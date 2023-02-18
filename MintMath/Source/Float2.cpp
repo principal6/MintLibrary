@@ -10,7 +10,7 @@ namespace mint
 	const Float2 Float2::kOne = Float2(+1.0f);
 	const Float2 Float2::kNegativeOne = Float2(-1.0f);
 	const Float2 Float2::kMax = Float2(Math::kFloatMax);
-	const Float2 Float2::kNan = Float2(Math::nan());
+	const Float2 Float2::kNan = Float2(Math::getNAN());
 
 	Float2::Float2(const Int2& rhs)
 		: Float2(static_cast<float>(rhs._x), static_cast<float>(rhs._y))
@@ -20,25 +20,25 @@ namespace mint
 
 	Float2& Float2::operator+=(const Float2& rhs)
 	{
-		Math::setAddVec(_c, rhs._c);
+		Math::SetAddVec(_c, rhs._c);
 		return *this;
 	}
 
 	Float2& Float2::operator-=(const Float2& rhs)
 	{
-		Math::setSubVec(_c, rhs._c);
+		Math::SetSubVec(_c, rhs._c);
 		return *this;
 	}
 
 	Float2& Float2::operator*=(const float scalar)
 	{
-		Math::setMulVec(_c, scalar);
+		Math::SetMulVec(_c, scalar);
 		return *this;
 	}
 
 	Float2& Float2::operator/=(const float scalar)
 	{
-		Math::setDivVec(_c, scalar);
+		Math::SetDivVec(_c, scalar);
 		return *this;
 	}
 
@@ -55,28 +55,28 @@ namespace mint
 	Float2 Float2::operator+(const Float2& rhs) const noexcept
 	{
 		Float2 result = *this;
-		Math::setAddVec(result._c, rhs._c);
+		Math::SetAddVec(result._c, rhs._c);
 		return result;
 	}
 
 	Float2 Float2::operator-(const Float2& rhs) const noexcept
 	{
 		Float2 result = *this;
-		Math::setSubVec(result._c, rhs._c);
+		Math::SetSubVec(result._c, rhs._c);
 		return result;
 	}
 
 	Float2 Float2::operator*(const float scalar) const noexcept
 	{
 		Float2 result = *this;
-		Math::setMulVec(result._c, scalar);
+		Math::SetMulVec(result._c, scalar);
 		return result;
 	}
 
 	Float2 Float2::operator/(const float scalar) const noexcept
 	{
 		Float2 result = *this;
-		Math::setDivVec(result._c, scalar);
+		Math::SetDivVec(result._c, scalar);
 		return result;
 	}
 
@@ -94,7 +94,7 @@ namespace mint
 
 	bool Float2::operator==(const Float2& rhs) const noexcept
 	{
-		return Math::equals(_c, rhs._c);
+		return Math::Equals(_c, rhs._c);
 	}
 
 	bool Float2::operator!=(const Float2& rhs) const noexcept
@@ -102,75 +102,75 @@ namespace mint
 		return !(*this == rhs);
 	}
 
-	float Float2::dot(const Float2& lhs, const Float2& rhs) noexcept
+	float Float2::Dot(const Float2& lhs, const Float2& rhs) noexcept
 	{
-		return Math::dot(lhs._c, rhs._c);
+		return Math::Dot(lhs._c, rhs._c);
 	}
 
-	Float2 Float2::normalize(const Float2& in) noexcept
+	Float2 Float2::Normalize(const Float2& in) noexcept
 	{
 		Float2 result = in;
-		Math::normalize(result._c);
+		Math::Normalize(result._c);
 		return result;
 	}
 
-	Float2 Float2::abs(const Float2& rhs) noexcept
+	Float2 Float2::Abs(const Float2& rhs) noexcept
 	{
 		return Float2(::abs(rhs._x), ::abs(rhs._y));
 	}
 
-	float Float2::dot(const Float2& rhs) const noexcept
+	float Float2::Dot(const Float2& rhs) const noexcept
 	{
-		return Math::dot(_c, rhs._c);
+		return Math::Dot(_c, rhs._c);
 	}
 
-	void Float2::normalize() noexcept
+	void Float2::Normalize() noexcept
 	{
-		Math::normalize(_c);
+		Math::Normalize(_c);
 	}
 
-	float Float2::lengthSqaure() const noexcept
+	float Float2::LengthSqaure() const noexcept
 	{
-		return Math::normSq(_c);
+		return Math::NormSq(_c);
 	}
 
-	float Float2::length() const noexcept
+	float Float2::Length() const noexcept
 	{
-		return Math::norm(_c);
+		return Math::Norm(_c);
 	}
 
-	float Float2::maxElement() const noexcept
+	float Float2::GetMaxElement() const noexcept
 	{
 		return mint::Max(_x, _y);
 	}
 
-	float Float2::minElement() const noexcept
+	float Float2::GetMinElement() const noexcept
 	{
 		return mint::Min(_x, _y);
 	}
 
-	void Float2::set(const float x, const float y) noexcept
+	void Float2::Set(const float x, const float y) noexcept
 	{
 		_x = x;
 		_y = y;
 	}
 
-	void Float2::setZero() noexcept
+	void Float2::SetZero() noexcept
 	{
-		Math::setZeroVec(_c);
+		Math::SetZeroVec(_c);
 	}
 
-	void Float2::setNan() noexcept
+	void Float2::SetNAN() noexcept
 	{
-		Math::setNan(_c);
+		Math::SetNAN(_c);
 	}
 
-	bool Float2::isNan() const noexcept
+	bool Float2::IsNAN() const noexcept
 	{
-		return Math::isNan(_c);
+		return Math::IsNAN(_c);
 	}
 
-	bool Float2::hasNegativeElement() const noexcept
+	bool Float2::HasNegativeElement() const noexcept
 	{
 		return (_x < 0.0f) || (_y < 0.0f);
 	}

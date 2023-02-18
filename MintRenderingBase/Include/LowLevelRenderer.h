@@ -31,7 +31,7 @@ namespace mint
 			TriangleList,
 		};
 
-		static constexpr uint32 kVertexOffsetZero = 0;
+		static constexpr uint32 kVertexOffSetZero = 0;
 
 
 		template <typename T>

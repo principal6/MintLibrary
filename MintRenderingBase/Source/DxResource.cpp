@@ -27,7 +27,7 @@ namespace mint
 			return DXGI_FORMAT();
 		}
 
-		uint32 DxResource::getColorCount(const DxTextureFormat format)
+		uint32 DxResource::GetColorCount(const DxTextureFormat format)
 		{
 			switch (format)
 			{
@@ -177,7 +177,7 @@ namespace mint
 				texture2DDescriptor.BindFlags = D3D11_BIND_FLAG::D3D11_BIND_SHADER_RESOURCE;
 				texture2DDescriptor.CPUAccessFlags = 0;
 
-				const uint32 colorCount = getColorCount(format);
+				const uint32 colorCount = GetColorCount(format);
 				D3D11_SUBRESOURCE_DATA subResource{};
 				subResource.pSysMem = resourceContent;
 				subResource.SysMemPitch = texture2DDescriptor.Width * colorCount;

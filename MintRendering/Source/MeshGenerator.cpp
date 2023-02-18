@@ -114,14 +114,14 @@ namespace mint
 			// TODO: TexCoord._w computation
 			const Float2 uv = getVertexUv(vertex);
 			vertex._tangentV._w = 0.0f;
-			vertex._bitangentW = Float4::crossNormalize(normal, vertex._tangentV);
-			vertex._tangentV = Float4::crossNormalize(vertex._bitangentW, normal);
+			vertex._bitangentW = Float4::CrossAndNormalize(normal, vertex._tangentV);
+			vertex._tangentV = Float4::CrossAndNormalize(vertex._bitangentW, normal);
 			setVertexUv(vertex, uv);
 		}
 
 		MINT_INLINE Float4 MeshGenerator::computeNormalFromTangentBitangent(const VS_INPUT& vertex) noexcept
 		{
-			return Float4::crossNormalize(vertex._tangentV, vertex._bitangentW);
+			return Float4::CrossAndNormalize(vertex._tangentV, vertex._bitangentW);
 		}
 
 		void MeshGenerator::computeTangentBitangent(const Face& face, Vector<VS_INPUT>& inoutVertexArray) noexcept
@@ -130,8 +130,8 @@ namespace mint
 			VS_INPUT& v1 = inoutVertexArray[face._vertexIndexArray[1]];
 			VS_INPUT& v2 = inoutVertexArray[face._vertexIndexArray[2]];
 
-			const Float4 edgeA = v1._positionU.getXyz0() - v0._positionU.getXyz0();
-			const Float4 edgeB = v2._positionU.getXyz0() - v0._positionU.getXyz0();
+			const Float4 edgeA = v1._positionU.GetXYZ0() - v0._positionU.GetXYZ0();
+			const Float4 edgeB = v2._positionU.GetXYZ0() - v0._positionU.GetXYZ0();
 
 			const Float2 uv0 = getVertexUv(v0);
 			const Float2 uv1 = getVertexUv(v1);
@@ -158,27 +158,27 @@ namespace mint
 			{
 				MINT_ASSERT(false, "uvMatrix 가 Invertible 하지 않습니다!!!");
 
-				tangent.setXyz(+1.0f, 0.0f, 0.0f);
-				bitangent.setXyz(0.0f, 0.0f, -1.0f);
+				tangent.SetXYZ(+1.0f, 0.0f, 0.0f);
+				bitangent.SetXYZ(0.0f, 0.0f, -1.0f);
 			}
 			else
 			{
-				const Float2x2 uvMatrixInverse = uvMatrix.inverse();
+				const Float2x2 uvMatrixInverse = uvMatrix.Inverse();
 
 				tangent = edgeA * uvMatrixInverse._11 + edgeB * uvMatrixInverse._12;
-				tangent.normalize();
+				tangent.Normalize();
 
 				bitangent = edgeA * uvMatrixInverse._21 + edgeB * uvMatrixInverse._22;
-				bitangent.normalize();
+				bitangent.Normalize();
 			}
 
-			v0._tangentV.setXyz(tangent);
-			v1._tangentV.setXyz(tangent);
-			v2._tangentV.setXyz(tangent);
+			v0._tangentV.SetXYZ(tangent);
+			v1._tangentV.SetXYZ(tangent);
+			v2._tangentV.SetXYZ(tangent);
 
-			v0._bitangentW.setXyz(bitangent);
-			v1._bitangentW.setXyz(bitangent);
-			v2._bitangentW.setXyz(bitangent);
+			v0._bitangentW.SetXYZ(bitangent);
+			v1._bitangentW.SetXYZ(bitangent);
+			v2._bitangentW.SetXYZ(bitangent);
 		}
 
 		void MeshGenerator::smoothNormals(MeshData& meshData) noexcept
@@ -209,7 +209,7 @@ namespace mint
 			{
 				normalArray[positionIndex] /= normalArray[positionIndex]._w;
 				normalArray[positionIndex]._w = 0.0f;
-				normalArray[positionIndex].normalize();
+				normalArray[positionIndex].Normalize();
 			}
 
 			// Recompute tangent, bitangent
@@ -217,8 +217,8 @@ namespace mint
 			{
 				const Float4& normal = normalArray[meshData._vertexToPositionTable[vertexIndex]];
 
-				const Float4 tangent = Float4::crossNormalize(meshData._vertexArray[vertexIndex]._bitangentW, normal);
-				const Float4 bitangent = Float4::crossNormalize(normal, tangent);
+				const Float4 tangent = Float4::CrossAndNormalize(meshData._vertexArray[vertexIndex]._bitangentW, normal);
+				const Float4 bitangent = Float4::CrossAndNormalize(normal, tangent);
 
 				meshData._vertexArray[vertexIndex]._tangentV = tangent;
 				meshData._vertexArray[vertexIndex]._bitangentW = bitangent;
@@ -600,7 +600,7 @@ namespace mint
 			for (uint32 positionIndex = 0; positionIndex < positionCount; ++positionIndex)
 			{
 				Float4& position = meshData._positionArray[positionIndex];
-				position = transformationMatrix.mul(position);
+				position = transformationMatrix.Mul(position);
 			}
 			meshData.updateVertexFromPositions();
 		}
@@ -866,25 +866,25 @@ namespace mint
 				Float4& faceVertexPosition2 = getFaceVertexPosition2(face, meshData);
 
 				faceVertexPosition0._w = 0.0f;
-				faceVertexPosition0.normalize();
+				faceVertexPosition0.Normalize();
 				vertexNormals[0] = faceVertexPosition0;
 				faceVertexPosition0 *= radiusParam._radius;
 				faceVertexPosition0._w = 1.0f;
 
 				faceVertexPosition1._w = 0.0f;
-				faceVertexPosition1.normalize();
+				faceVertexPosition1.Normalize();
 				vertexNormals[1] = faceVertexPosition1;
 				faceVertexPosition1 *= radiusParam._radius;
 				faceVertexPosition1._w = 1.0f;
 
 				faceVertexPosition2._w = 0.0f;
-				faceVertexPosition2.normalize();
+				faceVertexPosition2.Normalize();
 				vertexNormals[2] = faceVertexPosition2;
 				faceVertexPosition2 *= radiusParam._radius;
 				faceVertexPosition2._w = 1.0f;
 
 				faceNormal = vertexNormals[0] + vertexNormals[1] + vertexNormals[2];
-				faceNormal.normalize();
+				faceNormal.Normalize();
 
 				recomputeTangentBitangentFromNormal(faceNormal, getFaceVertex0(face, meshData));
 				recomputeTangentBitangentFromNormal(faceNormal, getFaceVertex1(face, meshData));

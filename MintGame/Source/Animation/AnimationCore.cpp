@@ -108,7 +108,7 @@ namespace mint
 				if (joint.HasParent())
 				{
 					SkeletonJoint& parentJoint = _joints[joint._parentIndex];
-					joint._bindPoseModelMatrix.mulAssignReverse(parentJoint._bindPoseModelMatrix);
+					joint._bindPoseModelMatrix.MulAssignReverse(parentJoint._bindPoseModelMatrix);
 				}
 			}
 		}
@@ -160,10 +160,10 @@ namespace mint
 					Float4x4 parentJointWorldMatrix = worldMatrix;
 					parentJointWorldMatrix *= parentJoint._bindPoseModelMatrix;
 
-					instantRenderer.drawLine(jointWorldMatrix.getTranslation(), parentJointWorldMatrix.getTranslation(), Rendering::Color::kCyan);
+					instantRenderer.drawLine(jointWorldMatrix.GetTranslation(), parentJointWorldMatrix.GetTranslation(), Rendering::Color::kCyan);
 				}
 
-				instantRenderer.drawGeoSphere(jointWorldMatrix.getTranslation(), 0.03125f, 1, Rendering::Color::kMagenta);
+				instantRenderer.drawGeoSphere(jointWorldMatrix.GetTranslation(), 0.03125f, 1, Rendering::Color::kMagenta);
 			}
 		}
 

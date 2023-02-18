@@ -102,7 +102,7 @@ namespace mint
 		return !(*this == rhs);
 	}
 
-	void Int2::set(const int32 x, const int32 y) noexcept
+	void Int2::Set(const int32 x, const int32 y) noexcept
 	{
 		_x = x;
 		_y = y;

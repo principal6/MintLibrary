@@ -10,7 +10,7 @@ namespace mint
 	{
 		void CircleShape2D::debug_drawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Float2& offset)
 		{
-			shapeRendererContext.setColor(color);
+			shapeRendererContext.SetColor(color);
 
 			const uint32 kSideCount = 32;
 			const float kThetaUnit = Math::kTwoPi / kSideCount;
@@ -31,7 +31,7 @@ namespace mint
 
 		void AABBShape2D::debug_drawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Float2& offset)
 		{
-			shapeRendererContext.setColor(color);
+			shapeRendererContext.SetColor(color);
 
 			const Float2 halfSizeX = Float2(_halfSize._x, 0.0f);
 			const Float2 halfSizeY = Float2(0.0f, _halfSize._y);
@@ -76,7 +76,7 @@ namespace mint
 
 		void ConvexShape2D::debug_drawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Float2& offset)
 		{
-			shapeRendererContext.setColor(color);
+			shapeRendererContext.SetColor(color);
 
 			const uint32 vertexCount = _vertices.Size();
 			for (uint32 vertexIndex = 1; vertexIndex < vertexCount; ++vertexIndex)
@@ -97,7 +97,7 @@ namespace mint
 			const uint32 vertexCount = _vertices.Size();
 			for (uint32 vertexIndex = 0; vertexIndex < vertexCount; ++vertexIndex)
 			{
-				const float dotProduct = direction.dot(_vertices[vertexIndex]);
+				const float dotProduct = direction.Dot(_vertices[vertexIndex]);
 				if (dotProduct > maxDotProduct)
 				{
 					maxDotProduct = dotProduct;
@@ -195,7 +195,7 @@ namespace mint
 				const Float2& a = inoutPoints[index_a];
 				const Float3 cb = Float3(b - c);
 				const Float3 ba = Float3(a - b);
-				const Float3 ba_x_cb = ba.cross(cb);
+				const Float3 ba_x_cb = ba.Cross(cb);
 				const bool is_counter_clockwise_or_straight = ba_x_cb._z >= 0.0f;
 				if (is_counter_clockwise_or_straight)
 				{
@@ -244,9 +244,9 @@ namespace mint
 
 		MINT_INLINE Float2 GJK2D_computePerpABToAC(const Float2& ab, const Float2& ac)
 		{
-			const Float2 normalizedAB = Float2::normalize(ab);
-			const Float2 result = ac - normalizedAB * normalizedAB.dot(ac);
-			return (result.lengthSqaure() == 0.0f ? result : Float2::normalize(result));
+			const Float2 normalizedAB = Float2::Normalize(ab);
+			const Float2 result = ac - normalizedAB * normalizedAB.Dot(ac);
+			return (result.LengthSqaure() == 0.0f ? result : Float2::Normalize(result));
 		}
 
 		// returns true whenever it's sure that there's an intersection
@@ -256,7 +256,7 @@ namespace mint
 			const Float2& b = inoutSimplex.getPointB();
 			const Float2 ab = b - a;
 			const Float2 ao = -a;
-			const float ab_dot_ao = ab.dot(ao);
+			const float ab_dot_ao = ab.Dot(ao);
 			if (inoutSimplex.getValidPointCount() == 2)
 			{
 				// 2-simplex (line)
@@ -270,7 +270,7 @@ namespace mint
 				{
 					// origin is outside the point region A
 					inoutSimplex = GJKSimplex2D(a);
-					outDirection = Float2::normalize(ao);
+					outDirection = Float2::Normalize(ao);
 					return false;
 				}
 			}
@@ -279,15 +279,15 @@ namespace mint
 				// 3-simplex (triangle)
 				const Float2& c = inoutSimplex.getPointC();
 				const Float2 ac = c - a;
-				const float ac_dot_ao = ac.dot(ao);
+				const float ac_dot_ao = ac.Dot(ao);
 				const Float2 perpDirection_ab_to_ao = GJK2D_computePerpABToAC(ab, ao);
 				const Float2 perpDirection_ab_to_ac = GJK2D_computePerpABToAC(ab, ac);
-				if (perpDirection_ab_to_ao.dot(perpDirection_ab_to_ac) > 0.0f)
+				if (perpDirection_ab_to_ao.Dot(perpDirection_ab_to_ac) > 0.0f)
 				{
 					// origin is inside the 3-simplex segment region AB
 					const Float2 perpDirection_ac_to_ao = GJK2D_computePerpABToAC(ac, ao);
 					const Float2 perpDirection_ac_to_ab = GJK2D_computePerpABToAC(ac, ab);
-					if (perpDirection_ac_to_ao.dot(perpDirection_ac_to_ab) > 0.0f)
+					if (perpDirection_ac_to_ao.Dot(perpDirection_ac_to_ab) > 0.0f)
 					{
 						// origin is inside the 3-simplex segment region AC
 						// thus, origin is enclosed by the 3-simplex
@@ -324,12 +324,12 @@ namespace mint
 			GJKSimplex2D simplex{ minkowskiDifferenceVertex };
 			// minkowskiDifferenceVertex to origin
 			direction = -minkowskiDifferenceVertex;
-			direction.normalize();
+			direction.Normalize();
 
 			while (true)
 			{
 				minkowskiDifferenceVertex = GJK2D_getMinkowskiDifferenceVertex(shapeA, shapeB, direction);
-				if (minkowskiDifferenceVertex.dot(direction) < 0.0f)
+				if (minkowskiDifferenceVertex.Dot(direction) < 0.0f)
 				{
 					// MinkowskiDifferenceVertex did not pass the origin
 					// Thus, an intersection is not possible.

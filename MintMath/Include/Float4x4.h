@@ -26,30 +26,30 @@ namespace mint
 
 #pragma region Static Functions
 	public:
-		static Float4 mul(const Float4x4& m, const Float4& v) noexcept;
-		static Float3 mul(const Float4x4& m, const Float3& v) noexcept;
-		static Float4x4 mul(const Float4x4& l, const Float4x4& r) noexcept;
+		static Float4 Mul(const Float4x4& m, const Float4& v) noexcept;
+		static Float3 Mul(const Float4x4& m, const Float3& v) noexcept;
+		static Float4x4 Mul(const Float4x4& l, const Float4x4& r) noexcept;
 
-		static Float4x4 translationMatrix(const float x, const float y, const float z) noexcept;
-		static Float4x4 translationMatrix(const Float3& translation) noexcept;
-		static Float4x4 scalingMatrix(const float x, const float y, const float z) noexcept;
-		static Float4x4 scalingMatrix(const Float3& scale) noexcept;
-		static Float4x4 rotationMatrixX(const float angle) noexcept;
-		static Float4x4 rotationMatrixY(const float angle) noexcept;
-		static Float4x4 rotationMatrixZ(const float angle) noexcept;
-		static Float4x4 rotationMatrixRollPitchYaw(const float pitch, const float yaw, const float roll) noexcept;
+		static Float4x4 TranslationMatrix(const float x, const float y, const float z) noexcept;
+		static Float4x4 TranslationMatrix(const Float3& translation) noexcept;
+		static Float4x4 ScalingMatrix(const float x, const float y, const float z) noexcept;
+		static Float4x4 ScalingMatrix(const Float3& scale) noexcept;
+		static Float4x4 RotationMatrixX(const float angle) noexcept;
+		static Float4x4 RotationMatrixY(const float angle) noexcept;
+		static Float4x4 RotationMatrixZ(const float angle) noexcept;
+		static Float4x4 RotationMatrixRollPitchYaw(const float pitch, const float yaw, const float roll) noexcept;
 		// Rodrigues' rotation formula
-		static Float4x4 rotationMatrixAxisAngle(const Float3& axis, const float angle) noexcept;
-		static Float4x4 rotationMatrixFromAxes(const Float3& axisX, const Float3& axisY, const Float3& axisZ) noexcept;
-		static Float4x4 rotationMatrix(const QuaternionF& rotation) noexcept;
-		static Float4x4 axesToColumns(const Float3& axisX, const Float3& axisY, const Float3& axisZ) noexcept;
+		static Float4x4 RotationMatrixAxisAngle(const Float3& axis, const float angle) noexcept;
+		static Float4x4 RotationMatrixFromAxes(const Float3& axisX, const Float3& axisY, const Float3& axisZ) noexcept;
+		static Float4x4 RotationMatrix(const QuaternionF& rotation) noexcept;
+		static Float4x4 AxesToColumns(const Float3& axisX, const Float3& axisY, const Float3& axisZ) noexcept;
 		// Interprets vector from new basis.
-		static Float4x4 axesToRows(const Float3& axisX, const Float3& axisY, const Float3& axisZ) noexcept;
-		static Float4x4 srtMatrix(const Float3& scale, const QuaternionF& rotation, const Float3& translation) noexcept;
+		static Float4x4 AxesToRows(const Float3& axisX, const Float3& axisY, const Float3& axisZ) noexcept;
+		static Float4x4 SRTMatrix(const Float3& scale, const QuaternionF& rotation, const Float3& translation) noexcept;
 
 		// +X is the right direction for world.
-		static Float4x4 projectionMatrixPerspectiveYUP(const bool isRightHanded, const float FOVAngle, const float nearDepth, const float farDepth, const float screenWidthOverHeight) noexcept;
-		static Float4x4 projectionMatrix2DFromTopLeft(const float pixelWidth, const float pixelHeight) noexcept;
+		static Float4x4 ProjectionMatrixPerspectiveYUP(const bool isRightHanded, const float FOVAngle, const float nearDepth, const float farDepth, const float screenWidthOverHeight) noexcept;
+		static Float4x4 ProjectionMatrix2DFromTopLeft(const float pixelWidth, const float pixelHeight) noexcept;
 #pragma endregion
 
 	public:
@@ -85,45 +85,45 @@ namespace mint
 		Float3 operator*(const Float3& vec) const noexcept;
 
 	public:
-		void set(
+		void Set(
 			const float _11, const float _12, const float _13, const float _14,
 			const float _21, const float _22, const float _23, const float _24,
 			const float _31, const float _32, const float _33, const float _34,
 			const float _41, const float _42, const float _43, const float _44) noexcept;
-		void setZero() noexcept;
-		void setIdentity() noexcept;
+		void SetZero() noexcept;
+		void SetIdentity() noexcept;
 
 	public:
-		void preScale(const float x, const float y, const float z) noexcept;
-		void postScale(const float x, const float y, const float z) noexcept;
-		void preScale(const Float3& scale) noexcept;
-		void postScale(const Float3& scale) noexcept;
+		void PreScale(const float x, const float y, const float z) noexcept;
+		void PostScale(const float x, const float y, const float z) noexcept;
+		void PreScale(const Float3& scale) noexcept;
+		void PostScale(const Float3& scale) noexcept;
 
 	public:
-		void setTranslation(const float x, const float y, const float z) noexcept;
-		void setTranslation(const Float3& translation) noexcept;
-		void preTranslate(const float x, const float y, const float z) noexcept;
-		void postTranslate(const float x, const float y, const float z) noexcept;
-		void preTranslate(const Float3& translation) noexcept;
-		void postTranslate(const Float3& translation) noexcept;
+		void SetTranslation(const float x, const float y, const float z) noexcept;
+		void SetTranslation(const Float3& translation) noexcept;
+		void PreTranslate(const float x, const float y, const float z) noexcept;
+		void PostTranslate(const float x, const float y, const float z) noexcept;
+		void PreTranslate(const Float3& translation) noexcept;
+		void PostTranslate(const Float3& translation) noexcept;
 
 	public:
-		Float3 getTranslation() const noexcept;
-		void decomposeSRT(Float3& outScale, Float4x4& outRotationMatrix, Float3& outTranslation) const noexcept;
+		Float3 GetTranslation() const noexcept;
+		void DecomposeSRT(Float3& outScale, Float4x4& outRotationMatrix, Float3& outTranslation) const noexcept;
 
 	public:
-		float determinant() const noexcept;
-		Float4x4 transpose() const noexcept;
-		Float4x4 inverse() const noexcept;
+		float Determinant() const noexcept;
+		Float4x4 Transpose() const noexcept;
+		Float4x4 Inverse() const noexcept;
 
 	public:
-		Float4x4 mul(const Float4x4& rhs) const noexcept;
-		void mulAssignReverse(const Float4x4& lhs) noexcept;
+		Float4x4 Mul(const Float4x4& rhs) const noexcept;
+		void MulAssignReverse(const Float4x4& lhs) noexcept;
 
 		// matrix * (column) vector
-		Float4 mul(const Float4& vec) const noexcept;
+		Float4 Mul(const Float4& vec) const noexcept;
 		// matrix * (column) vector
-		Float3 mul(const Float3& vec) const noexcept;
+		Float3 Mul(const Float3& vec) const noexcept;
 
 	public:
 		union

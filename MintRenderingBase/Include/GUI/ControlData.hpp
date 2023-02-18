@@ -77,22 +77,22 @@ namespace mint
 				titleBarZone = Rect(Float2::kZero, Float2(_size._x, 0.0f));
 				if (_type == ControlType::Window)
 				{
-					titleBarZone.bottom() += (_perTypeData._windowData._titleBarHeight);
+					titleBarZone.Bottom() += (_perTypeData._windowData._titleBarHeight);
 				}
 			}
 
 			inline void ControlData::computeMenuBarZone(Rect& menuBarZone)
 			{
-				menuBarZone = Rect(_zones._titleBarZone.position() + Float2(0.0f, _zones._titleBarZone.height()), Float2(_size._x, 0.0f));
+				menuBarZone = Rect(_zones._titleBarZone.Position() + Float2(0.0f, _zones._titleBarZone.Height()), Float2(_size._x, 0.0f));
 				if (_type == ControlType::Window)
 				{
-					menuBarZone.bottom() += _perTypeData._windowData._menuBarHeight;
+					menuBarZone.Bottom() += _perTypeData._windowData._menuBarHeight;
 				}
 			}
 
 			inline void ControlData::computeContentZone(Rect& contentZone)
 			{
-				contentZone = Rect(_zones._menuBarZone.position() + Float2(0.0f, _zones._menuBarZone.height()), _size);
+				contentZone = Rect(_zones._menuBarZone.Position() + Float2(0.0f, _zones._menuBarZone.Height()), _size);
 			}
 		}
 	}

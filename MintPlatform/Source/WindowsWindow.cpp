@@ -140,7 +140,7 @@ namespace mint
 
 			RECT rawWindowRect;
 			::GetWindowRect(_hWnd, &rawWindowRect);
-			_windowCreationDesc._position.set(rawWindowRect.left, rawWindowRect.top);
+			_windowCreationDesc._position.Set(rawWindowRect.left, rawWindowRect.top);
 
 			SetSize(_windowCreationDesc._size, false);
 
@@ -339,7 +339,7 @@ namespace mint
 			::ClientToScreen(_hWnd, &leftTop);
 			::ClientToScreen(_hWnd, &rightBottom);
 
-			const Rect clientRect = Rect::fromLongs(leftTop.x, rightBottom.x, leftTop.y, rightBottom.y);
+			const Rect clientRect = Rect::FromLongs(leftTop.x, rightBottom.x, leftTop.y, rightBottom.y);
 			if (clientRect.Contains(cursorPosition) == true)
 			{
 				::SetCursor(_cursorArray[static_cast<uint32>(_currentCursorType)]);

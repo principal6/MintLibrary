@@ -20,7 +20,7 @@ namespace mint
 		if ((MaxUnitCount % kBitMaskByteCount) != 0)
 		{
 			constexpr uint32 deleteBitCount = kBitMaskByteCount - (MaxUnitCount % kBitMaskByteCount);
-			constexpr BitMaskType deleteBitMask = static_cast<BitMaskType>(Math::pow2_ui32(deleteBitCount) - 1);
+			constexpr BitMaskType deleteBitMask = static_cast<BitMaskType>(Math::Pow2_Uint32(deleteBitCount) - 1);
 			_allocMetaDataArray[kAllocMetaDataCount - 1] |= deleteBitMask;
 		}
 	}
@@ -79,7 +79,7 @@ namespace mint
 
 		const uint32 allocMetaDataIndex = allocSizeDataIndex / kBitMaskByteCount;
 		const uint8 bitOffset = allocSizeDataIndex % kBitMaskByteCount;
-		const BitMaskType bitMask = static_cast<BitMaskType>(Math::pow2_ui32(unitCount) - 1);
+		const BitMaskType bitMask = static_cast<BitMaskType>(Math::Pow2_Uint32(unitCount) - 1);
 		const BitMaskType bitMaskAligned = ((bitMask << (kBitMaskByteCount - unitCount)) >> bitOffset);
 
 		_allocMetaDataArray[allocMetaDataIndex] ^= bitMaskAligned;
@@ -90,7 +90,7 @@ namespace mint
 	template<uint32 UnitByteSize, uint32 MaxUnitCount>
 	inline bool StackHolder<UnitByteSize, MaxUnitCount>::CanRegister(const CountMetaDataType unitCount, uint32& outAllocMetaDataIndex, uint8& outBitOffset, BitMaskType& outBitMask) const noexcept
 	{
-		const BitMaskType bitMaskRightAligned = static_cast<BitMaskType>(Math::pow2_ui32(unitCount) - 1);
+		const BitMaskType bitMaskRightAligned = static_cast<BitMaskType>(Math::Pow2_Uint32(unitCount) - 1);
 		const BitMaskType bitMaskLeftAligned = bitMaskRightAligned << (kBitMaskByteCount - unitCount);
 		for (uint32 allocMetaDataIndex = 0; allocMetaDataIndex < kAllocMetaDataCount; ++allocMetaDataIndex)
 		{

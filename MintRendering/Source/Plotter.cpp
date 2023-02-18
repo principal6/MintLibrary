@@ -107,7 +107,7 @@ namespace mint
 		{
 			const Float2 plotPosition2 = computePlotPosition(x, y);
 
-			_shapeFontRendererContext->setColor(color);
+			_shapeFontRendererContext->SetColor(color);
 			_shapeFontRendererContext->setPosition(Float4(plotPosition2._x, plotPosition2._y, 0.0f, 1.0f));
 
 			switch (plotType)
@@ -166,7 +166,7 @@ namespace mint
 		void Plotter::drawFrame(const Float4& frameCenterPosition) noexcept
 		{
 			_shapeFontRendererContext->setShapeBorderColor(Color::kBlack);
-			_shapeFontRendererContext->setColor(Color::kWhite);
+			_shapeFontRendererContext->SetColor(Color::kWhite);
 			_shapeFontRendererContext->setPosition(frameCenterPosition);
 			_shapeFontRendererContext->drawRectangle(_size, 1.0f, 0.0f);
 		}
@@ -183,7 +183,7 @@ namespace mint
 			const float paddingX = -2.0f;
 			const float textWidth = _shapeFontRendererContext->getFontData().computeTextWidth(_yLabel.c_str(), static_cast<uint32>(_yLabel.length()));
 			labelPosition = Float4(frameCenterPosition._x - _size._x * 0.5f - paddingX, frameCenterPosition._y + textWidth * 0.5f, 0.0f, 1.0f);
-			labelRenderingOption._transformMatrix = Float4x4::rotationMatrixZ(-Math::kPiOverTwo);
+			labelRenderingOption._transformMatrix = Float4x4::RotationMatrixZ(-Math::kPiOverTwo);
 			_shapeFontRendererContext->drawDynamicText(_yLabel.c_str(), static_cast<uint32>(_yLabel.length()), labelPosition, labelRenderingOption);
 		}
 	}

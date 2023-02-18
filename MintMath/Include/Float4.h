@@ -57,40 +57,40 @@ namespace mint
 		constexpr bool operator!=(const Float4& rhs) const noexcept;
 
 	public:
-		static float dot(const Float4& lhs, const Float4& rhs) noexcept;
+		static float Dot(const Float4& lhs, const Float4& rhs) noexcept;
 
 		// in 3D affine space
-		static Float4 cross(const Float4& lhs, const Float4& rhs) noexcept;
-		static Float4 crossNormalize(const Float4& lhs, const Float4& rhs) noexcept;
-		static Float4 normalize(const Float4& in) noexcept;
+		static Float4 Cross(const Float4& lhs, const Float4& rhs) noexcept;
+		static Float4 CrossAndNormalize(const Float4& lhs, const Float4& rhs) noexcept;
+		static Float4 Normalize(const Float4& in) noexcept;
 
 	public:
-		Float4& transform(const Float4x4& matrix) noexcept;
+		Float4& Transform(const Float4x4& matrix) noexcept;
 
 	public:
-		void normalize() noexcept;
+		void Normalize() noexcept;
 
 	public:
-		void setXyz(const float x, const float y, const float z) noexcept;
-		void setXyz(const Float3& rhs) noexcept;
-		void setXyz(const Float4& rhs) noexcept;
-		Float4 getXyz0() const noexcept;
-		Float4 getXyz1() const noexcept;
-		Float3 getXyz() const noexcept;
-		float maxComponent() const noexcept;
-		float minComponent() const noexcept;
+		void SetXYZ(const float x, const float y, const float z) noexcept;
+		void SetXYZ(const Float3& rhs) noexcept;
+		void SetXYZ(const Float4& rhs) noexcept;
+		Float4 GetXYZ0() const noexcept;
+		Float4 GetXYZ1() const noexcept;
+		Float3 GetXYZ() const noexcept;
+		float GetMaxComponent() const noexcept;
+		float GetMinComponent() const noexcept;
 
 	public:
-		float lengthSqaure() const noexcept;
-		float length() const noexcept;
+		float LengthSqaure() const noexcept;
+		float Length() const noexcept;
 
 	public:
-		void set(const float x, const float y, const float z, const float w) noexcept;
-		void setZero() noexcept;
-		void setNan() noexcept;
+		void Set(const float x, const float y, const float z, const float w) noexcept;
+		void SetZero() noexcept;
+		void SetNAN() noexcept;
 
 	public:
-		bool isNan() const noexcept;
+		bool IsNAN() const noexcept;
 
 	public:
 		union

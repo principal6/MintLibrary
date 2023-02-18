@@ -15,9 +15,9 @@ namespace mint
 	{
 #pragma region Static Functions
 	public:
-		static Float3x3 rotationMatrixX(const float angle) noexcept;
-		static Float3x3 rotationMatrixY(const float angle) noexcept;
-		static Float3x3 rotationMatrixZ(const float angle) noexcept;
+		static Float3x3 RotationMatrixX(const float angle) noexcept;
+		static Float3x3 RotationMatrixY(const float angle) noexcept;
+		static Float3x3 RotationMatrixZ(const float angle) noexcept;
 #pragma endregion
 
 	public:
@@ -41,16 +41,16 @@ namespace mint
 		Float3x3 operator/(const float scalar) const noexcept;
 
 	public:
-		void setZero() noexcept;
-		void setIdentity() noexcept;
+		void SetZero() noexcept;
+		void SetIdentity() noexcept;
 
 	public:
-		float determinant() const noexcept;
-		Float3x3 transpose() const noexcept;
-		Float3x3 inverse() const noexcept;
+		float Determinant() const noexcept;
+		Float3x3 Transpose() const noexcept;
+		Float3x3 Inverse() const noexcept;
 
 	public:
-		Float3 mul(const Float3& vec) const noexcept;
+		Float3 Mul(const Float3& vec) const noexcept;
 
 	public:
 		union

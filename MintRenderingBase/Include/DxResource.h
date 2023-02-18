@@ -54,7 +54,7 @@ namespace mint
 
 		private:
 			static DXGI_FORMAT getDxgiFormat(const DxTextureFormat format);
-			static uint32 getColorCount(const DxTextureFormat format);
+			static uint32 GetColorCount(const DxTextureFormat format);
 
 		private:
 			DxResource(GraphicDevice& graphicDevice);

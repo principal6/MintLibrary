@@ -42,7 +42,7 @@ namespace mint
 			for (uint32 vertexIndex = 0; vertexIndex < vertexCount; ++vertexIndex)
 			{
 				const uint32 positionIndex = _vertexToPositionTable[vertexIndex];
-				_vertexArray[vertexIndex]._positionU.setXyz(_positionArray[positionIndex]);
+				_vertexArray[vertexIndex]._positionU.SetXYZ(_positionArray[positionIndex]);
 			}
 		}
 

@@ -59,16 +59,16 @@ namespace mint
 			splineGenerator.generateBezierCurve(bezierControlPointSet1, bezierLinePointSet1);
 			splineGenerator.generateBezierCurve(bezierControlPointSet2, bezierLinePointSet2);
 			splineGenerator.generateBezierCurve(bezierControlPointSet3, bezierLinePointSet3);
-			graphicDevice.getShapeRendererContext().setColor(Color::kRed);
+			graphicDevice.getShapeRendererContext().SetColor(Color::kRed);
 			graphicDevice.getShapeRendererContext().drawLineStrip(bezierLinePointSet0, 1.0f);
-			graphicDevice.getShapeRendererContext().setColor(Color::kGreen);
+			graphicDevice.getShapeRendererContext().SetColor(Color::kGreen);
 			graphicDevice.getShapeRendererContext().drawLineStrip(bezierLinePointSet1, 1.0f);
-			graphicDevice.getShapeRendererContext().setColor(Color::kBlue);
+			graphicDevice.getShapeRendererContext().SetColor(Color::kBlue);
 			graphicDevice.getShapeRendererContext().drawLineStrip(bezierLinePointSet2, 1.0f);
-			graphicDevice.getShapeRendererContext().setColor(Color::kCyan);
+			graphicDevice.getShapeRendererContext().SetColor(Color::kCyan);
 			graphicDevice.getShapeRendererContext().drawLineStrip(bezierLinePointSet3, 1.0f);
 
-			graphicDevice.getShapeRendererContext().setColor(Color::kBlack);
+			graphicDevice.getShapeRendererContext().SetColor(Color::kBlack);
 			for (uint32 sourceControlPointIndex = 0; sourceControlPointIndex < sourceControlPointCount; sourceControlPointIndex++)
 			{
 				const Float2& sourceControlPoint = sourceControlPointSet[sourceControlPointIndex];
@@ -91,7 +91,7 @@ namespace mint
 			Vector<Float2> bSplineLinePointSet;
 			splineGenerator.setPrecision(64);
 			splineGenerator.generateBSpline(bSplineOrder, sourceControlPointSet, bSplineKnotVector, bSplineLinePointSet);
-			graphicDevice.getShapeRendererContext().setColor(Color::kMagenta);
+			graphicDevice.getShapeRendererContext().SetColor(Color::kMagenta);
 			graphicDevice.getShapeRendererContext().drawLineStrip(bSplineLinePointSet, 2.0f);
 			return true;
 		}

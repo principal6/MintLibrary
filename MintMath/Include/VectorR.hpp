@@ -15,7 +15,7 @@ namespace mint
 	namespace Math
 	{
 		template<int32 N, typename T>
-		MINT_INLINE bool equals(const T(&lhs)[N], const T(&rhs)[N], const T epsilon) noexcept
+		MINT_INLINE bool Equals(const T(&lhs)[N], const T(&rhs)[N], const T epsilon) noexcept
 		{
 			for (int32 i = 0; i < N; ++i)
 			{
@@ -29,7 +29,7 @@ namespace mint
 		}
 
 		template<int32 N, typename T>
-		MINT_INLINE void copyVec(const T(&src)[N], T(&dest)[N]) noexcept
+		MINT_INLINE void CopyVec(const T(&src)[N], T(&dest)[N]) noexcept
 		{
 			for (int32 i = 0; i < N; ++i)
 			{
@@ -38,7 +38,7 @@ namespace mint
 		}
 
 		template<int32 N, typename T>
-		MINT_INLINE T dot(const T(&lhs)[N], const T(&rhs)[N]) noexcept
+		MINT_INLINE T Dot(const T(&lhs)[N], const T(&rhs)[N]) noexcept
 		{
 			T result{};
 			for (int32 i = 0; i < N; ++i)
@@ -49,7 +49,7 @@ namespace mint
 		}
 
 		template<typename T>
-		MINT_INLINE void cross(const T(&lhs)[3], const T(&rhs)[3], T(&out)[3]) noexcept
+		MINT_INLINE void Cross(const T(&lhs)[3], const T(&rhs)[3], T(&out)[3]) noexcept
 		{
 			out[0] = lhs[1] * rhs[2] - lhs[2] * rhs[1];
 			out[1] = lhs[2] * rhs[0] - lhs[0] * rhs[2];
@@ -57,7 +57,7 @@ namespace mint
 		}
 
 		template<typename T>
-		void cross(const T(&lhs)[4], const T(&rhs)[4], T(&out)[4]) noexcept
+		void Cross(const T(&lhs)[4], const T(&rhs)[4], T(&out)[4]) noexcept
 		{
 			out[0] = lhs[1] * rhs[2] - lhs[2] * rhs[1];
 			out[1] = lhs[2] * rhs[0] - lhs[0] * rhs[2];
@@ -66,26 +66,26 @@ namespace mint
 		}
 
 		template<int32 N, typename T>
-		MINT_INLINE T normSq(const T(&vec)[N]) noexcept
+		MINT_INLINE T NormSq(const T(&vec)[N]) noexcept
 		{
-			return dot(vec, vec);
+			return Dot(vec, vec);
 		}
 
 		template<int32 N, typename T>
-		MINT_INLINE T norm(const T(&vec)[N]) noexcept
+		MINT_INLINE T Norm(const T(&vec)[N]) noexcept
 		{
-			return ::sqrt(normSq(vec));
+			return ::sqrt(NormSq(vec));
 		}
 
 		template<int32 N, typename T>
-		MINT_INLINE void normalize(T(&inOut)[N]) noexcept
+		MINT_INLINE void Normalize(T(&inOut)[N]) noexcept
 		{
-			const T norm_ = norm(inOut);
-			Math::setDivVec(inOut, norm_);
+			const T norm_ = Norm(inOut);
+			Math::SetDivVec(inOut, norm_);
 		}
 
 		template<int32 N, typename T>
-		MINT_INLINE void setZeroVec(T(&vec)[N]) noexcept
+		MINT_INLINE void SetZeroVec(T(&vec)[N]) noexcept
 		{
 			for (int32 i = 0; i < N; ++i)
 			{
@@ -94,20 +94,20 @@ namespace mint
 		}
 
 		template<int32 N, typename T>
-		MINT_INLINE void setNan(T(&vec)[N]) noexcept
+		MINT_INLINE void SetNAN(T(&vec)[N]) noexcept
 		{
 			for (int32 i = 0; i < N; ++i)
 			{
-				vec[i] = Math::nan();
+				vec[i] = Math::getNAN();
 			}
 		}
 
 		template<int32 N, typename T>
-		MINT_INLINE bool isNan(const T(&vec)[N]) noexcept
+		MINT_INLINE bool IsNAN(const T(&vec)[N]) noexcept
 		{
 			for (int32 i = 0; i < N; ++i)
 			{
-				if (Math::isNan(vec[i]))
+				if (Math::IsNAN(vec[i]))
 				{
 					return true;
 				}
@@ -116,7 +116,7 @@ namespace mint
 		}
 
 		template<int32 N, typename T>
-		MINT_INLINE void setAddVec(T(&lhs)[N], const T(&rhs)[N]) noexcept
+		MINT_INLINE void SetAddVec(T(&lhs)[N], const T(&rhs)[N]) noexcept
 		{
 			for (int32 i = 0; i < N; ++i)
 			{
@@ -125,7 +125,7 @@ namespace mint
 		}
 
 		template<int32 N, typename T>
-		MINT_INLINE void setSubVec(T(&lhs)[N], const T(&rhs)[N]) noexcept
+		MINT_INLINE void SetSubVec(T(&lhs)[N], const T(&rhs)[N]) noexcept
 		{
 			for (int32 i = 0; i < N; ++i)
 			{
@@ -134,7 +134,7 @@ namespace mint
 		}
 
 		template<int32 N, typename T>
-		MINT_INLINE void setMulVec(T(&vec)[N], const float scalar) noexcept
+		MINT_INLINE void SetMulVec(T(&vec)[N], const float scalar) noexcept
 		{
 			for (int32 i = 0; i < N; ++i)
 			{
@@ -143,7 +143,7 @@ namespace mint
 		}
 
 		template<int32 N, typename T>
-		MINT_INLINE void setDivVec(T(&vec)[N], const float scalar) noexcept
+		MINT_INLINE void SetDivVec(T(&vec)[N], const float scalar) noexcept
 		{
 			MINT_ASSERT(scalar != 0.0, "0 으로 나누려 합니다!");
 			for (int32 i = 0; i < N; ++i)
@@ -155,41 +155,41 @@ namespace mint
 
 
 	template<int32 N, typename T>
-	inline VectorR<N, T> VectorR<N, T>::standardUnitVector(const int32 math_i) noexcept
+	inline VectorR<N, T> VectorR<N, T>::StandardUnitVector(const int32 math_i) noexcept
 	{
 		VectorR<N, T> result;
-		result.setComponent(math_i - 1, 1.0);
+		result.SetComponent(math_i - 1, 1.0);
 		return result;
 	}
 
 	template<int32 N, typename T>
-	MINT_INLINE T VectorR<N, T>::dot(const VectorR& lhs, const VectorR& rhs) noexcept
+	MINT_INLINE T VectorR<N, T>::Dot(const VectorR& lhs, const VectorR& rhs) noexcept
 	{
-		return Math::dot(lhs._c, rhs._c);
+		return Math::Dot(lhs._c, rhs._c);
 	}
 
 	template<int32 N, typename T>
-	MINT_INLINE T VectorR<N, T>::distance(const VectorR& lhs, const VectorR& rhs) noexcept
+	MINT_INLINE T VectorR<N, T>::Distance(const VectorR& lhs, const VectorR& rhs) noexcept
 	{
-		return (rhs - lhs).norm();
+		return (rhs - lhs).Norm();
 	}
 
 	template<int32 N, typename T>
-	MINT_INLINE T VectorR<N, T>::angle(const VectorR& lhs, const VectorR& rhs) noexcept
+	MINT_INLINE T VectorR<N, T>::Angle(const VectorR& lhs, const VectorR& rhs) noexcept
 	{
-		return ::acos(lhs.normalize().dot(rhs.normalize()));
+		return ::acos(lhs.Normalize().Dot(rhs.Normalize()));
 	}
 
 	template<int32 N, typename T>
-	MINT_INLINE bool VectorR<N, T>::isOrthogonal(const VectorR& lhs, const VectorR& rhs) noexcept
+	MINT_INLINE bool VectorR<N, T>::IsOrthogonal(const VectorR& lhs, const VectorR& rhs) noexcept
 	{
-		return Math::equals(lhs.dot(rhs), 0.0);
+		return Math::Equals(lhs.Dot(rhs), 0.0);
 	}
 
 	template<int32 N, typename T>
-	MINT_INLINE VectorR<N, T> VectorR<N, T>::projectUOntoV(const VectorR& u, const VectorR& v) noexcept
+	MINT_INLINE VectorR<N, T> VectorR<N, T>::ProjectUOntoV(const VectorR& u, const VectorR& v) noexcept
 	{
-		return (u.dot(v) / u.dot(u)) * u;
+		return (u.Dot(v) / u.Dot(u)) * u;
 	}
 
 	template<int32 N, typename T>
@@ -343,7 +343,7 @@ namespace mint
 	}
 
 	template<int32 N, typename T>
-	MINT_INLINE void VectorR<N, T>::setZero() noexcept
+	MINT_INLINE void VectorR<N, T>::SetZero() noexcept
 	{
 		for (int32 index = 0; index < N; ++index)
 		{
@@ -352,7 +352,7 @@ namespace mint
 	}
 
 	template<int32 N, typename T>
-	MINT_INLINE VectorR<N, T>& VectorR<N, T>::setComponent(const uint32 index, const T value) noexcept
+	MINT_INLINE VectorR<N, T>& VectorR<N, T>::SetComponent(const uint32 index, const T value) noexcept
 	{
 		if (index < static_cast<uint32>(N))
 		{
@@ -362,68 +362,68 @@ namespace mint
 	}
 
 	template<int32 N, typename T>
-	MINT_INLINE T VectorR<N, T>::getComponent(const uint32 index) const noexcept
+	MINT_INLINE T VectorR<N, T>::GetComponent(const uint32 index) const noexcept
 	{
 		MINT_ASSERT(index < static_cast<uint32>(N), "범위를 벗어난 접근입니다!");
 		return _c[index];
 	}
 
 	template<int32 N, typename T>
-	MINT_INLINE T& VectorR<N, T>::x() noexcept
+	MINT_INLINE T& VectorR<N, T>::X() noexcept
 	{
 		return _c[0];
 	}
 
 	template<int32 N, typename T>
-	MINT_INLINE T& VectorR<N, T>::y() noexcept
+	MINT_INLINE T& VectorR<N, T>::Y() noexcept
 	{
 		static_assert(N >= 2, "Vector dimension is not enough!");
 		return _c[1];
 	}
 
 	template<int32 N, typename T>
-	MINT_INLINE T& VectorR<N, T>::z() noexcept
+	MINT_INLINE T& VectorR<N, T>::Z() noexcept
 	{
 		static_assert(N >= 3, "Vector dimension is not enough!");
 		return _c[2];
 	}
 
 	template<int32 N, typename T>
-	MINT_INLINE T& VectorR<N, T>::w() noexcept
+	MINT_INLINE T& VectorR<N, T>::W() noexcept
 	{
 		static_assert(N >= 4, "Vector dimension is not enough!");
 		return _c[3];
 	}
 
 	template<int32 N, typename T>
-	MINT_INLINE const T& VectorR<N, T>::x() const noexcept
+	MINT_INLINE const T& VectorR<N, T>::X() const noexcept
 	{
 		return _c[0];
 	}
 
 	template<int32 N, typename T>
-	MINT_INLINE const T& VectorR<N, T>::y() const noexcept
+	MINT_INLINE const T& VectorR<N, T>::Y() const noexcept
 	{
 		static_assert(N >= 2, "Vector dimension is not enough!");
 		return _c[1];
 	}
 
 	template<int32 N, typename T>
-	MINT_INLINE const T& VectorR<N, T>::z() const noexcept
+	MINT_INLINE const T& VectorR<N, T>::Z() const noexcept
 	{
 		static_assert(N >= 3, "Vector dimension is not enough!");
 		return _c[2];
 	}
 
 	template<int32 N, typename T>
-	MINT_INLINE const T& VectorR<N, T>::w() const noexcept
+	MINT_INLINE const T& VectorR<N, T>::W() const noexcept
 	{
 		static_assert(N >= 4, "Vector dimension is not enough!");
 		return _c[3];
 	}
 
 	template<int32 N, typename T>
-	MINT_INLINE T VectorR<N, T>::maxComponent() const noexcept
+	MINT_INLINE T VectorR<N, T>::GetMaxComponent() const noexcept
 	{
 		T result = 1.0e-323;
 		for (int32 index = 0; index < N; ++index)
@@ -437,7 +437,7 @@ namespace mint
 	}
 
 	template<int32 N, typename T>
-	MINT_INLINE T VectorR<N, T>::minComponent() const noexcept
+	MINT_INLINE T VectorR<N, T>::GetMinComponent() const noexcept
 	{
 		T result = 1.0e+308;
 		for (int32 index = 0; index < N; ++index)
@@ -451,21 +451,21 @@ namespace mint
 	}
 
 	template<int32 N, typename T>
-	MINT_INLINE T VectorR<N, T>::normSquared() const noexcept
+	MINT_INLINE T VectorR<N, T>::NormSq() const noexcept
 	{
-		return Math::normSq(_c);
+		return Math::NormSq(_c);
 	}
 
 	template<int32 N, typename T>
-	MINT_INLINE T VectorR<N, T>::norm() const noexcept
+	MINT_INLINE T VectorR<N, T>::Norm() const noexcept
 	{
-		return Math::norm(_c);
+		return Math::Norm(_c);
 	}
 
 	template<int32 N, typename T>
-	MINT_INLINE VectorR<N, T>& VectorR<N, T>::setNormalized() noexcept
+	MINT_INLINE VectorR<N, T>& VectorR<N, T>::SetNormalized() noexcept
 	{
-		const T norm_ = norm();
+		const T norm_ = Norm();
 		if (norm_ != 0)
 		{
 			*this /= norm_;
@@ -474,71 +474,71 @@ namespace mint
 	}
 
 	template<int32 N, typename T>
-	MINT_INLINE VectorR<N, T> VectorR<N, T>::normalize() const noexcept
+	MINT_INLINE VectorR<N, T> VectorR<N, T>::Normalize() const noexcept
 	{
 		VectorR<N, T> result = *this;
-		return result.setNormalized();
+		return result.SetNormalized();
 	}
 
 	template<int32 N, typename T>
-	MINT_INLINE bool VectorR<N, T>::isUnitVector() const noexcept
+	MINT_INLINE bool VectorR<N, T>::IsUnitVector() const noexcept
 	{
-		return Math::equals(normSquared(), static_cast<T>(1.0));
+		return Math::Equals(NormSq(), static_cast<T>(1.0));
 	}
 
 	template<int32 N, typename T>
-	MINT_INLINE T VectorR<N, T>::dot(const VectorR& rhs) const noexcept
+	MINT_INLINE T VectorR<N, T>::Dot(const VectorR& rhs) const noexcept
 	{
-		return dot(*this, rhs);
+		return Dot(*this, rhs);
 	}
 
 	template<int32 N, typename T>
-	MINT_INLINE T VectorR<N, T>::distance(const VectorR& rhs) const noexcept
+	MINT_INLINE T VectorR<N, T>::Distance(const VectorR& rhs) const noexcept
 	{
-		return distance(*this, rhs);
+		return Distance(*this, rhs);
 	}
 
 	template<int32 N, typename T>
-	MINT_INLINE T VectorR<N, T>::angle(const VectorR& rhs) const noexcept
+	MINT_INLINE T VectorR<N, T>::Angle(const VectorR& rhs) const noexcept
 	{
-		return angle(*this, rhs);
+		return Angle(*this, rhs);
 	}
 
 	template<int32 N, typename T>
-	MINT_INLINE bool VectorR<N, T>::isOrthogonalTo(const VectorR& rhs) const noexcept
+	MINT_INLINE bool VectorR<N, T>::IsOrthogonalTo(const VectorR& rhs) const noexcept
 	{
-		return isOrthogonal(*this, rhs);
+		return IsOrthogonal(*this, rhs);
 	}
 
 	template<int32 N, typename T>
-	MINT_INLINE VectorR<N, T> VectorR<N, T>::projectOnto(const VectorR& rhs) const noexcept
+	MINT_INLINE VectorR<N, T> VectorR<N, T>::ProjectOnto(const VectorR& rhs) const noexcept
 	{
-		return projectUOntoV(*this, rhs);
+		return ProjectUOntoV(*this, rhs);
 	}
 
 	template<int32 N, typename T>
-	MINT_INLINE VectorR<N - 1, T> VectorR<N, T>::shrink() const noexcept
+	MINT_INLINE VectorR<N - 1, T> VectorR<N, T>::Shrink() const noexcept
 	{
 		MINT_ASSERT(N > 1, "N must be greater than 1!!!");
 
 		VectorR<N - 1, T> result;
 		for (uint32 i = 0; i < N - 1; ++i)
 		{
-			result.setComponent(0, _c[i]);
+			result.SetComponent(0, _c[i]);
 		}
 		return result;
 	}
 
 
 	template<typename T>
-	VectorR<3, T> cross(const VectorR<3, T>& lhs, const VectorR<3, T>& rhs) noexcept
+	VectorR<3, T> Cross(const VectorR<3, T>& lhs, const VectorR<3, T>& rhs) noexcept
 	{
 		return VectorR<3, T>
 			(
 				{
-					lhs.getComponent(1) * rhs.getComponent(2) - lhs.getComponent(2) * rhs.getComponent(1),
-					lhs.getComponent(2) * rhs.getComponent(0) - lhs.getComponent(0) * rhs.getComponent(2),
-					lhs.getComponent(0) * rhs.getComponent(1) - lhs.getComponent(1) * rhs.getComponent(0)
+					lhs.GetComponent(1) * rhs.GetComponent(2) - lhs.GetComponent(2) * rhs.GetComponent(1),
+					lhs.GetComponent(2) * rhs.GetComponent(0) - lhs.GetComponent(0) * rhs.GetComponent(2),
+					lhs.GetComponent(0) * rhs.GetComponent(1) - lhs.GetComponent(1) * rhs.GetComponent(0)
 				}
 		);
 	}
@@ -553,20 +553,20 @@ namespace mint
 	namespace VectorUtils
 	{
 		template<int32 N, typename T>
-		void setNan(VectorR<N, T>& in) noexcept
+		void SetNAN(VectorR<N, T>& in) noexcept
 		{
 			for (uint32 i = 0; i < N; ++i)
 			{
-				in.setComponent(i, Math::nan());
+				in.SetComponent(i, Math::getNAN());
 			}
 		}
 
 		template<int32 N, typename T>
-		bool isNan(const VectorR<N, T>& in) noexcept
+		bool IsNAN(const VectorR<N, T>& in) noexcept
 		{
 			for (uint32 i = 0; i < N; ++i)
 			{
-				if (Math::isNan(in.getComponent(i)))
+				if (Math::IsNAN(in.GetComponent(i)))
 				{
 					return true;
 				}

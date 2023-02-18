@@ -12,7 +12,7 @@ namespace mint
 {
 	namespace TestMath
 	{
-		bool test();
+		bool Test();
 
 		bool Test_intTypes();
 		bool Test_floatTypes();

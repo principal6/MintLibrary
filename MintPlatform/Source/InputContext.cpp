@@ -36,7 +36,7 @@ namespace mint
 			_clickedButton = MouseButton::COUNT;
 			_doubleClickedButton = MouseButton::COUNT;
 
-			_deltaPosition.setZero();
+			_deltaPosition.SetZero();
 			_isPointerMoved = false;
 		}
 

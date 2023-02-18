@@ -321,7 +321,7 @@ namespace mint
 				{
 					const Int2 currentPosition{ x, y };
 					const Float2 diff = Float2(currentPosition - center);
-					if (diff.length() <= radiusF)
+					if (diff.Length() <= radiusF)
 					{
 						setPixel(currentPosition, color);
 					}
@@ -410,10 +410,10 @@ namespace mint
 
 		void ColorImage::getAdjacentPixels(const Int2& at, ColorImage::AdjacentPixels& outAdjacentPixels) const noexcept
 		{
-			outAdjacentPixels._top = (at._y <= 0) ? Color::kTransparent : getColorFromXy(at._x, at._y - 1);
-			outAdjacentPixels._bottom = (_size._y - 1 <= at._y) ? Color::kTransparent : getColorFromXy(at._x, at._y + 1);
-			outAdjacentPixels._left = (at._x <= 0) ? Color::kTransparent : getColorFromXy(at._x - 1, at._y);
-			outAdjacentPixels._right = (_size._x - 1 <= at._x) ? Color::kTransparent : getColorFromXy(at._x + 1, at._y);
+			outAdjacentPixels._top = (at._y <= 0) ? Color::kTransparent : GetColorFromXy(at._x, at._y - 1);
+			outAdjacentPixels._bottom = (_size._y - 1 <= at._y) ? Color::kTransparent : GetColorFromXy(at._x, at._y + 1);
+			outAdjacentPixels._left = (at._x <= 0) ? Color::kTransparent : GetColorFromXy(at._x - 1, at._y);
+			outAdjacentPixels._right = (_size._x - 1 <= at._x) ? Color::kTransparent : GetColorFromXy(at._x + 1, at._y);
 		}
 
 		void ColorImage::getCoAdjacentPixels(const Int2& at, ColorImage::CoAdjacentPixels& outCoAdjacentPixels) const noexcept
@@ -425,8 +425,8 @@ namespace mint
 			}
 			else
 			{
-				outCoAdjacentPixels._topLeft = (at._y <= 0) ? Color::kTransparent : getColorFromXy(at._x - 1, at._y - 1);
-				outCoAdjacentPixels._bottomLeft = (_size._y - 1 <= at._y) ? Color::kTransparent : getColorFromXy(at._x - 1, at._y + 1);
+				outCoAdjacentPixels._topLeft = (at._y <= 0) ? Color::kTransparent : GetColorFromXy(at._x - 1, at._y - 1);
+				outCoAdjacentPixels._bottomLeft = (_size._y - 1 <= at._y) ? Color::kTransparent : GetColorFromXy(at._x - 1, at._y + 1);
 			}
 
 			if (_size._x - 1 <= at._x)
@@ -436,8 +436,8 @@ namespace mint
 			}
 			else
 			{
-				outCoAdjacentPixels._topRight = (at._y <= 0) ? Color::kTransparent : getColorFromXy(at._x + 1, at._y - 1);
-				outCoAdjacentPixels._bottomRight = (_size._y - 1 <= at._y) ? Color::kTransparent : getColorFromXy(at._x + 1, at._y + 1);
+				outCoAdjacentPixels._topRight = (at._y <= 0) ? Color::kTransparent : GetColorFromXy(at._x + 1, at._y - 1);
+				outCoAdjacentPixels._bottomRight = (_size._y - 1 <= at._y) ? Color::kTransparent : GetColorFromXy(at._x + 1, at._y + 1);
 			}
 		}
 
@@ -445,17 +445,17 @@ namespace mint
 		{
 			Color(&pixels)[3][3] = outSample3x3._m;
 
-			pixels[0][0] = getColorFromXy(at._x - 1, at._y - 1);
-			pixels[0][1] = getColorFromXy(at._x, at._y - 1);
-			pixels[0][2] = getColorFromXy(at._x + 1, at._y - 1);
+			pixels[0][0] = GetColorFromXy(at._x - 1, at._y - 1);
+			pixels[0][1] = GetColorFromXy(at._x, at._y - 1);
+			pixels[0][2] = GetColorFromXy(at._x + 1, at._y - 1);
 
-			pixels[1][0] = getColorFromXy(at._x - 1, at._y);
-			pixels[1][1] = getColorFromXy(at._x, at._y);
-			pixels[1][2] = getColorFromXy(at._x + 1, at._y);
+			pixels[1][0] = GetColorFromXy(at._x - 1, at._y);
+			pixels[1][1] = GetColorFromXy(at._x, at._y);
+			pixels[1][2] = GetColorFromXy(at._x + 1, at._y);
 
-			pixels[2][0] = getColorFromXy(at._x - 1, at._y + 1);
-			pixels[2][1] = getColorFromXy(at._x, at._y + 1);
-			pixels[2][2] = getColorFromXy(at._x + 1, at._y + 1);
+			pixels[2][0] = GetColorFromXy(at._x - 1, at._y + 1);
+			pixels[2][1] = GetColorFromXy(at._x, at._y + 1);
+			pixels[2][2] = GetColorFromXy(at._x + 1, at._y + 1);
 		}
 
 		void ColorImage::buildPixelRgbaArray(Vector<byte>& outBytes) const noexcept
@@ -478,7 +478,7 @@ namespace mint
 			return Min(static_cast<int32>((_size._x * y) + x), static_cast<int32>(_colors.Size() - 1));
 		}
 
-		const Color& ColorImage::getColorFromXy(const uint32 x, const uint32 y) const noexcept
+		const Color& ColorImage::GetColorFromXy(const uint32 x, const uint32 y) const noexcept
 		{
 			return (x < static_cast<uint32>(_size._x) && y < static_cast<uint32>(_size._y)) ? _colors[(_size._x * y) + x] : Color::kTransparent;
 		}

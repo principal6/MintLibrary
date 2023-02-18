@@ -11,7 +11,7 @@ namespace mint
 		CameraObject::CameraObject(const ObjectPool* const objectPool)
 			: Object(objectPool, ObjectType::CameraObject)
 			, _isRightHanded{ true }
-			, _fov{ Math::toRadian(60.0f) }
+			, _fov{ Math::ToRadian(60.0f) }
 			, _nearZ{ 0.1f }
 			, _farZ{ 1000.0f }
 			, _screenRatio{ 1.0f }
@@ -51,7 +51,7 @@ namespace mint
 
 		void CameraObject::updatePerspectiveMatrix() noexcept
 		{
-			_projectionMatrix = Float4x4::projectionMatrixPerspectiveYUP(_isRightHanded, _fov, _nearZ, _farZ, _screenRatio);
+			_projectionMatrix = Float4x4::ProjectionMatrixPerspectiveYUP(_isRightHanded, _fov, _nearZ, _farZ, _screenRatio);
 		}
 
 		void CameraObject::steer(const Platform::InputContext& inputContext, const bool isMoveLocked)
@@ -103,8 +103,8 @@ namespace mint
 			const float deltaTimeSec = getDeltaTimeSec();
 
 			const float handnessSign = getHandednessSign();
-			const Float3& leftDirection = Float3::cross(_forwardDirection, Float3::kAxisY) * handnessSign;
-			const Float3& upDirection = Float3::cross(leftDirection, _forwardDirection) * handnessSign;
+			const Float3& leftDirection = Float3::Cross(_forwardDirection, Float3::kAxisY) * handnessSign;
+			const Float3& upDirection = Float3::Cross(leftDirection, _forwardDirection) * handnessSign;
 
 			const float moveSpeedFloat = getMoveSpeedAsFloat((_isBoostMode) ? getFasterMoveSpeed(getFasterMoveSpeed(_moveSpeed)) : _moveSpeed);
 			Transform& transform = getObjectTransform();
@@ -151,13 +151,13 @@ namespace mint
 		void CameraObject::rotatePitch(const float angle)
 		{
 			_pitch += angle * _rotationFactor;
-			_pitch = Math::limitAngleToPositiveNegativeTwoPiRotation(_pitch);
+			_pitch = Math::LimitAngleToPositiveNegativeTwoPiRotation(_pitch);
 		}
 
 		void CameraObject::rotateYaw(const float angle)
 		{
 			_yaw += angle * _rotationFactor;
-			_yaw = Math::limitAngleToPositiveNegativeTwoPiRotation(_yaw);
+			_yaw = Math::LimitAngleToPositiveNegativeTwoPiRotation(_yaw);
 		}
 
 		void CameraObject::rotateByMouseDelta(const Float2& mouseDelta)
@@ -169,8 +169,8 @@ namespace mint
 
 		Float4x4 CameraObject::getViewMatrix() const noexcept
 		{
-			const Float4x4& rotationMatrix = getRotationMatrix();
-			return rotationMatrix.transpose() * Float4x4::translationMatrix(-getObjectTransform()._translation);
+			const Float4x4& RotationMatrix = getRotationMatrix();
+			return RotationMatrix.Transpose() * Float4x4::TranslationMatrix(-getObjectTransform()._translation);
 		}
 
 		const Float4x4& CameraObject::getProjectionMatrix() const noexcept
@@ -182,11 +182,11 @@ namespace mint
 		{
 			const float handnessSign = getHandednessSign();
 			const Float3 kBaseForward = Float3::kAxisZ * handnessSign;
-			const Float3& forwardDirectionXz = Float4x4::rotationMatrixY(_yaw) * kBaseForward;
-			const Float3& leftDirection = Float3::crossAndNormalize(forwardDirectionXz, Float3::kAxisY) * handnessSign;
-			_forwardDirection = Float4x4::rotationMatrixAxisAngle(leftDirection * -handnessSign, _pitch) * forwardDirectionXz;
-			const Float3& upDirection = Float3::crossAndNormalize(leftDirection, _forwardDirection) * handnessSign;
-			return Float4x4::rotationMatrixFromAxes(-leftDirection, upDirection, _forwardDirection * handnessSign);
+			const Float3& forwardDirectionXz = Float4x4::RotationMatrixY(_yaw) * kBaseForward;
+			const Float3& leftDirection = Float3::CrossAndNormalize(forwardDirectionXz, Float3::kAxisY) * handnessSign;
+			_forwardDirection = Float4x4::RotationMatrixAxisAngle(leftDirection * -handnessSign, _pitch) * forwardDirectionXz;
+			const Float3& upDirection = Float3::CrossAndNormalize(leftDirection, _forwardDirection) * handnessSign;
+			return Float4x4::RotationMatrixFromAxes(-leftDirection, upDirection, _forwardDirection * handnessSign);
 		}
 
 		float CameraObject::getHandednessSign() const noexcept

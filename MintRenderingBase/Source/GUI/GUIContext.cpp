@@ -189,7 +189,7 @@ namespace mint
 				if (isNewlyCreated)
 				{
 					ControlData::PerTypeData::WindowData& windowData = controlData._perTypeData._windowData;
-					windowData._titleBarHeight = _fontSize + _theme._titleBarPadding.vert();
+					windowData._titleBarHeight = _fontSize + _theme._titleBarPadding.Vert();
 					controlData._resizingMask.setAllTrue();
 					controlData._resizableMinSize = Float2(windowData._titleBarHeight * 2.0f);
 					controlData._generalTraits._isFocusable = true;
@@ -216,9 +216,9 @@ namespace mint
 					closeButtonDesc._isRoundButton = true;
 					closeButtonDesc._customizeColor = true;
 					closeButtonDesc._customizedColorSet = _theme._closeButtonColorSet;
-					const float titleBarHeight = controlData._zones._titleBarZone.height();
+					const float titleBarHeight = controlData._zones._titleBarZone.Height();
 					const float radius = _theme._systemButtonRadius;
-					nextControlPosition(Float2(controlData._size._x - _theme._titleBarPadding.right() - radius * 2.0f, titleBarHeight * 0.5f - radius));
+					nextControlPosition(Float2(controlData._size._x - _theme._titleBarPadding.Right() - radius * 2.0f, titleBarHeight * 0.5f - radius));
 					nextControlSize(Float2(radius * 2.0f));
 					if (makeButton(fileLine, closeButtonDesc))
 					{
@@ -249,7 +249,7 @@ namespace mint
 				const Color& backgroundColor = labelDesc.getBackgroundColor(_theme);
 				if (backgroundColor.a() > 0.0f)
 				{
-					_rendererContext.setColor(backgroundColor);
+					_rendererContext.SetColor(backgroundColor);
 					_rendererContext.setPosition(computeShapePosition(controlData.getID()));
 					_rendererContext.drawRectangle(controlData._size, 0.0f, 0.0f);
 				}
@@ -262,7 +262,7 @@ namespace mint
 			void GUIContext::makeButton_render(const ButtonDesc& buttonDesc, const ControlData& controlData)
 			{
 				const HoverPressColorSet& hoverPressColorSet = (buttonDesc._customizeColor) ? buttonDesc._customizedColorSet : _theme._hoverPressColorSet;
-				_rendererContext.setColor(hoverPressColorSet.chooseColorByInteractionState(controlData._mouseInteractionState));
+				_rendererContext.SetColor(hoverPressColorSet.chooseColorByInteractionState(controlData._mouseInteractionState));
 				_rendererContext.setPosition(computeShapePosition(controlData.getID()));
 				if (buttonDesc._isRoundButton)
 				{
@@ -285,7 +285,7 @@ namespace mint
 				_rendererContext.setPosition(computeShapePosition(controlData.getID()));
 
 				const bool isFocused = _focusingModule.isInteractingWith(controlData.getID());
-				const float titleBarHeight = controlData._zones._titleBarZone.height();
+				const float titleBarHeight = controlData._zones._titleBarZone.Height();
 				StackVector<ShapeRendererContext::Split, 3> splits;
 				splits.PushBack(ShapeRendererContext::Split(titleBarHeight / controlData._size._y, (isFocused ? _theme._windowTitleBarFocusedColor : _theme._windowTitleBarUnfocusedColor)));
 				splits.PushBack(ShapeRendererContext::Split(1.0f, _theme._windowBackgroundColor));
@@ -295,7 +295,7 @@ namespace mint
 				titleBarFontRenderingOption._directionHorz = TextRenderDirectionHorz::Rightward;
 				titleBarFontRenderingOption._directionVert = TextRenderDirectionVert::Centered;
 				const ControlData& parentControlData = accessControlData(controlData._parentID);
-				const Float2 titleBarTextPosition = controlData.computeRelativePosition(parentControlData) + Float2(_theme._titleBarPadding.left(), 0.0f);
+				const Float2 titleBarTextPosition = controlData.computeRelativePosition(parentControlData) + Float2(_theme._titleBarPadding.Left(), 0.0f);
 				const Float2 titleBarSize = Float2(controlData._size._x, titleBarHeight);
 				drawText(titleBarTextPosition, titleBarSize, controlData._text, _theme._textColor, titleBarFontRenderingOption);
 			}
@@ -403,10 +403,10 @@ namespace mint
 					}
 
 					const Float2 maxPosition = _resizingModule.getInitialControlPosition() + _resizingModule.getInitialControlSize() - controlData._resizableMinSize;
-					nextControlPosition(Float2::min(_resizingModule.getInitialControlPosition() + displacementPosition, maxPosition));
+					nextControlPosition(Float2::Min(_resizingModule.getInitialControlPosition() + displacementPosition, maxPosition));
 				}
 
-				nextControlSize(Float2::max(_resizingModule.getInitialControlSize() + displacementSize, controlData._resizableMinSize));
+				nextControlSize(Float2::Max(_resizingModule.getInitialControlSize() + displacementSize, controlData._resizableMinSize));
 			}
 
 			void GUIContext::updateControlData_processDragging(const ControlData& controlData)
@@ -428,10 +428,10 @@ namespace mint
 				const Float2 controlRelativePosition = _nextControlDesc._position;
 				const Float2 controlSize = _nextControlDesc._size;
 
-				controlData._nextChildNextLinePosition = controlData._zones._contentZone.position();
+				controlData._nextChildNextLinePosition = controlData._zones._contentZone.Position();
 
 				// Position
-				const bool isAutoPositioned = controlRelativePosition.isNan();
+				const bool isAutoPositioned = controlRelativePosition.IsNAN();
 				ControlData& parentControlData = accessControlData(controlData._parentID);
 				const Float2& parentNextChildPosition = (_nextControlDesc._sameLine ? parentControlData._nextChildSameLinePosition : parentControlData._nextChildNextLinePosition);
 				const Float2 relativePosition = (isAutoPositioned ? parentNextChildPosition : controlRelativePosition);
@@ -440,18 +440,18 @@ namespace mint
 				if (isAutoPositioned)
 				{
 					// Only auto-positioned controls need margin
-					controlData._absolutePosition._x += _nextControlDesc._margin.left();
-					controlData._absolutePosition._y += _nextControlDesc._margin.top();
+					controlData._absolutePosition._x += _nextControlDesc._margin.Left();
+					controlData._absolutePosition._y += _nextControlDesc._margin.Top();
 				}
 
 				// Size
-				const bool isAutoSized = controlSize.isNan();
+				const bool isAutoSized = controlSize.IsNAN();
 				if (isAutoSized)
 				{
 					const FontData& fontData = _rendererContext.getFontData();
 					const float textWidth = fontData.computeTextWidth(controlData._text, StringUtil::Length(controlData._text));
-					controlData._size._x = textWidth + _nextControlDesc._padding.horz();
-					controlData._size._y = _fontSize + _nextControlDesc._padding.vert();
+					controlData._size._x = textWidth + _nextControlDesc._padding.Horz();
+					controlData._size._y = _fontSize + _nextControlDesc._padding.Vert();
 				}
 				else
 				{
@@ -461,13 +461,13 @@ namespace mint
 				if (isAutoPositioned)
 				{
 					// If its position is specified, the control does not affect its parent's _nextChildSameLinePosition nor _nextChildNextLinePosition.
-					parentControlData._nextChildSameLinePosition = relativePosition + Float2(controlData._size._x + _nextControlDesc._margin.right(), 0.0f);
+					parentControlData._nextChildSameLinePosition = relativePosition + Float2(controlData._size._x + _nextControlDesc._margin.Right(), 0.0f);
 
-					parentControlData._nextChildNextLinePosition._x = parentControlData._zones._contentZone.position()._x;
-					parentControlData._nextChildNextLinePosition._y = relativePosition._y + controlData._size._y + _nextControlDesc._margin.bottom();
+					parentControlData._nextChildNextLinePosition._x = parentControlData._zones._contentZone.Position()._x;
+					parentControlData._nextChildNextLinePosition._y = relativePosition._y + controlData._size._y + _nextControlDesc._margin.Bottom();
 				}
 
-				parentControlData._zones._contentZone.expandRightBottom(Rect(relativePosition, controlData._size));
+				parentControlData._zones._contentZone.ExpandRightBottom(Rect(relativePosition, controlData._size));
 
 				controlData.updateZones();
 			}
@@ -698,7 +698,7 @@ namespace mint
 			float GUIContext::computeRoundness(const ControlID& controlID) const
 			{
 				const ControlData& controlData = accessControlData(controlID);
-				return _rendererContext.computeNormalizedRoundness(controlData._size.minElement(), _theme._roundnessInPixel);
+				return _rendererContext.computeNormalizedRoundness(controlData._size.GetMinElement(), _theme._roundnessInPixel);
 			}
 
 			void GUIContext::debugRender_control(const ControlData& controlData)
@@ -706,27 +706,27 @@ namespace mint
 				if (_debugSwitch._renderZoneOverlay)
 				{
 					static const float OVERLAY_ALPHA = 0.125f;
-					const Float2 titleBarZoneSize = controlData._zones._titleBarZone.size();
+					const Float2 titleBarZoneSize = controlData._zones._titleBarZone.Size();
 					if (titleBarZoneSize._x != 0.0f && titleBarZoneSize._y != 0.0f)
 					{
-						_rendererContext.setColor(Color(1.0f, 0.5f, 0.25f, OVERLAY_ALPHA));
-						_rendererContext.setPosition(computeShapePosition(controlData._absolutePosition + controlData._zones._titleBarZone.position(), titleBarZoneSize));
+						_rendererContext.SetColor(Color(1.0f, 0.5f, 0.25f, OVERLAY_ALPHA));
+						_rendererContext.setPosition(computeShapePosition(controlData._absolutePosition + controlData._zones._titleBarZone.Position(), titleBarZoneSize));
 						_rendererContext.drawRectangle(titleBarZoneSize, 0.0f, 0.0f);
 					}
 
-					const Float2 contentZoneSize = controlData._zones._contentZone.size();
+					const Float2 contentZoneSize = controlData._zones._contentZone.Size();
 					if (contentZoneSize._x != 0.0f && contentZoneSize._y != 0.0f)
 					{
-						_rendererContext.setColor(Color(0.25f, 1.0f, 0.5f, OVERLAY_ALPHA));
-						_rendererContext.setPosition(computeShapePosition(controlData._absolutePosition + controlData._zones._contentZone.position(), contentZoneSize));
+						_rendererContext.SetColor(Color(0.25f, 1.0f, 0.5f, OVERLAY_ALPHA));
+						_rendererContext.setPosition(computeShapePosition(controlData._absolutePosition + controlData._zones._contentZone.Position(), contentZoneSize));
 						_rendererContext.drawRectangle(contentZoneSize, 0.0f, 0.0f);
 					}
 
-					const Float2 visibleContentZoneSize = controlData._zones._visibleContentZone.size();
+					const Float2 visibleContentZoneSize = controlData._zones._visibleContentZone.Size();
 					if (visibleContentZoneSize._x != 0.0f && visibleContentZoneSize._y != 0.0f)
 					{
-						_rendererContext.setColor(Color(0.25f, 0.25f, 1.0f, OVERLAY_ALPHA));
-						_rendererContext.setPosition(computeShapePosition(controlData._absolutePosition + controlData._zones._visibleContentZone.position(), visibleContentZoneSize));
+						_rendererContext.SetColor(Color(0.25f, 0.25f, 1.0f, OVERLAY_ALPHA));
+						_rendererContext.setPosition(computeShapePosition(controlData._absolutePosition + controlData._zones._visibleContentZone.Position(), visibleContentZoneSize));
 						_rendererContext.drawRectangle(visibleContentZoneSize, 0.0f, 0.0f);
 					}
 				}
@@ -737,11 +737,11 @@ namespace mint
 					if (_draggingModule.isInteractingWith(controlData.getID()))
 					{
 						const InputContext& inputContext = InputContext::getInstance();
-						_rendererContext.setColor(Color::kBlue);
+						_rendererContext.SetColor(Color::kBlue);
 						_rendererContext.setPosition(Float4(_draggingModule.getMousePressedPosition()));
 						_rendererContext.drawCircle(POINT_RADIUS);
 
-						_rendererContext.setColor(Color::kRed);
+						_rendererContext.SetColor(Color::kRed);
 						_rendererContext.setPosition(Float4(controlData._absolutePosition + _draggingModule.getMousePressedPosition() - _draggingModule.getInitialControlPosition()));
 						_rendererContext.drawCircle(POINT_RADIUS);
 					}
@@ -751,17 +751,17 @@ namespace mint
 				{
 					const Rect controlRect = Rect(controlData._absolutePosition, controlData._size);
 					Rect outerRect = controlRect;
-					outerRect.expandByQuantity(_theme._outerResizingDistances);
+					outerRect.ExpandByQuantity(_theme._outerResizingDistances);
 					Rect innerRect = controlRect;
-					innerRect.shrinkByQuantity(_theme._innerResizingDistances);
+					innerRect.ShrinkByQuantity(_theme._innerResizingDistances);
 
-					_rendererContext.setColor(Color(0.0f, 0.0f, 1.0f, 0.25f));
-					_rendererContext.setPosition(computeShapePosition(outerRect.position(), outerRect.size()));
-					_rendererContext.drawRectangle(outerRect.size(), 0.0f, 0.0f);
+					_rendererContext.SetColor(Color(0.0f, 0.0f, 1.0f, 0.25f));
+					_rendererContext.setPosition(computeShapePosition(outerRect.Position(), outerRect.Size()));
+					_rendererContext.drawRectangle(outerRect.Size(), 0.0f, 0.0f);
 
-					_rendererContext.setColor(Color(0.0f, 1.0f, 0.0f, 0.25f));
-					_rendererContext.setPosition(computeShapePosition(innerRect.position(), innerRect.size()));
-					_rendererContext.drawRectangle(innerRect.size(), 0.0f, 0.0f);
+					_rendererContext.SetColor(Color(0.0f, 1.0f, 0.0f, 0.25f));
+					_rendererContext.setPosition(computeShapePosition(innerRect.Position(), innerRect.Size()));
+					_rendererContext.drawRectangle(innerRect.Size(), 0.0f, 0.0f);
 				}
 			}
 		}

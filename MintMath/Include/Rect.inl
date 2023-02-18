@@ -3,12 +3,12 @@
 
 namespace mint
 {
-	MINT_INLINE constexpr Rect Rect::fromPositionSize(const Float2& positionFromLeftTop, const Float2& size)
+	MINT_INLINE constexpr Rect Rect::FromPositionSize(const Float2& positionFromLeftTop, const Float2& size)
 	{
 		return Rect(positionFromLeftTop, size);
 	}
 
-	MINT_INLINE constexpr Rect Rect::fromLongs(const long left, const long right, const long top, const long bottom)
+	MINT_INLINE constexpr Rect Rect::FromLongs(const long left, const long right, const long top, const long bottom)
 	{
 		return Rect(static_cast<float>(left), static_cast<float>(right), static_cast<float>(top), static_cast<float>(bottom));
 	}
@@ -48,202 +48,202 @@ namespace mint
 		return _raw != rhs._raw;
 	}
 
-	MINT_INLINE constexpr float Rect::left() const noexcept
+	MINT_INLINE constexpr float Rect::Left() const noexcept
 	{
 		return _raw._x;
 	}
 
-	MINT_INLINE constexpr float Rect::right() const noexcept
+	MINT_INLINE constexpr float Rect::Right() const noexcept
 	{
 		return _raw._y;
 	}
 
-	MINT_INLINE constexpr float Rect::top() const noexcept
+	MINT_INLINE constexpr float Rect::Top() const noexcept
 	{
 		return _raw._z;
 	}
 
-	MINT_INLINE constexpr float Rect::bottom() const noexcept
+	MINT_INLINE constexpr float Rect::Bottom() const noexcept
 	{
 		return _raw._w;
 	}
 
-	MINT_INLINE constexpr float Rect::horz() const noexcept
+	MINT_INLINE constexpr float Rect::Horz() const noexcept
 	{
-		return left() + right();
+		return Left() + Right();
 	}
 
-	MINT_INLINE constexpr float Rect::vert() const noexcept
+	MINT_INLINE constexpr float Rect::Vert() const noexcept
 	{
-		return top() + bottom();
+		return Top() + Bottom();
 	}
 
-	MINT_INLINE constexpr float Rect::width() const noexcept
+	MINT_INLINE constexpr float Rect::Width() const noexcept
 	{
-		const float signedDifference = right() - left();
+		const float signedDifference = Right() - Left();
 		return (signedDifference >= 0.0f ? signedDifference : -signedDifference);
 	}
 
-	MINT_INLINE constexpr float Rect::height() const noexcept
+	MINT_INLINE constexpr float Rect::Height() const noexcept
 	{
-		const float signedDifference = top() - bottom();
+		const float signedDifference = Top() - Bottom();
 		return (signedDifference >= 0.0f ? signedDifference : -signedDifference);
 	}
 
-	MINT_INLINE float& Rect::left() noexcept
+	MINT_INLINE float& Rect::Left() noexcept
 	{
 		return _raw._x;
 	}
 
-	MINT_INLINE float& Rect::right() noexcept
+	MINT_INLINE float& Rect::Right() noexcept
 	{
 		return _raw._y;
 	}
 
-	MINT_INLINE float& Rect::top() noexcept
+	MINT_INLINE float& Rect::Top() noexcept
 	{
 		return _raw._z;
 	}
 
-	MINT_INLINE float& Rect::bottom() noexcept
+	MINT_INLINE float& Rect::Bottom() noexcept
 	{
 		return _raw._w;
 	}
 
-	MINT_INLINE constexpr void Rect::left(const float s) noexcept
+	MINT_INLINE constexpr void Rect::Left(const float s) noexcept
 	{
 		_raw._x = s;
 	}
 
-	MINT_INLINE constexpr void Rect::right(const float s) noexcept
+	MINT_INLINE constexpr void Rect::Right(const float s) noexcept
 	{
 		_raw._y = s;
 	}
 
-	MINT_INLINE constexpr void Rect::top(const float s) noexcept
+	MINT_INLINE constexpr void Rect::Top(const float s) noexcept
 	{
 		_raw._z = s;
 	}
 
-	MINT_INLINE constexpr void Rect::bottom(const float s) noexcept
+	MINT_INLINE constexpr void Rect::Bottom(const float s) noexcept
 	{
 		_raw._w = s;
 	}
 
-	MINT_INLINE constexpr Float2 Rect::center() const noexcept
+	MINT_INLINE constexpr Float2 Rect::Center() const noexcept
 	{
-		return Float2((left() + right()) * 0.5f, (top() + bottom()) * 0.5f);
+		return Float2((Left() + Right()) * 0.5f, (Top() + Bottom()) * 0.5f);
 	}
 
-	MINT_INLINE constexpr Float2 Rect::size() const noexcept
+	MINT_INLINE constexpr Float2 Rect::Size() const noexcept
 	{
-		return Float2(right() - left(), bottom() - top());
+		return Float2(Right() - Left(), Bottom() - Top());
 	}
 
-	MINT_INLINE constexpr Float2 Rect::position() const noexcept
+	MINT_INLINE constexpr Float2 Rect::Position() const noexcept
 	{
-		return Float2(left(), top());
+		return Float2(Left(), Top());
 	}
 
-	MINT_INLINE constexpr void Rect::position(const Float2& position) noexcept
+	MINT_INLINE constexpr void Rect::Position(const Float2& position) noexcept
 	{
-		left(position._x);
-		top(position._y);
+		Left(position._x);
+		Top(position._y);
 	}
 
-	MINT_INLINE void Rect::clipBy(const Rect& outerRect) noexcept
+	MINT_INLINE void Rect::ClipBy(const Rect& outerRect) noexcept
 	{
-		left(Max(left(), outerRect.left()));
-		right(Min(right(), outerRect.right()));
-		top(Max(top(), outerRect.top()));
-		bottom(Min(bottom(), outerRect.bottom()));
+		Left(Max(Left(), outerRect.Left()));
+		Right(Min(Right(), outerRect.Right()));
+		Top(Max(Top(), outerRect.Top()));
+		Bottom(Min(Bottom(), outerRect.Bottom()));
 
-		validate();
+		Validate();
 	}
 
-	MINT_INLINE void Rect::moveBy(const Float2& offset) noexcept
+	MINT_INLINE void Rect::MoveBy(const Float2& offset) noexcept
 	{
-		left() += offset._x;
-		right() += offset._x;
-		top() += offset._y;
-		bottom() += offset._y;
+		Left() += offset._x;
+		Right() += offset._x;
+		Top() += offset._y;
+		Bottom() += offset._y;
 	}
 
-	MINT_INLINE void Rect::expandByQuantity(const Rect& quantity) noexcept
+	MINT_INLINE void Rect::ExpandByQuantity(const Rect& quantity) noexcept
 	{
-		left() -= quantity.left();
-		right() += quantity.right();
-		top() -= quantity.top();
-		bottom() += quantity.bottom();
+		Left() -= quantity.Left();
+		Right() += quantity.Right();
+		Top() -= quantity.Top();
+		Bottom() += quantity.Bottom();
 	}
 
-	MINT_INLINE void Rect::expand(const Rect& rhs) noexcept
+	MINT_INLINE void Rect::Expand(const Rect& rhs) noexcept
 	{
-		top(Min(top(), rhs.top()));
-		left(Min(left(), rhs.left()));
+		Top(Min(Top(), rhs.Top()));
+		Left(Min(Left(), rhs.Left()));
 
-		expandRightBottom(rhs);
+		ExpandRightBottom(rhs);
 	}
 
-	MINT_INLINE void Rect::expandRightBottom(const Rect& rhs) noexcept
+	MINT_INLINE void Rect::ExpandRightBottom(const Rect& rhs) noexcept
 	{
-		right(Max(right(), rhs.right()));
-		bottom(Max(bottom(), rhs.bottom()));
+		Right(Max(Right(), rhs.Right()));
+		Bottom(Max(Bottom(), rhs.Bottom()));
 	}
 
-	MINT_INLINE void Rect::shrinkByQuantity(const Rect& quantity) noexcept
+	MINT_INLINE void Rect::ShrinkByQuantity(const Rect& quantity) noexcept
 	{
-		left() += quantity.left();
-		right() -= quantity.right();
-		top() += quantity.top();
-		bottom() -= quantity.bottom();
+		Left() += quantity.Left();
+		Right() -= quantity.Right();
+		Top() += quantity.Top();
+		Bottom() -= quantity.Bottom();
 
-		validate();
+		Validate();
 	}
 
-	MINT_INLINE constexpr Float2 Rect::bound(const Float2& position) const noexcept
+	MINT_INLINE constexpr Float2 Rect::Bound(const Float2& position) const noexcept
 	{
-		return Float2(boundHorz(position._x), boundVert(position._y));
+		return Float2(BoundHorz(position._x), BoundVert(position._y));
 	}
 
 	MINT_INLINE constexpr bool Rect::Contains(const Float2& position) const noexcept
 	{
-		if (width() == 0.0f || height() == 0.0f)
+		if (Width() == 0.0f || Height() == 0.0f)
 		{
 			return false;
 		}
-		return (left() <= position._x && position._x <= right() && top() <= position._y && position._y <= bottom());
+		return (Left() <= position._x && position._x <= Right() && Top() <= position._y && position._y <= Bottom());
 	}
 
 	MINT_INLINE constexpr bool Rect::Contains(const Rect& rhs) const noexcept
 	{
-		return (left() <= rhs.left()) && (rhs.right() <= right()) && (top() >= rhs.top()) && (rhs.bottom() >= bottom());
+		return (Left() <= rhs.Left()) && (rhs.Right() <= Right()) && (Top() >= rhs.Top()) && (rhs.Bottom() >= Bottom());
 	}
 
-	MINT_INLINE bool Rect::isNan() const noexcept
+	MINT_INLINE bool Rect::IsNAN() const noexcept
 	{
-		return _raw.isNan();
+		return _raw.IsNAN();
 	}
 
-	MINT_INLINE void Rect::setNan() noexcept
+	MINT_INLINE void Rect::SetNAN() noexcept
 	{
-		_raw.setNan();
+		_raw.SetNAN();
 	}
 
-	MINT_INLINE constexpr float Rect::boundHorz(const float x) const noexcept
+	MINT_INLINE constexpr float Rect::BoundHorz(const float x) const noexcept
 	{
-		return Min(Max(left(), x), right());
+		return Min(Max(Left(), x), Right());
 	}
 
-	MINT_INLINE constexpr float Rect::boundVert(const float y) const noexcept
+	MINT_INLINE constexpr float Rect::BoundVert(const float y) const noexcept
 	{
-		return Min(Max(top(), y), bottom());
+		return Min(Max(Top(), y), Bottom());
 	}
 
-	MINT_INLINE void Rect::validate() noexcept
+	MINT_INLINE void Rect::Validate() noexcept
 	{
 		// Rect Size 가 음수가 되지 않도록 방지!! (중요)
-		right(Max(left(), right()));
-		bottom(Max(top(), bottom()));
+		Right(Max(Left(), Right()));
+		Bottom(Max(Top(), Bottom()));
 	}
 }

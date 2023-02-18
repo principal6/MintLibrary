@@ -28,8 +28,8 @@ namespace mint
 		static const Float2 kNan;
 
 	public:
-		static constexpr Float2 max(const Float2& a, const Float2& b) noexcept;
-		static constexpr Float2 min(const Float2& a, const Float2& b) noexcept;
+		static constexpr Float2 Max(const Float2& a, const Float2& b) noexcept;
+		static constexpr Float2 Min(const Float2& a, const Float2& b) noexcept;
 
 	public:
 		constexpr Float2();
@@ -70,26 +70,26 @@ namespace mint
 		bool operator!=(const Float2& rhs) const noexcept;
 
 	public:
-		static float dot(const Float2& lhs, const Float2& rhs) noexcept;
-		static Float2 normalize(const Float2& in) noexcept;
-		static Float2 abs(const Float2& rhs) noexcept;
+		static float Dot(const Float2& lhs, const Float2& rhs) noexcept;
+		static Float2 Normalize(const Float2& in) noexcept;
+		static Float2 Abs(const Float2& rhs) noexcept;
 
 	public:
-		float dot(const Float2& rhs) const noexcept;
-		void normalize() noexcept;
-		float lengthSqaure() const noexcept;
-		float length() const noexcept;
-		float maxElement() const noexcept;
-		float minElement() const noexcept;
+		float Dot(const Float2& rhs) const noexcept;
+		void Normalize() noexcept;
+		float LengthSqaure() const noexcept;
+		float Length() const noexcept;
+		float GetMaxElement() const noexcept;
+		float GetMinElement() const noexcept;
 
 	public:
-		void set(const float x, const float y) noexcept;
-		void setZero() noexcept;
-		void setNan() noexcept;
+		void Set(const float x, const float y) noexcept;
+		void SetZero() noexcept;
+		void SetNAN() noexcept;
 
 	public:
-		bool isNan() const noexcept;
-		bool hasNegativeElement() const noexcept;
+		bool IsNAN() const noexcept;
+		bool HasNegativeElement() const noexcept;
 
 	public:
 		union

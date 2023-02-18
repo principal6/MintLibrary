@@ -33,7 +33,7 @@ namespace mint
 		{
 			if (objectComponent != nullptr)
 			{
-				if (getComponent(objectComponent->getType()) != nullptr)
+				if (GetComponent(objectComponent->getType()) != nullptr)
 				{
 					MINT_LOG_ERROR("동일한 Type 의 Component 를 Attach 하는 것은 아직 지원되지 않습니다!");
 					return;
@@ -79,7 +79,7 @@ namespace mint
 			return static_cast<uint32>(_componentArray.Size());
 		}
 
-		IObjectComponent* Object::getComponent(const ObjectComponentType type) const noexcept
+		IObjectComponent* Object::GetComponent(const ObjectComponentType type) const noexcept
 		{
 			const uint32 componentCount = getComponentCount();
 			for (uint32 componentIndex = 0; componentIndex < componentCount; ++componentIndex)
@@ -109,7 +109,7 @@ namespace mint
 
 		Float4x4 Object::getObjectTransformMatrix() const noexcept
 		{
-			return getObjectTransformComponent()->_transform.toMatrix();
+			return getObjectTransformComponent()->_transform.ToMatrix();
 		}
 
 		TransformComponent* Object::getObjectTransformComponent() const noexcept

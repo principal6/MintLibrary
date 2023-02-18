@@ -8,10 +8,10 @@ namespace mint
 		MINT_INLINE D3D11_RECT rectToD3dRect(const Rect& rect) noexcept
 		{
 			D3D11_RECT result;
-			result.left = static_cast<LONG>(rect.left());
-			result.right = static_cast<LONG>(rect.right());
-			result.top = static_cast<LONG>(rect.top());
-			result.bottom = static_cast<LONG>(rect.bottom());
+			result.left = static_cast<LONG>(rect.Left());
+			result.right = static_cast<LONG>(rect.Right());
+			result.top = static_cast<LONG>(rect.Top());
+			result.bottom = static_cast<LONG>(rect.Bottom());
 			return result;
 		}
 

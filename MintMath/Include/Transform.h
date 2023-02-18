@@ -18,7 +18,7 @@ namespace mint
 		Transform(const Float3& translation);
 
 	public:
-		Float4x4 toMatrix() const noexcept { return Float4x4::srtMatrix(_scale, _rotation, _translation); }
+		Float4x4 ToMatrix() const noexcept { return Float4x4::SRTMatrix(_scale, _rotation, _translation); }
 
 	public:
 		Float3 _scale = Float3::kUnitScale;

@@ -183,7 +183,7 @@ namespace mint
 
 		public:
 			void initialize2DProjectionMatrix(const Float2& windowSize) noexcept;
-			void setViewProjectionMatrix(const Float4x4& viewMatrix, const Float4x4& projectionMatrix) noexcept;
+			void setViewProjectionMatrix(const Float4x4& viewMatrix, const Float4x4& ProjectionMatrix) noexcept;
 
 		public:
 			ID3D11Device* getDxDevice() noexcept;

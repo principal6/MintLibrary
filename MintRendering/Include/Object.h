@@ -53,7 +53,7 @@ namespace mint
 			ObjectType getType() const noexcept;
 			bool isTypeOf(const ObjectType objectType) const noexcept;
 			uint32 getComponentCount() const noexcept;
-			IObjectComponent* getComponent(const ObjectComponentType type) const noexcept;
+			IObjectComponent* GetComponent(const ObjectComponentType type) const noexcept;
 
 		public:
 			void setObjectTransform(const Transform& transform) noexcept;

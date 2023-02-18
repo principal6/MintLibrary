@@ -45,10 +45,10 @@ namespace mint
 			VS_INPUT vertex;
 			vertex._materialID = materialID;
 
-			vertex._positionU.setXyz(a);
+			vertex._positionU.SetXYZ(a);
 			vertices.PushBack(vertex);
 
-			vertex._positionU.setXyz(b);
+			vertex._positionU.SetXYZ(b);
 			vertices.PushBack(vertex);
 
 			IndexElementType index = static_cast<IndexElementType>(indices.Size());
@@ -68,7 +68,7 @@ namespace mint
 			boxParam._depth = extents._z;
 			MeshData meshData;
 			MeshGenerator::generateBox(boxParam, meshData);
-			MeshGenerator::transformMeshData(meshData, worldTransform.toMatrix());
+			MeshGenerator::transformMeshData(meshData, worldTransform.ToMatrix());
 
 			pushMeshWithMaterial(meshData, color);
 		}
@@ -82,7 +82,7 @@ namespace mint
 			coneParam._smooth = true;
 			MeshData meshData;
 			MeshGenerator::generateCone(coneParam, meshData);
-			MeshGenerator::transformMeshData(meshData, worldTransform.toMatrix());
+			MeshGenerator::transformMeshData(meshData, worldTransform.ToMatrix());
 
 			pushMeshWithMaterial(meshData, color);
 		}
@@ -92,11 +92,11 @@ namespace mint
 			MeshGenerator::CylinderParam cylinderParam;
 			cylinderParam._height = height;
 			cylinderParam._radius = radius;
-			cylinderParam._sideCount = Math::pow2_ui32(2 + subdivisionIteration);
+			cylinderParam._sideCount = Math::Pow2_Uint32(2 + subdivisionIteration);
 			cylinderParam._smooth = true;
 			MeshData meshData;
 			MeshGenerator::generateCylinder(cylinderParam, meshData);
-			MeshGenerator::transformMeshData(meshData, worldTransform.toMatrix());
+			MeshGenerator::transformMeshData(meshData, worldTransform.ToMatrix());
 
 			pushMeshWithMaterial(meshData, color);
 		}
@@ -112,7 +112,7 @@ namespace mint
 			MeshGenerator::generateSphere(sphereParam, meshData);
 
 			Float4x4 transformationMatrix;
-			transformationMatrix.setTranslation(center);
+			transformationMatrix.SetTranslation(center);
 			MeshGenerator::transformMeshData(meshData, transformationMatrix);
 
 			pushMeshWithMaterial(meshData, color);
@@ -128,7 +128,7 @@ namespace mint
 			MeshGenerator::generateGeoSphere(geosphereParam, meshData);
 
 			Float4x4 transformationMatrix;
-			transformationMatrix.setTranslation(center);
+			transformationMatrix.SetTranslation(center);
 			MeshGenerator::transformMeshData(meshData, transformationMatrix);
 
 			pushMeshWithMaterial(meshData, color);
@@ -143,7 +143,7 @@ namespace mint
 			capsulePram._smooth = true;
 			MeshData meshData;
 			MeshGenerator::generateCapsule(capsulePram, meshData);
-			MeshGenerator::transformMeshData(meshData, worldTransform.toMatrix());
+			MeshGenerator::transformMeshData(meshData, worldTransform.ToMatrix());
 
 			pushMeshWithMaterial(meshData, color);
 		}
@@ -188,7 +188,7 @@ namespace mint
 				cbTransform.bindToShader(GraphicShaderType::VertexShader, cbTransform.getRegisterIndex());
 				cbTransform.bindToShader(GraphicShaderType::GeometryShader, cbTransform.getRegisterIndex());
 
-				_cbTransformData._cbWorldMatrix.setIdentity();
+				_cbTransformData._cbWorldMatrix.SetIdentity();
 				cbTransform.updateBuffer(&_cbTransformData, 1);
 			}
 

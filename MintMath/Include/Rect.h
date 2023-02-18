@@ -15,8 +15,8 @@ namespace mint
 	class Rect
 	{
 	public:
-		static constexpr Rect fromPositionSize(const Float2& positionFromLeftTop, const Float2& size);
-		static constexpr Rect fromLongs(const long left, const long right, const long top, const long bottom);
+		static constexpr Rect FromPositionSize(const Float2& positionFromLeftTop, const Float2& size);
+		static constexpr Rect FromLongs(const long left, const long right, const long top, const long bottom);
 
 	public:
 		constexpr Rect();
@@ -35,49 +35,49 @@ namespace mint
 		constexpr bool operator!=(const Rect& rhs) const noexcept;
 
 	public:
-		constexpr float left() const noexcept;
-		constexpr float right() const noexcept;
-		constexpr float top() const noexcept;
-		constexpr float bottom() const noexcept;
-		constexpr float horz() const noexcept;
-		constexpr float vert() const noexcept;
-		constexpr float width() const noexcept;
-		constexpr float height() const noexcept;
+		constexpr float Left() const noexcept;
+		constexpr float Right() const noexcept;
+		constexpr float Top() const noexcept;
+		constexpr float Bottom() const noexcept;
+		constexpr float Horz() const noexcept;
+		constexpr float Vert() const noexcept;
+		constexpr float Width() const noexcept;
+		constexpr float Height() const noexcept;
 
-		float& left() noexcept;
-		float& right() noexcept;
-		float& top() noexcept;
-		float& bottom() noexcept;
+		float& Left() noexcept;
+		float& Right() noexcept;
+		float& Top() noexcept;
+		float& Bottom() noexcept;
 
-		constexpr void left(const float s) noexcept;
-		constexpr void right(const float s) noexcept;
-		constexpr void top(const float s) noexcept;
-		constexpr void bottom(const float s) noexcept;
+		constexpr void Left(const float s) noexcept;
+		constexpr void Right(const float s) noexcept;
+		constexpr void Top(const float s) noexcept;
+		constexpr void Bottom(const float s) noexcept;
 
-		constexpr Float2 center() const noexcept;
-		constexpr Float2 size() const noexcept;
-		constexpr Float2 position() const noexcept;
-		constexpr void position(const Float2& position) noexcept;
+		constexpr Float2 Center() const noexcept;
+		constexpr Float2 Size() const noexcept;
+		constexpr Float2 Position() const noexcept;
+		constexpr void Position(const Float2& position) noexcept;
 
 	public:
-		void clipBy(const Rect& outerRect) noexcept;
-		void moveBy(const Float2& offset) noexcept;
-		void expandByQuantity(const Rect& quantity) noexcept;
-		void expand(const Rect& rhs) noexcept;
-		void expandRightBottom(const Rect& rhs) noexcept;
-		void shrinkByQuantity(const Rect& quantity) noexcept;
-		constexpr Float2 bound(const Float2& position) const noexcept;
+		void ClipBy(const Rect& outerRect) noexcept;
+		void MoveBy(const Float2& offset) noexcept;
+		void ExpandByQuantity(const Rect& quantity) noexcept;
+		void Expand(const Rect& rhs) noexcept;
+		void ExpandRightBottom(const Rect& rhs) noexcept;
+		void ShrinkByQuantity(const Rect& quantity) noexcept;
+		constexpr Float2 Bound(const Float2& position) const noexcept;
 		constexpr bool Contains(const Float2& position) const noexcept;
 		constexpr bool Contains(const Rect& rhs) const noexcept;
 
 	public:
-		bool isNan() const noexcept;
-		void setNan() noexcept;
+		bool IsNAN() const noexcept;
+		void SetNAN() noexcept;
 
 	private:
-		constexpr float boundHorz(const float x) const noexcept;
-		constexpr float boundVert(const float y) const noexcept;
-		void validate() noexcept;
+		constexpr float BoundHorz(const float x) const noexcept;
+		constexpr float BoundVert(const float y) const noexcept;
+		void Validate() noexcept;
 
 	private:
 		Float4 _raw;

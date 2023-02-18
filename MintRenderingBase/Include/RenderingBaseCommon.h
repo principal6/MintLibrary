@@ -57,7 +57,7 @@ namespace mint
 			{
 				const Float3 a = Float3(color.rAsFloat(), color.gAsFloat(), color.bAsFloat());
 				const Float3 b = Float3(colorKey.rAsFloat(), colorKey.gAsFloat(), colorKey.bAsFloat());
-				const float distance = (b - a).length();
+				const float distance = (b - a).Length();
 				return Min(distance, 1.0f);
 			}
 
@@ -133,7 +133,7 @@ namespace mint
 
 		public:
 			constexpr Color() : Color(255, 255, 255) { __noop; }
-			constexpr Color(const float r, const float g, const float b, const float a) : _raw{ Math::saturate(r), Math::saturate(g), Math::saturate(b), Math::saturate(a) } { __noop; }
+			constexpr Color(const float r, const float g, const float b, const float a) : _raw{ Math::Saturate(r), Math::Saturate(g), Math::Saturate(b), Math::Saturate(a) } { __noop; }
 			constexpr Color(const int32 r, const int32 g, const int32 b, const int32 a) : Color(convertByteToNormalizedFloat(r), convertByteToNormalizedFloat(g), convertByteToNormalizedFloat(b), convertByteToNormalizedFloat(a)) { __noop; }
 			constexpr Color(const float r, const float g, const float b) : Color(r, g, b, 1.0f) { __noop; }
 			constexpr Color(const int32 r, const int32 g, const int32 b) : Color(r, g, b, 255) { __noop; }
@@ -179,7 +179,7 @@ namespace mint
 			MINT_INLINE void scaleG(const float s) noexcept { _raw._y *= s; }
 			MINT_INLINE void scaleB(const float s) noexcept { _raw._z *= s; }
 			MINT_INLINE void scaleA(const float s) noexcept { _raw._w *= s; }
-			MINT_INLINE Color cloneAddRGB(const float s) const noexcept { return Color(Math::saturate(_raw._x + s), Math::saturate(_raw._y + s), Math::saturate(_raw._z + s), _raw._w); }
+			MINT_INLINE Color cloneAddRGB(const float s) const noexcept { return Color(Math::Saturate(_raw._x + s), Math::Saturate(_raw._y + s), Math::Saturate(_raw._z + s), _raw._w); }
 			MINT_INLINE Color cloneAddRGB(const int32 s) const noexcept { return cloneAddRGB(convertByteToNormalizedFloat(s)); }
 			MINT_INLINE Color cloneScaleRGB(const float s) const noexcept { return Color(_raw._x * s, _raw._y * s, _raw._z * s, _raw._w); }
 			MINT_INLINE Color cloneScaleA(const float s) const noexcept { return Color(_raw._x, _raw._y, _raw._z, _raw._w * s); }
@@ -285,7 +285,7 @@ namespace mint
 
 		private:
 			int32 convertXyToIndex(const uint32 x, const uint32 y) const noexcept;
-			const Color& getColorFromXy(const uint32 x, const uint32 y) const noexcept;
+			const Color& GetColorFromXy(const uint32 x, const uint32 y) const noexcept;
 
 		private:
 			Int2 _size;

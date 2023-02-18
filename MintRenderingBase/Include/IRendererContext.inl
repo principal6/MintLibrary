@@ -25,18 +25,18 @@ namespace mint
 			_position._z = s;
 		}
 
-		MINT_INLINE void IRendererContext::setColor(const ByteColor& color) noexcept
+		MINT_INLINE void IRendererContext::SetColor(const ByteColor& color) noexcept
 		{
-			setColor(Color(color.r(), color.g(), color.b(), color.a()));
+			SetColor(Color(color.r(), color.g(), color.b(), color.a()));
 		}
 
-		MINT_INLINE void IRendererContext::setColor(const Color& color) noexcept
+		MINT_INLINE void IRendererContext::SetColor(const Color& color) noexcept
 		{
 			_colorArray.Clear();
 			_defaultColor = color;
 		}
 
-		MINT_INLINE void IRendererContext::setColor(const Vector<Color>& colorArray) noexcept
+		MINT_INLINE void IRendererContext::SetColor(const Vector<Color>& colorArray) noexcept
 		{
 			_colorArray = colorArray;
 
@@ -51,7 +51,7 @@ namespace mint
 			_clipRect = clipRect;
 		}
 
-		MINT_INLINE const Float4& IRendererContext::getColorInternal(const uint32 index) const noexcept
+		MINT_INLINE const Float4& IRendererContext::GetColorInternal(const uint32 index) const noexcept
 		{
 			const uint32 colorCount = static_cast<uint32>(_colorArray.Size());
 			return (colorCount <= index) ? _defaultColor : _colorArray[index];

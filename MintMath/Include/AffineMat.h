@@ -33,45 +33,45 @@ namespace mint
 	AffineVec<T> operator*(const AffineMat<T>& mat, const AffineVec<T>& colVec) noexcept;
 
 	template<typename T>
-	AffineMat<T> translationMatrix(const AffineVec<T>& translation) noexcept;
+	AffineMat<T> TranslationMatrix(const AffineVec<T>& translation) noexcept;
 
 	template<typename T>
-	AffineMat<T> scalarMatrix(const T scalar) noexcept;
+	AffineMat<T> ScalarMatrix(const T scalar) noexcept;
 
 	template<typename T>
-	AffineMat<T> scalarMatrix(const AffineVec<T>& scalar) noexcept; // actually diagonal ...
+	AffineMat<T> ScalarMatrix(const AffineVec<T>& scalar) noexcept; // actually diagonal ...
 
 	template<typename T>
-	AffineMat<T> rotationMatrixX(const T angle) noexcept;
+	AffineMat<T> RotationMatrixX(const T angle) noexcept;
 
 	template<typename T>
-	AffineMat<T> rotationMatrixY(const T angle) noexcept;
+	AffineMat<T> RotationMatrixY(const T angle) noexcept;
 
 	template<typename T>
-	AffineMat<T> rotationMatrixZ(const T angle) noexcept;
+	AffineMat<T> RotationMatrixZ(const T angle) noexcept;
 
 	template<typename T>
-	AffineMat<T> rotationMatrixRollPitchYaw(const T pitch, const T yaw, const T roll) noexcept;
+	AffineMat<T> RotationMatrixRollPitchYaw(const T pitch, const T yaw, const T roll) noexcept;
 
 	// Rodrigues' rotation formula
 	template<typename T>
-	AffineMat<T> rotationMatrixAxisAngle(const AffineVec<T>& axis, const T angle) noexcept;
+	AffineMat<T> RotationMatrixAxisAngle(const AffineVec<T>& axis, const T angle) noexcept;
 
 	template<typename T>
-	AffineMat<T> rotationMatrixFromAxes(const AffineVec<T>& axisX, const AffineVec<T>& axisY, const AffineVec<T>& axisZ) noexcept;
+	AffineMat<T> RotationMatrixFromAxes(const AffineVec<T>& axisX, const AffineVec<T>& axisY, const AffineVec<T>& axisZ) noexcept;
 
 	template<typename T>
-	AffineMat<T> rotationMatrix(const Quaternion<T>& rotation) noexcept;
+	AffineMat<T> RotationMatrix(const Quaternion<T>& rotation) noexcept;
 
 	template<typename T>
-	AffineMat<T> axesToColumns(const AffineVec<T>& axisX, const AffineVec<T>& axisY, const AffineVec<T>& axisZ) noexcept;
+	AffineMat<T> AxesToColumns(const AffineVec<T>& axisX, const AffineVec<T>& axisY, const AffineVec<T>& axisZ) noexcept;
 
 	// Interprets vector from new basis.
 	template<typename T>
-	AffineMat<T> axesToRows(const AffineVec<T>& axisX, const AffineVec<T>& axisY, const AffineVec<T>& axisZ) noexcept;
+	AffineMat<T> AxesToRows(const AffineVec<T>& axisX, const AffineVec<T>& axisY, const AffineVec<T>& axisZ) noexcept;
 
 	template<typename T>
-	AffineMat<T> srtMatrix(const AffineVec<T>& scale, const Quaternion<T>& rotation, const AffineVec<T>& translation) noexcept;
+	AffineMat<T> SRTMatrix(const AffineVec<T>& scale, const Quaternion<T>& rotation, const AffineVec<T>& translation) noexcept;
 #pragma endregion
 
 
@@ -116,37 +116,37 @@ namespace mint
 		AffineMat& operator/=(const float scalar) noexcept;
 
 	public:
-		void set(
+		void Set(
 			float _11, float _12, float _13, float _14
 			, float _21, float _22, float _23, float _24
 			, float _31, float _32, float _33, float _34
 			, float _41, float _42, float _43, float _44) noexcept;
-		void setZero() noexcept;
-		void setIdentity() noexcept;
-		void setRow(const int32 row, const AffineVecF& vec) noexcept;
-		void setCol(const int32 col, const AffineVecF& vec) noexcept;
-		void setElement(const int32 row, const int32 col, const float scalar) noexcept;
+		void SetZero() noexcept;
+		void SetIdentity() noexcept;
+		void SetRow(const int32 row, const AffineVecF& vec) noexcept;
+		void SetCol(const int32 col, const AffineVecF& vec) noexcept;
+		void SetElement(const int32 row, const int32 col, const float scalar) noexcept;
 
 	public:
-		void get(float(&mat)[4][4]) const noexcept;
-		const AffineVecF& getRow(const int32 row) const noexcept;
-		AffineVecF getCol(const int32 col) const noexcept;
+		void Get(float(&mat)[4][4]) const noexcept;
+		const AffineVecF& GetRow(const int32 row) const noexcept;
+		AffineVecF GetCol(const int32 col) const noexcept;
 
 	public:
-		void preScale(const AffineVecF& scale) noexcept;
-		void postScale(const AffineVecF& scale) noexcept;
-		void preTranslate(const AffineVecF& translation) noexcept;
-		void postTranslate(const AffineVecF& translation) noexcept;
+		void PreScale(const AffineVecF& scale) noexcept;
+		void PostScale(const AffineVecF& scale) noexcept;
+		void PreTranslate(const AffineVecF& translation) noexcept;
+		void PostTranslate(const AffineVecF& translation) noexcept;
 
 	public:
-		void setTranslation(const AffineVecF& translation) noexcept { setCol(3, translation); }
-		AffineVecF getTranslation() const noexcept { return getCol(3); }
+		void SetTranslation(const AffineVecF& translation) noexcept { SetCol(3, translation); }
+		AffineVecF GetTranslation() const noexcept { return GetCol(3); }
 
 	public:
-		void decomposeSRT(AffineVecF& outScale, AffineMat& outRotationMatrix, AffineVecF& outTranslation) const noexcept;
+		void DecomposeSRT(AffineVecF& outScale, AffineMat& outRotationMatrix, AffineVecF& outTranslation) const noexcept;
 
 	public:
-		AffineMat inverse() const noexcept;
+		AffineMat Inverse() const noexcept;
 
 	private:
 		AffineVecF _rows[4];

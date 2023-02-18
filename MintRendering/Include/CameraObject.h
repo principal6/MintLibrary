@@ -54,7 +54,7 @@ namespace mint
 			{
 				static_assert(static_cast<uint8>(MoveSpeed::x0_125) == 0, "Base 가 달라졌습니다!");
 				const uint8 moveSpeedUint8 = static_cast<uint8>(moveSpeed);
-				return 0.125f * static_cast<float>(Math::pow2_ui32(moveSpeedUint8));
+				return 0.125f * static_cast<float>(Math::Pow2_Uint32(moveSpeedUint8));
 			}
 
 			MINT_INLINE constexpr MoveSpeed getFasterMoveSpeed(const MoveSpeed moveSpeed)

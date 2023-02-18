@@ -30,10 +30,10 @@ int main()
 
 	WindowCreationDesc windowCreationDesc;
 	windowCreationDesc._style = WindowStyle::Default;
-	windowCreationDesc._position.set(200, 100);
-	windowCreationDesc._size.set(1024, 768);
+	windowCreationDesc._position.Set(200, 100);
+	windowCreationDesc._size.Set(1024, 768);
 	windowCreationDesc._title = L"HI";
-	windowCreationDesc._backgroundColor.set(0.875f, 0.875f, 0.875f);
+	windowCreationDesc._backgroundColor.Set(0.875f, 0.875f, 0.875f);
 
 	WindowsWindow window;
 	if (window.create(windowCreationDesc) == false)
@@ -47,7 +47,7 @@ int main()
 
 #if defined MINT_DEBUG
 	//Logger::setOutputFileName("LOG.txt");
-	TestMath::test();
+	TestMath::Test();
 	TestContainers::Test();
 	TestPlatform::test();
 	TestLanguage::Test();
@@ -69,7 +69,7 @@ bool run2DTestWindow(mint::Platform::IWindow& window, mint::Rendering::GraphicDe
 	using namespace Rendering;
 
 	const Float2 windowSize = graphicDevice.getWindowSizeFloat2();
-	const Float4x4 projectionMatrix = Float4x4::projectionMatrix2DFromTopLeft(windowSize._x, windowSize._y);
+	const Float4x4 projectionMatrix = Float4x4::ProjectionMatrix2DFromTopLeft(windowSize._x, windowSize._y);
 	ImageRenderer imageRenderer{ graphicDevice, 0, ByteColor(0, 0, 0, 0) };
 	ByteColorImage byteColorImage;
 	ImageLoader imageLoader;
@@ -151,12 +151,12 @@ bool run3DTestWindow(mint::Platform::IWindow& window, mint::Rendering::GraphicDe
 	InstantRenderer instantRenderer{ graphicDevice };
 	Game::SkeletonGenerator testSkeletonGenerator;
 	Float4x4 testSkeletonWorldMatrix;
-	testSkeletonWorldMatrix.setTranslation(1.0f, 0.0f, -4.0f);
+	testSkeletonWorldMatrix.SetTranslation(1.0f, 0.0f, -4.0f);
 	Float4x4 bindPoseLocalMatrix;
 	testSkeletonGenerator.CreateJoint(-1, "Root", bindPoseLocalMatrix);
-	bindPoseLocalMatrix.setTranslation(1.0f, 0.0f, 0.0f);
+	bindPoseLocalMatrix.SetTranslation(1.0f, 0.0f, 0.0f);
 	testSkeletonGenerator.CreateJoint(0, "Elbow", bindPoseLocalMatrix);
-	bindPoseLocalMatrix.setTranslation(1.0f, 0.0f, 0.0f);
+	bindPoseLocalMatrix.SetTranslation(1.0f, 0.0f, 0.0f);
 	testSkeletonGenerator.CreateJoint(1, "Tip", bindPoseLocalMatrix);
 	testSkeletonGenerator.BuildBindPoseModelSpace();
 	Game::Skeleton testSkeleton(testSkeletonGenerator);
@@ -191,12 +191,12 @@ bool run3DTestWindow(mint::Platform::IWindow& window, mint::Rendering::GraphicDe
 			}
 			else if (inputContext.isKeyDown(Platform::KeyCode::Num4) == true)
 			{
-				MeshComponent* const meshComponent = static_cast<MeshComponent*>(testObject->getComponent(ObjectComponentType::MeshComponent));
+				MeshComponent* const meshComponent = static_cast<MeshComponent*>(testObject->GetComponent(ObjectComponentType::MeshComponent));
 				meshComponent->shouldDrawNormals(!meshComponent->shouldDrawNormals());
 			}
 			else if (inputContext.isKeyDown(Platform::KeyCode::Num5) == true)
 			{
-				MeshComponent* const meshComponent = static_cast<MeshComponent*>(testObject->getComponent(ObjectComponentType::MeshComponent));
+				MeshComponent* const meshComponent = static_cast<MeshComponent*>(testObject->GetComponent(ObjectComponentType::MeshComponent));
 				meshComponent->shouldDrawEdges(!meshComponent->shouldDrawEdges());
 			}
 			else if (inputContext.isKeyDown(Platform::KeyCode::Shift) == true)

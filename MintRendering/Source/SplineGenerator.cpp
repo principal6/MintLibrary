@@ -98,7 +98,7 @@ namespace mint
 
 			if (controlPoints.Size() == 2)
 			{
-				return Math::lerp(controlPoints[0], controlPoints[1], t);
+				return Math::Lerp(controlPoints[0], controlPoints[1], t);
 			}
 
 			const uint32 order = controlPoints.Size() - 1;
@@ -106,7 +106,7 @@ namespace mint
 			result.Reserve(order - 1);
 			for (uint32 orderIter = 0; orderIter < order; ++orderIter)
 			{
-				result.PushBack(Math::lerp(controlPoints[orderIter], controlPoints[orderIter + 1], t));
+				result.PushBack(Math::Lerp(controlPoints[orderIter], controlPoints[orderIter + 1], t));
 			}
 
 			return computeDeCasteljauPoint(result, t);

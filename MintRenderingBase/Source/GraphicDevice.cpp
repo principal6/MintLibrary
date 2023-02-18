@@ -635,10 +635,10 @@ namespace mint
 			_fullScreenViewport.TopLeftX = 0.0f;
 			_fullScreenViewport.TopLeftY = 0.0f;
 
-			_fullScreenClipRect.left(0);
-			_fullScreenClipRect.right(static_cast<float>(windowSize._x));
-			_fullScreenClipRect.top(0);
-			_fullScreenClipRect.bottom(static_cast<float>(windowSize._y));
+			_fullScreenClipRect.Left(0);
+			_fullScreenClipRect.Right(static_cast<float>(windowSize._x));
+			_fullScreenClipRect.Top(0);
+			_fullScreenClipRect.Bottom(static_cast<float>(windowSize._y));
 		}
 
 		void GraphicDevice::setDefaultRenderTargetsAndDepthStencil()
@@ -733,16 +733,16 @@ namespace mint
 
 		void GraphicDevice::initialize2DProjectionMatrix(const Float2& windowSize) noexcept
 		{
-			_cbViewData._cb2DProjectionMatrix = Float4x4::projectionMatrix2DFromTopLeft(windowSize._x, windowSize._y);
+			_cbViewData._cb2DProjectionMatrix = Float4x4::ProjectionMatrix2DFromTopLeft(windowSize._x, windowSize._y);
 
 			DxResource& cbView = _resourcePool.getResource(_cbViewID);
 			cbView.updateBuffer(&_cbViewData, 1);
 		}
 
-		void GraphicDevice::setViewProjectionMatrix(const Float4x4& viewMatrix, const Float4x4& projectionMatrix) noexcept
+		void GraphicDevice::setViewProjectionMatrix(const Float4x4& viewMatrix, const Float4x4& ProjectionMatrix) noexcept
 		{
 			_cbViewData._cbViewMatrix = viewMatrix;
-			_cbViewData._cb3DProjectionMatrix = projectionMatrix;
+			_cbViewData._cb3DProjectionMatrix = ProjectionMatrix;
 			_cbViewData._cbViewProjectionMatrix = _cbViewData._cb3DProjectionMatrix * _cbViewData._cbViewMatrix;
 
 			DxResource& cbView = _resourcePool.getResource(_cbViewID);

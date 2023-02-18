@@ -291,7 +291,7 @@ namespace mint
 			const float kSize = 40.0f;
 			const float kHalfSize = kSize * 0.5f;
 
-			setColor(Color(20, 200, 80));
+			SetColor(Color(20, 200, 80));
 
 			// First row
 			drawQuadraticBezier(screenOffset + Float2(-kHalfSize, +kHalfSize), screenOffset + Float2(+kHalfSize, +kHalfSize), screenOffset + Float2(0.0f, -kHalfSize));
@@ -419,7 +419,7 @@ namespace mint
 			indexArray.PushBack(vertexBase + 2);
 
 			const uint32 indexCount = _lowLevelRenderer->getIndexCount() - indexOffset;
-			_lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffsetZero, indexOffset, indexCount, _clipRect);
+			_lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, indexCount, _clipRect);
 
 			pushShapeTransformToBuffer(rotationAngle);
 		}
@@ -498,14 +498,14 @@ namespace mint
 			}
 
 			const uint32 indexCount = _lowLevelRenderer->getIndexCount() - indexOffset;
-			_lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffsetZero, indexOffset, indexCount, _clipRect);
+			_lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, indexCount, _clipRect);
 
 			pushShapeTransformToBuffer(rotationAngle);
 		}
 
 		void ShapeRendererContext::drawRoundedRectangle(const Float2& size, const float roundness, const float borderThickness, const float rotationAngle)
 		{
-			const float normalizedRoundness = Math::saturate(roundness);
+			const float normalizedRoundness = Math::Saturate(roundness);
 			if (normalizedRoundness == 0.0f)
 			{
 				drawRectangle(size, borderThickness, rotationAngle);
@@ -595,8 +595,8 @@ namespace mint
 			const Float2 upperShapeSize = Float2(size._x, size._y * splits[0]._ratio);
 			const Float2 middleShapeSize = (hasMiddleShape ? Float2(size._x, size._y * (splits[1]._ratio - splits[0]._ratio)) : Float2::kZero);
 			const Float2 lowerShapeSize = Float2(size._x, size._y - upperShapeSize._y - middleShapeSize._y);
-			const float upperShapeRoundness = computeNormalizedRoundness(upperShapeSize.minElement(), roundnessInPixel);
-			const float lowerShapeRoundness = computeNormalizedRoundness(lowerShapeSize.minElement(), roundnessInPixel);
+			const float upperShapeRoundness = computeNormalizedRoundness(upperShapeSize.GetMinElement(), roundnessInPixel);
+			const float lowerShapeRoundness = computeNormalizedRoundness(lowerShapeSize.GetMinElement(), roundnessInPixel);
 			drawUpperHalfRoundedRectangleInternal(Float2(0.0f, (-lowerShapeSize._y - middleShapeSize._y) * 0.5f), upperShapeSize, upperShapeRoundness, upperColor);
 			if (hasMiddleShape)
 			{
@@ -610,7 +610,7 @@ namespace mint
 
 		void ShapeRendererContext::drawHalfRoundedRectangle(const Float2& size, const float roundness, const float rotationAngle)
 		{
-			const float normalizedRoundness = Math::saturate(roundness);
+			const float normalizedRoundness = Math::Saturate(roundness);
 			if (normalizedRoundness == 0.0f)
 			{
 				drawRectangle(size, 0.0f, rotationAngle);
@@ -644,13 +644,13 @@ namespace mint
 			const float halfRadius = radius * 0.5f;
 
 			const Float4& offset = Float4(+halfRadius, -halfRadius, 0.0f, 0.0f);
-			const Float4x4& rotationMatrixA = Float4x4::rotationMatrixZ(-rotationAngle);
-			const Float4& rotatedOffsetA = rotationMatrixA.mul(offset);
+			const Float4x4& RotationMatrixA = Float4x4::RotationMatrixZ(-rotationAngle);
+			const Float4& rotatedOffsetA = RotationMatrixA.Mul(offset);
 			setPosition(originalPosition + rotatedOffsetA);
 			drawQuarterCircle(radius, rotationAngle);
 
-			const Float4x4& rotationMatrixB = Float4x4::rotationMatrixZ(-(rotationAngle + Math::kPiOverTwo));
-			const Float4& rotatedOffsetB = rotationMatrixB.mul(offset);
+			const Float4x4& RotationMatrixB = Float4x4::RotationMatrixZ(-(rotationAngle + Math::kPiOverTwo));
+			const Float4& rotatedOffsetB = RotationMatrixB.Mul(offset);
 			setPosition(originalPosition + rotatedOffsetB);
 			drawQuarterCircle(radius, rotationAngle + Math::kPiOverTwo);
 
@@ -712,7 +712,7 @@ namespace mint
 			}
 
 			const uint32 indexCount = _lowLevelRenderer->getIndexCount() - indexOffset;
-			_lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffsetZero, indexOffset, indexCount, _clipRect);
+			_lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, indexCount, _clipRect);
 
 			pushShapeTransformToBuffer(0.0f);
 		}
@@ -772,7 +772,7 @@ namespace mint
 			}
 
 			const uint32 indexCount = _lowLevelRenderer->getIndexCount() - indexOffset;
-			_lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffsetZero, indexOffset, indexCount, _clipRect);
+			_lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, indexCount, _clipRect);
 
 			pushShapeTransformToBuffer(0.0f);
 		}
@@ -833,7 +833,7 @@ namespace mint
 			}
 
 			const uint32 indexCount = _lowLevelRenderer->getIndexCount() - indexOffset;
-			_lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffsetZero, indexOffset, indexCount, _clipRect);
+			_lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, indexCount, _clipRect);
 
 			pushShapeTransformToBuffer(0.0f);
 		}
@@ -841,7 +841,7 @@ namespace mint
 		void ShapeRendererContext::drawCircularArc(const float radius, const float arcAngle, const float rotationAngle)
 		{
 			static constexpr uint32 kDeltaVertexCount = 6;
-			const float halfArcAngle = Math::clamp(arcAngle, 0.0f, Math::kPi) * 0.5f;
+			const float halfArcAngle = Math::Clamp(arcAngle, 0.0f, Math::kPi) * 0.5f;
 			const float sinHalfArcAngle = sin(halfArcAngle);
 			const float cosHalfArcAngle = cos(halfArcAngle);
 			const uint32 vertexOffset = _lowLevelRenderer->getVertexCount();
@@ -917,7 +917,7 @@ namespace mint
 			indexArray.PushBack(vertexBase + 0);
 
 			const uint32 indexCount = _lowLevelRenderer->getIndexCount() - indexOffset;
-			_lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffsetZero, indexOffset, indexCount, _clipRect);
+			_lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, indexCount, _clipRect);
 
 			pushShapeTransformToBuffer(rotationAngle);
 		}
@@ -925,7 +925,7 @@ namespace mint
 		void ShapeRendererContext::drawDoubleCircularArc(const float outerRadius, const float innerRadius, const float arcAngle, const float rotationAngle)
 		{
 			static constexpr uint32 kDeltaVertexCount = 13;
-			const float halfArcAngle = Math::clamp(arcAngle, 0.0f, Math::kPi) * 0.5f;
+			const float halfArcAngle = Math::Clamp(arcAngle, 0.0f, Math::kPi) * 0.5f;
 			const float sinHalfArcAngle = sin(halfArcAngle);
 			const float cosHalfArcAngle = cos(halfArcAngle);
 			const float tanHalfArcAngle = tan(halfArcAngle);
@@ -1083,7 +1083,7 @@ namespace mint
 			indexArray.PushBack(vertexBase + 5);
 
 			const uint32 indexCount = _lowLevelRenderer->getIndexCount() - indexOffset;
-			_lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffsetZero, indexOffset, indexCount, _clipRect);
+			_lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, indexCount, _clipRect);
 
 			pushShapeTransformToBuffer(rotationAngle);
 		}
@@ -1131,7 +1131,7 @@ namespace mint
 				for (uint32 outerStepIndex = 0; outerStepIndex < outerStepCount; ++outerStepIndex)
 				{
 					const float outerStepRatio = 1.0f - static_cast<float>(outerStepIndex) / (outerStepCount + outerStepSmoothingOffset);
-					setColor(stepsColor * outerStepRatio + Color(0.0f, 0.0f, 0.0f, 1.0f));
+					SetColor(stepsColor * outerStepRatio + Color(0.0f, 0.0f, 0.0f, 1.0f));
 
 					drawDoubleCircularArc(stepHeight * (innerStepCount + outerStepIndex + 1) + 1.0f, stepHeight * (innerStepCount + outerStepIndex), deltaAngle, deltaAngle * colorIndex);
 				}
@@ -1140,7 +1140,7 @@ namespace mint
 				const Color deltaColor = Color(1.0f, 1.0f, 1.0f, 0.0f) / (innerStepCount + innerStepSmoothingOffset);
 				for (uint32 innerStepIndex = 0; innerStepIndex < innerStepCount; ++innerStepIndex)
 				{
-					setColor(stepsColor + deltaColor * static_cast<float>(innerStepCount - innerStepIndex));
+					SetColor(stepsColor + deltaColor * static_cast<float>(innerStepCount - innerStepIndex));
 
 					drawDoubleCircularArc(stepHeight * (innerStepIndex + 1) + 1.0f, stepHeight * innerStepIndex, deltaAngle, deltaAngle * colorIndex);
 				}
@@ -1179,7 +1179,7 @@ namespace mint
 			}
 
 			const uint32 indexCount = _lowLevelRenderer->getIndexCount() - indexOffset;
-			_lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffsetZero, indexOffset, indexCount, _clipRect);
+			_lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, indexCount, _clipRect);
 
 			const Float4& preTranslation = position;
 			pushFontTransformToBuffer(preTranslation, fontRenderingOption._transformMatrix, postTranslation);
@@ -1217,7 +1217,7 @@ namespace mint
 			}
 
 			const uint32 indexCount = _lowLevelRenderer->getIndexCount() - indexOffset;
-			_lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffsetZero, indexOffset, indexCount, _clipRect);
+			_lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, indexCount, _clipRect);
 
 			const Float4& preTranslation = position;
 			pushFontTransformToBuffer(preTranslation, fontRenderingOption._transformMatrix, postTranslation);
@@ -1225,13 +1225,13 @@ namespace mint
 
 		float ShapeRendererContext::computeNormalizedRoundness(const float minSize, const float roundnessInPixel) const
 		{
-			return Math::clamp((roundnessInPixel * 2.0f) / minSize, 0.0f, 1.0f);
+			return Math::Clamp((roundnessInPixel * 2.0f) / minSize, 0.0f, 1.0f);
 		}
 
 		void ShapeRendererContext::drawLineInternal(const Float2& p0, const Float2& p1, const float thickness)
 		{
 			static constexpr uint32 kDeltaVertexCount = 4;
-			const Float2& dir = Float2::normalize(p1 - p0);
+			const Float2& dir = Float2::Normalize(p1 - p0);
 			const Float2& normal = Float2(-dir._y, dir._x);
 			const float halfThickness = thickness * 0.5f;
 
@@ -1275,7 +1275,7 @@ namespace mint
 			indexArray.PushBack(vertexBase + 3);
 
 			const uint32 indexCount = _lowLevelRenderer->getIndexCount() - indexOffset;
-			_lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffsetZero, indexOffset, indexCount, _clipRect);
+			_lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, indexCount, _clipRect);
 		}
 
 		void ShapeRendererContext::drawSolidTriangleInternal(const Float2& pointA, const Float2& pointB, const Float2& pointC, const Color& color)
@@ -1312,7 +1312,7 @@ namespace mint
 			}
 
 			const uint32 indexCount = _lowLevelRenderer->getIndexCount() - indexOffset;
-			_lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffsetZero, indexOffset, indexCount, _clipRect);
+			_lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, indexCount, _clipRect);
 		}
 
 		void ShapeRendererContext::drawRectangleInternal(const Float2& offset, const Float2& halfSize, const Color& color, const ShapeType shapeType)
@@ -1367,7 +1367,7 @@ namespace mint
 			indexArray.PushBack(vertexBase + 3);
 
 			const uint32 indexCount = _lowLevelRenderer->getIndexCount() - indexOffset;
-			_lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffsetZero, indexOffset, indexCount, _clipRect);
+			_lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, indexCount, _clipRect);
 		}
 
 		void ShapeRendererContext::drawRoundedRectangleInternal(const float radius, const Float2& halfSize, const Color& color)
@@ -1525,8 +1525,8 @@ namespace mint
 				// The control point must be on the left side of the AB segment!
 				const Float3 ac = Float3(controlPoint - pointA);
 				const Float3 ab = Float3(pointB - pointA);
-				const Float3& cross = Float3::cross(ab, ac);
-				flip = (cross._z > 0.0f) ? 1 : 0; // y 좌표계가 (아래가 + 방향으로) 뒤집혀 있어서 z 값 비교도 뒤집혔다.
+				const Float3& Cross = Float3::Cross(ab, ac);
+				flip = (Cross._z > 0.0f) ? 1 : 0; // y 좌표계가 (아래가 + 방향으로) 뒤집혀 있어서 z 값 비교도 뒤집혔다.
 			}
 
 			VS_INPUT_SHAPE v;
@@ -1560,7 +1560,7 @@ namespace mint
 			indexArray.PushBack(vertexBase + 2);
 
 			const uint32 indexCount = _lowLevelRenderer->getIndexCount() - indexOffset;
-			_lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffsetZero, indexOffset, indexCount, _clipRect);
+			_lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, indexCount, _clipRect);
 		}
 
 		void ShapeRendererContext::drawQuarterCircleInternal(const Float2& offset, const float halfRadius, const Color& color)
@@ -1613,7 +1613,7 @@ namespace mint
 			}
 
 			const uint32 indexCount = _lowLevelRenderer->getIndexCount() - indexOffset;
-			_lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffsetZero, indexOffset, indexCount, _clipRect);
+			_lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, indexCount, _clipRect);
 		}
 
 		void ShapeRendererContext::drawGlyph(const wchar_t wideChar, Float2& glyphPosition, const float scale, const bool drawShade, const bool leaveOnlySpace)
@@ -1625,20 +1625,20 @@ namespace mint
 				const float scaledFontHeight = static_cast<float>(_fontData._fontSize) * scale;
 
 				Rect glyphRect;
-				glyphRect.left(glyphPosition._x + static_cast<float>(glyphInfo._horiBearingX) * scale);
-				glyphRect.right(glyphRect.left() + static_cast<float>(glyphInfo._width) * scale);
-				glyphRect.top(glyphPosition._y + scaledFontHeight - static_cast<float>(glyphInfo._horiBearingY) * scale);
-				glyphRect.bottom(glyphRect.top() + static_cast<float>(glyphInfo._height) * scale);
-				if (glyphRect.right() >= 0.0f && glyphRect.left() <= _graphicDevice.getWindowSize()._x
-					&& glyphRect.bottom() >= 0.0f && glyphRect.top() <= _graphicDevice.getWindowSize()._y) // 화면을 벗어나면 렌더링 할 필요가 없으므로
+				glyphRect.Left(glyphPosition._x + static_cast<float>(glyphInfo._horiBearingX) * scale);
+				glyphRect.Right(glyphRect.Left() + static_cast<float>(glyphInfo._width) * scale);
+				glyphRect.Top(glyphPosition._y + scaledFontHeight - static_cast<float>(glyphInfo._horiBearingY) * scale);
+				glyphRect.Bottom(glyphRect.Top() + static_cast<float>(glyphInfo._height) * scale);
+				if (glyphRect.Right() >= 0.0f && glyphRect.Left() <= _graphicDevice.getWindowSize()._x
+					&& glyphRect.Bottom() >= 0.0f && glyphRect.Top() <= _graphicDevice.getWindowSize()._y) // 화면을 벗어나면 렌더링 할 필요가 없으므로
 				{
 					Vector<VS_INPUT_SHAPE>& vertices = _lowLevelRenderer->vertices();
 
 					// Vertices
 					{
 						VS_INPUT_SHAPE v;
-						v._position._x = glyphRect.left();
-						v._position._y = glyphRect.top();
+						v._position._x = glyphRect.Left();
+						v._position._y = glyphRect.Top();
 						v._position._z = 0.0f;
 						v._color = _textColor;
 						v._texCoord._x = glyphInfo._uv0._x;
@@ -1647,18 +1647,18 @@ namespace mint
 						v._info._y = (drawShade ? 1.0f : 0.0f);
 						vertices.PushBack(v);
 
-						v._position._x = glyphRect.right();
+						v._position._x = glyphRect.Right();
 						v._texCoord._x = glyphInfo._uv1._x;
 						v._texCoord._y = glyphInfo._uv0._y;
 						vertices.PushBack(v);
 
-						v._position._x = glyphRect.left();
-						v._position._y = glyphRect.bottom();
+						v._position._x = glyphRect.Left();
+						v._position._y = glyphRect.Bottom();
 						v._texCoord._x = glyphInfo._uv0._x;
 						v._texCoord._y = glyphInfo._uv1._y;
 						vertices.PushBack(v);
 
-						v._position._x = glyphRect.right();
+						v._position._x = glyphRect.Right();
 						v._texCoord._x = glyphInfo._uv1._x;
 						v._texCoord._y = glyphInfo._uv1._y;
 						vertices.PushBack(v);
@@ -1686,7 +1686,7 @@ namespace mint
 		void ShapeRendererContext::pushShapeTransformToBuffer(const float rotationAngle, const bool applyInternalPosition)
 		{
 			SB_Transform transform;
-			transform._transformMatrix = Float4x4::rotationMatrixZ(-rotationAngle);
+			transform._transformMatrix = Float4x4::RotationMatrixZ(-rotationAngle);
 			transform._transformMatrix._m[0][3] = (applyInternalPosition == true) ? _position._x : 0.0f;
 			transform._transformMatrix._m[1][3] = (applyInternalPosition == true) ? _position._y : 0.0f;
 			//transform._transformMatrix._m[2][3] = (applyInternalPosition == true) ? _position._z : 0.0f;
@@ -1696,8 +1696,8 @@ namespace mint
 		void ShapeRendererContext::pushFontTransformToBuffer(const Float4& preTranslation, Float4x4 transformMatrix, const Float4& postTranslation)
 		{
 			SB_Transform transform;
-			transform._transformMatrix.preTranslate(preTranslation.getXyz());
-			transform._transformMatrix.postTranslate(postTranslation.getXyz());
+			transform._transformMatrix.PreTranslate(preTranslation.GetXYZ());
+			transform._transformMatrix.PostTranslate(postTranslation.GetXYZ());
 			transform._transformMatrix *= transformMatrix;
 			_sbTransformData.PushBack(transform);
 		}

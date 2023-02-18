@@ -11,31 +11,31 @@ namespace mint
 	}
 
 	template<typename T>
-	MINT_INLINE AffineVec<T> normalize(const AffineVec<T>& in) noexcept
+	MINT_INLINE AffineVec<T> Normalize(const AffineVec<T>& in) noexcept
 	{
-		const T norm = in.norm();
-		return AffineVec<T>(in) / norm;
+		const T Norm = in.Norm();
+		return AffineVec<T>(in) / Norm;
 	}
 
 	template<typename T>
-	MINT_INLINE void normalize(AffineVec<T>& inOut) noexcept
+	MINT_INLINE void Normalize(AffineVec<T>& inOut) noexcept
 	{
-		const T norm = inOut.norm();
-		inOut /= norm;
+		const T Norm = inOut.Norm();
+		inOut /= Norm;
 	}
 
-	MINT_INLINE float dot(const AffineVec<float>& lhs, const AffineVec<float>& rhs) noexcept
+	MINT_INLINE float Dot(const AffineVec<float>& lhs, const AffineVec<float>& rhs) noexcept
 	{
-		const __m128 result = _mm_mul_ps(lhs.getRaw(), rhs.getRaw());
+		const __m128 result = _mm_mul_ps(lhs.GetRaw(), rhs.GetRaw());
 		return result.m128_f32[0] + result.m128_f32[1] + result.m128_f32[2] + result.m128_f32[3];
 	}
 
-	MINT_INLINE AffineVec<float> cross(const AffineVec<float>& lhs, const AffineVec<float>& rhs) noexcept
+	MINT_INLINE AffineVec<float> Cross(const AffineVec<float>& lhs, const AffineVec<float>& rhs) noexcept
 	{
 		float l[4];
-		lhs.get(l);
+		lhs.Get(l);
 		float r[4];
-		rhs.get(r);
+		rhs.Get(r);
 		const __m128 a = _mm_mul_ps(_mm_set_ps(0.0f, l[0], l[2], l[1]), _mm_set_ps(0.0f, r[1], r[0], r[2])); // 순서에 주의!!!
 		const __m128 b = _mm_mul_ps(_mm_set_ps(0.0f, l[1], l[0], l[2]), _mm_set_ps(0.0f, r[0], r[2], r[1])); // 순서에 주의!!!
 		// x == ly * rz - lz * ry
@@ -44,18 +44,18 @@ namespace mint
 		return AffineVec<float>(_mm_sub_ps(a, b));
 	}
 
-	MINT_INLINE double dot(const AffineVec<double>& lhs, const AffineVec<double>& rhs) noexcept
+	MINT_INLINE double Dot(const AffineVec<double>& lhs, const AffineVec<double>& rhs) noexcept
 	{
-		const __m256d result = _mm256_mul_pd(lhs.getRaw(), rhs.getRaw());
+		const __m256d result = _mm256_mul_pd(lhs.GetRaw(), rhs.GetRaw());
 		return result.m256d_f64[0] + result.m256d_f64[1] + result.m256d_f64[2] + result.m256d_f64[3];
 	}
 
-	MINT_INLINE AffineVec<double> cross(const AffineVec<double>& lhs, const AffineVec<double>& rhs) noexcept
+	MINT_INLINE AffineVec<double> Cross(const AffineVec<double>& lhs, const AffineVec<double>& rhs) noexcept
 	{
 		double l[4];
-		lhs.get(l);
+		lhs.Get(l);
 		double r[4];
-		rhs.get(r);
+		rhs.Get(r);
 		const __m256d a = _mm256_mul_pd(_mm256_set_pd(0.0f, l[0], l[2], l[1]), _mm256_set_pd(0.0f, r[1], r[0], r[2])); // 순서에 주의!!!
 		const __m256d b = _mm256_mul_pd(_mm256_set_pd(0.0f, l[1], l[0], l[2]), _mm256_set_pd(0.0f, r[0], r[2], r[1])); // 순서에 주의!!!
 		// x == ly * rz - lz * ry
@@ -209,59 +209,59 @@ namespace mint
 		return *this;
 	}
 
-	MINT_INLINE void AffineVec<float>::set(const float x, const float y, const float z, const float w) noexcept
+	MINT_INLINE void AffineVec<float>::Set(const float x, const float y, const float z, const float w) noexcept
 	{
 		_raw = _mm_set_ps(w, z, y, x); // 순서에 주의!!!
 	}
 
-	MINT_INLINE void AffineVec<float>::setComponent(const int32 i, const float scalar) noexcept
+	MINT_INLINE void AffineVec<float>::SetComponent(const int32 i, const float scalar) noexcept
 	{
 		_raw.m128_f32[i] = scalar;
 	}
 
-	MINT_INLINE void AffineVec<float>::addComponent(const int32 i, const float scalar) noexcept
+	MINT_INLINE void AffineVec<float>::AddComponent(const int32 i, const float scalar) noexcept
 	{
 		_raw.m128_f32[i] += scalar;
 	}
 
-	MINT_INLINE void AffineVec<float>::get(float(&vec)[4]) const noexcept
+	MINT_INLINE void AffineVec<float>::Get(float(&vec)[4]) const noexcept
 	{
 		_mm_store_ps(vec, _raw);
 	}
 
-	MINT_INLINE float AffineVec<float>::getComponent(const int32 i) const noexcept
+	MINT_INLINE float AffineVec<float>::GetComponent(const int32 i) const noexcept
 	{
 		return _raw.m128_f32[i];
 	}
 
-	MINT_INLINE const __m128& AffineVec<float>::getRaw() const noexcept
+	MINT_INLINE const __m128& AffineVec<float>::GetRaw() const noexcept
 	{
 		return _raw;
 	}
 
-	MINT_INLINE float AffineVec<float>::dot(const AffineVec& rhs) const noexcept
+	MINT_INLINE float AffineVec<float>::Dot(const AffineVec& rhs) const noexcept
 	{
-		return mint::dot(*this, rhs);
+		return mint::Dot(*this, rhs);
 	}
 
-	MINT_INLINE float AffineVec<float>::normSq() const noexcept
+	MINT_INLINE float AffineVec<float>::NormSq() const noexcept
 	{
-		return dot(*this);
+		return Dot(*this);
 	}
 
-	MINT_INLINE float AffineVec<float>::norm() const noexcept
+	MINT_INLINE float AffineVec<float>::Norm() const noexcept
 	{
-		return ::sqrt(normSq());
+		return ::sqrt(NormSq());
 	}
 
-	MINT_INLINE void AffineVec<float>::normalize() noexcept
+	MINT_INLINE void AffineVec<float>::Normalize() noexcept
 	{
-		mint::normalize(*this);
+		mint::Normalize(*this);
 	}
 
-	MINT_INLINE AffineVec<float> AffineVec<float>::cross(const AffineVec<float>& rhs) const noexcept
+	MINT_INLINE AffineVec<float> AffineVec<float>::Cross(const AffineVec<float>& rhs) const noexcept
 	{
-		return mint::cross(*this, rhs);
+		return mint::Cross(*this, rhs);
 	}
 
 
@@ -410,58 +410,58 @@ namespace mint
 		return *this;
 	}
 
-	MINT_INLINE void AffineVec<double>::set(const double x, const double y, const double z, const double w) noexcept
+	MINT_INLINE void AffineVec<double>::Set(const double x, const double y, const double z, const double w) noexcept
 	{
 		_raw = _mm256_set_pd(w, z, y, x); // 순서에 주의!!!
 	}
 
-	MINT_INLINE void AffineVec<double>::setComponent(const int32 i, const double scalar) noexcept
+	MINT_INLINE void AffineVec<double>::SetComponent(const int32 i, const double scalar) noexcept
 	{
 		_raw.m256d_f64[i] = scalar;
 	}
 
-	MINT_INLINE void AffineVec<double>::addComponent(const int32 i, const double scalar) noexcept
+	MINT_INLINE void AffineVec<double>::AddComponent(const int32 i, const double scalar) noexcept
 	{
 		_raw.m256d_f64[i] += scalar;
 	}
 
-	MINT_INLINE void AffineVec<double>::get(double(&vec)[4]) const noexcept
+	MINT_INLINE void AffineVec<double>::Get(double(&vec)[4]) const noexcept
 	{
 		_mm256_store_pd(vec, _raw);
 	}
 
-	MINT_INLINE double AffineVec<double>::getComponent(const int32 i) const noexcept
+	MINT_INLINE double AffineVec<double>::GetComponent(const int32 i) const noexcept
 	{
 		return _raw.m256d_f64[i];
 	}
 
-	MINT_INLINE const __m256d& AffineVec<double>::getRaw() const noexcept
+	MINT_INLINE const __m256d& AffineVec<double>::GetRaw() const noexcept
 	{
 		return _raw;
 	}
 
-	MINT_INLINE double AffineVec<double>::dot(const AffineVec& rhs) const noexcept
+	MINT_INLINE double AffineVec<double>::Dot(const AffineVec& rhs) const noexcept
 	{
-		return mint::dot(*this, rhs);
+		return mint::Dot(*this, rhs);
 	}
 
-	MINT_INLINE double AffineVec<double>::normSq() const noexcept
+	MINT_INLINE double AffineVec<double>::NormSq() const noexcept
 	{
-		return dot(*this);
+		return Dot(*this);
 	}
 
-	MINT_INLINE double AffineVec<double>::norm() const noexcept
+	MINT_INLINE double AffineVec<double>::Norm() const noexcept
 	{
-		return ::sqrt(normSq());
+		return ::sqrt(NormSq());
 	}
 
-	MINT_INLINE void AffineVec<double>::normalize() noexcept
+	MINT_INLINE void AffineVec<double>::Normalize() noexcept
 	{
-		mint::normalize(*this);
+		mint::Normalize(*this);
 	}
 
-	MINT_INLINE AffineVec<double> AffineVec<double>::cross(const AffineVec<double>& rhs) const noexcept
+	MINT_INLINE AffineVec<double> AffineVec<double>::Cross(const AffineVec<double>& rhs) const noexcept
 	{
-		return mint::cross(*this, rhs);
+		return mint::Cross(*this, rhs);
 	}
 }

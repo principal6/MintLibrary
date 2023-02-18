@@ -5,7 +5,7 @@
 
 namespace mint
 {
-	Float2x2 Float2x2::rotationMatrix(const float angle) noexcept
+	Float2x2 Float2x2::RotationMatrix(const float angle) noexcept
 	{
 		const float cosAngle = cos(angle);
 		const float sinAngle = sin(angle);
@@ -43,21 +43,21 @@ namespace mint
 	Float2x2 Float2x2::operator*(const float scalar) const noexcept
 	{
 		Float2x2 result = *this;
-		Math::setMulMat(result._m, scalar);
+		Math::SetMulMat(result._m, scalar);
 		return result;
 	}
 
 	Float2x2 Float2x2::operator/(const float scalar) const noexcept
 	{
 		Float2x2 result = *this;
-		Math::setDivMat(result._m, scalar);
+		Math::SetDivMat(result._m, scalar);
 		return result;
 	}
 
 	Float2x2 Float2x2::operator*(const Float2x2& rhs) const noexcept
 	{
 		Float2x2 result;
-		Math::mul(_m, rhs._m, result._m);
+		Math::Mul(_m, rhs._m, result._m);
 		return result;
 	}
 
@@ -71,22 +71,22 @@ namespace mint
 		return _m[Min(row - 1, Float2x2::kMaxIndex)][Min(col - 1, Float2x2::kMaxIndex)];
 	}
 
-	void Float2x2::setZero() noexcept
+	void Float2x2::SetZero() noexcept
 	{
-		Math::setZeroMat(_m);
+		Math::SetZeroMat(_m);
 	}
 
-	void Float2x2::setIdentity() noexcept
+	void Float2x2::SetIdentity() noexcept
 	{
-		Math::setIdentity(_m);
+		Math::SetIdentity(_m);
 	}
 
-	float Float2x2::determinant() const noexcept
+	float Float2x2::Determinant() const noexcept
 	{
-		return Math::determinant(_m);
+		return Math::Determinant(_m);
 	}
 
-	Float2x2 Float2x2::inverse() const noexcept
+	Float2x2 Float2x2::Inverse() const noexcept
 	{
 		const float a = _m[0][0];
 		const float b = _m[0][1];
@@ -95,18 +95,18 @@ namespace mint
 		return Float2x2(
 			d, -b,
 			-c, a
-		) / determinant();
+		) / Determinant();
 	}
 
 	bool Float2x2::isInvertible() const noexcept
 	{
-		return (determinant() != 0.0f);
+		return (Determinant() != 0.0f);
 	}
 
 	Float2 Float2x2::mul(const Float2& vec) const noexcept
 	{
 		Float2 result;
-		Math::mul(_m, vec._c, result._c);
+		Math::Mul(_m, vec._c, result._c);
 		return result;
 	}
 }

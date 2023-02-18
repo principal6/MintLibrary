@@ -18,17 +18,17 @@ namespace mint
 #pragma region Static functions
 	private:
 		// q*
-		static Quaternion conjugate(const Quaternion& q) noexcept;
+		static Quaternion Conjugate(const Quaternion& q) noexcept;
 
 		// ||q||
-		static T norm(const Quaternion& q) noexcept;
+		static T Norm(const Quaternion& q) noexcept;
 
 	public:
-		static Quaternion makeRotationQuaternion(const Float3& axis, const T angle) noexcept;
-		static Quaternion makeRotationQuaternion(const VectorR3<T>& axis, const T angle) noexcept;
+		static Quaternion MakeRotationQuaternion(const Float3& axis, const T angle) noexcept;
+		static Quaternion MakeRotationQuaternion(const VectorR3<T>& axis, const T angle) noexcept;
 
 		// q^(-1)
-		static Quaternion reciprocal(const Quaternion& q) noexcept;
+		static Quaternion Reciprocal(const Quaternion& q) noexcept;
 #pragma endregion
 
 	public:
@@ -64,17 +64,17 @@ namespace mint
 		Quaternion operator/(const T s) const noexcept;
 
 	public:
-		Quaternion conjugate() const noexcept;
-		Quaternion reciprocal() const noexcept;
-		Float4 rotateVector(const Float4& inputVector) const noexcept;
-		VectorR4<T> rotateVector(const VectorR4<T>& inputVector) const noexcept;
+		Quaternion Conjugate() const noexcept;
+		Quaternion Reciprocal() const noexcept;
+		Float4 RotateVector(const Float4& inputVector) const noexcept;
+		VectorR4<T> RotateVector(const VectorR4<T>& inputVector) const noexcept;
 
 	public:
-		void setAxisAngle(const Float3& axis, const T angle) noexcept;
-		void setAxisAngle(const VectorR3<T>& axis, const T angle) noexcept;
-		void getAxisAngle(T(&axis)[3], T& angle) const noexcept;
-		void getAxisAngle(Float3& axis, T& angle) const noexcept;
-		void getAxisAngle(VectorR3<T>& axis, T& angle) const noexcept;
+		void SetAxisAngle(const Float3& axis, const T angle) noexcept;
+		void SetAxisAngle(const VectorR3<T>& axis, const T angle) noexcept;
+		void GetAxisAngle(T(&axis)[3], T& angle) const noexcept;
+		void GetAxisAngle(Float3& axis, T& angle) const noexcept;
+		void GetAxisAngle(VectorR3<T>& axis, T& angle) const noexcept;
 
 	public:
 		union

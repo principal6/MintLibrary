@@ -8,22 +8,22 @@ namespace mint
 {
 	const Float4x4 Float4x4::kIdentity = Float4x4();
 
-	Float4 Float4x4::mul(const Float4x4& m, const Float4& v) noexcept
+	Float4 Float4x4::Mul(const Float4x4& m, const Float4& v) noexcept
 	{
-		return m.mul(v);
+		return m.Mul(v);
 	}
 
-	Float3 Float4x4::mul(const Float4x4& m, const Float3& v) noexcept
+	Float3 Float4x4::Mul(const Float4x4& m, const Float3& v) noexcept
 	{
-		return m.mul(v);
+		return m.Mul(v);
 	}
 
-	Float4x4 Float4x4::mul(const Float4x4& l, const Float4x4& r) noexcept
+	Float4x4 Float4x4::Mul(const Float4x4& l, const Float4x4& r) noexcept
 	{
-		return l.mul(r);
+		return l.Mul(r);
 	}
 
-	Float4x4 Float4x4::translationMatrix(const float x, const float y, const float z) noexcept
+	Float4x4 Float4x4::TranslationMatrix(const float x, const float y, const float z) noexcept
 	{
 		return Float4x4
 		(
@@ -34,12 +34,12 @@ namespace mint
 		);
 	}
 
-	Float4x4 Float4x4::translationMatrix(const Float3& translation) noexcept
+	Float4x4 Float4x4::TranslationMatrix(const Float3& translation) noexcept
 	{
-		return translationMatrix(translation._x, translation._y, translation._z);
+		return TranslationMatrix(translation._x, translation._y, translation._z);
 	}
 
-	Float4x4 Float4x4::scalingMatrix(const float x, const float y, const float z) noexcept
+	Float4x4 Float4x4::ScalingMatrix(const float x, const float y, const float z) noexcept
 	{
 		return Float4x4
 		(
@@ -50,12 +50,12 @@ namespace mint
 		);
 	}
 
-	Float4x4 Float4x4::scalingMatrix(const Float3& scale) noexcept
+	Float4x4 Float4x4::ScalingMatrix(const Float3& scale) noexcept
 	{
-		return scalingMatrix(scale._x, scale._y, scale._z);
+		return ScalingMatrix(scale._x, scale._y, scale._z);
 	}
 
-	Float4x4 Float4x4::rotationMatrixX(const float angle) noexcept
+	Float4x4 Float4x4::RotationMatrixX(const float angle) noexcept
 	{
 		return Float4x4
 		(
@@ -66,7 +66,7 @@ namespace mint
 		);
 	}
 
-	Float4x4 Float4x4::rotationMatrixY(const float angle) noexcept
+	Float4x4 Float4x4::RotationMatrixY(const float angle) noexcept
 	{
 		return Float4x4
 		(
@@ -77,7 +77,7 @@ namespace mint
 		);
 	}
 
-	Float4x4 Float4x4::rotationMatrixZ(const float angle) noexcept
+	Float4x4 Float4x4::RotationMatrixZ(const float angle) noexcept
 	{
 		return Float4x4
 		(
@@ -88,16 +88,16 @@ namespace mint
 		);
 	}
 
-	Float4x4 Float4x4::rotationMatrixRollPitchYaw(const float pitch, const float yaw, const float roll) noexcept
+	Float4x4 Float4x4::RotationMatrixRollPitchYaw(const float pitch, const float yaw, const float roll) noexcept
 	{
-		return rotationMatrixY(yaw) * rotationMatrixX(pitch) * rotationMatrixZ(roll);
+		return RotationMatrixY(yaw) * RotationMatrixX(pitch) * RotationMatrixZ(roll);
 	}
 
-	Float4x4 Float4x4::rotationMatrixAxisAngle(const Float3& axis, const float angle) noexcept
+	Float4x4 Float4x4::RotationMatrixAxisAngle(const Float3& axis, const float angle) noexcept
 	{
 		// (v * r)r(1 - cosθ) + vcosθ + (r X v)sinθ
 
-		const Float3 r = Float3::normalize(axis);
+		const Float3 r = Float3::Normalize(axis);
 		const float c = cosf(angle);
 		const float s = sinf(angle);
 
@@ -114,20 +114,20 @@ namespace mint
 		return result;
 	}
 
-	Float4x4 Float4x4::rotationMatrixFromAxes(const Float3& axisX, const Float3& axisY, const Float3& axisZ) noexcept
+	Float4x4 Float4x4::RotationMatrixFromAxes(const Float3& axisX, const Float3& axisY, const Float3& axisZ) noexcept
 	{
-		return axesToColumns(axisX, axisY, axisZ);
+		return AxesToColumns(axisX, axisY, axisZ);
 	}
 
-	Float4x4 Float4x4::rotationMatrix(const QuaternionF& rotation) noexcept
+	Float4x4 Float4x4::RotationMatrix(const QuaternionF& rotation) noexcept
 	{
 		Float3 axis;
 		float angle;
-		rotation.getAxisAngle(axis, angle);
-		return rotationMatrixAxisAngle(axis, angle);
+		rotation.GetAxisAngle(axis, angle);
+		return RotationMatrixAxisAngle(axis, angle);
 	}
 
-	Float4x4 Float4x4::axesToColumns(const Float3& axisX, const Float3& axisY, const Float3& axisZ) noexcept
+	Float4x4 Float4x4::AxesToColumns(const Float3& axisX, const Float3& axisY, const Float3& axisZ) noexcept
 	{
 		return Float4x4
 		(
@@ -138,7 +138,7 @@ namespace mint
 		);
 	}
 
-	Float4x4 Float4x4::axesToRows(const Float3& axisX, const Float3& axisY, const Float3& axisZ) noexcept
+	Float4x4 Float4x4::AxesToRows(const Float3& axisX, const Float3& axisY, const Float3& axisZ) noexcept
 	{
 		return Float4x4
 		(
@@ -149,18 +149,18 @@ namespace mint
 		);
 	}
 
-	Float4x4 Float4x4::srtMatrix(const Float3& scale, const QuaternionF& rotation, const Float3& translation) noexcept
+	Float4x4 Float4x4::SRTMatrix(const Float3& scale, const QuaternionF& rotation, const Float3& translation) noexcept
 	{
 		// SRT matrix for column vector is like below:
 		// SRT = T * R * S
 		// which is the same as below..
-		Float4x4 matrix = rotationMatrix(rotation);
-		matrix.preTranslate(translation._x, translation._y, translation._z);
-		matrix.postScale(scale._x, scale._y, scale._z);
+		Float4x4 matrix = RotationMatrix(rotation);
+		matrix.PreTranslate(translation._x, translation._y, translation._z);
+		matrix.PostScale(scale._x, scale._y, scale._z);
 		return matrix;
 	}
 
-	Float4x4 Float4x4::projectionMatrixPerspectiveYUP(const bool isRightHanded, const float FOVAngle, const float nearDepth, const float farDepth, const float screenWidthOverHeight) noexcept
+	Float4x4 Float4x4::ProjectionMatrixPerspectiveYUP(const bool isRightHanded, const float FOVAngle, const float nearDepth, const float farDepth, const float screenWidthOverHeight) noexcept
 	{
 		const float halfFOVAngle = FOVAngle * 0.5f;
 		const float a = 1.0f / (tanf(halfFOVAngle) * screenWidthOverHeight);
@@ -177,7 +177,7 @@ namespace mint
 		);
 	}
 
-	Float4x4 Float4x4::projectionMatrix2DFromTopLeft(const float pixelWidth, const float pixelHeight) noexcept
+	Float4x4 Float4x4::ProjectionMatrix2DFromTopLeft(const float pixelWidth, const float pixelHeight) noexcept
 	{
 		return Float4x4
 		(
@@ -227,54 +227,54 @@ namespace mint
 
 	Float4x4& Float4x4::operator*=(const Float4x4& rhs) noexcept
 	{
-		Math::mul(_m, rhs._m, _m);
+		Math::Mul(_m, rhs._m, _m);
 		return *this;
 	}
 
 	Float4x4 Float4x4::operator+(const Float4x4& rhs) const noexcept
 	{
 		Float4x4 result = *this;
-		Math::setAddMat(result._m, rhs._m);
+		Math::SetAddMat(result._m, rhs._m);
 		return result;
 	}
 
 	Float4x4 Float4x4::operator-(const Float4x4& rhs) const noexcept
 	{
 		Float4x4 result = *this;
-		Math::setSubMat(result._m, rhs._m);
+		Math::SetSubMat(result._m, rhs._m);
 		return result;
 	}
 
 	Float4x4 Float4x4::operator*(const float scalar) const noexcept
 	{
 		Float4x4 result = *this;
-		Math::setMulMat(result._m, scalar);
+		Math::SetMulMat(result._m, scalar);
 		return result;
 	}
 
 	Float4x4 Float4x4::operator/(const float scalar) const noexcept
 	{
 		Float4x4 result = *this;
-		Math::setDivMat(result._m, scalar);
+		Math::SetDivMat(result._m, scalar);
 		return result;
 	}
 
 	Float4x4 Float4x4::operator*(const Float4x4& rhs) const noexcept
 	{
-		return mul(*this, rhs);
+		return Mul(*this, rhs);
 	}
 
 	Float4 Float4x4::operator*(const Float4& vec) const noexcept
 	{
-		return mul(*this, vec);
+		return Mul(*this, vec);
 	}
 
 	Float3 Float4x4::operator*(const Float3& vec) const noexcept
 	{
-		return mul(*this, vec);
+		return Mul(*this, vec);
 	}
 
-	void Float4x4::set(
+	void Float4x4::Set(
 		const float _11, const float _12, const float _13, const float _14,
 		const float _21, const float _22, const float _23, const float _24,
 		const float _31, const float _32, const float _33, const float _34,
@@ -305,24 +305,24 @@ namespace mint
 		_m[3][3] = _44;
 	}
 
-	void Float4x4::setZero() noexcept
+	void Float4x4::SetZero() noexcept
 	{
-		Math::setZeroMat(_m);
+		Math::SetZeroMat(_m);
 	}
 
-	void Float4x4::setIdentity() noexcept
+	void Float4x4::SetIdentity() noexcept
 	{
-		Math::setIdentity(_m);
+		Math::SetIdentity(_m);
 	}
 
-	void Float4x4::preScale(const float x, const float y, const float z) noexcept
+	void Float4x4::PreScale(const float x, const float y, const float z) noexcept
 	{
 		_row[0] *= x;
 		_row[1] *= y;
 		_row[2] *= z;
 	}
 
-	void Float4x4::postScale(const float x, const float y, const float z) noexcept
+	void Float4x4::PostScale(const float x, const float y, const float z) noexcept
 	{
 		_11 *= x;
 		_21 *= x;
@@ -340,38 +340,38 @@ namespace mint
 		_43 *= z;
 	}
 
-	void Float4x4::preScale(const Float3& scale) noexcept
+	void Float4x4::PreScale(const Float3& scale) noexcept
 	{
-		preScale(scale._x, scale._y, scale._z);
+		PreScale(scale._x, scale._y, scale._z);
 	}
 
-	void Float4x4::postScale(const Float3& scale) noexcept
+	void Float4x4::PostScale(const Float3& scale) noexcept
 	{
-		postScale(scale._x, scale._y, scale._z);
+		PostScale(scale._x, scale._y, scale._z);
 	}
 
-	void Float4x4::setTranslation(const float x, const float y, const float z) noexcept
+	void Float4x4::SetTranslation(const float x, const float y, const float z) noexcept
 	{
 		_14 = x;
 		_24 = y;
 		_34 = z;
 	}
 
-	void Float4x4::setTranslation(const Float3& translation) noexcept
+	void Float4x4::SetTranslation(const Float3& translation) noexcept
 	{
 		_14 = translation._x;
 		_24 = translation._y;
 		_34 = translation._z;
 	}
 
-	void Float4x4::preTranslate(const float x, const float y, const float z) noexcept
+	void Float4x4::PreTranslate(const float x, const float y, const float z) noexcept
 	{
 		_14 += x;
 		_24 += y;
 		_34 += z;
 	}
 
-	void Float4x4::postTranslate(const float x, const float y, const float z) noexcept
+	void Float4x4::PostTranslate(const float x, const float y, const float z) noexcept
 	{
 		Float4 row = _row[0];
 		_row[0]._w += row._x * x + row._y * y + row._z * z;
@@ -383,22 +383,22 @@ namespace mint
 		_row[3]._w += row._x * x + row._y * y + row._z * z;
 	}
 
-	void Float4x4::preTranslate(const Float3& translation) noexcept
+	void Float4x4::PreTranslate(const Float3& translation) noexcept
 	{
-		preTranslate(translation._x, translation._y, translation._z);
+		PreTranslate(translation._x, translation._y, translation._z);
 	}
 
-	void Float4x4::postTranslate(const Float3& translation) noexcept
+	void Float4x4::PostTranslate(const Float3& translation) noexcept
 	{
-		postTranslate(translation._x, translation._y, translation._z);
+		PostTranslate(translation._x, translation._y, translation._z);
 	}
 
-	Float3 Float4x4::getTranslation() const noexcept
+	Float3 Float4x4::GetTranslation() const noexcept
 	{
 		return Float3(_14, _24, _34);
 	}
 
-	void Float4x4::decomposeSRT(Float3& outScale, Float4x4& outRotationMatrix, Float3& outTranslation) const noexcept
+	void Float4x4::DecomposeSRT(Float3& outScale, Float4x4& outRotationMatrix, Float3& outTranslation) const noexcept
 	{
 		// TODO: avoid nan in outRotationMatrix
 
@@ -437,50 +437,50 @@ namespace mint
 		outTranslation._z = _34;
 	}
 
-	float Float4x4::determinant() const noexcept
+	float Float4x4::Determinant() const noexcept
 	{
-		return Math::determinant(_m);
+		return Math::Determinant(_m);
 	}
 
-	Float4x4 Float4x4::transpose() const noexcept
+	Float4x4 Float4x4::Transpose() const noexcept
 	{
 		Float4x4 result;
-		Math::transpose(_m, result._m);
+		Math::Transpose(_m, result._m);
 		return result;
 	}
 
-	Float4x4 Float4x4::inverse() const noexcept
+	Float4x4 Float4x4::Inverse() const noexcept
 	{
 		Float4x4 adj;
-		Math::adjugate(_m, adj._m);
-		return adj / Math::determinant(_m);
+		Math::Adjugate(_m, adj._m);
+		return adj / Math::Determinant(_m);
 	}
 
-	Float4x4 Float4x4::mul(const Float4x4& rhs) const noexcept
+	Float4x4 Float4x4::Mul(const Float4x4& rhs) const noexcept
 	{
 		Float4x4 result;
-		Math::mul(_m, rhs._m, result._m);
+		Math::Mul(_m, rhs._m, result._m);
 		return result;
 	}
 
-	void Float4x4::mulAssignReverse(const Float4x4& lhs) noexcept
+	void Float4x4::MulAssignReverse(const Float4x4& lhs) noexcept
 	{
 		Float4x4 rhsCopy = *this;
-		Math::mul(lhs._m, rhsCopy._m, _m);
+		Math::Mul(lhs._m, rhsCopy._m, _m);
 	}
 
-	Float4 Float4x4::mul(const Float4& vec) const noexcept
+	Float4 Float4x4::Mul(const Float4& vec) const noexcept
 	{
 		Float4 result;
-		Math::mul(_m, vec._c, result._c);
+		Math::Mul(_m, vec._c, result._c);
 		return result;
 	}
 
-	Float3 Float4x4::mul(const Float3& vec) const noexcept
+	Float3 Float4x4::Mul(const Float3& vec) const noexcept
 	{
 		Float4 v4 = Float4(vec._x, vec._y, vec._z, 0.0f);
 		Float4 r4;
-		Math::mul(_m, v4._c, r4._c);
-		return r4.getXyz();
+		Math::Mul(_m, v4._c, r4._c);
+		return r4.GetXYZ();
 	}
 }

@@ -46,7 +46,7 @@ namespace mint
 #pragma region Intersection Free Functions
 		MINT_INLINE bool intersect2D_circle_point(const Float2& circleCenter, const float circleRadius, const Float2& point)
 		{
-			const float distanceSq = (point - circleCenter).lengthSqaure();
+			const float distanceSq = (point - circleCenter).LengthSqaure();
 			const float circleRadiusSq = circleRadius * circleRadius;
 			return distanceSq <= circleRadiusSq;
 		}

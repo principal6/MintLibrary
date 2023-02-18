@@ -23,7 +23,7 @@ namespace mint
 			};
 
 		public:
-			static float ease(const Method method, float x) noexcept;
+			static float Ease(const Method method, float x) noexcept;
 
 		private:
 			Easing() = default;

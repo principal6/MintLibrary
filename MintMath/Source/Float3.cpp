@@ -14,25 +14,25 @@ namespace mint
 
 	Float3& Float3::operator+=(const Float3& rhs)
 	{
-		Math::setAddVec(_c, rhs._c);
+		Math::SetAddVec(_c, rhs._c);
 		return *this;
 	}
 
 	Float3& Float3::operator-=(const Float3& rhs)
 	{
-		Math::setSubVec(_c, rhs._c);
+		Math::SetSubVec(_c, rhs._c);
 		return *this;
 	}
 
 	Float3& Float3::operator*=(const float scalar)
 	{
-		Math::setMulVec(_c, scalar);
+		Math::SetMulVec(_c, scalar);
 		return *this;
 	}
 
 	Float3& Float3::operator/=(const float scalar)
 	{
-		Math::setDivVec(_c, scalar);
+		Math::SetDivVec(_c, scalar);
 		return *this;
 	}
 
@@ -80,7 +80,7 @@ namespace mint
 
 	bool Float3::operator==(const Float3& rhs) const noexcept
 	{
-		return Math::equals(_c, rhs._c);
+		return Math::Equals(_c, rhs._c);
 	}
 
 	bool Float3::operator!=(const Float3& rhs) const noexcept
@@ -88,63 +88,63 @@ namespace mint
 		return !(*this == rhs);
 	}
 
-	float Float3::dot(const Float3& lhs, const Float3& rhs) noexcept
+	float Float3::Dot(const Float3& lhs, const Float3& rhs) noexcept
 	{
-		return Math::dot(lhs._c, rhs._c);
+		return Math::Dot(lhs._c, rhs._c);
 	}
 
-	Float3 Float3::cross(const Float3& lhs, const Float3& rhs) noexcept
+	Float3 Float3::Cross(const Float3& lhs, const Float3& rhs) noexcept
 	{
 		Float3 result;
-		Math::cross(lhs._c, rhs._c, result._c);
+		Math::Cross(lhs._c, rhs._c, result._c);
 		return result;
 	}
 
-	Float3 Float3::crossAndNormalize(const Float3& lhs, const Float3& rhs) noexcept
+	Float3 Float3::CrossAndNormalize(const Float3& lhs, const Float3& rhs) noexcept
 	{
-		return normalize(cross(lhs, rhs));
+		return Normalize(Cross(lhs, rhs));
 	}
 
-	Float3 Float3::normalize(const Float3& in) noexcept
+	Float3 Float3::Normalize(const Float3& in) noexcept
 	{
 		Float3 result = in;
-		result.normalize();
+		result.Normalize();
 		return result;
 	}
 
-	float Float3::dot(const Float3& rhs) const noexcept
+	float Float3::Dot(const Float3& rhs) const noexcept
 	{
-		return Float3::dot(*this, rhs);
+		return Float3::Dot(*this, rhs);
 	}
 
-	Float3 Float3::cross(const Float3& rhs) const noexcept
+	Float3 Float3::Cross(const Float3& rhs) const noexcept
 	{
-		return Float3::cross(*this, rhs);
+		return Float3::Cross(*this, rhs);
 	}
 
-	float Float3::lengthSqaure() const noexcept
+	float Float3::LengthSqaure() const noexcept
 	{
-		return Math::normSq(_c);
+		return Math::NormSq(_c);
 	}
 
-	float Float3::length() const noexcept
+	float Float3::Length() const noexcept
 	{
-		return Math::norm(_c);
+		return Math::Norm(_c);
 	}
 
-	void Float3::normalize() noexcept
+	void Float3::Normalize() noexcept
 	{
-		Math::normalize(_c);
+		Math::Normalize(_c);
 	}
 
-	void Float3::set(const float x, const float y, const float z) noexcept
+	void Float3::Set(const float x, const float y, const float z) noexcept
 	{
 		_x = x;
 		_y = y;
 		_z = z;
 	}
 
-	Float2 Float3::xy() const noexcept
+	Float2 Float3::XY() const noexcept
 	{
 		return Float2(_x, _y);
 	}

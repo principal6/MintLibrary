@@ -112,12 +112,12 @@ namespace mint
 		return !(*this == rhs);
 	}
 
-	MINT_INLINE float Float4::maxComponent() const noexcept
+	MINT_INLINE float Float4::GetMaxComponent() const noexcept
 	{
 		return Max(Max(_x, _y), Max(_z, _w));
 	}
 
-	MINT_INLINE float Float4::minComponent() const noexcept
+	MINT_INLINE float Float4::GetMinComponent() const noexcept
 	{
 		return Min(Min(_x, _y), Min(_z, _w));
 	}

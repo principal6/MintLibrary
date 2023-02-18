@@ -3,12 +3,12 @@
 
 namespace mint
 {
-	constexpr Float2 Float2::max(const Float2& a, const Float2& b) noexcept
+	constexpr Float2 Float2::Max(const Float2& a, const Float2& b) noexcept
 	{
 		return Float2(mint::Max(a._x, b._x), mint::Max(a._y, b._y));
 	}
 
-	constexpr Float2 Float2::min(const Float2& a, const Float2& b) noexcept
+	constexpr Float2 Float2::Min(const Float2& a, const Float2& b) noexcept
 	{
 		return Float2(mint::Min(a._x, b._x), mint::Min(a._y, b._y));
 	}

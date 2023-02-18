@@ -42,7 +42,7 @@ namespace mint
 			auto sizeSt = sizeof(st);
 			Float3 p{ 1, 0, 0 };
 			Float3 q{ 0, 1, 0 };
-			Float3 r = Float3::cross(p, q);
+			Float3 r = Float3::Cross(p, q);
 
 #if defined MINT_TEST_FAILURES
 			Float2 t;
@@ -63,7 +63,7 @@ namespace mint
 						//a *= 0.5f;
 						//a *= 2.0f;
 						c = a + b;
-						//c = Float4::cross(a, b);
+						//c = Float4::Cross(a, b);
 					}
 				}
 				{
@@ -78,7 +78,7 @@ namespace mint
 						//a *= 0.5f;
 						//a *= 2.0f;
 						c = a + b;
-						//c = a.cross(b);
+						//c = a.Cross(b);
 					}
 				}
 				auto logArray = Profiler::ScopedCPUProfiler::GetEntireLogData();
@@ -109,92 +109,92 @@ namespace mint
 			VectorD<3> vec0(1.0, 1.0, 0.0);
 			vec0 = 5.0 * vec0;
 			VectorD<3> vec1(0.0, 3.0, 0.0);
-			VectorD<3> vec2 = cross(vec0, vec1).setNormalized();
-			const bool trueValue = vec2.isUnitVector();
-			const bool falseValue = Math::equals(1.00002f, 1.0f);
-			const double distance = vec1.normalize().distance(vec2);
-			const double theta = vec1.angle(vec2);
-			const bool orthogonality = vec1.isOrthogonalTo(vec2);
+			VectorD<3> vec2 = Cross(vec0, vec1).SetNormalized();
+			const bool trueValue = vec2.IsUnitVector();
+			const bool falseValue = Math::Equals(1.00002f, 1.0f);
+			const double distance = vec1.Normalize().Distance(vec2);
+			const double theta = vec1.Angle(vec2);
+			const bool orthogonality = vec1.IsOrthogonalTo(vec2);
 
 			VectorD<1> vec3(3.0);
 			MatrixD<1, 3> mat0;
-			mat0.setRow(0, VectorD<3>(4.0, 5.0, 6.0));
-			constexpr bool isMat0Square = mat0.isSquareMatrix();
+			mat0.SetRow(0, VectorD<3>(4.0, 5.0, 6.0));
+			constexpr bool isMat0Square = mat0.IsSquareMatrix();
 
 			MatrixD<3, 3> mat1;
-			mat1.setRow(0, VectorD<3>(3.0, 0.0, 0.0));
-			mat1.setRow(1, VectorD<3>(0.0, 3.0, 0.0));
-			mat1.setRow(2, VectorD<3>(0.0, 0.0, 3.0));
-			const bool isMat1Scalar = mat1.isScalarMatrix();
-			mat1.setIdentity();
-			const bool isMat1Identity = mat1.isIdentityMatrix();
-			mat1.setZero();
-			const bool isMat1Zero = mat1.isZeroMatrix();
+			mat1.SetRow(0, VectorD<3>(3.0, 0.0, 0.0));
+			mat1.SetRow(1, VectorD<3>(0.0, 3.0, 0.0));
+			mat1.SetRow(2, VectorD<3>(0.0, 0.0, 3.0));
+			const bool isMat1Scalar = mat1.IsScalarMatrix();
+			mat1.SetIdentity();
+			const bool isMat1Identity = mat1.IsIdentityMatrix();
+			mat1.SetZero();
+			const bool isMat1Zero = mat1.IsZeroMatrix();
 
 			VectorD<3> a = VectorD<3>(1.0, 2.0, 3.0);
-			mat1.setRow(0, VectorD<3>(1.0, 2.0, 3.0));
-			mat1.setRow(1, VectorD<3>(4.0, 5.0, 6.0));
-			mat1.setRow(2, VectorD<3>(7.0, 8.0, 9.0));
-			VectorD<3> e1 = VectorD<3>::standardUnitVector(1);
+			mat1.SetRow(0, VectorD<3>(1.0, 2.0, 3.0));
+			mat1.SetRow(1, VectorD<3>(4.0, 5.0, 6.0));
+			mat1.SetRow(2, VectorD<3>(7.0, 8.0, 9.0));
+			VectorD<3> e1 = VectorD<3>::StandardUnitVector(1);
 			VectorD<3> row1 = e1 * mat1;
 			VectorD<3> col1 = mat1 * e1;
 			vec0 = vec3 * mat0;
 
-			mat1.setRow(1, VectorD<3>(2.0, 5.0, 6.0));
-			mat1.setRow(2, VectorD<3>(3.0, 6.0, 9.0));
-			const bool isMat1Symmetric = mat1.isSymmetricMatrix();
+			mat1.SetRow(1, VectorD<3>(2.0, 5.0, 6.0));
+			mat1.SetRow(2, VectorD<3>(3.0, 6.0, 9.0));
+			const bool isMat1Symmetric = mat1.IsSymmetricMatrix();
 
-			mat1.setRow(1, VectorD<3>(-2.0, 5.0, 6.0));
-			mat1.setRow(2, VectorD<3>(-3.0, -6.0, 9.0));
-			const bool isMat1SkewSymmetric = mat1.isSkewSymmetricMatrix();
+			mat1.SetRow(1, VectorD<3>(-2.0, 5.0, 6.0));
+			mat1.SetRow(2, VectorD<3>(-3.0, -6.0, 9.0));
+			const bool isMat1SkewSymmetric = mat1.IsSkewSymmetricMatrix();
 
 			MatrixD<2, 3> mat2;
-			mat2.setRow(0, VectorD<3>(0.0, 1.0, 2.0));
-			mat2.setRow(1, VectorD<3>(3.0, 4.0, 5.0));
-			MatrixD<3, 2> mat2Transpose = mat2.transpose();
+			mat2.SetRow(0, VectorD<3>(0.0, 1.0, 2.0));
+			mat2.SetRow(1, VectorD<3>(3.0, 4.0, 5.0));
+			MatrixD<3, 2> mat2Transpose = mat2.Transpose();
 
 			MatrixD<2, 2> mat3;
-			const bool isMat3Idempotent = mat3.isIdempotentMatrix();
+			const bool isMat3Idempotent = mat3.IsIdempotentMatrix();
 
 
 			Float4x4 testFloat4x4;
-			testFloat4x4.set(1, 1, 1, 0, 0, 3, 1, 2, 2, 3, 1, 0, 1, 0, 2, 1);
-			Float4x4 testFloat4x4Inverse{ testFloat4x4.inverse() };
+			testFloat4x4.Set(1, 1, 1, 0, 0, 3, 1, 2, 2, 3, 1, 0, 1, 0, 2, 1);
+			Float4x4 testFloat4x4Inverse{ testFloat4x4.Inverse() };
 
 			Matrix<4, 4, float> testMatrix4x4;
-			testMatrix4x4.setRow(0, { 1, 1, 1, 0 });
-			testMatrix4x4.setRow(1, { 0, 3, 1, 2 });
-			testMatrix4x4.setRow(2, { 2, 3, 1, 0 });
-			testMatrix4x4.setRow(3, { 1, 0, 2, 1 });
+			testMatrix4x4.SetRow(0, { 1, 1, 1, 0 });
+			testMatrix4x4.SetRow(1, { 0, 3, 1, 2 });
+			testMatrix4x4.SetRow(2, { 2, 3, 1, 0 });
+			testMatrix4x4.SetRow(3, { 1, 0, 2, 1 });
 			const bool testEquals = testMatrix4x4 == testMatrix4x4;
 			testMatrix4x4 *= testMatrix4x4;
 
-			const Matrix<4, 4, float> testIdentity(MatrixUtils::identity<4, float>());
+			const Matrix<4, 4, float> testIdentity(MatrixUtils::Identity<4, float>());
 
 			// Affine
 			{
 				float v[4];
 				AffineVecF vec0 = AffineVecF(1, 0, 0, 0);
 				AffineVecF vec1 = AffineVecF(0, 1, 0, 0);
-				AffineVecF vec2 = vec0.cross(vec1);
-				vec0.setComponent(3, 1);
-				vec0.get(v);
+				AffineVecF vec2 = vec0.Cross(vec1);
+				vec0.SetComponent(3, 1);
+				vec0.Get(v);
 
-				AffineMat<float> mat0 = translationMatrix(AffineVecF(4, 5, 6, 1));
-				AffineMat<float> mat1 = scalarMatrix(AffineVecF(2, 3, 4, 0));
+				AffineMat<float> mat0 = TranslationMatrix(AffineVecF(4, 5, 6, 1));
+				AffineMat<float> mat1 = ScalarMatrix(AffineVecF(2, 3, 4, 0));
 				mat1 *= mat0;
 				AffineVecF vec3 = mat1 * vec0;
-				AffineMat<float> mat1Inv = mat1.inverse();
+				AffineMat<float> mat1Inv = mat1.Inverse();
 				mat1 *= mat1Inv;
 
-				AffineMat<float> mat2 = rotationMatrixAxisAngle(AffineVecF(1, 0, 0, 0), 1.0f);
+				AffineMat<float> mat2 = RotationMatrixAxisAngle(AffineVecF(1, 0, 0, 0), 1.0f);
 				printf("");
 			}
 
 			return true;
 		}
 
-		bool test()
+		bool Test()
 		{
 			MINT_ASSURE(Test_intTypes());
 			MINT_ASSURE(Test_floatTypes());

@@ -17,7 +17,7 @@ namespace mint
 
 #pragma region Static Functions
 	public:
-		static Float2x2 rotationMatrix(const float angle) noexcept;
+		static Float2x2 RotationMatrix(const float angle) noexcept;
 #pragma endregion
 
 
@@ -42,12 +42,12 @@ namespace mint
 	public:
 		void set(const uint32 row, const uint32 col, const float newValue) noexcept;
 		float get(const uint32 row, const uint32 col) const noexcept;
-		void setZero() noexcept;
-		void setIdentity() noexcept;
+		void SetZero() noexcept;
+		void SetIdentity() noexcept;
 
 	public:
-		float determinant() const noexcept;
-		Float2x2 inverse() const noexcept;
+		float Determinant() const noexcept;
+		Float2x2 Inverse() const noexcept;
 		bool isInvertible() const noexcept;
 
 	public:

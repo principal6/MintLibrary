@@ -53,7 +53,7 @@ namespace mint
 		bool operator!=(const Int2& rhs) const noexcept;
 
 	public:
-		void set(const int32 x, const int32 y) noexcept;
+		void Set(const int32 x, const int32 y) noexcept;
 
 	public:
 		int32 _x;

@@ -20,88 +20,88 @@ namespace mint
 		return _c[index];
 	}
 
-	float Float4::dot(const Float4& lhs, const Float4& rhs) noexcept
+	float Float4::Dot(const Float4& lhs, const Float4& rhs) noexcept
 	{
-		return Math::dot(lhs._c, rhs._c);
+		return Math::Dot(lhs._c, rhs._c);
 	}
 
-	Float4 Float4::cross(const Float4& lhs, const Float4& rhs) noexcept
+	Float4 Float4::Cross(const Float4& lhs, const Float4& rhs) noexcept
 	{
 		Float4 result;
-		Math::cross(lhs._c, rhs._c, result._c);
+		Math::Cross(lhs._c, rhs._c, result._c);
 		return result;
 	}
 
-	Float4 Float4::crossNormalize(const Float4& lhs, const Float4& rhs) noexcept
+	Float4 Float4::CrossAndNormalize(const Float4& lhs, const Float4& rhs) noexcept
 	{
-		return normalize(cross(lhs, rhs));
+		return Normalize(Cross(lhs, rhs));
 	}
 
-	Float4 Float4::normalize(const Float4& in) noexcept
+	Float4 Float4::Normalize(const Float4& in) noexcept
 	{
 		Float4 result = in;
-		Math::normalize(result._c);
+		Math::Normalize(result._c);
 		return result;
 	}
 
-	Float4& Float4::transform(const Float4x4& matrix) noexcept
+	Float4& Float4::Transform(const Float4x4& matrix) noexcept
 	{
 		*this = matrix * (*this);
 		return *this;
 	}
 
-	void Float4::normalize() noexcept
+	void Float4::Normalize() noexcept
 	{
-		Math::normalize(_c);
+		Math::Normalize(_c);
 	}
 
-	void Float4::setXyz(const float x, const float y, const float z) noexcept
+	void Float4::SetXYZ(const float x, const float y, const float z) noexcept
 	{
 		_x = x;
 		_y = y;
 		_z = z;
 	}
 
-	void Float4::setXyz(const Float3& rhs) noexcept
+	void Float4::SetXYZ(const Float3& rhs) noexcept
 	{
 		_x = rhs._x;
 		_y = rhs._y;
 		_z = rhs._z;
 	}
 
-	void Float4::setXyz(const Float4& rhs) noexcept
+	void Float4::SetXYZ(const Float4& rhs) noexcept
 	{
 		_x = rhs._x;
 		_y = rhs._y;
 		_z = rhs._z;
 	}
 
-	Float4 Float4::getXyz0() const noexcept
+	Float4 Float4::GetXYZ0() const noexcept
 	{
 		return Float4(_x, _y, _z, 0.0f);
 	}
 
-	Float4 Float4::getXyz1() const noexcept
+	Float4 Float4::GetXYZ1() const noexcept
 	{
 		return Float4(_x, _y, _z, 1.0f);
 	}
 
-	Float3 Float4::getXyz() const noexcept
+	Float3 Float4::GetXYZ() const noexcept
 	{
 		return Float3(_x, _y, _z);
 	}
 
-	float Float4::lengthSqaure() const noexcept
+	float Float4::LengthSqaure() const noexcept
 	{
-		return Math::normSq(_c);
+		return Math::NormSq(_c);
 	}
 
-	float Float4::length() const noexcept
+	float Float4::Length() const noexcept
 	{
-		return Math::norm(_c);
+		return Math::Norm(_c);
 	}
 
-	void Float4::set(const float x, const float y, const float z, const float w) noexcept
+	void Float4::Set(const float x, const float y, const float z, const float w) noexcept
 	{
 		_x = x;
 		_y = y;
@@ -109,18 +109,18 @@ namespace mint
 		_w = w;
 	}
 
-	void Float4::setZero() noexcept
+	void Float4::SetZero() noexcept
 	{
-		Math::setZeroVec(_c);
+		Math::SetZeroVec(_c);
 	}
 
-	bool Float4::isNan() const noexcept
+	bool Float4::IsNAN() const noexcept
 	{
-		return Math::isNan(_c);
+		return Math::IsNAN(_c);
 	}
 
-	void Float4::setNan() noexcept
+	void Float4::SetNAN() noexcept
 	{
-		Math::setNan(_c);
+		Math::SetNAN(_c);
 	}
 }

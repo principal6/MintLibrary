@@ -6,7 +6,7 @@
 
 namespace mint
 {
-	Float3x3 Float3x3::rotationMatrixX(const float angle) noexcept
+	Float3x3 Float3x3::RotationMatrixX(const float angle) noexcept
 	{
 		const float cosAngle = cos(angle);
 		const float sinAngle = sin(angle);
@@ -18,7 +18,7 @@ namespace mint
 		);
 	}
 
-	Float3x3 Float3x3::rotationMatrixY(const float angle) noexcept
+	Float3x3 Float3x3::RotationMatrixY(const float angle) noexcept
 	{
 		const float cosAngle = cos(angle);
 		const float sinAngle = sin(angle);
@@ -30,7 +30,7 @@ namespace mint
 		);
 	}
 
-	Float3x3 Float3x3::rotationMatrixZ(const float angle) noexcept
+	Float3x3 Float3x3::RotationMatrixZ(const float angle) noexcept
 	{
 		const float cosAngle = cos(angle);
 		const float sinAngle = sin(angle);
@@ -72,57 +72,57 @@ namespace mint
 	Float3x3 Float3x3::operator*(const Float3x3& rhs) const noexcept
 	{
 		Float3x3 result;
-		Math::mul(_m, rhs._m, result._m);
+		Math::Mul(_m, rhs._m, result._m);
 		return result;
 	}
 
 	Float3x3 Float3x3::operator*(const float scalar) const noexcept
 	{
 		Float3x3 result = *this;
-		Math::setMulMat(result._m, scalar);
+		Math::SetMulMat(result._m, scalar);
 		return result;
 	}
 
 	Float3x3 Float3x3::operator/(const float scalar) const noexcept
 	{
 		Float3x3 result = *this;
-		Math::setDivMat(result._m, scalar);
+		Math::SetDivMat(result._m, scalar);
 		return result;
 	}
 
-	void Float3x3::setZero() noexcept
+	void Float3x3::SetZero() noexcept
 	{
-		Math::setZeroMat(_m);
+		Math::SetZeroMat(_m);
 	}
 
-	void Float3x3::setIdentity() noexcept
+	void Float3x3::SetIdentity() noexcept
 	{
-		Math::setIdentity(_m);
+		Math::SetIdentity(_m);
 	}
 
-	float Float3x3::determinant() const noexcept
+	float Float3x3::Determinant() const noexcept
 	{
-		return Math::determinant(_m);
+		return Math::Determinant(_m);
 	}
 
-	Float3x3 Float3x3::transpose() const noexcept
+	Float3x3 Float3x3::Transpose() const noexcept
 	{
 		Float3x3 result;
-		Math::transpose(_m, result._m);
+		Math::Transpose(_m, result._m);
 		return result;
 	}
 
-	Float3x3 Float3x3::inverse() const noexcept
+	Float3x3 Float3x3::Inverse() const noexcept
 	{
 		Float3x3 adj;
-		Math::adjugate(_m, adj._m);
-		return adj / Math::determinant(_m);
+		Math::Adjugate(_m, adj._m);
+		return adj / Math::Determinant(_m);
 	}
 
-	Float3 Float3x3::mul(const Float3& vec) const noexcept
+	Float3 Float3x3::Mul(const Float3& vec) const noexcept
 	{
 		Float3 result;
-		Math::mul(_m, vec._c, result._c);
+		Math::Mul(_m, vec._c, result._c);
 		return result;
 	}
 }
