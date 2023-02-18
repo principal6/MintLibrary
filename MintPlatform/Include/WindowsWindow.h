@@ -62,10 +62,10 @@ namespace mint
 		{
 			friend WindowsWindowPool;
 
-			struct WparamKeyCodePair
+			struct WPARAMKeyCodePair
 			{
-				WparamKeyCodePair() = default;
-				WparamKeyCodePair(const WPARAM wParam, const Platform::KeyCode keyCode);
+				WPARAMKeyCodePair() = default;
+				WPARAMKeyCodePair(const WPARAM wParam, const Platform::KeyCode keyCode);
 
 				WPARAM _wParam;
 				Platform::KeyCode _keyCode;
@@ -80,9 +80,9 @@ namespace mint
 			virtual void Destroy() noexcept override;
 
 		private:
-			void BuildWparamKeyCodePairArray() noexcept;
-			Platform::KeyCode ConvertWparamToKeyCode(const WPARAM wParam) const noexcept;
-			WPARAM ConvertKeyCodeToWparam(const Platform::KeyCode keyCode) const noexcept;
+			void BuildWPARAMKeyCodePairArray() noexcept;
+			Platform::KeyCode ConvertWPARAMToKeyCode(const WPARAM wParam) const noexcept;
+			WPARAM ConvertKeyCodeToWPARAM(const Platform::KeyCode keyCode) const noexcept;
 
 		public:
 			virtual bool IsRunning() noexcept override;
@@ -121,7 +121,7 @@ namespace mint
 
 		private:
 			HCURSOR _cursorArray[static_cast<uint32>(CursorType::COUNT)];
-			Vector<WparamKeyCodePair> _wParamKeyCodePairArray;
+			Vector<WPARAMKeyCodePair> _WPARAMKeyCodePairArray;
 			BYTE _byteArrayForRawInput[kRawInputByteSize];
 		};
 #pragma endregion
