@@ -68,7 +68,7 @@ namespace mint
 				uint32 advanceCount = 0;
 				SyntaxTreeNodeData rootItem;
 				rootItem._classifier = SyntaxClassifier::ROOT;
-				rootItem._IDentifier = "ROOT";
+				rootItem._Identifier = "ROOT";
 				SyntaxTreeNode syntaxTreeRootNode = _syntaxTree.CreateRootNode(rootItem);
 				while (ContinuesParsing() == true)
 				{
@@ -127,7 +127,7 @@ namespace mint
 
 				SyntaxTreeNodeData syntaxTreeItem;
 				syntaxTreeItem._classifier = SyntaxClassifier::Namespace;
-				syntaxTreeItem._IDentifier = _symbolTable[symbolPosition + 1]._symbolString;
+				syntaxTreeItem._Identifier = _symbolTable[symbolPosition + 1]._symbolString;
 				SyntaxTreeNode newNode = currentNode.InsertChildNode(syntaxTreeItem);
 				currentNode = newNode;
 
@@ -152,7 +152,7 @@ namespace mint
 
 				SyntaxTreeNodeData syntaxTreeItem;
 				syntaxTreeItem._classifier = SyntaxClassifier::Struct;
-				syntaxTreeItem._IDentifier = _symbolTable[symbolPosition + 1]._symbolString;
+				syntaxTreeItem._Identifier = _symbolTable[symbolPosition + 1]._symbolString;
 				SyntaxTreeNode newNode = currentNode.InsertChildNode(syntaxTreeItem);
 				currentNode = newNode;
 				outAdvanceCount += 2 + 1;
@@ -180,13 +180,13 @@ namespace mint
 
 				SyntaxTreeNodeData syntaxTreeItem;
 				syntaxTreeItem._classifier = SyntaxClassifier::Variable;
-				syntaxTreeItem._IDentifier = _symbolTable[symbolPosition + 1]._symbolString;
+				syntaxTreeItem._Identifier = _symbolTable[symbolPosition + 1]._symbolString;
 				SyntaxTreeNode newNode = currentNode.InsertChildNode(syntaxTreeItem);
 				{
 					// DataType 은 Variable Identifier 노드의 자식!
 					SyntaxTreeNodeData syntaxTreeItemChild;
 					syntaxTreeItemChild._classifier = SyntaxClassifier::DataType;
-					syntaxTreeItemChild._IDentifier = _symbolTable[symbolPosition]._symbolString;
+					syntaxTreeItemChild._Identifier = _symbolTable[symbolPosition]._symbolString;
 					newNode.InsertChildNode(syntaxTreeItemChild);
 
 					if (_symbolTable[symbolPosition + kSemicolonMinOffset]._symbolString == "{")
@@ -216,7 +216,7 @@ namespace mint
 				if (_symbolTable[symbolPosition]._symbolString == "CPP_HLSL_SEMANTIC_NAME")
 				{
 					syntaxTreeItem._classifier = SyntaxClassifier::SemanticName;
-					syntaxTreeItem._IDentifier = _symbolTable[symbolPosition + 2]._symbolString;
+					syntaxTreeItem._Identifier = _symbolTable[symbolPosition + 2]._symbolString;
 					SyntaxTreeNode newNode = currentNode.InsertChildNode(syntaxTreeItem);
 					outAdvanceCount += 3 + 1;
 				}
@@ -253,7 +253,7 @@ namespace mint
 						break;
 					}
 
-					namespaceStack.PushBack(parentNode.GetNodeData()._IDentifier);
+					namespaceStack.PushBack(parentNode.GetNodeData()._Identifier);
 					parentNode = parentNode.GetParentNode();
 				}
 
@@ -265,7 +265,7 @@ namespace mint
 					namespaceStack.PopBack();
 				}
 				const SyntaxTreeNodeData& structNodeSyntaxTreeItem = structNode.GetNodeData();
-				fullTypeName += structNodeSyntaxTreeItem._IDentifier;
+				fullTypeName += structNodeSyntaxTreeItem._Identifier;
 
 				KeyValuePair found = _typeMetaDataMap.Find(fullTypeName);
 				if (found.IsValid() == true)
@@ -288,10 +288,10 @@ namespace mint
 					{
 						const uint32 attributeCount = childNode.GetChildNodeCount();
 						SyntaxTreeNode dataTypeNode = childNode.GetChildNode(0);
-						TypeMetaData<TypeCustomData> memberTypeMetaData = GetTypeMetaData(dataTypeNode.GetNodeData()._IDentifier);
+						TypeMetaData<TypeCustomData> memberTypeMetaData = GetTypeMetaData(dataTypeNode.GetNodeData()._Identifier);
 						memberTypeMetaData.SetByteOffset(structSize);
 						structSize += memberTypeMetaData.GetSize();
-						memberTypeMetaData.SetDeclName(childNodeData._IDentifier);
+						memberTypeMetaData.SetDeclName(childNodeData._Identifier);
 						memberTypeMetaData._customData.SetInputSlot(inputSlot);
 
 						if (attributeCount >= 2)
@@ -301,7 +301,7 @@ namespace mint
 							const SyntaxTreeNodeData& attribute1Data = attribute1.GetNodeData();
 							if (attribute1Data._classifier == SyntaxClassifier::SemanticName)
 							{
-								memberTypeMetaData._customData.SetSemanticName(attribute1Data._IDentifier);
+								memberTypeMetaData._customData.SetSemanticName(attribute1Data._Identifier);
 							}
 							else
 							{

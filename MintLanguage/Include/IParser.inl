@@ -25,7 +25,7 @@ namespace mint
 #pragma region TypeMetaData
 		template <typename CustomDataType>
 		inline TypeMetaData<CustomDataType>::TypeMetaData()
-			: _IsBuiltIn{ false }
+			: _isBuiltIn{ false }
 			, _size{ 0 }
 			, _byteOffset{ 0 }
 		{
@@ -40,10 +40,10 @@ namespace mint
 		}
 
 		template <typename CustomDataType>
-		MINT_INLINE void TypeMetaData<CustomDataType>::SetBaseData(const std::string& typeName, const bool IsBuiltIn)
+		MINT_INLINE void TypeMetaData<CustomDataType>::SetBaseData(const std::string& typeName, const bool isBuiltIn)
 		{
 			_typeName = typeName;
-			_IsBuiltIn = IsBuiltIn;
+			_isBuiltIn = isBuiltIn;
 		}
 
 		template <typename CustomDataType>
@@ -73,7 +73,7 @@ namespace mint
 		template <typename CustomDataType>
 		MINT_INLINE bool TypeMetaData<CustomDataType>::IsBuiltIn() const noexcept
 		{
-			return _IsBuiltIn;
+			return _isBuiltIn;
 		}
 
 		template <typename CustomDataType>

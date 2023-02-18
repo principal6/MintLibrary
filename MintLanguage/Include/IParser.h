@@ -27,7 +27,7 @@ namespace mint
 
 			//private:
 			ClassifierType _classifier;
-			std::string _IDentifier;
+			std::string _Identifier;
 			std::string _value;
 		};
 
@@ -43,7 +43,7 @@ namespace mint
 			static const TypeMetaData& GetInvalid() noexcept;
 
 		public:
-			void SetBaseData(const std::string& typeName, const bool IsBuiltIn);
+			void SetBaseData(const std::string& typeName, const bool isBuiltIn);
 			void SetDeclName(const std::string& declName);
 			void SetSize(const uint32 size);
 			void SetByteOffset(const uint32 byteOffset);
@@ -61,7 +61,7 @@ namespace mint
 			const TypeMetaData& GetMember(const uint32 memberIndex) const noexcept;
 
 		private:
-			bool _IsBuiltIn;
+			bool _isBuiltIn;
 			std::string _typeName; // namespace + name
 			std::string _declName;
 			uint32 _size; // Byte count
