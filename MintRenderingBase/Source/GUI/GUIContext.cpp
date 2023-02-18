@@ -102,7 +102,7 @@ namespace mint
 					for (const ControlID& controlID : _controlIDsOfCurrentFrame)
 					{
 						ControlData& controlData = AccessControlData(controlID);
-						DebugRender_control(controlData);
+						DebugRender_Control(controlData);
 					}
 				}
 				_controlIDsOfCurrentFrame.Clear();
@@ -149,7 +149,7 @@ namespace mint
 				controlData._parentID = parentControlID;
 				controlData._text = labelDesc._text;
 				UpdateControlData(controlData);
-				MakeLabel_render(labelDesc, controlData);
+				MakeLabel_Render(labelDesc, controlData);
 			}
 
 			bool GUIContext::MakeButton(const FileLine& fileLine, const ButtonDesc& buttonDesc)
@@ -163,7 +163,7 @@ namespace mint
 				controlData._parentID = parentControlID;
 				controlData._text = buttonDesc._text;
 				UpdateControlData(controlData);
-				MakeButton_render(buttonDesc, controlData);
+				MakeButton_Render(buttonDesc, controlData);
 				return controlData._mouseInteractionState == ControlData::MouseInteractionState::Clicked;
 			}
 
@@ -207,7 +207,7 @@ namespace mint
 				NextControlMargin(Rect());
 
 				UpdateControlData(controlData);
-				BeginWindow_render(controlData);
+				BeginWindow_Render(controlData);
 				_controlStack.PushBack(controlID);
 
 				{
@@ -244,7 +244,7 @@ namespace mint
 				_controlStack.PopBack();
 			}
 
-			void GUIContext::MakeLabel_render(const LabelDesc& labelDesc, const ControlData& controlData)
+			void GUIContext::MakeLabel_Render(const LabelDesc& labelDesc, const ControlData& controlData)
 			{
 				const Color& backgroundColor = labelDesc.GetBackgroundColor(_theme);
 				if (backgroundColor.A() > 0.0f)
@@ -259,7 +259,7 @@ namespace mint
 				DrawText_(controlData.GetID(), labelDesc.GetTextColor(_theme), fontRenderingOption);
 			}
 
-			void GUIContext::MakeButton_render(const ButtonDesc& buttonDesc, const ControlData& controlData)
+			void GUIContext::MakeButton_Render(const ButtonDesc& buttonDesc, const ControlData& controlData)
 			{
 				const HoverPressColorSet& hoverPressColorSet = (buttonDesc._customizeColor) ? buttonDesc._customizedColorSet : _theme._hoverPressColorSet;
 				_rendererContext.SetColor(hoverPressColorSet.ChooseColorByInteractionState(controlData._mouseInteractionState));
@@ -280,7 +280,7 @@ namespace mint
 				}
 			}
 
-			void GUIContext::BeginWindow_render(const ControlData& controlData)
+			void GUIContext::BeginWindow_Render(const ControlData& controlData)
 			{
 				_rendererContext.SetPosition(ComputeShapePosition(controlData.GetID()));
 
@@ -701,7 +701,7 @@ namespace mint
 				return _rendererContext.ComputeNormalizedRoundness(controlData._size.GetMinElement(), _theme._roundnessInPixel);
 			}
 
-			void GUIContext::DebugRender_control(const ControlData& controlData)
+			void GUIContext::DebugRender_Control(const ControlData& controlData)
 			{
 				if (_debugSwitch._renderZoneOverlay)
 				{

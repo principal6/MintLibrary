@@ -16,8 +16,8 @@
 #pragma optimize("", off)
 
 
-bool run2DTestWindow(mint::Platform::IWindow& window, mint::Rendering::GraphicDevice& graphicDevice);
-bool run3DTestWindow(mint::Platform::IWindow& window, mint::Rendering::GraphicDevice& graphicDevice);
+bool Run2DTestWindow(mint::Platform::IWindow& window, mint::Rendering::GraphicDevice& graphicDevice);
+bool Run3DTestWindow(mint::Platform::IWindow& window, mint::Rendering::GraphicDevice& graphicDevice);
 
 
 int main()
@@ -46,7 +46,7 @@ int main()
 	graphicDevice.Initialize();
 
 #if defined MINT_DEBUG
-	//Logger::setOutputFileName("LOG.txt");
+	//Logger::SetOutputFileName("LOG.txt");
 	TestMath::Test();
 	TestContainers::Test();
 	TestPlatform::Test();
@@ -56,13 +56,13 @@ int main()
 	TestLibrary::Test();
 #endif
 
-	//run2DTestWindow(window, graphicDevice);
-	run3DTestWindow(window, graphicDevice);
+	//Run2DTestWindow(window, graphicDevice);
+	Run3DTestWindow(window, graphicDevice);
 	return 0;
 }
 
 
-bool run2DTestWindow(mint::Platform::IWindow& window, mint::Rendering::GraphicDevice& graphicDevice)
+bool Run2DTestWindow(mint::Platform::IWindow& window, mint::Rendering::GraphicDevice& graphicDevice)
 {
 	using namespace mint;
 	using namespace Platform;
@@ -126,7 +126,7 @@ bool run2DTestWindow(mint::Platform::IWindow& window, mint::Rendering::GraphicDe
 	return true;
 }
 
-bool run3DTestWindow(mint::Platform::IWindow& window, mint::Rendering::GraphicDevice& graphicDevice)
+bool Run3DTestWindow(mint::Platform::IWindow& window, mint::Rendering::GraphicDevice& graphicDevice)
 {
 	using namespace mint;
 	using namespace Platform;
@@ -242,8 +242,8 @@ bool run3DTestWindow(mint::Platform::IWindow& window, mint::Rendering::GraphicDe
 			meshRenderer.Render(objectPool);
 
 			// # ShapeRendererContext 테스트
-			//ShapeRendererContext& shapeFontRendererContext = graphicDevice.GetShapeRendererContext();
-			//shapeFontRendererContext.TestDraw(Float2(30, 60));
+			//ShapeRendererContext& shapeRendererContext = graphicDevice.GetShapeRendererContext();
+			//shapeRendererContext.TestDraw(Float2(30, 60));
 
 			instantRenderer.Render();
 

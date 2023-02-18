@@ -109,9 +109,9 @@ namespace mint
 
 				// Control rendering
 			private:
-				void MakeLabel_render(const LabelDesc& labelDesc, const ControlData& controlData);
-				void MakeButton_render(const ButtonDesc& buttonDesc, const ControlData& controlData);
-				void BeginWindow_render(const ControlData& controlData);
+				void MakeLabel_Render(const LabelDesc& labelDesc, const ControlData& controlData);
+				void MakeButton_Render(const ButtonDesc& buttonDesc, const ControlData& controlData);
+				void BeginWindow_Render(const ControlData& controlData);
 
 			private:
 				ControlData& AccessControlData(const ControlID& controlID) const;
@@ -145,7 +145,7 @@ namespace mint
 				float ComputeRoundness(const ControlID& controlID) const;
 
 			private:
-				void DebugRender_control(const ControlData& controlData);
+				void DebugRender_Control(const ControlData& controlData);
 
 			public:
 				struct DebugSwitch
