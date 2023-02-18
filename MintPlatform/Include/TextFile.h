@@ -28,13 +28,13 @@ namespace mint
 		virtual ~TextFileReader() = default;
 
 	public:
-		virtual bool open(const char* const fileName) override;
-		virtual bool isOpen() const noexcept override;
-		virtual uint32 getFileSize() const noexcept override;
+		virtual bool Open(const char* const fileName) override;
+		virtual bool IsOpen() const noexcept override;
+		virtual uint32 GetFileSize() const noexcept override;
 
 	public:
-		char get(const uint32 at) const noexcept;
-		const char* get() const noexcept;
+		char Get(const uint32 at) const noexcept;
+		const char* Get() const noexcept;
 
 	private:
 		Vector<byte> _byteArray;
@@ -51,14 +51,14 @@ namespace mint
 		virtual ~TextFileWriter() = default;
 
 	public:
-		virtual bool save(const char* const fileName) override;
+		virtual bool Save(const char* const fileName) override;
 
 	public:
-		void clear();
+		void Clear();
 
 	public:
-		void write(const char ch) noexcept;
-		void write(const char* const text) noexcept;
+		void Write(const char ch) noexcept;
+		void Write(const char* const text) noexcept;
 
 	private:
 		Vector<byte> _byteArray;

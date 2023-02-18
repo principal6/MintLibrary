@@ -40,10 +40,10 @@ namespace mint
 				TextRenderDirectionVert _directionVert = TextRenderDirectionVert::Centered;
 
 			public:
-				void setBackgroundColor(const Color& color) { _useThemeColor = false; _color = color; }
-				void setTextColor(const Color& color) { _useThemeTextColor = false; _textColor = color; }
-				const Color& getBackgroundColor(const Theme& theme) const { return (_useThemeColor ? theme._defaultLabelBackgroundColor : _color); }
-				const Color& getTextColor(const Theme& theme) const { return (_useThemeTextColor ? theme._textColor : _textColor); }
+				void SetBackgroundColor(const Color& color) { _useThemeColor = false; _color = color; }
+				void SetTextColor(const Color& color) { _useThemeTextColor = false; _textColor = color; }
+				const Color& GetBackgroundColor(const Theme& theme) const { return (_useThemeColor ? theme._defaultLabelBackgroundColor : _color); }
+				const Color& GetTextColor(const Theme& theme) const { return (_useThemeTextColor ? theme._textColor : _textColor); }
 
 			private:
 				bool _useThemeColor = true;
@@ -82,70 +82,70 @@ namespace mint
 				~GUIContext();
 
 			public:
-				void initialize();
+				void Initialize();
 
 			public:
-				void processEvent() noexcept;
-				void updateScreenSize(const Float2& newScreenSize);
-				void render() noexcept;
+				void ProcessEvent() noexcept;
+				void UpdateScreenSize(const Float2& newScreenSize);
+				void Render() noexcept;
 
 				// Next control's ControlRenderingDesc
 			public:
-				void nextControlSameLine();
-				void nextControlPosition(const Float2& position);
-				void nextControlSize(const Float2& contentSize);
-				void nextControlMargin(const Rect& margin);
-				void nextControlPadding(const Rect& padding);
+				void NextControlSameLine();
+				void NextControlPosition(const Float2& position);
+				void NextControlSize(const Float2& contentSize);
+				void NextControlMargin(const Rect& margin);
+				void NextControlPadding(const Rect& padding);
 
 				// Control creation #0 make-()
 			public:
-				void makeLabel(const FileLine& fileLine, const LabelDesc& labelDesc);
-				bool makeButton(const FileLine& fileLine, const ButtonDesc& buttonDesc);
+				void MakeLabel(const FileLine& fileLine, const LabelDesc& labelDesc);
+				bool MakeButton(const FileLine& fileLine, const ButtonDesc& buttonDesc);
 
 				// Control creation #1 begin-() && end-()
 			public:
-				bool beginWindow(const FileLine& fileLine, const WindowDesc& windowDesc);
-				void endWindow();
+				bool BeginWindow(const FileLine& fileLine, const WindowDesc& windowDesc);
+				void EndWindow();
 
 				// Control rendering
 			private:
-				void makeLabel_render(const LabelDesc& labelDesc, const ControlData& controlData);
-				void makeButton_render(const ButtonDesc& buttonDesc, const ControlData& controlData);
-				void beginWindow_render(const ControlData& controlData);
+				void MakeLabel_render(const LabelDesc& labelDesc, const ControlData& controlData);
+				void MakeButton_render(const ButtonDesc& buttonDesc, const ControlData& controlData);
+				void BeginWindow_render(const ControlData& controlData);
 
 			private:
-				ControlData& accessControlData(const ControlID& controlID) const;
-				ControlData& accessControlData(const ControlID& controlID, const ControlType controlType);
-				ControlData& accessStackParentControlData();
-				ControlID findAncestorWindowControl(const ControlID& controlID) const;
+				ControlData& AccessControlData(const ControlID& controlID) const;
+				ControlData& AccessControlData(const ControlID& controlID, const ControlType controlType);
+				ControlData& AccessStackParentControlData();
+				ControlID FindAncestorWindowControl(const ControlID& controlID) const;
 
 			private:
-				void updateControlData(ControlData& controlData);
-				void updateControlData_processResizing(const ControlData& controlData);
-				void updateControlData_processDragging(const ControlData& controlData);
-				void updateControlData_renderingData(ControlData& controlData);
-				void updateControlData_interaction(ControlData& controlData);
-				void updateControlData_interaction_focusing(ControlData& controlData);
-				void updateControlData_interaction_resizing(ControlData& controlData);
-				void updateControlData_interaction_dragging(ControlData& controlData);
-				void updateControlData_resetNextControlDesc();
+				void UpdateControlData(ControlData& controlData);
+				void UpdateControlData_ProcessResizing(const ControlData& controlData);
+				void UpdateControlData_ProcessDragging(const ControlData& controlData);
+				void UpdateControlData_RenderingData(ControlData& controlData);
+				void UpdateControlData_Interaction(ControlData& controlData);
+				void UpdateControlData_Interaction_focusing(ControlData& controlData);
+				void UpdateControlData_Interaction_resizing(ControlData& controlData);
+				void UpdateControlData_Interaction_dragging(ControlData& controlData);
+				void UpdateControlData_ResetNextControlDesc();
 
 			private:
-				void selectResizingCursorType(const ControlData::ResizingFlags& resizingFlags);
+				void SelectResizingCursorType(const ControlData::ResizingFlags& resizingFlags);
 
 				// Internal rendering functions
 			private:
-				void drawText(const ControlID& controlID, const Color& color, const FontRenderingOption& fontRenderingOption);
-				void drawText(const Float2& position, const Float2& size, const wchar_t* const text, const Color& color, const FontRenderingOption& fontRenderingOption);
+				void DrawText_(const ControlID& controlID, const Color& color, const FontRenderingOption& fontRenderingOption);
+				void DrawText_(const Float2& position, const Float2& size, const wchar_t* const text, const Color& color, const FontRenderingOption& fontRenderingOption);
 
 				// Internal rendering helpers
 			private:
-				Float4 computeShapePosition(const ControlID& controlID) const;
-				Float4 computeShapePosition(const Float2& position, const Float2& size) const;
-				float computeRoundness(const ControlID& controlID) const;
+				Float4 ComputeShapePosition(const ControlID& controlID) const;
+				Float4 ComputeShapePosition(const Float2& position, const Float2& size) const;
+				float ComputeRoundness(const ControlID& controlID) const;
 
 			private:
-				void debugRender_control(const ControlData& controlData);
+				void DebugRender_control(const ControlData& controlData);
 
 			public:
 				struct DebugSwitch

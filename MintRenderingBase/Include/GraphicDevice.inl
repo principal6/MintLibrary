@@ -5,7 +5,7 @@ namespace mint
 {
 	namespace Rendering
 	{
-		MINT_INLINE D3D11_RECT rectToD3dRect(const Rect& rect) noexcept
+		MINT_INLINE D3D11_RECT RectToD3dRect(const Rect& rect) noexcept
 		{
 			D3D11_RECT result;
 			result.left = static_cast<LONG>(rect.Left());
@@ -16,57 +16,57 @@ namespace mint
 		}
 
 
-		MINT_INLINE DxShaderPool& GraphicDevice::getShaderPool() noexcept
+		MINT_INLINE DxShaderPool& GraphicDevice::GetShaderPool() noexcept
 		{
 			return _shaderPool;
 		}
 
-		MINT_INLINE DxResourcePool& GraphicDevice::getResourcePool() noexcept
+		MINT_INLINE DxResourcePool& GraphicDevice::GetResourcePool() noexcept
 		{
 			return _resourcePool;
 		}
 
-		MINT_INLINE ShapeRendererContext& GraphicDevice::getShapeRendererContext() noexcept
+		MINT_INLINE ShapeRendererContext& GraphicDevice::GetShapeRendererContext() noexcept
 		{
 			return _shapeRendererContext;
 		}
 
-		MINT_INLINE GUI::GUIContext& GraphicDevice::getGUIContext() noexcept
+		MINT_INLINE GUI::GUIContext& GraphicDevice::GetGUIContext() noexcept
 		{
 			return _guiContext;
 		}
 
-		MINT_INLINE const Language::CppHlsl::Interpreter& GraphicDevice::getCppHlslSteamData() const noexcept
+		MINT_INLINE const Language::CppHlsl::Interpreter& GraphicDevice::GetCppHlslSteamData() const noexcept
 		{
 			return _cppHlslStreamData;
 		}
 
-		MINT_INLINE const Language::CppHlsl::Interpreter& GraphicDevice::getCppHlslConstantBuffers() const noexcept
+		MINT_INLINE const Language::CppHlsl::Interpreter& GraphicDevice::GetCppHlslConstantBuffers() const noexcept
 		{
 			return _cppHlslConstantBuffers;
 		}
 
-		MINT_INLINE GraphicDevice::StateManager& GraphicDevice::getStateManager() noexcept
+		MINT_INLINE GraphicDevice::StateManager& GraphicDevice::GetStateManager() noexcept
 		{
 			return _stateManager;
 		}
 
-		MINT_INLINE GraphicObjectID GraphicDevice::getCommonCbTransformID() const noexcept
+		MINT_INLINE GraphicObjectID GraphicDevice::GetCommonCBTransformID() const noexcept
 		{
 			return _cbTransformID;
 		}
 
-		MINT_INLINE GraphicObjectID GraphicDevice::getCommonSBTransformID() const noexcept
+		MINT_INLINE GraphicObjectID GraphicDevice::GetCommonSBTransformID() const noexcept
 		{
 			return _sbTransformID;
 		}
 
-		MINT_INLINE GraphicObjectID GraphicDevice::getCommonSBMaterialID() const noexcept
+		MINT_INLINE GraphicObjectID GraphicDevice::GetCommonSBMaterialID() const noexcept
 		{
 			return _sbMaterialID;
 		}
 
-		MINT_INLINE ID3D11Device* GraphicDevice::getDxDevice() noexcept
+		MINT_INLINE ID3D11Device* GraphicDevice::GetDxDevice() noexcept
 		{
 			return _device.Get();
 		}

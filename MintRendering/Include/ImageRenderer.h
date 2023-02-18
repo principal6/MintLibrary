@@ -19,12 +19,12 @@ namespace mint
 			virtual ~ImageRenderer() = default;
 
 		public:
-			virtual void initializeShaders() noexcept override;
-			virtual void flush() noexcept override;
-			virtual void render() noexcept override;
+			virtual void InitializeShaders() noexcept override;
+			virtual void Flush() noexcept override;
+			virtual void Render() noexcept override;
 
 		public:
-			void drawImage(const Float2& position, const Float2& size, const Float2& uv0, const Float2& uv1);
+			void DrawImage(const Float2& position, const Float2& size, const Float2& uv0, const Float2& uv1);
 
 		private:
 			uint32 _psTextureSlot;

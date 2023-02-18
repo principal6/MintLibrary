@@ -25,17 +25,17 @@ namespace mint
 			virtual ~MeshComponent();
 
 		public:
-			const MeshData& getMeshData() const noexcept;
-			uint32 getVertexCount() const noexcept;
-			const VS_INPUT* getVertices() const noexcept;
-			uint32 getIndexCount() const noexcept;
-			const IndexElementType* getIndices() const noexcept;
+			const MeshData& GetMeshData() const noexcept;
+			uint32 GetVertexCount() const noexcept;
+			const VS_INPUT* GetVertices() const noexcept;
+			uint32 GetIndexCount() const noexcept;
+			const IndexElementType* GetIndices() const noexcept;
 
 		public:
-			void shouldDrawNormals(const bool shouldDrawNormals) noexcept;
-			bool shouldDrawNormals() const noexcept;
-			void shouldDrawEdges(const bool shouldDrawEdges) noexcept;
-			bool shouldDrawEdges() const noexcept;
+			void ShouldDrawNormals(const bool shouldDrawNormals) noexcept;
+			bool ShouldDrawNormals() const noexcept;
+			void ShouldDrawEdges(const bool shouldDrawEdges) noexcept;
+			bool ShouldDrawEdges() const noexcept;
 
 		private:
 			MeshData _meshData;

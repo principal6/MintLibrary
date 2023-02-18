@@ -100,17 +100,17 @@ namespace mint
 		struct MouseState
 		{
 		public:
-			void process() noexcept;
+			void Process() noexcept;
 
 		public:
-			bool isPointerMoved() const noexcept;
-			void setPosition(const Float2& position) noexcept;
-			void setDeltaPosition(const Float2& deltaPosition) noexcept;
-			const Float2& getPosition() const noexcept;
-			const Float2& getDeltaPosition() const noexcept;
+			bool IsPointerMoved() const noexcept;
+			void SetPosition(const Float2& position) noexcept;
+			void SetDeltaPosition(const Float2& deltaPosition) noexcept;
+			const Float2& GetPosition() const noexcept;
+			const Float2& GetDeltaPosition() const noexcept;
 
 		public:
-			MouseButtonState _buttonStates[getMouseButtonCount()]{};
+			MouseButtonState _buttonStates[GetMouseButtonCount()]{};
 			float _wheelScroll = 0.0f;
 
 		public:
@@ -127,9 +127,9 @@ namespace mint
 
 		struct KeyboardState
 		{
-			void process() noexcept;
+			void Process() noexcept;
 
-			KeyState _keyStates[getKeyCodeCount()]{};
+			KeyState _keyStates[GetKeyCodeCount()]{};
 
 			KeyCode _pressedKeyCode;
 			KeyCode _releasedKeyCode;
@@ -149,39 +149,39 @@ namespace mint
 			~InputContext();
 
 		public:
-			static InputContext& getInstance() noexcept;
+			static InputContext& GetInstance() noexcept;
 
 		public:
-			void flushInputEvents() noexcept;
-			void pushInputEvent(const InputEvent& inputEvent) noexcept;
+			void FlushInputEvents() noexcept;
+			void PushInputEvent(const InputEvent& inputEvent) noexcept;
 
 		public:
-			void processEvents() noexcept;
+			void ProcessEvents() noexcept;
 
 		public:
-			const MouseState& getMouseState() const noexcept;
-			MouseButtonState getMouseButtonState(const MouseButton mouseButton) const noexcept;
-			bool isMouseButtonPressed() const noexcept;
-			bool isMouseButtonReleased() const noexcept;
-			bool isMouseButtonClicked() const noexcept;
-			bool isMouseButtonDoubleClicked() const noexcept;
-			bool isMouseButtonDown(const MouseButton mouseButton) const noexcept;
-			bool isMouseButtonUp(const MouseButton mouseButton) const noexcept;
-			bool isMousePointerMoved() const noexcept;
-			bool isMouseWheelScrolled() const noexcept;
-			Float2 getMousePosition() const noexcept;
-			Float2 getMouseDeltaPosition() const noexcept;
-			float getMouseWheelScroll() const noexcept;
+			const MouseState& GetMouseState() const noexcept;
+			MouseButtonState GetMouseButtonState(const MouseButton mouseButton) const noexcept;
+			bool IsMouseButtonPressed() const noexcept;
+			bool IsMouseButtonReleased() const noexcept;
+			bool IsMouseButtonClicked() const noexcept;
+			bool IsMouseButtonDoubleClicked() const noexcept;
+			bool IsMouseButtonDown(const MouseButton mouseButton) const noexcept;
+			bool IsMouseButtonUp(const MouseButton mouseButton) const noexcept;
+			bool IsMousePointerMoved() const noexcept;
+			bool IsMouseWheelScrolled() const noexcept;
+			Float2 GetMousePosition() const noexcept;
+			Float2 GetMouseDeltaPosition() const noexcept;
+			float GetMouseWheelScroll() const noexcept;
 
 		public:
-			const KeyboardState& getKeyboardState() const noexcept;
-			KeyState getKeyState(const KeyCode keyCode) const noexcept;
-			bool isKeyPressed() const noexcept;
-			bool isKeyReleased() const noexcept;
-			bool isKeyInputCharacter() const noexcept;
-			bool isKeyInputCharacterCandidate() const noexcept;
-			bool isKeyDown(const KeyCode keyCode) const noexcept;
-			bool isKeyUp(const KeyCode keyCode) const noexcept;
+			const KeyboardState& GetKeyboardState() const noexcept;
+			KeyState GetKeyState(const KeyCode keyCode) const noexcept;
+			bool IsKeyPressed() const noexcept;
+			bool IsKeyReleased() const noexcept;
+			bool IsKeyInputCharacter() const noexcept;
+			bool IsKeyInputCharacterCandidate() const noexcept;
+			bool IsKeyDown(const KeyCode keyCode) const noexcept;
+			bool IsKeyUp(const KeyCode keyCode) const noexcept;
 
 		private:
 			Queue<InputEvent> _events;

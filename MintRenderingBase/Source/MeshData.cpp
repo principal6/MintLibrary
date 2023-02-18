@@ -20,7 +20,7 @@ namespace mint
 			return _positionArray.IsEmpty() && _vertexToPositionTable.IsEmpty() && _vertexArray.IsEmpty() && _faceArray.IsEmpty();
 		}
 
-		void MeshData::clear() noexcept
+		void MeshData::Clear() noexcept
 		{
 			_positionArray.Clear();
 			_vertexToPositionTable.Clear();
@@ -28,7 +28,7 @@ namespace mint
 			_faceArray.Clear();
 		}
 
-		void MeshData::shrinkToFit() noexcept
+		void MeshData::ShrinkToFit() noexcept
 		{
 			_positionArray.ShrinkToFit();
 			_vertexToPositionTable.ShrinkToFit();
@@ -36,9 +36,9 @@ namespace mint
 			_faceArray.ShrinkToFit();
 		}
 
-		void MeshData::updateVertexFromPositions() noexcept
+		void MeshData::UpdateVertexFromPositions() noexcept
 		{
-			const uint32 vertexCount = getVertexCount();
+			const uint32 vertexCount = GetVertexCount();
 			for (uint32 vertexIndex = 0; vertexIndex < vertexCount; ++vertexIndex)
 			{
 				const uint32 positionIndex = _vertexToPositionTable[vertexIndex];
@@ -46,32 +46,32 @@ namespace mint
 			}
 		}
 
-		uint32 MeshData::getPositionCount() const noexcept
+		uint32 MeshData::GetPositionCount() const noexcept
 		{
 			return _positionArray.Size();
 		}
 
-		uint32 MeshData::getVertexCount() const noexcept
+		uint32 MeshData::GetVertexCount() const noexcept
 		{
 			return _vertexArray.Size();
 		}
 
-		uint32 MeshData::getFaceCount() const noexcept
+		uint32 MeshData::GetFaceCount() const noexcept
 		{
 			return _faceArray.Size();
 		}
 
-		uint32 MeshData::getIndexCount() const noexcept
+		uint32 MeshData::GetIndexCount() const noexcept
 		{
 			return static_cast<uint32>(_faceArray.Size() * Face::kVertexCountPerFace);
 		}
 
-		const VS_INPUT* MeshData::getVertices() const noexcept
+		const VS_INPUT* MeshData::GetVertices() const noexcept
 		{
 			return (_vertexArray.IsEmpty()) ? &MeshData::kNullVertex : &_vertexArray[0];
 		}
 
-		const IndexElementType* MeshData::getIndices() const noexcept
+		const IndexElementType* MeshData::GetIndices() const noexcept
 		{
 			return (_faceArray.IsEmpty() == true) ? &MeshData::kNullIndex : &_faceArray[0]._vertexIndexArray[0];
 		}

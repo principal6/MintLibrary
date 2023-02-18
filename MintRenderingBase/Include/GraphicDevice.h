@@ -39,7 +39,7 @@ namespace mint
 		using Microsoft::WRL::ComPtr;
 
 
-		D3D11_RECT rectToD3dRect(const Rect& rect) noexcept;
+		D3D11_RECT RectToD3dRect(const Rect& rect) noexcept;
 
 
 		class SafeResourceMapper
@@ -50,7 +50,7 @@ namespace mint
 
 		public:
 			bool IsValid() const noexcept;
-			void set(const void* const data, const uint32 size) noexcept;
+			void Set(const void* const data, const uint32 size) noexcept;
 
 		private:
 			GraphicDevice& _graphicDevice;
@@ -70,30 +70,30 @@ namespace mint
 				~StateManager() = default;
 
 			public: // IA
-				void setIAInputLayout(ID3D11InputLayout* const iaInputLayout) noexcept;
-				void setIARenderingPrimitive(const RenderingPrimitive renderingPrimitive) noexcept;
-				void setIAVertexBuffers(const int32 bindingStartSlot, const uint32 bufferCount, ID3D11Buffer* const* const buffers, const uint32* const strides, const uint32* const offsets) noexcept;
-				void setIAIndexBuffer(ID3D11Buffer* const buffer, const DXGI_FORMAT format, const uint32 offset) noexcept;
+				void SetIAInputLayout(ID3D11InputLayout* const iaInputLayout) noexcept;
+				void SetIARenderingPrimitive(const RenderingPrimitive renderingPrimitive) noexcept;
+				void SetIAVertexBuffers(const int32 bindingStartSlot, const uint32 bufferCount, ID3D11Buffer* const* const buffers, const uint32* const strides, const uint32* const offsets) noexcept;
+				void SetIAIndexBuffer(ID3D11Buffer* const buffer, const DXGI_FORMAT format, const uint32 offset) noexcept;
 
 			public: // RS
-				void setRSRasterizerState(ID3D11RasterizerState* const rsRasterizerState) noexcept;
-				void setRSViewport(const D3D11_VIEWPORT rsViewport) noexcept;
-				void setRSScissorRectangle(const D3D11_RECT rsScissorRectangle) noexcept;
+				void SetRSRasterizerState(ID3D11RasterizerState* const rsRasterizerState) noexcept;
+				void SetRSViewport(const D3D11_VIEWPORT rsViewport) noexcept;
+				void SetRSScissorRectangle(const D3D11_RECT rsScissorRectangle) noexcept;
 
 			public: // Shader
-				void setVSShader(ID3D11VertexShader* const shader) noexcept;
-				void setGSShader(ID3D11GeometryShader* const shader) noexcept;
-				void setPSShader(ID3D11PixelShader* const shader) noexcept;
+				void SetVSShader(ID3D11VertexShader* const shader) noexcept;
+				void SetGSShader(ID3D11GeometryShader* const shader) noexcept;
+				void SetPSShader(ID3D11PixelShader* const shader) noexcept;
 
 			public: // Resources
-				void setVSResources(const DxResource& resource, uint32 bindingSlot) noexcept;
-				void setGSResources(const DxResource& resource, uint32 bindingSlot) noexcept;
-				void setPSResources(const DxResource& resource, uint32 bindingSlot) noexcept;
+				void SetVSResources(const DxResource& resource, uint32 bindingSlot) noexcept;
+				void SetGSResources(const DxResource& resource, uint32 bindingSlot) noexcept;
+				void SetPSResources(const DxResource& resource, uint32 bindingSlot) noexcept;
 
 			public: // Constant Buffers
-				void setVSConstantBuffers(const DxResource& constantBuffer, uint32 bindingSlot);
-				void setGSConstantBuffers(const DxResource& constantBuffer, uint32 bindingSlot);
-				void setPSConstantBuffers(const DxResource& constantBuffer, uint32 bindingSlot);
+				void SetVSConstantBuffers(const DxResource& constantBuffer, uint32 bindingSlot);
+				void SetGSConstantBuffers(const DxResource& constantBuffer, uint32 bindingSlot);
+				void SetPSConstantBuffers(const DxResource& constantBuffer, uint32 bindingSlot);
 
 			private:
 				GraphicDevice& _graphicDevice;
@@ -134,63 +134,63 @@ namespace mint
 			~GraphicDevice() = default;
 
 		public:
-			bool initialize();
-			void updateScreenSize();
+			bool Initialize();
+			void UpdateScreenSize();
 
 		private:
-			void createDxDevice();
-			bool loadFontData();
+			void CreateDxDevice();
+			bool LoadFontData();
 
 		private:
-			bool createSwapChain(const Int2& windowSize, const HWND windowHandle);
-			bool initializeBackBuffer();
-			bool initializeDepthStencilBufferAndView(const Int2& windowSize);
-			bool initializeDepthStencilStates();
-			void initializeShaderHeaderMemory();
-			void initializeShaders();
-			void initializeSamplerStates();
-			void initializeBlendStates();
-			void initializeFullScreenData(const Int2& windowSize);
-			void setDefaultRenderTargetsAndDepthStencil();
+			bool CreateSwapChain(const Int2& windowSize, const HWND windowHandle);
+			bool InitializeBackBuffer();
+			bool InitializeDepthStencilBufferAndView(const Int2& windowSize);
+			bool InitializeDepthStencilStates();
+			void InitializeShaderHeaderMemory();
+			void InitializeShaders();
+			void InitializeSamplerStates();
+			void InitializeBlendStates();
+			void InitializeFullScreenData(const Int2& windowSize);
+			void SetDefaultRenderTargetsAndDepthStencil();
 
 		public:
-			void beginRendering();
-			void draw(const uint32 vertexCount, const uint32 vertexOffset) noexcept;
-			void drawIndexed(const uint32 indexCount, const uint32 indexOffset, const uint32 vertexOffset) noexcept;
-			void endRendering();
+			void BeginRendering();
+			void Draw(const uint32 vertexCount, const uint32 vertexOffset) noexcept;
+			void DrawIndexed(const uint32 indexCount, const uint32 indexOffset, const uint32 vertexOffset) noexcept;
+			void EndRendering();
 
 		public:
-			void useScissorRectangles() noexcept;
-			void useFullScreenViewport() noexcept;
-			void useWireFrameNoCullingRasterizer() noexcept;
-			void useWireFrameCullBackRasterizer() noexcept;
-			void useSolidCullBackRasterizer() noexcept;
-			const Rect& getFullScreenClipRect() const noexcept;
+			void UseScissorRectangles() noexcept;
+			void UseFullScreenViewport() noexcept;
+			void UseWireFrameNoCullingRasterizer() noexcept;
+			void UseWireFrameCullBackRasterizer() noexcept;
+			void UseSolidCullBackRasterizer() noexcept;
+			const Rect& GetFullScreenClipRect() const noexcept;
 
 		public:
-			DxShaderPool& getShaderPool() noexcept;
-			DxResourcePool& getResourcePool() noexcept;
-			ShapeRendererContext& getShapeRendererContext() noexcept;
-			GUI::GUIContext& getGUIContext() noexcept;
-			const Language::CppHlsl::Interpreter& getCppHlslSteamData() const noexcept;
-			const Language::CppHlsl::Interpreter& getCppHlslConstantBuffers() const noexcept;
-			StateManager& getStateManager() noexcept;
+			DxShaderPool& GetShaderPool() noexcept;
+			DxResourcePool& GetResourcePool() noexcept;
+			ShapeRendererContext& GetShapeRendererContext() noexcept;
+			GUI::GUIContext& GetGUIContext() noexcept;
+			const Language::CppHlsl::Interpreter& GetCppHlslSteamData() const noexcept;
+			const Language::CppHlsl::Interpreter& GetCppHlslConstantBuffers() const noexcept;
+			StateManager& GetStateManager() noexcept;
 
 		public: // Common buffers
-			GraphicObjectID getCommonCbTransformID() const noexcept;
-			GraphicObjectID getCommonSBTransformID() const noexcept;
-			GraphicObjectID getCommonSBMaterialID() const noexcept;
+			GraphicObjectID GetCommonCBTransformID() const noexcept;
+			GraphicObjectID GetCommonSBTransformID() const noexcept;
+			GraphicObjectID GetCommonSBMaterialID() const noexcept;
 
 		public:
-			void initialize2DProjectionMatrix(const Float2& windowSize) noexcept;
-			void setViewProjectionMatrix(const Float4x4& viewMatrix, const Float4x4& ProjectionMatrix) noexcept;
+			void Initialize2DProjectionMatrix(const Float2& windowSize) noexcept;
+			void SetViewProjectionMatrix(const Float4x4& viewMatrix, const Float4x4& ProjectionMatrix) noexcept;
 
 		public:
-			ID3D11Device* getDxDevice() noexcept;
-			const Int2& getWindowSize() const noexcept;
-			Float2 getWindowSizeFloat2() const noexcept;
-			Platform::IWindow& accessWindow() noexcept;
-			const Platform::IWindow& getWindow() const noexcept;
+			ID3D11Device* GetDxDevice() noexcept;
+			const Int2& GetWindowSize() const noexcept;
+			Float2 GetWindowSizeFloat2() const noexcept;
+			Platform::IWindow& AccessWindow() noexcept;
+			const Platform::IWindow& GetWindow() const noexcept;
 
 		private:
 			Platform::IWindow& _window;

@@ -22,7 +22,7 @@ namespace mint
 	}
 
 	template<typename T>
-	inline bool JSONSerializer::serialize(const T& from, const StringReferenceA& fileName)
+	inline bool JSONSerializer::Serialize(const T& from, const StringReferenceA& fileName)
 	{
 		if constexpr (IsReflectionClass<T>::value == false)
 		{
@@ -30,57 +30,57 @@ namespace mint
 			return false;
 		}
 
-		_writer.clear();
+		_writer.Clear();
 
 		_indents = true;
 
-		serialize_internal(0, StringReferenceA(""), from);
+		SerializeInternal(0, StringReferenceA(""), from);
 
-		return _writer.save(fileName.CString());
+		return _writer.Save(fileName.CString());
 	}
 
 	template<typename CharType, typename T>
-	inline void JSONSerializer::serialize_internal(const uint32 depth, const StringReference<CharType>& declarationName, const T& from)
+	inline void JSONSerializer::SerializeInternal(const uint32 depth, const StringReference<CharType>& declarationName, const T& from)
 	{
 		if constexpr (IsReflectionClass<T>::value == true)
 		{
-			serialize_helper_indent(depth);
+			SerializeHelper_Indent(depth);
 			if (depth > 0)
 			{
-				serialize_helper_declaration(declarationName);
+				SerializeHelper_Declaration(declarationName);
 			}
 
-			_writer.write("{\n");
+			_writer.Write("{\n");
 
 			const ReflectionData& reflectionData = from.getReflectionData();
 			const uint32 memberCount = reflectionData._memberTypeDatas.Size();
 			for (uint32 memberIndex = 0; memberIndex < memberCount; ++memberIndex)
 			{
 				const TypeBaseData& memberTypeData = *reflectionData._memberTypeDatas[memberIndex];
-				memberTypeData.serializeValue(*this, depth + 1, reinterpret_cast<const char*>(&from) + memberTypeData._offset, memberTypeData._arrayItemCount);
+				memberTypeData.SerializeValue(*this, depth + 1, reinterpret_cast<const char*>(&from) + memberTypeData._offset, memberTypeData._arrayItemCount);
 
 				if (memberIndex < memberCount - 1)
 				{
-					_writer.write(",\n");
+					_writer.Write(",\n");
 				}
 				else
 				{
-					_writer.write("\n");
+					_writer.Write("\n");
 				}
 			}
 
-			serialize_helper_indent(depth);
+			SerializeHelper_Indent(depth);
 
-			_writer.write("}");
+			_writer.Write("}");
 		}
 		else if constexpr (std::is_integral_v<T> == true || std::is_floating_point_v<T> == true)
 		{
-			serialize_helper_indent(depth);
-			serialize_helper_declaration(declarationName);
+			SerializeHelper_Indent(depth);
+			SerializeHelper_Declaration(declarationName);
 
 			StackString<CharType, 256> buffer;
 			StringUtil::ToString(from, buffer);
-			_writer.write(buffer.CString());
+			_writer.Write(buffer.CString());
 		}
 		else
 		{
@@ -89,42 +89,42 @@ namespace mint
 	}
 
 	template<typename CharType>
-	inline void JSONSerializer::serialize_internal(const uint32 depth, const StringReference<CharType>& declarationName, const String<CharType>& from)
+	inline void JSONSerializer::SerializeInternal(const uint32 depth, const StringReference<CharType>& declarationName, const String<CharType>& from)
 	{
-		serialize_helper_indent(depth);
-		serialize_helper_declaration(declarationName);
+		SerializeHelper_Indent(depth);
+		SerializeHelper_Declaration(declarationName);
 
-		_writer.write("\"");
-		_writer.write(from.CString());
-		_writer.write("\"");
+		_writer.Write("\"");
+		_writer.Write(from.CString());
+		_writer.Write("\"");
 	}
 
 	template<typename CharType>
-	inline void JSONSerializer::serialize_internal(const uint32 depth, const StringReference<CharType>& declarationName, const StringReference<CharType>& from)
+	inline void JSONSerializer::SerializeInternal(const uint32 depth, const StringReference<CharType>& declarationName, const StringReference<CharType>& from)
 	{
-		serialize_helper_indent(depth);
-		serialize_helper_declaration(declarationName);
+		SerializeHelper_Indent(depth);
+		SerializeHelper_Declaration(declarationName);
 
-		_writer.write("\"");
-		_writer.write(from.CString());
-		_writer.write("\"");
+		_writer.Write("\"");
+		_writer.Write(from.CString());
+		_writer.Write("\"");
 	}
 
 	template<typename CharType, typename T>
-	inline void JSONSerializer::serialize_internal(const uint32 depth, const StringReference<CharType>& declarationName, const Vector<T>& from)
+	inline void JSONSerializer::SerializeInternal(const uint32 depth, const StringReference<CharType>& declarationName, const Vector<T>& from)
 	{
-		serialize_helper_arrayPrefix(depth, declarationName);
+		SerializeHelper_ArrayPrefix(depth, declarationName);
 
 		const uint32 count = from.Size();
 		for (uint32 index = 0; index < count; ++index)
 		{
-			serialize_helper_arrayItem(depth, declarationName, from[index], index == count - 1);
+			SerializeHelper_ArrayItem(depth, declarationName, from[index], index == count - 1);
 		}
 
-		serialize_helper_arrayPostfix(depth);
+		SerializeHelper_ArrayPostfix(depth);
 	}
 
-	inline void JSONSerializer::serialize_helper_indent(const uint32 depth)
+	inline void JSONSerializer::SerializeHelper_Indent(const uint32 depth)
 	{
 		if (depth == 0)
 		{
@@ -135,46 +135,46 @@ namespace mint
 		{
 			for (uint32 depthIter = 0; depthIter < depth; depthIter++)
 			{
-				_writer.write("\t");
+				_writer.Write("\t");
 			}
 		}
 	}
 
 	template<typename CharType>
-	inline void JSONSerializer::serialize_helper_declaration(const StringReference<CharType>& declarationName)
+	inline void JSONSerializer::SerializeHelper_Declaration(const StringReference<CharType>& declarationName)
 	{
-		_writer.write("\"");
-		_writer.write(declarationName.CString());
-		_writer.write("\": ");
+		_writer.Write("\"");
+		_writer.Write(declarationName.CString());
+		_writer.Write("\": ");
 	}
 
 	template<typename CharType>
-	inline void JSONSerializer::serialize_helper_arrayPrefix(const uint32 depth, const StringReference<CharType>& declarationName)
+	inline void JSONSerializer::SerializeHelper_ArrayPrefix(const uint32 depth, const StringReference<CharType>& declarationName)
 	{
-		serialize_helper_indent(depth);
-		serialize_helper_declaration(declarationName);
+		SerializeHelper_Indent(depth);
+		SerializeHelper_Declaration(declarationName);
 
-		_writer.write("[\n");
+		_writer.Write("[\n");
 	}
 
 	template<typename CharType, typename T>
-	inline void JSONSerializer::serialize_helper_arrayItem(const uint32 depth, const StringReference<CharType>& declarationName, const T& item, const bool isLastItem)
+	inline void JSONSerializer::SerializeHelper_ArrayItem(const uint32 depth, const StringReference<CharType>& declarationName, const T& item, const bool isLastItem)
 	{
-		serialize_helper_indent(depth + 1);
+		SerializeHelper_Indent(depth + 1);
 
-		_writer.write("{ ");
+		_writer.Write("{ ");
 
 		_indents = false;
-		serialize_internal(depth, declarationName, item);
+		SerializeInternal(depth, declarationName, item);
 		_indents = true;
 
-		_writer.write((isLastItem ? " }\n" : " },\n"));
+		_writer.Write((isLastItem ? " }\n" : " },\n"));
 	}
 
-	inline void JSONSerializer::serialize_helper_arrayPostfix(const uint32 depth)
+	inline void JSONSerializer::SerializeHelper_ArrayPostfix(const uint32 depth)
 	{
-		serialize_helper_indent(depth);
+		SerializeHelper_Indent(depth);
 
-		_writer.write("]");
+		_writer.Write("]");
 	}
 }

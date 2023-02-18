@@ -44,14 +44,14 @@ namespace mint
 
 
 #pragma region Intersection Free Functions
-		MINT_INLINE bool intersect2D_circle_point(const Float2& circleCenter, const float circleRadius, const Float2& point)
+		MINT_INLINE bool Intersect2D_circle_point(const Float2& circleCenter, const float circleRadius, const Float2& point)
 		{
 			const float distanceSq = (point - circleCenter).LengthSqaure();
 			const float circleRadiusSq = circleRadius * circleRadius;
 			return distanceSq <= circleRadiusSq;
 		}
 
-		MINT_INLINE bool intersect2D_aabb_point(const Rect& aabb, const Float2& point)
+		MINT_INLINE bool Intersect2D_aabb_point(const Rect& aabb, const Float2& point)
 		{
 			return aabb.Contains(point);
 		}

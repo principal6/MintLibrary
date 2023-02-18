@@ -9,13 +9,13 @@ namespace mint
 {
 	namespace FileUtil
 	{
-		bool isFile(const char* const fileName) noexcept;
-		bool isDirectory(const char* const fileName) noexcept;
-		bool isReadOnly(const char* const fileName) noexcept;
-		void unsetReadOnly(const char* const fileName) noexcept;
-		bool exists(const char* const path) noexcept;
-		bool createDirectory(const char* const directoryName) noexcept;
-		bool deleteFile(const char* const fileName) noexcept;
+		bool IsFile(const char* const fileName) noexcept;
+		bool IsDirectory(const char* const fileName) noexcept;
+		bool IsReadOnly(const char* const fileName) noexcept;
+		void UnsetReadOnly(const char* const fileName) noexcept;
+		bool Exists(const char* const path) noexcept;
+		bool CreateDirectory_(const char* const directoryName) noexcept;
+		bool DeleteFile_(const char* const fileName) noexcept;
 	}
 }
 

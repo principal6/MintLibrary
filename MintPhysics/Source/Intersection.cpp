@@ -8,7 +8,7 @@ namespace mint
 {
 	namespace Physics
 	{
-		void CircleShape2D::debug_drawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Float2& offset)
+		void CircleShape2D::DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Float2& offset)
 		{
 			shapeRendererContext.SetColor(color);
 
@@ -20,28 +20,28 @@ namespace mint
 				const float thetaB = kThetaUnit * sideIndex;
 				const Float2 pointA = Float2(::cos(thetaA) * _radius, -::sin(thetaA) * _radius);
 				const Float2 pointB = Float2(::cos(thetaB) * _radius, -::sin(thetaB) * _radius);
-				shapeRendererContext.drawLine(offset + _center + pointA, offset + _center + pointB, 1.0f);
+				shapeRendererContext.DrawLine(offset + _center + pointA, offset + _center + pointB, 1.0f);
 			}
 		}
 
-		Float2 CircleShape2D::computeSupportPoint(const Float2& direction) const
+		Float2 CircleShape2D::ComputeSupportPoint(const Float2& direction) const
 		{
 			return _center + direction * _radius;
 		}
 
-		void AABBShape2D::debug_drawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Float2& offset)
+		void AABBShape2D::DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Float2& offset)
 		{
 			shapeRendererContext.SetColor(color);
 
 			const Float2 halfSizeX = Float2(_halfSize._x, 0.0f);
 			const Float2 halfSizeY = Float2(0.0f, _halfSize._y);
-			shapeRendererContext.drawLine(offset + _center - halfSizeX + halfSizeY, offset + _center + halfSizeX + halfSizeY, 1.0f);
-			shapeRendererContext.drawLine(offset + _center - halfSizeX - halfSizeY, offset + _center + halfSizeX - halfSizeY, 1.0f);
-			shapeRendererContext.drawLine(offset + _center + halfSizeX + halfSizeY, offset + _center + halfSizeX - halfSizeY, 1.0f);
-			shapeRendererContext.drawLine(offset + _center - halfSizeX + halfSizeY, offset + _center - halfSizeX - halfSizeY, 1.0f);
+			shapeRendererContext.DrawLine(offset + _center - halfSizeX + halfSizeY, offset + _center + halfSizeX + halfSizeY, 1.0f);
+			shapeRendererContext.DrawLine(offset + _center - halfSizeX - halfSizeY, offset + _center + halfSizeX - halfSizeY, 1.0f);
+			shapeRendererContext.DrawLine(offset + _center + halfSizeX + halfSizeY, offset + _center + halfSizeX - halfSizeY, 1.0f);
+			shapeRendererContext.DrawLine(offset + _center - halfSizeX + halfSizeY, offset + _center - halfSizeX - halfSizeY, 1.0f);
 		}
 
-		Float2 AABBShape2D::computeSupportPoint(const Float2& direction) const
+		Float2 AABBShape2D::ComputeSupportPoint(const Float2& direction) const
 		{
 			if (direction._x > 0.0f)
 			{
@@ -50,14 +50,14 @@ namespace mint
 			return _center + Float2(-_halfSize._x, (direction._y > 0.0f ? +_halfSize._y : -_halfSize._y));
 		}
 
-		ConvexShape2D ConvexShape2D::makeFromPoints(const Float2& center, const Vector<Float2>& points)
+		ConvexShape2D ConvexShape2D::MakeFromPoints(const Float2& center, const Vector<Float2>& points)
 		{
 			ConvexShape2D shape(center, points);
-			GrahamScan_convexify(shape._vertices);
+			GrahamScan_Convexify(shape._vertices);
 			return shape;
 		}
 
-		ConvexShape2D ConvexShape2D::makeMinkowskiDifferenceShape(const ConvexShape2D& a, const ConvexShape2D& b)
+		ConvexShape2D ConvexShape2D::MakeMinkowskiDifferenceShape(const ConvexShape2D& a, const ConvexShape2D& b)
 		{
 			ConvexShape2D shape;
 			shape._center = Float2(0, 0);
@@ -70,22 +70,22 @@ namespace mint
 					shape._vertices.PushBack(a._vertices[i] - b._vertices[j]);
 				}
 			}
-			GrahamScan_convexify(shape._vertices);
+			GrahamScan_Convexify(shape._vertices);
 			return shape;
 		}
 
-		void ConvexShape2D::debug_drawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Float2& offset)
+		void ConvexShape2D::DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Float2& offset)
 		{
 			shapeRendererContext.SetColor(color);
 
 			const uint32 vertexCount = _vertices.Size();
 			for (uint32 vertexIndex = 1; vertexIndex < vertexCount; ++vertexIndex)
 			{
-				shapeRendererContext.drawLine(offset + _vertices[vertexIndex - 1], offset + _vertices[vertexIndex], 1.0f);
+				shapeRendererContext.DrawLine(offset + _vertices[vertexIndex - 1], offset + _vertices[vertexIndex], 1.0f);
 			}
 		}
 
-		Float2 ConvexShape2D::computeSupportPoint(const Float2& direction) const
+		Float2 ConvexShape2D::ComputeSupportPoint(const Float2& direction) const
 		{
 			if (_vertices.IsEmpty())
 			{
@@ -107,7 +107,7 @@ namespace mint
 			return _center + _vertices[targetVertexIndex];
 		}
 
-		uint32 ConvexShape2D::GrahamScan_findStartPoint(const Vector<Float2>& points)
+		uint32 ConvexShape2D::GrahamScan_FindStartPoint(const Vector<Float2>& points)
 		{
 			Float2 min = Float2(10000.0f, -10000.0f);
 			const uint32 pointCount = points.Size();
@@ -135,9 +135,9 @@ namespace mint
 			return startPointIndex;
 		}
 
-		void ConvexShape2D::GrahamScan_sortPoints(Vector<Float2>& inoutPoints)
+		void ConvexShape2D::GrahamScan_SortPoints(Vector<Float2>& inoutPoints)
 		{
-			const uint32 startPointIndex = GrahamScan_findStartPoint(inoutPoints);
+			const uint32 startPointIndex = GrahamScan_FindStartPoint(inoutPoints);
 			const Float2& startPoint = inoutPoints[startPointIndex];
 			struct AngleIndex
 			{
@@ -172,14 +172,14 @@ namespace mint
 			inoutPoints = orderedPoints;
 		}
 
-		void ConvexShape2D::GrahamScan_convexify(Vector<Float2>& inoutPoints)
+		void ConvexShape2D::GrahamScan_Convexify(Vector<Float2>& inoutPoints)
 		{
 			if (inoutPoints.IsEmpty())
 			{
 				return;
 			}
 
-			GrahamScan_sortPoints(inoutPoints);
+			GrahamScan_SortPoints(inoutPoints);
 
 			Vector<uint32> convexPointIndices;
 			convexPointIndices.Reserve(inoutPoints.Size());
@@ -231,7 +231,7 @@ namespace mint
 			__noop;
 		}
 
-		void GJKSimplex2D::appendPoint(const Float2& pointA)
+		void GJKSimplex2D::AppendPoint(const Float2& pointA)
 		{
 			_points[_validPointCount] = pointA;
 			++_validPointCount;
@@ -239,7 +239,7 @@ namespace mint
 
 		MINT_INLINE Float2 GJK2D_getMinkowskiDifferenceVertex(const Shape2D& shapeA, const Shape2D& shapeB, const Float2& direction)
 		{
-			return shapeA.computeSupportPoint(direction) - shapeB.computeSupportPoint(-direction);
+			return shapeA.ComputeSupportPoint(direction) - shapeB.ComputeSupportPoint(-direction);
 		}
 
 		MINT_INLINE Float2 GJK2D_computePerpABToAC(const Float2& ab, const Float2& ac)
@@ -252,12 +252,12 @@ namespace mint
 		// returns true whenever it's sure that there's an intersection
 		bool GJK2D_processSimplex(GJKSimplex2D& inoutSimplex, Float2& outDirection)
 		{
-			const Float2& a = inoutSimplex.getPointA();
-			const Float2& b = inoutSimplex.getPointB();
+			const Float2& a = inoutSimplex.GetPointA();
+			const Float2& b = inoutSimplex.GetPointB();
 			const Float2 ab = b - a;
 			const Float2 ao = -a;
 			const float ab_dot_ao = ab.Dot(ao);
-			if (inoutSimplex.getValidPointCount() == 2)
+			if (inoutSimplex.GetValidPointCount() == 2)
 			{
 				// 2-simplex (line)
 				if (ab_dot_ao > 0.0f)
@@ -274,10 +274,10 @@ namespace mint
 					return false;
 				}
 			}
-			else if (inoutSimplex.getValidPointCount() == 3)
+			else if (inoutSimplex.GetValidPointCount() == 3)
 			{
 				// 3-simplex (triangle)
-				const Float2& c = inoutSimplex.getPointC();
+				const Float2& c = inoutSimplex.GetPointC();
 				const Float2 ac = c - a;
 				const float ac_dot_ao = ac.Dot(ao);
 				const Float2 perpDirection_ab_to_ao = GJK2D_computePerpABToAC(ab, ao);
@@ -316,7 +316,7 @@ namespace mint
 			return false;
 		}
 
-		bool intersect2D_GJK(const Shape2D& shapeA, const Shape2D& shapeB)
+		bool Intersect2D_GJK(const Shape2D& shapeA, const Shape2D& shapeB)
 		{
 			Float2 direction = Float2(1, 0);
 			Float2 minkowskiDifferenceVertex = GJK2D_getMinkowskiDifferenceVertex(shapeA, shapeB, direction);
@@ -336,7 +336,7 @@ namespace mint
 					return false;
 				}
 
-				simplex.appendPoint(minkowskiDifferenceVertex);
+				simplex.AppendPoint(minkowskiDifferenceVertex);
 				if (GJK2D_processSimplex(simplex, direction))
 				{
 					return true;

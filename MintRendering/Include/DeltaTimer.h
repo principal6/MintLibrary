@@ -23,9 +23,9 @@ namespace mint
 			~DeltaTimer();
 
 		public:
-			static const DeltaTimer& getInstance() noexcept;
-			float computeDeltaTimeSec() const noexcept;
-			float getDeltaTimeSec() const noexcept;
+			static const DeltaTimer& GetInstance() noexcept;
+			float ComputeDeltaTimeSec() const noexcept;
+			float GetDeltaTimeSec() const noexcept;
 
 		private:
 			mutable float _deltaTimeS;

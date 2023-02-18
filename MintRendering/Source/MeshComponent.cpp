@@ -18,7 +18,7 @@ namespace mint
 			geosphereParam._radius = 1.0f;
 			geosphereParam._subdivisionIteration = 3;
 			geosphereParam._smooth = true;
-			MeshGenerator::generateGeoSphere(geosphereParam, _meshData);
+			MeshGenerator::GenerateGeoSphere(geosphereParam, _meshData);
 		}
 
 		MeshComponent::~MeshComponent()
@@ -26,47 +26,47 @@ namespace mint
 			__noop;
 		}
 
-		const MeshData& MeshComponent::getMeshData() const noexcept
+		const MeshData& MeshComponent::GetMeshData() const noexcept
 		{
 			return _meshData;
 		}
 
-		uint32 MeshComponent::getVertexCount() const noexcept
+		uint32 MeshComponent::GetVertexCount() const noexcept
 		{
-			return _meshData.getVertexCount();
+			return _meshData.GetVertexCount();
 		}
 
-		const VS_INPUT* MeshComponent::getVertices() const noexcept
+		const VS_INPUT* MeshComponent::GetVertices() const noexcept
 		{
 			return (_meshData._vertexArray.IsEmpty()) ? &MeshData::kNullVertex : &_meshData._vertexArray[0];
 		}
 
-		uint32 MeshComponent::getIndexCount() const noexcept
+		uint32 MeshComponent::GetIndexCount() const noexcept
 		{
-			return _meshData.getIndexCount();
+			return _meshData.GetIndexCount();
 		}
 
-		const IndexElementType* MeshComponent::getIndices() const noexcept
+		const IndexElementType* MeshComponent::GetIndices() const noexcept
 		{
 			return (_meshData._faceArray.IsEmpty() == true) ? &MeshData::kNullIndex : &_meshData._faceArray[0]._vertexIndexArray[0];
 		}
 
-		void MeshComponent::shouldDrawNormals(const bool shouldDrawNormals) noexcept
+		void MeshComponent::ShouldDrawNormals(const bool shouldDrawNormals) noexcept
 		{
 			_shouldDrawNormals = shouldDrawNormals;
 		}
 
-		bool MeshComponent::shouldDrawNormals() const noexcept
+		bool MeshComponent::ShouldDrawNormals() const noexcept
 		{
 			return _shouldDrawNormals;
 		}
 
-		void MeshComponent::shouldDrawEdges(const bool shouldDrawEdges) noexcept
+		void MeshComponent::ShouldDrawEdges(const bool shouldDrawEdges) noexcept
 		{
 			_shouldDrawEdges = shouldDrawEdges;
 		}
 
-		bool MeshComponent::shouldDrawEdges() const noexcept
+		bool MeshComponent::ShouldDrawEdges() const noexcept
 		{
 			return _shouldDrawEdges;
 		}

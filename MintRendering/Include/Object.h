@@ -46,24 +46,24 @@ namespace mint
 			virtual ~Object();
 
 		public:
-			void attachComponent(IObjectComponent* const objectComponent);
-			void detachComponent(IObjectComponent* const objectComponent);
+			void AttachComponent(IObjectComponent* const objectComponent);
+			void DetachComponent(IObjectComponent* const objectComponent);
 
 		public:
-			ObjectType getType() const noexcept;
-			bool isTypeOf(const ObjectType objectType) const noexcept;
-			uint32 getComponentCount() const noexcept;
+			ObjectType GetType() const noexcept;
+			bool IsTypeOf(const ObjectType objectType) const noexcept;
+			uint32 GetComponentCount() const noexcept;
 			IObjectComponent* GetComponent(const ObjectComponentType type) const noexcept;
 
 		public:
-			void setObjectTransform(const Transform& transform) noexcept;
-			Transform& getObjectTransform() noexcept;
-			const Transform& getObjectTransform() const noexcept;
-			Float4x4 getObjectTransformMatrix() const noexcept;
+			void SetObjectTransform(const Transform& transform) noexcept;
+			Transform& GetObjectTransform() noexcept;
+			const Transform& GetObjectTransform() const noexcept;
+			Float4x4 GetObjectTransformMatrix() const noexcept;
 
 		protected:
-			TransformComponent* getObjectTransformComponent() const noexcept;
-			float getDeltaTimeSec() const noexcept;
+			TransformComponent* GetObjectTransformComponent() const noexcept;
+			float GetDeltaTimeSec() const noexcept;
 
 		protected:
 			const ObjectPool* const _objectPool;

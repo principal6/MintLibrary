@@ -27,7 +27,7 @@ namespace mint
 
 			COUNT,
 		};
-		MINT_INLINE constexpr uint32 getMouseButtonCount() noexcept
+		MINT_INLINE constexpr uint32 GetMouseButtonCount() noexcept
 		{
 			return static_cast<uint32>(MouseButton::COUNT);
 		}
@@ -87,11 +87,11 @@ namespace mint
 
 			COUNT
 		};
-		MINT_INLINE constexpr uint32 getKeyCodeCount() noexcept
+		MINT_INLINE constexpr uint32 GetKeyCodeCount() noexcept
 		{
 			return static_cast<uint32>(KeyCode::COUNT);
 		}
-		MINT_INLINE constexpr bool isKeyCodeAlnum(const KeyCode keyCode) noexcept
+		MINT_INLINE constexpr bool IsKeyCodeAlnum(const KeyCode keyCode) noexcept
 		{
 			return (KeyCode::A <= keyCode && keyCode <= KeyCode::Num9);
 		}

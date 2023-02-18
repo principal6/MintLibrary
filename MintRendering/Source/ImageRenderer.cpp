@@ -12,36 +12,36 @@ namespace mint
 			, _psTextureSlot{ psTextureSlot }
 			, _transparentColor{ transparentColor }
 		{
-			initializeShaders();
+			InitializeShaders();
 		}
 
-		void ImageRenderer::initializeShaders() noexcept
+		void ImageRenderer::InitializeShaders() noexcept
 		{
-			_clipRect = _graphicDevice.getFullScreenClipRect();
+			_clipRect = _graphicDevice.GetFullScreenClipRect();
 
-			DxShaderPool& shaderPool = _graphicDevice.getShaderPool();
+			DxShaderPool& shaderPool = _graphicDevice.GetShaderPool();
 			{
 				if (_vertexShaderID.IsValid())
 				{
-					shaderPool.removeShader(_vertexShaderID);
+					shaderPool.RemoveShader(_vertexShaderID);
 				}
-				_vertexShaderID = shaderPool.addShaderFromMemory("ImageRendererVS", getDefaultVertexShaderString(), "main_shape", GraphicShaderType::VertexShader);
+				_vertexShaderID = shaderPool.AddShaderFromMemory("ImageRendererVS", GetDefaultVertexShaderString(), "main_shape", GraphicShaderType::VertexShader);
 
 				if (_inputLayoutID.IsValid())
 				{
-					shaderPool.removeInputLayout(_inputLayoutID);
+					shaderPool.RemoveInputLayout(_inputLayoutID);
 				}
 				using namespace Language;
-				const TypeMetaData<CppHlsl::TypeCustomData>& typeMetaData = _graphicDevice.getCppHlslSteamData().GetTypeMetaData(typeid(VS_INPUT_SHAPE));
-				_inputLayoutID = shaderPool.addInputLayout(_vertexShaderID, typeMetaData);
+				const TypeMetaData<CppHlsl::TypeCustomData>& typeMetaData = _graphicDevice.GetCppHlslSteamData().GetTypeMetaData(typeid(VS_INPUT_SHAPE));
+				_inputLayoutID = shaderPool.AddInputLayout(_vertexShaderID, typeMetaData);
 			}
 
 			{
 				if (_geometryShaderID.IsValid())
 				{
-					shaderPool.removeShader(_geometryShaderID);
+					shaderPool.RemoveShader(_geometryShaderID);
 				}
-				_geometryShaderID = shaderPool.addShaderFromMemory("ImageRendererGS", getDefaultGeometryShaderString(), "main_shape", GraphicShaderType::GeometryShader);
+				_geometryShaderID = shaderPool.AddShaderFromMemory("ImageRendererGS", GetDefaultGeometryShaderString(), "main_shape", GraphicShaderType::GeometryShader);
 			}
 
 			{
@@ -62,7 +62,7 @@ namespace mint
 				shaderString += ");\n";
 
 				StackStringA<256> transparentColorString;
-				FormatString(transparentColorString, "float4(%.1f, %.1f, %.1f, %.1f);\n", _transparentColor.rAsFloat(), _transparentColor.gAsFloat(), _transparentColor.bAsFloat(), _transparentColor.aAsFloat());
+				FormatString(transparentColorString, "float4(%.1f, %.1f, %.1f, %.1f);\n", _transparentColor.RAsFloat(), _transparentColor.GAsFloat(), _transparentColor.BAsFloat(), _transparentColor.AAsFloat());
 
 				shaderString += "float4 main_image(VS_OUTPUT_SHAPE input) : SV_Target\n";
 				shaderString += "{\n";
@@ -75,30 +75,30 @@ namespace mint
 				shaderString += "}";
 				if (_pixelShaderID.IsValid())
 				{
-					shaderPool.removeShader(_pixelShaderID);
+					shaderPool.RemoveShader(_pixelShaderID);
 				}
-				_pixelShaderID = shaderPool.addShaderFromMemory("ImageRendererPS", shaderString.CString(), "main_image", GraphicShaderType::PixelShader);
+				_pixelShaderID = shaderPool.AddShaderFromMemory("ImageRendererPS", shaderString.CString(), "main_image", GraphicShaderType::PixelShader);
 			}
 		}
 
-		void ImageRenderer::flush() noexcept
+		void ImageRenderer::Flush() noexcept
 		{
-			__super::flush();
+			__super::Flush();
 		}
 
-		void ImageRenderer::render() noexcept
+		void ImageRenderer::Render() noexcept
 		{
-			__super::render();
+			__super::Render();
 		}
 
-		void ImageRenderer::drawImage(const Float2& position, const Float2& size, const Float2& uv0, const Float2& uv1)
+		void ImageRenderer::DrawImage(const Float2& position, const Float2& size, const Float2& uv0, const Float2& uv1)
 		{
 			const Float2 halfSize = size * 0.5f;
-			setPosition(Float4(position + halfSize));
+			SetPosition(Float4(position + halfSize));
 			_uv0 = uv0;
 			_uv1 = uv1;
-			drawRectangleInternal(Float2::kZero, halfSize, Color::kWhite, ShapeType::TexturedTriangle);
-			pushShapeTransformToBuffer(0.0f);
+			DrawRectangleInternal(Float2::kZero, halfSize, Color::kWhite, ShapeType::TexturedTriangle);
+			PushShapeTransformToBuffer(0.0f);
 		}
 	}
 }

@@ -11,7 +11,7 @@ namespace mint
 			__noop;
 		}
 
-		void FixedTimeStepCalculator::update(const float deltaTime)
+		void FixedTimeStepCalculator::Update(const float deltaTime)
 		{
 			_leftOverTime += deltaTime;
 			_substepCount = static_cast<uint32>(_leftOverTime / kFixedDeltaTime);

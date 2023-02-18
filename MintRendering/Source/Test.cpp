@@ -54,31 +54,31 @@ namespace mint
 			Vector<Float2> bezierLinePointSet1;
 			Vector<Float2> bezierLinePointSet2;
 			Vector<Float2> bezierLinePointSet3;
-			splineGenerator.setPrecision(16);
-			splineGenerator.generateBezierCurve(bezierControlPointSet0, bezierLinePointSet0);
-			splineGenerator.generateBezierCurve(bezierControlPointSet1, bezierLinePointSet1);
-			splineGenerator.generateBezierCurve(bezierControlPointSet2, bezierLinePointSet2);
-			splineGenerator.generateBezierCurve(bezierControlPointSet3, bezierLinePointSet3);
-			graphicDevice.getShapeRendererContext().SetColor(Color::kRed);
-			graphicDevice.getShapeRendererContext().drawLineStrip(bezierLinePointSet0, 1.0f);
-			graphicDevice.getShapeRendererContext().SetColor(Color::kGreen);
-			graphicDevice.getShapeRendererContext().drawLineStrip(bezierLinePointSet1, 1.0f);
-			graphicDevice.getShapeRendererContext().SetColor(Color::kBlue);
-			graphicDevice.getShapeRendererContext().drawLineStrip(bezierLinePointSet2, 1.0f);
-			graphicDevice.getShapeRendererContext().SetColor(Color::kCyan);
-			graphicDevice.getShapeRendererContext().drawLineStrip(bezierLinePointSet3, 1.0f);
+			splineGenerator.SetPrecision(16);
+			splineGenerator.GenerateBezierCurve(bezierControlPointSet0, bezierLinePointSet0);
+			splineGenerator.GenerateBezierCurve(bezierControlPointSet1, bezierLinePointSet1);
+			splineGenerator.GenerateBezierCurve(bezierControlPointSet2, bezierLinePointSet2);
+			splineGenerator.GenerateBezierCurve(bezierControlPointSet3, bezierLinePointSet3);
+			graphicDevice.GetShapeRendererContext().SetColor(Color::kRed);
+			graphicDevice.GetShapeRendererContext().DrawLineStrip(bezierLinePointSet0, 1.0f);
+			graphicDevice.GetShapeRendererContext().SetColor(Color::kGreen);
+			graphicDevice.GetShapeRendererContext().DrawLineStrip(bezierLinePointSet1, 1.0f);
+			graphicDevice.GetShapeRendererContext().SetColor(Color::kBlue);
+			graphicDevice.GetShapeRendererContext().DrawLineStrip(bezierLinePointSet2, 1.0f);
+			graphicDevice.GetShapeRendererContext().SetColor(Color::kCyan);
+			graphicDevice.GetShapeRendererContext().DrawLineStrip(bezierLinePointSet3, 1.0f);
 
-			graphicDevice.getShapeRendererContext().SetColor(Color::kBlack);
+			graphicDevice.GetShapeRendererContext().SetColor(Color::kBlack);
 			for (uint32 sourceControlPointIndex = 0; sourceControlPointIndex < sourceControlPointCount; sourceControlPointIndex++)
 			{
 				const Float2& sourceControlPoint = sourceControlPointSet[sourceControlPointIndex];
-				graphicDevice.getShapeRendererContext().setPosition(Float4(sourceControlPoint._x, sourceControlPoint._y, 0.0, 1.0f));
-				graphicDevice.getShapeRendererContext().drawCircle(2.0f);
+				graphicDevice.GetShapeRendererContext().SetPosition(Float4(sourceControlPoint._x, sourceControlPoint._y, 0.0, 1.0f));
+				graphicDevice.GetShapeRendererContext().DrawCircle(2.0f);
 
 				if (sourceControlPointIndex > 0)
 				{
 					const Float2& previousSourceControlPoint = sourceControlPointSet[sourceControlPointIndex - 1];
-					graphicDevice.getShapeRendererContext().drawLine(previousSourceControlPoint, sourceControlPoint, 1.0f);
+					graphicDevice.GetShapeRendererContext().DrawLine(previousSourceControlPoint, sourceControlPoint, 1.0f);
 				}
 			}
 
@@ -89,10 +89,10 @@ namespace mint
 				bSplineKnotVector.PushBack(static_cast<float>(knotIndex));
 			}
 			Vector<Float2> bSplineLinePointSet;
-			splineGenerator.setPrecision(64);
-			splineGenerator.generateBSpline(bSplineOrder, sourceControlPointSet, bSplineKnotVector, bSplineLinePointSet);
-			graphicDevice.getShapeRendererContext().SetColor(Color::kMagenta);
-			graphicDevice.getShapeRendererContext().drawLineStrip(bSplineLinePointSet, 2.0f);
+			splineGenerator.SetPrecision(64);
+			splineGenerator.GenerateBSpline(bSplineOrder, sourceControlPointSet, bSplineKnotVector, bSplineLinePointSet);
+			graphicDevice.GetShapeRendererContext().SetColor(Color::kMagenta);
+			graphicDevice.GetShapeRendererContext().DrawLineStrip(bSplineLinePointSet, 2.0f);
 			return true;
 		}
 
@@ -100,22 +100,22 @@ namespace mint
 		{
 			using namespace Rendering;
 
-			ShapeRendererContext& shapeFontRendererContext = graphicDevice.getShapeRendererContext();
+			ShapeRendererContext& shapeFontRendererContext = graphicDevice.GetShapeRendererContext();
 			Plotter plotter(shapeFontRendererContext);
-			plotter.xLabel(L"weight");
-			plotter.yLabel(L"length");
+			plotter.SetXLabel(L"weight");
+			plotter.SetYLabel(L"length");
 
 			Vector<float> xData{ 1.0f, 2.0f, 4.0f, 8.0f, 16.0f, 32.0f };
 			Vector<float> yData{ 10.0f, 11.0f, 12.0f, 13.0f, 14.0f, 15.0f };
-			plotter.plotType(Plotter::PlotType::Circle);
-			plotter.scatter(xData, yData);
+			plotter.SetPlotType(Plotter::PlotType::Circle);
+			plotter.Scatter(xData, yData);
 
 			Vector<float> xData1{ 21.0f, 22.0f, 24.0f, 28.0f, 26.0f, 22.0f };
 			Vector<float> yData1{ -2.0f, -3.0f, -8.0f, -1.0f, 50.0f, 30.0f };
-			plotter.plotType(Plotter::PlotType::Triangle);
-			plotter.scatter(xData1, yData1);
+			plotter.SetPlotType(Plotter::PlotType::Triangle);
+			plotter.Scatter(xData1, yData1);
 
-			plotter.render();
+			plotter.Render();
 			return true;
 		}
 
@@ -125,7 +125,7 @@ namespace mint
 
 			MathExpressionRenderer mathExpressionRenderer(graphicDevice);
 			mathExpressionRenderer.drawMathExpression(MathExpression(L"\\bold{aba} is it even possibile? AB=C"), Float2(100, 100));
-			mathExpressionRenderer.render();
+			mathExpressionRenderer.Render();
 			return true;
 		}
 
@@ -134,15 +134,15 @@ namespace mint
 			using namespace Rendering;
 			using namespace GUI;
 
-			GUI::GUIContext& guiContext = graphicDevice.getGUIContext();
+			GUI::GUIContext& guiContext = graphicDevice.GetGUIContext();
 			//guiContext._debugSwitch._renderZoneOverlay = true;
 			//guiContext._debugSwitch._renderMousePoints = true;
 			//guiContext._debugSwitch._renderResizingArea = true;
 			ButtonDesc button0Desc;
 			button0Desc._text = L"버튼0";
-			guiContext.nextControlPosition(Float2(100, 50));
-			guiContext.nextControlSize(Float2(100, 30));
-			if (guiContext.makeButton(MINT_FILE_LINE, button0Desc))
+			guiContext.NextControlPosition(Float2(100, 50));
+			guiContext.NextControlSize(Float2(100, 30));
+			if (guiContext.MakeButton(MINT_FILE_LINE, button0Desc))
 			{
 			}
 
@@ -150,62 +150,62 @@ namespace mint
 			window0Desc._title = L"윈도우0";
 			window0Desc._initialPosition = Float2(100, 100);
 			window0Desc._initialSize = Float2(300, 400);
-			if (guiContext.beginWindow(MINT_FILE_LINE, window0Desc))
+			if (guiContext.BeginWindow(MINT_FILE_LINE, window0Desc))
 			{
 				ButtonDesc button1Desc;
 				button1Desc._text = L"버튼1";
-				//guiContext.nextControlPosition(Float2(100, 200));
-				//guiContext.nextControlSize(Float2(100, 50));
-				if (guiContext.makeButton(MINT_FILE_LINE, button1Desc))
+				//guiContext.NextControlPosition(Float2(100, 200));
+				//guiContext.NextControlSize(Float2(100, 50));
+				if (guiContext.MakeButton(MINT_FILE_LINE, button1Desc))
 				{
 				}
 
-				guiContext.nextControlSameLine();
+				guiContext.NextControlSameLine();
 
 				LabelDesc labelDesc;
 				labelDesc._text = L"테스트 레이블";
-				//labelDesc.setBackgroundColor(Color::kCyan);
-				//labelDesc.setTextColor(Color::kBlack);
-				//guiContext.nextControlPosition(Float2(100, 100));
-				//guiContext.nextControlSize(Float2(100, 50));
-				guiContext.makeLabel(MINT_FILE_LINE, labelDesc);
+				//labelDesc.SetBackgroundColor(Color::kCyan);
+				//labelDesc.SetTextColor(Color::kBlack);
+				//guiContext.NextControlPosition(Float2(100, 100));
+				//guiContext.NextControlSize(Float2(100, 50));
+				guiContext.MakeLabel(MINT_FILE_LINE, labelDesc);
 
-				guiContext.nextControlSameLine();
+				guiContext.NextControlSameLine();
 
 				ButtonDesc button2Desc;
 				button2Desc._text = L"버튼2";
-				if (guiContext.makeButton(MINT_FILE_LINE, button2Desc))
+				if (guiContext.MakeButton(MINT_FILE_LINE, button2Desc))
 				{
 				}
 
 				ButtonDesc button3Desc;
 				button3Desc._text = L"버튼3";
-				if (guiContext.makeButton(MINT_FILE_LINE, button3Desc))
+				if (guiContext.MakeButton(MINT_FILE_LINE, button3Desc))
 				{
 				}
 
-				guiContext.nextControlSameLine();
+				guiContext.NextControlSameLine();
 
 				ButtonDesc button4Desc;
 				button4Desc._text = L"버튼4";
-				if (guiContext.makeButton(MINT_FILE_LINE, button4Desc))
+				if (guiContext.MakeButton(MINT_FILE_LINE, button4Desc))
 				{
 				}
 
 				ButtonDesc button5Desc;
 				button5Desc._text = L"버튼5";
-				if (guiContext.makeButton(MINT_FILE_LINE, button5Desc))
+				if (guiContext.MakeButton(MINT_FILE_LINE, button5Desc))
 				{
 				}
 
-				guiContext.endWindow();
+				guiContext.EndWindow();
 			}
 
 			ButtonDesc button1Desc;
 			button1Desc._text = L"버튼1";
-			guiContext.nextControlPosition(Float2(210, 50));
-			guiContext.nextControlSize(Float2(100, 30));
-			if (guiContext.makeButton(MINT_FILE_LINE, button1Desc))
+			guiContext.NextControlPosition(Float2(210, 50));
+			guiContext.NextControlSize(Float2(100, 30));
+			if (guiContext.MakeButton(MINT_FILE_LINE, button1Desc))
 			{
 			}
 
@@ -213,25 +213,25 @@ namespace mint
 			window1Desc._title = L"윈도우1";
 			window1Desc._initialPosition = Float2(450, 100);
 			window1Desc._initialSize = Float2(200, 300);
-			if (guiContext.beginWindow(MINT_FILE_LINE, window1Desc))
+			if (guiContext.BeginWindow(MINT_FILE_LINE, window1Desc))
 			{
 
 				ButtonDesc button5Desc;
 				button5Desc._text = L"버튼1-1";
-				if (guiContext.makeButton(MINT_FILE_LINE, button5Desc))
+				if (guiContext.MakeButton(MINT_FILE_LINE, button5Desc))
 				{
 				}
 
-				guiContext.endWindow();
+				guiContext.EndWindow();
 			}
 
 			WindowDesc window2Desc;
 			window2Desc._title = L"윈도우2";
 			window2Desc._initialPosition = Float2(700, 100);
 			window2Desc._initialSize = Float2(200, 200);
-			if (guiContext.beginWindow(MINT_FILE_LINE, window2Desc))
+			if (guiContext.BeginWindow(MINT_FILE_LINE, window2Desc))
 			{
-				guiContext.endWindow();
+				guiContext.EndWindow();
 			}
 			return true;
 		}

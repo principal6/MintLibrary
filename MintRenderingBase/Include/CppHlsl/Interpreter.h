@@ -31,13 +31,13 @@ namespace mint
 				~Interpreter() = default;
 
 			public:
-				void parseCppHlslFile(const char* const fileName);
+				void ParseCppHlslFile(const char* const fileName);
 
 			public:
-				void generateHlslString(const CppHlslFileType fileType);
+				void GenerateHlslString(const CppHlslFileType fileType);
 
 			public:
-				const char* getHlslString() const noexcept;
+				const char* GetHlslString() const noexcept;
 
 			public:
 				uint32 GetTypeMetaDataCount() const noexcept;

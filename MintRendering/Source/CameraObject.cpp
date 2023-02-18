@@ -22,7 +22,7 @@ namespace mint
 			, _isBoostMode{ false }
 			, _rotationFactor{ 0.005f }
 		{
-			updatePerspectiveMatrix();
+			UpdatePerspectiveMatrix();
 		}
 
 		CameraObject::~CameraObject()
@@ -30,84 +30,84 @@ namespace mint
 			__noop;
 		}
 
-		void CameraObject::setPerspectiveFov(const float fov)
+		void CameraObject::SetPerspectiveFov(const float fov)
 		{
 			_fov = fov;
-			updatePerspectiveMatrix();
+			UpdatePerspectiveMatrix();
 		}
 
-		void CameraObject::setPerspectiveZRange(const float nearZ, const float farZ)
+		void CameraObject::SetPerspectiveZRange(const float nearZ, const float farZ)
 		{
 			_nearZ = nearZ;
 			_farZ = farZ;
-			updatePerspectiveMatrix();
+			UpdatePerspectiveMatrix();
 		}
 
-		void CameraObject::setPerspectiveScreenRatio(const float screenRatio)
+		void CameraObject::SetPerspectiveScreenRatio(const float screenRatio)
 		{
 			_screenRatio = screenRatio;
-			updatePerspectiveMatrix();
+			UpdatePerspectiveMatrix();
 		}
 
-		void CameraObject::updatePerspectiveMatrix() noexcept
+		void CameraObject::UpdatePerspectiveMatrix() noexcept
 		{
 			_projectionMatrix = Float4x4::ProjectionMatrixPerspectiveYUP(_isRightHanded, _fov, _nearZ, _farZ, _screenRatio);
 		}
 
-		void CameraObject::steer(const Platform::InputContext& inputContext, const bool isMoveLocked)
+		void CameraObject::Steer(const Platform::InputContext& inputContext, const bool isMoveLocked)
 		{
 			if (isMoveLocked == false)
 			{
-				if (inputContext.isKeyDown(Platform::KeyCode::Q) == true)
+				if (inputContext.IsKeyDown(Platform::KeyCode::Q) == true)
 				{
-					move(Rendering::CameraObject::MoveDirection::Upward);
+					Move(Rendering::CameraObject::MoveDirection::Upward);
 				}
 
-				if (inputContext.isKeyDown(Platform::KeyCode::E) == true)
+				if (inputContext.IsKeyDown(Platform::KeyCode::E) == true)
 				{
-					move(Rendering::CameraObject::MoveDirection::Downward);
+					Move(Rendering::CameraObject::MoveDirection::Downward);
 				}
 
-				if (inputContext.isKeyDown(Platform::KeyCode::W) == true)
+				if (inputContext.IsKeyDown(Platform::KeyCode::W) == true)
 				{
-					move(Rendering::CameraObject::MoveDirection::Forward);
+					Move(Rendering::CameraObject::MoveDirection::Forward);
 				}
 
-				if (inputContext.isKeyDown(Platform::KeyCode::S) == true)
+				if (inputContext.IsKeyDown(Platform::KeyCode::S) == true)
 				{
-					move(Rendering::CameraObject::MoveDirection::Backward);
+					Move(Rendering::CameraObject::MoveDirection::Backward);
 				}
 
-				if (inputContext.isKeyDown(Platform::KeyCode::A) == true)
+				if (inputContext.IsKeyDown(Platform::KeyCode::A) == true)
 				{
-					move(Rendering::CameraObject::MoveDirection::Leftward);
+					Move(Rendering::CameraObject::MoveDirection::Leftward);
 				}
 
-				if (inputContext.isKeyDown(Platform::KeyCode::D) == true)
+				if (inputContext.IsKeyDown(Platform::KeyCode::D) == true)
 				{
-					move(Rendering::CameraObject::MoveDirection::Rightward);
+					Move(Rendering::CameraObject::MoveDirection::Rightward);
 				}
 			}
 
-			if (inputContext.isMousePointerMoved() == true)
+			if (inputContext.IsMousePointerMoved() == true)
 			{
-				if (inputContext.isMouseButtonDown(Platform::MouseButton::Right) == true)
+				if (inputContext.IsMouseButtonDown(Platform::MouseButton::Right) == true)
 				{
-					rotateByMouseDelta(inputContext.getMouseDeltaPosition());
+					RotateByMouseDelta(inputContext.GetMouseDeltaPosition());
 				}
 			}
 		}
 
-		void CameraObject::move(const MoveDirection moveDirection)
+		void CameraObject::Move(const MoveDirection moveDirection)
 		{
-			const float deltaTimeSec = getDeltaTimeSec();
+			const float deltaTimeSec = GetDeltaTimeSec();
 
-			const float handnessSign = getHandednessSign();
+			const float handnessSign = GetHandednessSign();
 			const Float3& leftDirection = Float3::Cross(_forwardDirection, Float3::kAxisY) * handnessSign;
 			const Float3& upDirection = Float3::Cross(leftDirection, _forwardDirection) * handnessSign;
 
-			const float moveSpeedFloat = getMoveSpeedAsFloat((_isBoostMode) ? getFasterMoveSpeed(getFasterMoveSpeed(_moveSpeed)) : _moveSpeed);
-			Transform& transform = getObjectTransform();
+			const float moveSpeedFloat = GetMoveSpeedAsFloat((_isBoostMode) ? GetFasterMoveSpeed(GetFasterMoveSpeed(_moveSpeed)) : _moveSpeed);
+			Transform& transform = GetObjectTransform();
 			switch (moveDirection)
 			{
 			case CameraObject::MoveDirection::Forward:
@@ -133,54 +133,54 @@ namespace mint
 			}
 		}
 
-		void CameraObject::increaseMoveSpeed() noexcept
+		void CameraObject::IncreaseMoveSpeed() noexcept
 		{
-			_moveSpeed = getFasterMoveSpeed(_moveSpeed);
+			_moveSpeed = GetFasterMoveSpeed(_moveSpeed);
 		}
 
-		void CameraObject::decreaseMoveSpeed() noexcept
+		void CameraObject::DecreaseMoveSpeed() noexcept
 		{
-			_moveSpeed = getSlowerMoveSpeed(_moveSpeed);
+			_moveSpeed = GetSlowerMoveSpeed(_moveSpeed);
 		}
 
-		void CameraObject::setBoostMode(const bool isBoostMode) noexcept
+		void CameraObject::SetBoostMode(const bool isBoostMode) noexcept
 		{
 			_isBoostMode = isBoostMode;
 		}
 
-		void CameraObject::rotatePitch(const float angle)
+		void CameraObject::RotatePitch(const float angle)
 		{
 			_pitch += angle * _rotationFactor;
 			_pitch = Math::LimitAngleToPositiveNegativeTwoPiRotation(_pitch);
 		}
 
-		void CameraObject::rotateYaw(const float angle)
+		void CameraObject::RotateYaw(const float angle)
 		{
 			_yaw += angle * _rotationFactor;
 			_yaw = Math::LimitAngleToPositiveNegativeTwoPiRotation(_yaw);
 		}
 
-		void CameraObject::rotateByMouseDelta(const Float2& mouseDelta)
+		void CameraObject::RotateByMouseDelta(const Float2& mouseDelta)
 		{
-			const float handnessSign = getHandednessSign();
-			rotatePitch(mouseDelta._y);
-			rotateYaw(mouseDelta._x * handnessSign);
+			const float handnessSign = GetHandednessSign();
+			RotatePitch(mouseDelta._y);
+			RotateYaw(mouseDelta._x * handnessSign);
 		}
 
-		Float4x4 CameraObject::getViewMatrix() const noexcept
+		Float4x4 CameraObject::GetViewMatrix() const noexcept
 		{
-			const Float4x4& RotationMatrix = getRotationMatrix();
-			return RotationMatrix.Transpose() * Float4x4::TranslationMatrix(-getObjectTransform()._translation);
+			const Float4x4& RotationMatrix = GetRotationMatrix();
+			return RotationMatrix.Transpose() * Float4x4::TranslationMatrix(-GetObjectTransform()._translation);
 		}
 
-		const Float4x4& CameraObject::getProjectionMatrix() const noexcept
+		const Float4x4& CameraObject::GetProjectionMatrix() const noexcept
 		{
 			return _projectionMatrix;
 		}
 
-		Float4x4 CameraObject::getRotationMatrix() const noexcept
+		Float4x4 CameraObject::GetRotationMatrix() const noexcept
 		{
-			const float handnessSign = getHandednessSign();
+			const float handnessSign = GetHandednessSign();
 			const Float3 kBaseForward = Float3::kAxisZ * handnessSign;
 			const Float3& forwardDirectionXz = Float4x4::RotationMatrixY(_yaw) * kBaseForward;
 			const Float3& leftDirection = Float3::CrossAndNormalize(forwardDirectionXz, Float3::kAxisY) * handnessSign;
@@ -189,7 +189,7 @@ namespace mint
 			return Float4x4::RotationMatrixFromAxes(-leftDirection, upDirection, _forwardDirection * handnessSign);
 		}
 
-		float CameraObject::getHandednessSign() const noexcept
+		float CameraObject::GetHandednessSign() const noexcept
 		{
 			return (_isRightHanded ? -1.0f : +1.0f);
 		}

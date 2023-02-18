@@ -15,9 +15,9 @@ namespace mint
 			__noop;
 		}
 
-		void MouseState::process() noexcept
+		void MouseState::Process() noexcept
 		{
-			for (uint32 mouseButtonIndex = 0; mouseButtonIndex < getMouseButtonCount(); ++mouseButtonIndex)
+			for (uint32 mouseButtonIndex = 0; mouseButtonIndex < GetMouseButtonCount(); ++mouseButtonIndex)
 			{
 				if (_buttonStates[mouseButtonIndex] == MouseButtonState::Pressed)
 				{
@@ -40,37 +40,37 @@ namespace mint
 			_isPointerMoved = false;
 		}
 
-		bool MouseState::isPointerMoved() const noexcept
+		bool MouseState::IsPointerMoved() const noexcept
 		{
 			return _isPointerMoved;
 		}
 
-		void MouseState::setPosition(const Float2& position) noexcept
+		void MouseState::SetPosition(const Float2& position) noexcept
 		{
 			_position = position;
 			_isPointerMoved = true;
 		}
 
-		void MouseState::setDeltaPosition(const Float2& deltaPosition) noexcept
+		void MouseState::SetDeltaPosition(const Float2& deltaPosition) noexcept
 		{
 			_deltaPosition = deltaPosition;
 			_isPointerMoved = true;
 		}
 
-		const Float2& MouseState::getPosition() const noexcept
+		const Float2& MouseState::GetPosition() const noexcept
 		{
 			return _position;
 		}
 
-		const Float2& MouseState::getDeltaPosition() const noexcept
+		const Float2& MouseState::GetDeltaPosition() const noexcept
 		{
 			return _deltaPosition;
 		}
 
 
-		void KeyboardState::process() noexcept
+		void KeyboardState::Process() noexcept
 		{
-			for (uint32 keyIndex = 0; keyIndex < getKeyCodeCount(); keyIndex++)
+			for (uint32 keyIndex = 0; keyIndex < GetKeyCodeCount(); keyIndex++)
 			{
 				if (_keyStates[keyIndex] == KeyState::Pressed)
 				{
@@ -99,26 +99,26 @@ namespace mint
 			__noop;
 		}
 
-		InputContext& InputContext::getInstance() noexcept
+		InputContext& InputContext::GetInstance() noexcept
 		{
 			static InputContext instance;
 			return instance;
 		}
 
-		void InputContext::flushInputEvents() noexcept
+		void InputContext::FlushInputEvents() noexcept
 		{
 			_events.Flush();
 		}
 
-		void InputContext::pushInputEvent(const InputEvent& inputEvent) noexcept
+		void InputContext::PushInputEvent(const InputEvent& inputEvent) noexcept
 		{
 			_events.Push(inputEvent);
 		}
 
-		void InputContext::processEvents() noexcept
+		void InputContext::ProcessEvents() noexcept
 		{
-			_mouseState.process();
-			_keyboardState.process();
+			_mouseState.Process();
+			_keyboardState.Process();
 
 			while (_events.IsEmpty() == false)
 			{
@@ -140,7 +140,7 @@ namespace mint
 					}
 					case InputMouseEventType::ButtonReleased:
 					{
-						if (isMouseButtonDown(mouseData._button) == true)
+						if (IsMouseButtonDown(mouseData._button) == true)
 						{
 							_mouseState._clickedButton = mouseData._button;
 						}
@@ -157,12 +157,12 @@ namespace mint
 					}
 					case InputMouseEventType::PointerMoved:
 					{
-						_mouseState.setPosition(mouseData._position);
+						_mouseState.SetPosition(mouseData._position);
 						break;
 					}
 					case InputMouseEventType::PointerMovedDelta:
 					{
-						_mouseState.setDeltaPosition(mouseData._position);
+						_mouseState.SetDeltaPosition(mouseData._position);
 						break;
 					}
 					case InputMouseEventType::WheelScrolled:
@@ -216,111 +216,111 @@ namespace mint
 			}
 		}
 
-		const MouseState& InputContext::getMouseState() const noexcept
+		const MouseState& InputContext::GetMouseState() const noexcept
 		{
 			return _mouseState;
 		}
 
-		MouseButtonState InputContext::getMouseButtonState(const MouseButton mouseButton) const noexcept
+		MouseButtonState InputContext::GetMouseButtonState(const MouseButton mouseButton) const noexcept
 		{
 			const int32 mouseButtonIndex = static_cast<int32>(mouseButton);
 			return _mouseState._buttonStates[mouseButtonIndex];
 		}
 
-		bool InputContext::isMouseButtonPressed() const noexcept
+		bool InputContext::IsMouseButtonPressed() const noexcept
 		{
 			return _mouseState._pressedButton != MouseButton::COUNT;
 		}
 
-		bool InputContext::isMouseButtonReleased() const noexcept
+		bool InputContext::IsMouseButtonReleased() const noexcept
 		{
 			return _mouseState._releasedButton != MouseButton::COUNT;
 		}
 
-		bool InputContext::isMouseButtonClicked() const noexcept
+		bool InputContext::IsMouseButtonClicked() const noexcept
 		{
 			return _mouseState._clickedButton != MouseButton::COUNT;
 		}
 
-		bool InputContext::isMouseButtonDoubleClicked() const noexcept
+		bool InputContext::IsMouseButtonDoubleClicked() const noexcept
 		{
 			return _mouseState._doubleClickedButton != MouseButton::COUNT;
 		}
 
-		bool InputContext::isMouseButtonDown(const MouseButton mouseButton) const noexcept
+		bool InputContext::IsMouseButtonDown(const MouseButton mouseButton) const noexcept
 		{
-			return getMouseButtonState(mouseButton) == MouseButtonState::Down || getMouseButtonState(mouseButton) == MouseButtonState::Pressed;
+			return GetMouseButtonState(mouseButton) == MouseButtonState::Down || GetMouseButtonState(mouseButton) == MouseButtonState::Pressed;
 		}
 
-		bool InputContext::isMouseButtonUp(const MouseButton mouseButton) const noexcept
+		bool InputContext::IsMouseButtonUp(const MouseButton mouseButton) const noexcept
 		{
-			return getMouseButtonState(mouseButton) == MouseButtonState::Released || getMouseButtonState(mouseButton) == MouseButtonState::Up;
+			return GetMouseButtonState(mouseButton) == MouseButtonState::Released || GetMouseButtonState(mouseButton) == MouseButtonState::Up;
 		}
 
-		bool InputContext::isMousePointerMoved() const noexcept
+		bool InputContext::IsMousePointerMoved() const noexcept
 		{
-			return _mouseState.isPointerMoved();
+			return _mouseState.IsPointerMoved();
 		}
 
-		bool InputContext::isMouseWheelScrolled() const noexcept
+		bool InputContext::IsMouseWheelScrolled() const noexcept
 		{
 			return _mouseState._wheelScroll != 0.0f;
 		}
 
-		Float2 InputContext::getMousePosition() const noexcept
+		Float2 InputContext::GetMousePosition() const noexcept
 		{
-			return _mouseState.getPosition();
+			return _mouseState.GetPosition();
 		}
 
-		Float2 InputContext::getMouseDeltaPosition() const noexcept
+		Float2 InputContext::GetMouseDeltaPosition() const noexcept
 		{
-			return _mouseState.getDeltaPosition();
+			return _mouseState.GetDeltaPosition();
 		}
 
-		float InputContext::getMouseWheelScroll() const noexcept
+		float InputContext::GetMouseWheelScroll() const noexcept
 		{
 			return _mouseState._wheelScroll;
 		}
 
-		const KeyboardState& InputContext::getKeyboardState() const noexcept
+		const KeyboardState& InputContext::GetKeyboardState() const noexcept
 		{
 			return _keyboardState;
 		}
 
-		KeyState InputContext::getKeyState(const KeyCode keyCode) const noexcept
+		KeyState InputContext::GetKeyState(const KeyCode keyCode) const noexcept
 		{
 			const int32 keyIndex = static_cast<int32>(keyCode);
 			return _keyboardState._keyStates[keyIndex];
 		}
 
-		bool InputContext::isKeyPressed() const noexcept
+		bool InputContext::IsKeyPressed() const noexcept
 		{
 			return _keyboardState._pressedKeyCode != KeyCode::NONE;
 		}
 
-		bool InputContext::isKeyReleased() const noexcept
+		bool InputContext::IsKeyReleased() const noexcept
 		{
 			return _keyboardState._releasedKeyCode != KeyCode::NONE;
 		}
 
-		bool InputContext::isKeyInputCharacter() const noexcept
+		bool InputContext::IsKeyInputCharacter() const noexcept
 		{
 			return _keyboardState._character != L'\0';
 		}
 
-		bool InputContext::isKeyInputCharacterCandidate() const noexcept
+		bool InputContext::IsKeyInputCharacterCandidate() const noexcept
 		{
 			return _keyboardState._characterCandidate != L'\0';
 		}
 
-		bool InputContext::isKeyDown(const KeyCode keyCode) const noexcept
+		bool InputContext::IsKeyDown(const KeyCode keyCode) const noexcept
 		{
-			return getKeyState(keyCode) == KeyState::Down || getKeyState(keyCode) == KeyState::Pressed;
+			return GetKeyState(keyCode) == KeyState::Down || GetKeyState(keyCode) == KeyState::Pressed;
 		}
 
-		bool InputContext::isKeyUp(const KeyCode keyCode) const noexcept
+		bool InputContext::IsKeyUp(const KeyCode keyCode) const noexcept
 		{
-			return getKeyState(keyCode) == KeyState::Up || getKeyState(keyCode) == KeyState::Released;
+			return GetKeyState(keyCode) == KeyState::Up || GetKeyState(keyCode) == KeyState::Released;
 		}
 	}
 }

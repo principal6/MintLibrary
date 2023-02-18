@@ -24,22 +24,22 @@ namespace mint
 		~BinaryPointerReader() = default;
 
 	public:
-		void reset(const byte* const bytes, const uint32 byteCount) { _bytes = bytes; _byteCount = byteCount; _at = 0; }
+		void Reset(const byte* const bytes, const uint32 byteCount) { _bytes = bytes; _byteCount = byteCount; _at = 0; }
 
-		void goTo(const uint32 at) const;
+		void GoTo(const uint32 at) const;
 
-		bool canRead(const uint32 count) const;
+		bool CanRead(const uint32 count) const;
 		
 		template <typename T>
-		const T* const peek() const;
+		const T* const Peek() const;
 
 		template <typename T>
-		const T* const read() const;
+		const T* const Read() const;
 
 		template <typename T>
-		const T* const read(const uint32 count) const;
+		const T* const Read(const uint32 count) const;
 
-		void skip(const uint32 count) const;
+		void Skip(const uint32 count) const;
 
 	private:
 		const byte* _bytes;
@@ -55,27 +55,27 @@ namespace mint
 		virtual ~BinaryFileReader() = default;
 
 	public:
-		virtual bool open(const char* const fileName) override;
-		virtual bool isOpen() const noexcept override;
-		virtual uint32 getFileSize() const noexcept override;
+		virtual bool Open(const char* const fileName) override;
+		virtual bool IsOpen() const noexcept override;
+		virtual uint32 GetFileSize() const noexcept override;
 
 	public:
-		void goTo(const uint32 at);
+		void GoTo(const uint32 at);
 
-		bool canRead(const uint32 count) const noexcept;
-
-		template <typename T>
-		const T* const peek() const noexcept;
+		bool CanRead(const uint32 count) const noexcept;
 
 		template <typename T>
-		const T* const read() noexcept;
+		const T* const Peek() const noexcept;
 
 		template <typename T>
-		const T* const read(const uint32 count) noexcept;
+		const T* const Read() noexcept;
 
-		void skip(const uint32 count) noexcept;
+		template <typename T>
+		const T* const Read(const uint32 count) noexcept;
 
-		const Vector<byte>& getBytes() const { return _bytes; }
+		void Skip(const uint32 count) noexcept;
+
+		const Vector<byte>& GetBytes() const { return _bytes; }
 
 	private:
 		Vector<byte> _bytes;
@@ -90,24 +90,24 @@ namespace mint
 		virtual ~BinaryFileWriter() = default;
 
 	public:
-		virtual bool save(const char* const fileName) override;
+		virtual bool Save(const char* const fileName) override;
 
 	public:
-		void clear();
+		void Clear();
 
 	public:
 		template <typename T>
-		void write(const T& in) noexcept;
+		void Write(const T& in) noexcept;
 
 		template <typename T>
-		void write(T&& in) noexcept;
+		void Write(T&& in) noexcept;
 
-		void write(const char* const in) noexcept;
+		void Write(const char* const in) noexcept;
 
-		void write(const void* const in, const uint32 byteCount) noexcept;
+		void Write(const void* const in, const uint32 byteCount) noexcept;
 
 	private:
-		void _writeInternal(const void* const in, const uint32 currentSize, const uint32 deltaSize) noexcept;
+		void WriteInternal(const void* const in, const uint32 currentSize, const uint32 deltaSize) noexcept;
 
 	private:
 		Vector<byte> _bytes;

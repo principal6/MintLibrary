@@ -31,23 +31,23 @@ namespace mint
 			~InstantRenderer();
 
 		public:
-			void testDraw(const Float3& worldOffset) noexcept;
+			void TestDraw(const Float3& worldOffset) noexcept;
 
 		public:
-			void drawLine(const Float3& a, const Float3& b, const Color& color) noexcept;
-			void drawBox(const Transform& worldTransform, const Float3& extents, const Color& color) noexcept;
-			void drawCone(const Transform& worldTransform, const float radius, const float height, const uint8 detail, const Color& color) noexcept;
-			void drawCylinder(const Transform& worldTransform, const float radius, const float height, const uint8 subdivisionIteration, const Color& color) noexcept;
-			void drawSphere(const Float3& center, const float radius, const uint8 polarDetail, const uint8 azimuthalDetail, const Color& color) noexcept;
-			void drawGeoSphere(const Float3& center, const float radius, const uint8 subdivisionIteration, const Color& color) noexcept;
-			void drawCapsule(const Transform& worldTransform, const float sphereRadius, const float cylinderHeight, const uint8 subdivisionIteration, const Color& color) noexcept;
+			void DrawLine(const Float3& a, const Float3& b, const Color& color) noexcept;
+			void DrawBox(const Transform& worldTransform, const Float3& extents, const Color& color) noexcept;
+			void DrawCone(const Transform& worldTransform, const float radius, const float height, const uint8 detail, const Color& color) noexcept;
+			void DrawCylinder(const Transform& worldTransform, const float radius, const float height, const uint8 subdivisionIteration, const Color& color) noexcept;
+			void DrawSphere(const Float3& center, const float radius, const uint8 polarDetail, const uint8 azimuthalDetail, const Color& color) noexcept;
+			void DrawGeoSphere(const Float3& center, const float radius, const uint8 subdivisionIteration, const Color& color) noexcept;
+			void DrawCapsule(const Transform& worldTransform, const float sphereRadius, const float cylinderHeight, const uint8 subdivisionIteration, const Color& color) noexcept;
 
 		private:
-			void initialize() noexcept;
-			void pushMeshWithMaterial(MeshData& meshData, const Color& diffuseColor) noexcept;
+			void Initialize() noexcept;
+			void PushMeshWithMaterial(MeshData& meshData, const Color& diffuseColor) noexcept;
 
 		public:
-			void render() noexcept;
+			void Render() noexcept;
 
 		private:
 			GraphicDevice& _graphicDevice;

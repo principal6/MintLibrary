@@ -29,11 +29,11 @@ namespace mint
 			__noop;
 		}
 
-		void Object::attachComponent(IObjectComponent* const objectComponent)
+		void Object::AttachComponent(IObjectComponent* const objectComponent)
 		{
 			if (objectComponent != nullptr)
 			{
-				if (GetComponent(objectComponent->getType()) != nullptr)
+				if (GetComponent(objectComponent->GetType()) != nullptr)
 				{
 					MINT_LOG_ERROR("동일한 Type 의 Component 를 Attach 하는 것은 아직 지원되지 않습니다!");
 					return;
@@ -45,7 +45,7 @@ namespace mint
 			}
 		}
 
-		void Object::detachComponent(IObjectComponent* const objectComponent)
+		void Object::DetachComponent(IObjectComponent* const objectComponent)
 		{
 			if (objectComponent == nullptr)
 			{
@@ -74,17 +74,17 @@ namespace mint
 			}
 		}
 
-		uint32 Object::getComponentCount() const noexcept
+		uint32 Object::GetComponentCount() const noexcept
 		{
 			return static_cast<uint32>(_componentArray.Size());
 		}
 
 		IObjectComponent* Object::GetComponent(const ObjectComponentType type) const noexcept
 		{
-			const uint32 componentCount = getComponentCount();
+			const uint32 componentCount = GetComponentCount();
 			for (uint32 componentIndex = 0; componentIndex < componentCount; ++componentIndex)
 			{
-				if (_componentArray[componentIndex]->getType() == type)
+				if (_componentArray[componentIndex]->GetType() == type)
 				{
 					return _componentArray[componentIndex];
 				}
@@ -92,35 +92,35 @@ namespace mint
 			return nullptr;
 		}
 
-		void Object::setObjectTransform(const Transform& transform) noexcept
+		void Object::SetObjectTransform(const Transform& transform) noexcept
 		{
-			getObjectTransformComponent()->_transform = transform;
+			GetObjectTransformComponent()->_transform = transform;
 		}
 
-		Transform& Object::getObjectTransform() noexcept
+		Transform& Object::GetObjectTransform() noexcept
 		{
-			return getObjectTransformComponent()->_transform;
+			return GetObjectTransformComponent()->_transform;
 		}
 
-		const Transform& Object::getObjectTransform() const noexcept
+		const Transform& Object::GetObjectTransform() const noexcept
 		{
-			return getObjectTransformComponent()->_transform;
+			return GetObjectTransformComponent()->_transform;
 		}
 
-		Float4x4 Object::getObjectTransformMatrix() const noexcept
+		Float4x4 Object::GetObjectTransformMatrix() const noexcept
 		{
-			return getObjectTransformComponent()->_transform.ToMatrix();
+			return GetObjectTransformComponent()->_transform.ToMatrix();
 		}
 
-		TransformComponent* Object::getObjectTransformComponent() const noexcept
+		TransformComponent* Object::GetObjectTransformComponent() const noexcept
 		{
 			return static_cast<TransformComponent*>(_componentArray[0]);
 		}
 
-		float Object::getDeltaTimeSec() const noexcept
+		float Object::GetDeltaTimeSec() const noexcept
 		{
-			const DeltaTimer& deltaTimer = *_objectPool->getDeltaTimerXXX();
-			return deltaTimer.getDeltaTimeSec();
+			const DeltaTimer& deltaTimer = *_objectPool->GetDeltaTimerXXX();
+			return deltaTimer.GetDeltaTimeSec();
 		}
 	}
 }

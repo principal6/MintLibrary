@@ -53,7 +53,7 @@ namespace mint
 			static constexpr DXGI_FORMAT kIndexBufferFormat = DXGI_FORMAT::DXGI_FORMAT_R16_UINT;
 
 		private:
-			static DXGI_FORMAT getDxgiFormat(const DxTextureFormat format);
+			static DXGI_FORMAT GetDXGIFormat(const DxTextureFormat format);
 			static uint32 GetColorCount(const DxTextureFormat format);
 
 		private:
@@ -67,35 +67,35 @@ namespace mint
 			DxResource& operator=(DxResource&& rhs) noexcept = default;
 
 		private:
-			bool createBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount);
-			bool createTexture(const DxTextureFormat format, const void* const resourceContent, const uint32 width, const uint32 height);
+			bool CreateBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount);
+			bool CreateTexture(const DxTextureFormat format, const void* const resourceContent, const uint32 width, const uint32 height);
 
 		public:
 			bool IsValid() const noexcept;
 
 		public:
-			void updateBuffer(const void* const resourceContent, const uint32 elementCount);
-			void updateBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount);
+			void UpdateBuffer(const void* const resourceContent, const uint32 elementCount);
+			void UpdateBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount);
 
 		public:
-			void updateTexture(const void* const resourceContent);
-			void updateTexture(const void* const resourceContent, const uint32 width, const uint32 height);
+			void UpdateTexture(const void* const resourceContent);
+			void UpdateTexture(const void* const resourceContent, const uint32 width, const uint32 height);
 
 		private:
-			void updateContentInternal(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount, const uint32 width);
+			void UpdateContentInternal(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount, const uint32 width);
 
 		public:
-			void setOffset(const uint32 elementOffset);
+			void SetOffset(const uint32 elementOffset);
 
 		public:
-			uint32 getRegisterIndex() const noexcept;
-			ID3D11Buffer* const* getBuffer() const noexcept;
-			ID3D11ShaderResourceView* const* getResourceView() const noexcept;
+			uint32 GetRegisterIndex() const noexcept;
+			ID3D11Buffer* const* GetBuffer() const noexcept;
+			ID3D11ShaderResourceView* const* GetResourceView() const noexcept;
 
 		public:
-			bool needToBind() const noexcept;
-			void bindAsInput() const noexcept;
-			void bindToShader(const GraphicShaderType shaderType, const uint32 bindingSlot) const noexcept;
+			bool NeedsToBind() const noexcept;
+			void BindAsInput() const noexcept;
+			void BindToShader(const GraphicShaderType shaderType, const uint32 bindingSlot) const noexcept;
 
 		private:
 			ComPtr<ID3D11Resource> _resource;
@@ -131,20 +131,20 @@ namespace mint
 			virtual ~DxResourcePool() = default;
 
 		public:
-			GraphicObjectID addConstantBuffer(const void* const resourceContent, const uint32 bufferSize, const uint32 registerIndex);
-			GraphicObjectID addVertexBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount);
-			GraphicObjectID addIndexBuffer(const void* const resourceContent, const uint32 elementCount);
-			GraphicObjectID addStructuredBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount, const uint32 registerIndex);
+			GraphicObjectID AddConstantBuffer(const void* const resourceContent, const uint32 bufferSize, const uint32 registerIndex);
+			GraphicObjectID AddVertexBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount);
+			GraphicObjectID AddIndexBuffer(const void* const resourceContent, const uint32 elementCount);
+			GraphicObjectID AddStructuredBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount, const uint32 registerIndex);
 
 		public:
-			GraphicObjectID addTexture2D(const DxTextureFormat format, const byte* const textureContent, const uint32 width, const uint32 height);
+			GraphicObjectID AddTexture2D(const DxTextureFormat format, const byte* const textureContent, const uint32 width, const uint32 height);
 
 		public:
-			void bindAsInput(const GraphicObjectID& objectID) noexcept;
-			void bindToShader(const GraphicObjectID& objectID, const GraphicShaderType shaderType, const uint32 bindingSlot) noexcept;
+			void BindAsInput(const GraphicObjectID& objectID) noexcept;
+			void BindToShader(const GraphicObjectID& objectID, const GraphicShaderType shaderType, const uint32 bindingSlot) noexcept;
 
 		public:
-			DxResource& getResource(const GraphicObjectID& objectID);
+			DxResource& GetResource(const GraphicObjectID& objectID);
 
 		private:
 			Vector<DxResource> _resourceArray;

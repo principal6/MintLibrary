@@ -77,60 +77,60 @@ namespace mint
 			};
 
 		public:
-			static void generateBox(const BoxParam& boxParam, MeshData& meshData) noexcept;
-			static void generateCone(const ConeParam& coneParam, MeshData& meshData) noexcept;
-			static void generateCylinder(const CylinderParam& cylinderParam, MeshData& meshData) noexcept;
-			static void generateSphere(const SphereParam& sphereParam, MeshData& meshData) noexcept;
-			static void generateOctahedron(const RadiusParam& radiusParam, MeshData& meshData) noexcept;
-			static void generateHalfOpenOctahedron(const RadiusParam& radiusParam, MeshData& meshData) noexcept;
-			static void generateGeoSphere(const GeoSphereParam& geoSphereParam, MeshData& meshData) noexcept;
-			static void generateHalfOpenGeoSphere(const GeoSphereParam& geoSphereParam, MeshData& meshData) noexcept;
-			static void generateCapsule(const CapsulePram& capsulePram, MeshData& meshData) noexcept;
+			static void GenerateBox(const BoxParam& boxParam, MeshData& meshData) noexcept;
+			static void GenerateCone(const ConeParam& coneParam, MeshData& meshData) noexcept;
+			static void GenerateCylinder(const CylinderParam& cylinderParam, MeshData& meshData) noexcept;
+			static void GenerateSphere(const SphereParam& sphereParam, MeshData& meshData) noexcept;
+			static void GenerateOctahedron(const RadiusParam& radiusParam, MeshData& meshData) noexcept;
+			static void GenerateHalfOpenOctahedron(const RadiusParam& radiusParam, MeshData& meshData) noexcept;
+			static void GenerateGeoSphere(const GeoSphereParam& geoSphereParam, MeshData& meshData) noexcept;
+			static void GenerateHalfOpenGeoSphere(const GeoSphereParam& geoSphereParam, MeshData& meshData) noexcept;
+			static void GenerateCapsule(const CapsulePram& capsulePram, MeshData& meshData) noexcept;
 
 		private:
-			static void _pushCirclularPoints(const float radius, const float y, const uint32 sideCount, MeshData& meshData) noexcept;
-			static void _pushUpperUmbrellaTris(const int32 centerIndex, const int32 indexBase, const uint8 triangleCount, MeshData& meshData) noexcept;
-			static void _pushLowerUmbrellaTris(const int32 centerIndex, const int32 indexBase, const uint8 triangleCount, MeshData& meshData) noexcept;
-			static void _pushRingQuads(const int32 indexBase, const uint8 quadCount, MeshData& meshData) noexcept;
+			static void _PushCirclularPoints(const float radius, const float y, const uint32 sideCount, MeshData& meshData) noexcept;
+			static void _PushUpperUmbrellaTris(const int32 centerIndex, const int32 indexBase, const uint8 triangleCount, MeshData& meshData) noexcept;
+			static void _PushLowerUmbrellaTris(const int32 centerIndex, const int32 indexBase, const uint8 triangleCount, MeshData& meshData) noexcept;
+			static void _PushRingQuads(const int32 indexBase, const uint8 quadCount, MeshData& meshData) noexcept;
 
 		public:
-			static void setMaterialID(MeshData& meshData, const uint32 materialID) noexcept;
-			static void transformMeshData(MeshData& meshData, const Float4x4& transformationMatrix) noexcept;
-			static void mergeMeshData(const MeshData& meshDataA, const MeshData& meshDataB, MeshData& outMeshData) noexcept;
-			static void mergeMeshData(const MeshData& sourceMeshData, MeshData& inoutTargetMeshData) noexcept;
+			static void SetMaterialID(MeshData& meshData, const uint32 materialID) noexcept;
+			static void TransformMeshData(MeshData& meshData, const Float4x4& transformationMatrix) noexcept;
+			static void MergeMeshData(const MeshData& meshDataA, const MeshData& meshDataB, MeshData& outMeshData) noexcept;
+			static void MergeMeshData(const MeshData& sourceMeshData, MeshData& inoutTargetMeshData) noexcept;
 
 		private:
-			static void pushPosition(const float(&xyz)[3], MeshData& meshData) noexcept;
-			static void pushPosition(const Float4& xyzw, MeshData& meshData) noexcept;
-			static void pushTri(const int32(&positionIndices)[3], MeshData& meshData, const Float2(&uvs)[3]) noexcept;
-			static void pushQuad(const int32(&positionIndices)[4], MeshData& meshData, const Float2(&uvs)[4]) noexcept;
+			static void PushPosition(const float(&xyz)[3], MeshData& meshData) noexcept;
+			static void PushPosition(const Float4& xyzw, MeshData& meshData) noexcept;
+			static void PushTri(const int32(&positionIndices)[3], MeshData& meshData, const Float2(&uvs)[3]) noexcept;
+			static void PushQuad(const int32(&positionIndices)[4], MeshData& meshData, const Float2(&uvs)[4]) noexcept;
 
 		private:
-			static void subdivideTriByMidpoints(MeshData& oldMeshData) noexcept;
-			static void projectVerticesToSphere(const RadiusParam& radiusParam, MeshData& meshData) noexcept;
+			static void SubdivideTriByMidpoints(MeshData& oldMeshData) noexcept;
+			static void ProjectVerticesToSphere(const RadiusParam& radiusParam, MeshData& meshData) noexcept;
 
 		private:
-			static void pushVertexWithPositionXXX(const uint32 positionIndex, MeshData& meshData) noexcept;
-			static void setVertexUv(MeshData& meshData, const uint32 vertexIndex, const float u, const float v) noexcept;
-			static void setVertexUv(VS_INPUT& vertex, const Float2& uv) noexcept;
-			static Float2 getVertexUv(const VS_INPUT& inoutVertex) noexcept;
-			static VS_INPUT& getFaceVertex0(const Face& face, MeshData& meshData) noexcept;
-			static VS_INPUT& getFaceVertex1(const Face& face, MeshData& meshData) noexcept;
-			static VS_INPUT& getFaceVertex2(const Face& face, MeshData& meshData) noexcept;
-			static uint32 getFaceVertexPositionIndex0(const Face& face, MeshData& meshData) noexcept;
-			static uint32 getFaceVertexPositionIndex1(const Face& face, MeshData& meshData) noexcept;
-			static uint32 getFaceVertexPositionIndex2(const Face& face, MeshData& meshData) noexcept;
-			static Float4& getFaceVertexPosition0(const Face& face, MeshData& meshData) noexcept;
-			static Float4& getFaceVertexPosition1(const Face& face, MeshData& meshData) noexcept;
-			static Float4& getFaceVertexPosition2(const Face& face, MeshData& meshData) noexcept;
-			static void pushTriFaceXXX(const uint32 vertexOffset, MeshData& meshData) noexcept;
-			static void pushQuadFaceXXX(const uint32 vertexOffset, MeshData& meshData) noexcept;
-			static void recomputeTangentBitangentFromNormal(const Float4& normal, VS_INPUT& vertex) noexcept;
-			static Float4 computeNormalFromTangentBitangent(const VS_INPUT& vertex) noexcept;
+			static void PushVertexWithPositionXXX(const uint32 positionIndex, MeshData& meshData) noexcept;
+			static void SetVertexUV(MeshData& meshData, const uint32 vertexIndex, const float u, const float v) noexcept;
+			static void SetVertexUV(VS_INPUT& vertex, const Float2& uv) noexcept;
+			static Float2 GetVertexUV(const VS_INPUT& inoutVertex) noexcept;
+			static VS_INPUT& GetFaceVertex0(const Face& face, MeshData& meshData) noexcept;
+			static VS_INPUT& GetFaceVertex1(const Face& face, MeshData& meshData) noexcept;
+			static VS_INPUT& GetFaceVertex2(const Face& face, MeshData& meshData) noexcept;
+			static uint32 GetFaceVertexPositionIndex0(const Face& face, MeshData& meshData) noexcept;
+			static uint32 GetFaceVertexPositionIndex1(const Face& face, MeshData& meshData) noexcept;
+			static uint32 GetFaceVertexPositionIndex2(const Face& face, MeshData& meshData) noexcept;
+			static Float4& GetFaceVertexPosition0(const Face& face, MeshData& meshData) noexcept;
+			static Float4& GetFaceVertexPosition1(const Face& face, MeshData& meshData) noexcept;
+			static Float4& GetFaceVertexPosition2(const Face& face, MeshData& meshData) noexcept;
+			static void PushTriFaceXXX(const uint32 vertexOffset, MeshData& meshData) noexcept;
+			static void PushQuadFaceXXX(const uint32 vertexOffset, MeshData& meshData) noexcept;
+			static void RecomputeTangentBitangentFromNormal(const Float4& normal, VS_INPUT& vertex) noexcept;
+			static Float4 ComputeNormalFromTangentBitangent(const VS_INPUT& vertex) noexcept;
 
 		public:
-			static void computeTangentBitangent(const Face& face, Vector<VS_INPUT>& inoutVertexArray) noexcept;
-			static void smoothNormals(MeshData& meshData) noexcept;
+			static void ComputeTangentBitangent(const Face& face, Vector<VS_INPUT>& inoutVertexArray) noexcept;
+			static void SmoothNormals(MeshData& meshData) noexcept;
 		};
 	}
 }

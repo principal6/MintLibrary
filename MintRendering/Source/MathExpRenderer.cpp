@@ -142,9 +142,9 @@ namespace mint
 			__noop;
 		}
 
-		void MathExpression::evaluate() const noexcept
+		void MathExpression::Evaluate() const noexcept
 		{
-			if (isEvaluated() == true)
+			if (IsEvaluated() == true)
 			{
 				return;
 			}
@@ -160,12 +160,12 @@ namespace mint
 			_isEvaluated = true;
 		}
 
-		const wchar_t* const MathExpression::getPlainString() const noexcept
+		const wchar_t* const MathExpression::GetPlainString() const noexcept
 		{
 			return _plainString.c_str();
 		}
 
-		uint32 MathExpression::getPlainStringLength() const noexcept
+		uint32 MathExpression::GetPlainStringLength() const noexcept
 		{
 			return static_cast<uint32>(_plainString.length());
 		}
@@ -174,24 +174,24 @@ namespace mint
 		MathExpressionRenderer::MathExpressionRenderer(GraphicDevice& graphicDevice)
 			: _shapeFontRendererContexts{ graphicDevice, graphicDevice, graphicDevice, graphicDevice }
 		{
-			const char* const kFontFileNames[MathExpression::getModifierTypeCount()] =
+			const char* const kFontFileNames[MathExpression::GetModifierTypeCount()] =
 			{ Path::MakeAssetPath("cmu_s_italic"), Path::MakeAssetPath("cmu_s_bold"), Path::MakeAssetPath("cmu_s_bold_italic"), Path::MakeAssetPath("cmu_s_roman") };
 
 			FontLoader fontLoader;
-			for (uint32 modifierTypeIndex = 0; modifierTypeIndex < MathExpression::getModifierTypeCount(); ++modifierTypeIndex)
+			for (uint32 modifierTypeIndex = 0; modifierTypeIndex < MathExpression::GetModifierTypeCount(); ++modifierTypeIndex)
 			{
 				ShapeRendererContext& rendererContext = _shapeFontRendererContexts[modifierTypeIndex];
 				const char* const kFontFileName = kFontFileNames[modifierTypeIndex];
-				if (FontLoader::doesExistFont(kFontFileName) == false)
+				if (FontLoader::ExistsFont(kFontFileName) == false)
 				{
-					fontLoader.pushGlyphRange(GlyphRange(0, 0x33DD));
-					fontLoader.bakeFontData(kFontFileName, 32, kFontFileName, 2048, 1, 1);
+					fontLoader.PushGlyphRange(GlyphRange(0, 0x33DD));
+					fontLoader.BakeFontData(kFontFileName, 32, kFontFileName, 2048, 1, 1);
 				}
-				fontLoader.loadFont(kFontFileName, graphicDevice);
+				fontLoader.LoadFont(kFontFileName, graphicDevice);
 
-				rendererContext.initializeFontData(fontLoader.getFontData());
-				rendererContext.initializeShaders();
-				rendererContext.setTextColor(Color::kBlack);
+				rendererContext.InitializeFontData(fontLoader.GetFontData());
+				rendererContext.InitializeShaders();
+				rendererContext.SetTextColor(Color::kBlack);
 			}
 		}
 
@@ -202,10 +202,10 @@ namespace mint
 
 		void MathExpressionRenderer::drawMathExpression(const MathExpression& mathExpression, const Float2& screenPosition) noexcept
 		{
-			mathExpression.evaluate();
+			mathExpression.Evaluate();
 
-			const uint32 plainStringLength = mathExpression.getPlainStringLength();
-			for (uint32 modifierTypeIndex = 0; modifierTypeIndex < MathExpression::getModifierTypeCount(); ++modifierTypeIndex)
+			const uint32 plainStringLength = mathExpression.GetPlainStringLength();
+			for (uint32 modifierTypeIndex = 0; modifierTypeIndex < MathExpression::GetModifierTypeCount(); ++modifierTypeIndex)
 			{
 				BitVector& bitFlags = _bitFlagsArray[modifierTypeIndex];
 				bitFlags.ResizeBitCount(plainStringLength);
@@ -226,22 +226,22 @@ namespace mint
 				}
 			}
 
-			for (uint32 modifierTypeIndex = 0; modifierTypeIndex < MathExpression::getModifierTypeCount(); ++modifierTypeIndex)
+			for (uint32 modifierTypeIndex = 0; modifierTypeIndex < MathExpression::GetModifierTypeCount(); ++modifierTypeIndex)
 			{
 				ShapeRendererContext& rendererContext = _shapeFontRendererContexts[modifierTypeIndex];
 
-				rendererContext.drawDynamicTextBitFlagged(mathExpression.getPlainString(), Float4(screenPosition._x, screenPosition._y, 0.0f, 1.0f),
+				rendererContext.DrawDynamicTextBitFlagged(mathExpression.GetPlainString(), Float4(screenPosition._x, screenPosition._y, 0.0f, 1.0f),
 					FontRenderingOption(TextRenderDirectionHorz::Rightward, TextRenderDirectionVert::Downward), _bitFlagsArray[modifierTypeIndex]);
 			}
 		}
 
-		void MathExpressionRenderer::render() noexcept
+		void MathExpressionRenderer::Render() noexcept
 		{
-			for (uint32 modifierTypeIndex = 0; modifierTypeIndex < MathExpression::getModifierTypeCount(); ++modifierTypeIndex)
+			for (uint32 modifierTypeIndex = 0; modifierTypeIndex < MathExpression::GetModifierTypeCount(); ++modifierTypeIndex)
 			{
 				ShapeRendererContext& rendererContext = _shapeFontRendererContexts[modifierTypeIndex];
-				rendererContext.render();
-				rendererContext.flush();
+				rendererContext.Render();
+				rendererContext.Flush();
 			}
 		}
 	}

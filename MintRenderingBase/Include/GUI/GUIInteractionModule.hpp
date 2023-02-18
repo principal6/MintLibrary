@@ -11,21 +11,21 @@ namespace mint
 		namespace GUI
 		{
 			template<typename Input>
-			inline bool InteractionMousePressModule<Input>::isInteracting() const
+			inline bool InteractionMousePressModule<Input>::IsInteracting() const
 			{
 				return _input._controlID.IsValid();
 			}
 
 			template<typename Input>
-			inline bool InteractionMousePressModule<Input>::isInteractingWith(const ControlID& controlID) const
+			inline bool InteractionMousePressModule<Input>::IsInteractingWith(const ControlID& controlID) const
 			{
 				return _input._controlID == controlID;
 			}
 
 			template<typename Input>
-			inline bool InteractionMousePressModule<Input>::begin(const Input& input)
+			inline bool InteractionMousePressModule<Input>::Begin(const Input& input)
 			{
-				if (isInteracting())
+				if (IsInteracting())
 				{
 					return false;
 				}
@@ -35,13 +35,13 @@ namespace mint
 			}
 
 			template<typename Input>
-			inline void InteractionMousePressModule<Input>::end()
+			inline void InteractionMousePressModule<Input>::End()
 			{
 				_input._controlID.Invalidate();
 			}
 
 			template<typename Input>
-			inline Float2 InteractionMousePressModule<Input>::computeRelativeMousePressedPosition() const
+			inline Float2 InteractionMousePressModule<Input>::ComputeRelativeMousePressedPosition() const
 			{
 				return _input._mousePressedPosition - _input._controlPosition;
 			}

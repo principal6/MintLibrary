@@ -19,22 +19,22 @@ namespace mint
 				__noop;
 			}
 
-			void Interpreter::parseCppHlslFile(const char* const fileName)
+			void Interpreter::ParseCppHlslFile(const char* const fileName)
 			{
 				TextFileReader textFileReader;
-				if (textFileReader.open(fileName) == false)
+				if (textFileReader.Open(fileName) == false)
 				{
 					MINT_LOG_ERROR("CppHlsl 파일[%s] 을 여는 데 실패했습니다!!", fileName);
 					return;
 				}
 
-				_lexer.SetSource(textFileReader.get());
+				_lexer.SetSource(textFileReader.Get());
 				_lexer.Execute();
 
 				_parser.Execute();
 			}
 
-			void Interpreter::generateHlslString(const CppHlslFileType fileType)
+			void Interpreter::GenerateHlslString(const CppHlslFileType fileType)
 			{
 				_fileType = fileType;
 
@@ -51,7 +51,7 @@ namespace mint
 							continue;
 						}
 
-						_hlslString.append(_parser.serializeCppHlslTypeToHlslStructuredBufferDefinition(typeMetaData));
+						_hlslString.append(_parser.SerializeCppHlslTypeToHlslStructuredBufferDefinition(typeMetaData));
 					}
 				}
 
@@ -67,11 +67,11 @@ namespace mint
 
 					if (_fileType == CppHlslFileType::StreamData)
 					{
-						_hlslString.append(_parser.serializeCppHlslTypeToHlslStreamDatum(typeMetaData));
+						_hlslString.append(_parser.SerializeCppHlslTypeToHlslStreamDatum(typeMetaData));
 					}
 					else if (_fileType == CppHlslFileType::ConstantBuffers)
 					{
-						_hlslString.append(_parser.serializeCppHlslTypeToHlslConstantBuffer(typeMetaData, bufferIndex));
+						_hlslString.append(_parser.SerializeCppHlslTypeToHlslConstantBuffer(typeMetaData, bufferIndex));
 
 						++bufferIndex;
 					}
@@ -83,7 +83,7 @@ namespace mint
 				}
 			}
 
-			const char* Interpreter::getHlslString() const noexcept
+			const char* Interpreter::GetHlslString() const noexcept
 			{
 				return _hlslString.c_str();
 			}

@@ -93,34 +93,34 @@ namespace mint
 			~LowLevelRenderer() = default;
 
 		public:
-			Vector<T>& vertices() noexcept;
-			Vector<IndexElementType>& indices() noexcept;
-			uint32 getVertexCount() const noexcept;
-			uint32 getIndexCount() const noexcept;
+			Vector<T>& Vertices() noexcept;
+			Vector<IndexElementType>& Indices() noexcept;
+			uint32 GetVertexCount() const noexcept;
+			uint32 GetIndexCount() const noexcept;
 
 		public:
-			void pushMesh(const MeshData& meshData) noexcept;
+			void PushMesh(const MeshData& meshData) noexcept;
 
 		public:
-			void setIndexBaseXXX(const IndexElementType base) noexcept;
-			IndexElementType getIndexBaseXXX() const noexcept;
+			void SetIndexBaseXXX(const IndexElementType base) noexcept;
+			IndexElementType GetIndexBaseXXX() const noexcept;
 
 		public:
-			void flush() noexcept;
-			bool isRenderable() const noexcept;
-			void render(const RenderingPrimitive renderingPrimitive) noexcept;
+			void Flush() noexcept;
+			bool IsRenderable() const noexcept;
+			void Render(const RenderingPrimitive renderingPrimitive) noexcept;
 
 		public:
-			void pushRenderCommandIndexed(const RenderingPrimitive primitive, const uint32 vertexOffset, const uint32 indexOffset, const uint32 indexCount, const Rect& clipRect) noexcept;
-			void beginOrdinalRenderCommands(const uint64 key) noexcept;
-			void endOrdinalRenderCommands() noexcept;
-			void setOrdinalRenderCommandGroupPriority(const uint64 key, const uint32 priority) noexcept;
+			void PushRenderCommandIndexed(const RenderingPrimitive primitive, const uint32 vertexOffset, const uint32 indexOffset, const uint32 indexCount, const Rect& clipRect) noexcept;
+			void BeginOrdinalRenderCommands(const uint64 key) noexcept;
+			void EndOrdinalRenderCommands() noexcept;
+			void SetOrdinalRenderCommandGroupPriority(const uint64 key, const uint32 priority) noexcept;
 			void ExecuteRenderCommands() noexcept;
 
 		private:
-			bool mergeNewRenderCommand(const RenderCommand& newRenderCommand) noexcept;
-			void prepareBuffers() noexcept;
-			void ExecuteRenderCommands_draw(const RenderCommand& renderCommand) const noexcept;
+			bool MergeNewRenderCommand(const RenderCommand& newRenderCommand) noexcept;
+			void PrepareBuffers() noexcept;
+			void ExecuteRenderCommands_Draw(const RenderCommand& renderCommand) const noexcept;
 
 		private:
 			GraphicDevice& _graphicDevice;

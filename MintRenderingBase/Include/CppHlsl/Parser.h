@@ -44,22 +44,22 @@ namespace mint
 				~TypeCustomData() = default;
 
 			public:
-				void setSemanticName(const std::string& semanticName);
-				void setRegisterIndex(const uint32 registerIndex);
-				void setInputSlot(const uint32 inputSlot);
-				void setInstanceDataStepRate(const uint32 instanceDataStepRate);
-				void pushSlottedStreamData(const TypeMetaData<TypeCustomData>& slottedStreamData);
+				void SetSemanticName(const std::string& semanticName);
+				void SetRegisterIndex(const uint32 registerIndex);
+				void SetInputSlot(const uint32 inputSlot);
+				void SetInstanceDataStepRate(const uint32 instanceDataStepRate);
+				void PushSlottedStreamData(const TypeMetaData<TypeCustomData>& slottedStreamData);
 
 			public:
-				bool isRegisterIndexValid() const noexcept;
+				bool IsRegisterIndexValid() const noexcept;
 
 			public:
-				const std::string& getSemanticName() const noexcept;
-				uint32 getRegisterIndex() const noexcept;
-				uint32 getInputSlot() const noexcept;
-				uint32 getInstanceDataStepRate() const noexcept;
-				uint32 getSlottedStreamDataCount() const noexcept;
-				const TypeMetaData<TypeCustomData>& getSlottedStreamData(const uint32 inputSlot) const noexcept;
+				const std::string& GetSemanticName() const noexcept;
+				uint32 GetRegisterIndex() const noexcept;
+				uint32 GetInputSlot() const noexcept;
+				uint32 GetInstanceDataStepRate() const noexcept;
+				uint32 GetSlottedStreamDataCount() const noexcept;
+				const TypeMetaData<TypeCustomData>& GetSlottedStreamData(const uint32 inputSlot) const noexcept;
 
 			private:
 				static constexpr uint32 kInvalidRegisterIndex = kUint32Max;
@@ -83,33 +83,33 @@ namespace mint
 				virtual bool Execute() override final;
 
 			private:
-				bool parseCode(const uint32 symbolPosition, SyntaxTreeNode& currentNode, uint32& outAdvanceCount) noexcept;
+				bool ParseCode(const uint32 symbolPosition, SyntaxTreeNode& currentNode, uint32& outAdvanceCount) noexcept;
 
 			private:
-				bool parseNamespace(const uint32 symbolPosition, SyntaxTreeNode& currentNode, uint32& outAdvanceCount) noexcept;
-				bool parseStruct(const uint32 symbolPosition, SyntaxTreeNode& currentNode, uint32& outAdvanceCount) noexcept;
-				bool parseStructMember(const uint32 symbolPosition, SyntaxTreeNode& currentNode, uint32& outAdvanceCount) noexcept;
-				bool parseCustomSyntax(const uint32 symbolPosition, SyntaxTreeNode& currentNode, uint32& outAdvanceCount) noexcept;
+				bool ParseNamespace(const uint32 symbolPosition, SyntaxTreeNode& currentNode, uint32& outAdvanceCount) noexcept;
+				bool ParseStruct(const uint32 symbolPosition, SyntaxTreeNode& currentNode, uint32& outAdvanceCount) noexcept;
+				bool ParseStructMember(const uint32 symbolPosition, SyntaxTreeNode& currentNode, uint32& outAdvanceCount) noexcept;
+				bool ParseCustomSyntax(const uint32 symbolPosition, SyntaxTreeNode& currentNode, uint32& outAdvanceCount) noexcept;
 
 			private:
-				void buildTypeMetaData(const SyntaxTreeNode& structNode) noexcept;
+				void BuildTypeMetaData(const SyntaxTreeNode& structNode) noexcept;
 
 			private:
-				int32 getSlottedStreamDataInputSlot(const std::string& typeName, std::string& streamDataTypeName) const noexcept;
+				int32 GetSlottedStreamDataInputSlot(const std::string& typeName, std::string& streamDataTypeName) const noexcept;
 
 			public:
-				static std::string convertDeclarationNameToHlslSemanticName(const std::string& declarationName);
-				static DXGI_FORMAT convertCppHlslTypeToDxgiFormat(const TypeMetaData<TypeCustomData>& typeMetaData);
+				static std::string ConvertDeclarationNameToHlslSemanticName(const std::string& declarationName);
+				static DXGI_FORMAT ConvertCppHlslTypeToDxgiFormat(const TypeMetaData<TypeCustomData>& typeMetaData);
 
 			public:
-				std::string serializeCppHlslTypeToHlslStreamDatum(const TypeMetaData<TypeCustomData>& typeMetaData);
+				std::string SerializeCppHlslTypeToHlslStreamDatum(const TypeMetaData<TypeCustomData>& typeMetaData);
 
 			private:
-				std::string serializeCppHlslTypeToHlslStreamDatumMembers(const TypeMetaData<TypeCustomData>& typeMetaData);
+				std::string SerializeCppHlslTypeToHlslStreamDatumMembers(const TypeMetaData<TypeCustomData>& typeMetaData);
 
 			public:
-				std::string serializeCppHlslTypeToHlslConstantBuffer(const TypeMetaData<TypeCustomData>& typeMetaData, const uint32 bufferIndex);
-				std::string serializeCppHlslTypeToHlslStructuredBufferDefinition(const TypeMetaData<TypeCustomData>& typeMetaData);
+				std::string SerializeCppHlslTypeToHlslConstantBuffer(const TypeMetaData<TypeCustomData>& typeMetaData, const uint32 bufferIndex);
+				std::string SerializeCppHlslTypeToHlslStructuredBufferDefinition(const TypeMetaData<TypeCustomData>& typeMetaData);
 			};
 		}
 	}

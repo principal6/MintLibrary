@@ -19,11 +19,11 @@ namespace mint
 			class InteractionModule
 			{
 			public:
-				virtual bool begin(const Input& input) abstract;
-				virtual void end() abstract;
+				virtual bool Begin(const Input& input) abstract;
+				virtual void End() abstract;
 
 			public:
-				virtual bool isInteracting() const abstract;
+				virtual bool IsInteracting() const abstract;
 			};
 #pragma endregion
 
@@ -40,18 +40,18 @@ namespace mint
 			class InteractionMousePressModule : public InteractionModule<Input>
 			{
 			public:
-				virtual bool begin(const Input& input) override;
-				virtual void end() override;
+				virtual bool Begin(const Input& input) override;
+				virtual void End() override;
 
 			public:
-				virtual bool isInteracting() const override;
-				virtual bool isInteractingWith(const ControlID& controlID) const;
+				virtual bool IsInteracting() const override;
+				virtual bool IsInteractingWith(const ControlID& controlID) const;
 
 			public:
-				Float2 computeRelativeMousePressedPosition() const;
-				const Float2& getMousePressedPosition() const { return _input._mousePressedPosition; }
-				const Float2& getInitialControlPosition() const { return _input._controlPosition; }
-				const ControlID& getControlID() const { return _input._controlID; }
+				Float2 ComputeRelativeMousePressedPosition() const;
+				const Float2& GetMousePressedPosition() const { return _input._mousePressedPosition; }
+				const Float2& GetInitialControlPosition() const { return _input._controlPosition; }
+				const ControlID& GetControlID() const { return _input._controlID; }
 
 			protected:
 				Input _input;
@@ -71,15 +71,15 @@ namespace mint
 			class ResizingModule final : public InteractionMousePressModule<ResizingModuleInput>
 			{
 			public:
-				static void makeOuterAndInenrRects(const ControlData& controlData, const Rect& outerResizingDistances, const Rect& innerResizingDistances, Rect& outerRect, Rect& innerRect);
-				static ControlData::ResizingFlags makeResizingFlags(const Float2& mousePosition, const ControlData& controlData, const Rect& outerRect, const Rect& innerRect);
+				static void MakeOuterAndInenrRects(const ControlData& controlData, const Rect& outerResizingDistances, const Rect& innerResizingDistances, Rect& outerRect, Rect& innerRect);
+				static ControlData::ResizingFlags MakeResizingFlags(const Float2& mousePosition, const ControlData& controlData, const Rect& outerRect, const Rect& innerRect);
 
 			public:
-				virtual bool begin(const ResizingModuleInput& resizingModuleInput) override;
+				virtual bool Begin(const ResizingModuleInput& resizingModuleInput) override;
 
 			public:
-				MINT_INLINE const Float2& getInitialControlSize() const { return _input._controlSize; }
-				MINT_INLINE const ControlData::ResizingFlags& getResizingFlags() const { return _input._resizingInteraction; }
+				MINT_INLINE const Float2& GetInitialControlSize() const { return _input._controlSize; }
+				MINT_INLINE const ControlData::ResizingFlags& GetResizingFlags() const { return _input._resizingInteraction; }
 			};
 		}
 	}

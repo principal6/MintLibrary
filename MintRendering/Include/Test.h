@@ -15,7 +15,7 @@ namespace mint
 
 	namespace TestRendering
 	{
-		bool test(Rendering::GraphicDevice& graphicDevice);
+		bool Test(Rendering::GraphicDevice& graphicDevice);
 
 		bool Test_SplineGenerator(Rendering::GraphicDevice& graphicDevice);
 		bool Test_Plotter(Rendering::GraphicDevice& graphicDevice);

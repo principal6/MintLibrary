@@ -8,7 +8,7 @@ namespace mint
 		namespace GUI
 		{
 #pragma region ResizingModule
-			void ResizingModule::makeOuterAndInenrRects(const ControlData& controlData, const Rect& outerResizingDistances, const Rect& innerResizingDistances, Rect& outerRect, Rect& innerRect)
+			void ResizingModule::MakeOuterAndInenrRects(const ControlData& controlData, const Rect& outerResizingDistances, const Rect& innerResizingDistances, Rect& outerRect, Rect& innerRect)
 			{
 				const Rect controlRect = Rect(controlData._absolutePosition, controlData._size);
 				outerRect = controlRect;
@@ -17,7 +17,7 @@ namespace mint
 				innerRect.ShrinkByQuantity(innerResizingDistances);
 			}
 
-			ControlData::ResizingFlags ResizingModule::makeResizingFlags(const Float2& mousePosition, const ControlData& controlData, const Rect& outerRect, const Rect& innerRect)
+			ControlData::ResizingFlags ResizingModule::MakeResizingFlags(const Float2& mousePosition, const ControlData& controlData, const Rect& outerRect, const Rect& innerRect)
 			{
 				ControlData::ResizingFlags resizingInteraction;
 				if (mousePosition._y >= outerRect.Top() && mousePosition._y <= innerRect.Top())
@@ -36,18 +36,18 @@ namespace mint
 				{
 					resizingInteraction._right = true;
 				}
-				resizingInteraction.maskBy(controlData._resizingMask);
+				resizingInteraction.MaskBy(controlData._resizingMask);
 				return resizingInteraction;
 			}
 
-			bool ResizingModule::begin(const ResizingModuleInput& resizingModuleInput)
+			bool ResizingModule::Begin(const ResizingModuleInput& resizingModuleInput)
 			{
-				if (resizingModuleInput._resizingInteraction.isAllFalse() == true)
+				if (resizingModuleInput._resizingInteraction.IsAllFalse() == true)
 				{
 					return false;
 				}
 
-				return __super::begin(resizingModuleInput);
+				return __super::Begin(resizingModuleInput);
 			}
 #pragma endregion
 		}

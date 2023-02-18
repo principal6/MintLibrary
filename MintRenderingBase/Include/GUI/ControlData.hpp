@@ -18,7 +18,7 @@ namespace mint
 	template<>
 	inline uint64 Hasher<Rendering::GUI::ControlID>::operator()(const Rendering::GUI::ControlID& value) const noexcept
 	{
-		return ComputeHash(value.getRawID());
+		return ComputeHash(value.GetRawID());
 	}
 
 
@@ -38,7 +38,7 @@ namespace mint
 				__noop;
 			}
 
-			ControlID ControlData::generateID(const FileLine& fileLine, const ControlType type, const wchar_t* const text, const ControlID& parentControlID)
+			ControlID ControlData::GenerateID(const FileLine& fileLine, const ControlType type, const wchar_t* const text, const ControlID& parentControlID)
 			{
 				StackStringA<512> file = fileLine._file;
 				StackStringW<512> key;
@@ -53,26 +53,26 @@ namespace mint
 				StringUtil::ToString(static_cast<uint32>(type), conv);
 				key.Append(conv);
 				key.Append(L"_");
-				StringUtil::ToString(parentControlID.getRawID(), conv);
+				StringUtil::ToString(parentControlID.GetRawID(), conv);
 				key.Append(conv);
 				return ControlID(key.ComputeHash());
 			}
 
-			inline void ControlData::updateZones()
+			inline void ControlData::UpdateZones()
 			{
-				computeTitleBarZone(_zones._titleBarZone);
-				computeMenuBarZone(_zones._menuBarZone);
+				ComputeTitleBarZone(_zones._titleBarZone);
+				ComputeMenuBarZone(_zones._menuBarZone);
 
-				computeContentZone(_zones._contentZone);
-				computeContentZone(_zones._visibleContentZone);
+				ComputeContentZone(_zones._contentZone);
+				ComputeContentZone(_zones._visibleContentZone);
 			}
 
-			inline Float2 ControlData::computeRelativePosition(const ControlData& parentControlData) const
+			inline Float2 ControlData::ComputeRelativePosition(const ControlData& parentControlData) const
 			{
 				return _absolutePosition - parentControlData._absolutePosition;
 			}
 
-			inline void ControlData::computeTitleBarZone(Rect& titleBarZone)
+			inline void ControlData::ComputeTitleBarZone(Rect& titleBarZone)
 			{
 				titleBarZone = Rect(Float2::kZero, Float2(_size._x, 0.0f));
 				if (_type == ControlType::Window)
@@ -81,7 +81,7 @@ namespace mint
 				}
 			}
 
-			inline void ControlData::computeMenuBarZone(Rect& menuBarZone)
+			inline void ControlData::ComputeMenuBarZone(Rect& menuBarZone)
 			{
 				menuBarZone = Rect(_zones._titleBarZone.Position() + Float2(0.0f, _zones._titleBarZone.Height()), Float2(_size._x, 0.0f));
 				if (_type == ControlType::Window)
@@ -90,7 +90,7 @@ namespace mint
 				}
 			}
 
-			inline void ControlData::computeContentZone(Rect& contentZone)
+			inline void ControlData::ComputeContentZone(Rect& contentZone)
 			{
 				contentZone = Rect(_zones._menuBarZone.Position() + Float2(0.0f, _zones._menuBarZone.Height()), _size);
 			}

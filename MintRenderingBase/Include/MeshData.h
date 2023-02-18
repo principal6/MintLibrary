@@ -32,17 +32,17 @@ namespace mint
 
 		public:
 			bool IsEmpty() const noexcept;
-			void clear() noexcept;
-			void shrinkToFit() noexcept;
-			void updateVertexFromPositions() noexcept;
+			void Clear() noexcept;
+			void ShrinkToFit() noexcept;
+			void UpdateVertexFromPositions() noexcept;
 
 		public:
-			uint32 getPositionCount() const noexcept;
-			uint32 getVertexCount() const noexcept;
-			uint32 getFaceCount() const noexcept;
-			uint32 getIndexCount() const noexcept;
-			const VS_INPUT* getVertices() const noexcept;
-			const IndexElementType* getIndices() const noexcept;
+			uint32 GetPositionCount() const noexcept;
+			uint32 GetVertexCount() const noexcept;
+			uint32 GetFaceCount() const noexcept;
+			uint32 GetIndexCount() const noexcept;
+			const VS_INPUT* GetVertices() const noexcept;
+			const IndexElementType* GetIndices() const noexcept;
 
 		public:
 			static const VS_INPUT kNullVertex;

@@ -160,10 +160,10 @@ namespace mint
 					Float4x4 parentJointWorldMatrix = worldMatrix;
 					parentJointWorldMatrix *= parentJoint._bindPoseModelMatrix;
 
-					instantRenderer.drawLine(jointWorldMatrix.GetTranslation(), parentJointWorldMatrix.GetTranslation(), Rendering::Color::kCyan);
+					instantRenderer.DrawLine(jointWorldMatrix.GetTranslation(), parentJointWorldMatrix.GetTranslation(), Rendering::Color::kCyan);
 				}
 
-				instantRenderer.drawGeoSphere(jointWorldMatrix.GetTranslation(), 0.03125f, 1, Rendering::Color::kMagenta);
+				instantRenderer.DrawGeoSphere(jointWorldMatrix.GetTranslation(), 0.03125f, 1, Rendering::Color::kMagenta);
 			}
 		}
 

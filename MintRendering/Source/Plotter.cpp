@@ -24,7 +24,7 @@ namespace mint
 			_max._y = -Math::kFloatMax;
 		}
 
-		void Plotter::scatter(const Vector<float>& xData, const Vector<float>& yData)
+		void Plotter::Scatter(const Vector<float>& xData, const Vector<float>& yData)
 		{
 			_xDataSets.PushBack(xData);
 			_yDataSets.PushBack(yData);
@@ -41,13 +41,13 @@ namespace mint
 
 			_range = _max - _min;
 
-			updateFrameValues();
+			UpdateFrameValues();
 
 			_colorArray.PushBack(Color::kTransparent);
 			_plotTypeArray.PushBack(_nextPlotType);
 		}
 
-		void Plotter::updateFrameValues()
+		void Plotter::UpdateFrameValues()
 		{
 			_framePadding = _range / 10.0f;
 			_framePadding._x = std::ceilf(_framePadding._x);
@@ -64,13 +64,13 @@ namespace mint
 			_frameRange = _frameMax - _frameMin;
 		}
 
-		void Plotter::render() noexcept
+		void Plotter::Render() noexcept
 		{
 			const Float2 centerPosition = _position + _size * 0.5f;
 			Float4 frameCenterPosition = Float4(centerPosition._x + _frameOffset._x, centerPosition._y + _frameOffset._y, 0.0f, 1.0f);
 
-			drawFrame(frameCenterPosition);
-			drawLabels(frameCenterPosition);
+			DrawFrame(frameCenterPosition);
+			DrawLabels(frameCenterPosition);
 
 			uint32 autoColorIndex = 0;
 			const uint32 setCount = _xDataSets.Size();
@@ -86,7 +86,7 @@ namespace mint
 					const float xDatum = _xDataSets[setIndex][dataIndex];
 					const float yDatum = _yDataSets[setIndex][dataIndex];
 
-					plotScatter(plotType, xDatum, yDatum, color);
+					PlotScatter(plotType, xDatum, yDatum, color);
 				}
 
 				if (useAutoColor == true)
@@ -99,23 +99,23 @@ namespace mint
 				}
 			}
 
-			_shapeFontRendererContext->render();
-			_shapeFontRendererContext->flush();
+			_shapeFontRendererContext->Render();
+			_shapeFontRendererContext->Flush();
 		}
 
-		void Plotter::plotScatter(const PlotType plotType, const float x, const float y, const Color& color)
+		void Plotter::PlotScatter(const PlotType plotType, const float x, const float y, const Color& color)
 		{
-			const Float2 plotPosition2 = computePlotPosition(x, y);
+			const Float2 plotPosition2 = ComputePlotPosition(x, y);
 
 			_shapeFontRendererContext->SetColor(color);
-			_shapeFontRendererContext->setPosition(Float4(plotPosition2._x, plotPosition2._y, 0.0f, 1.0f));
+			_shapeFontRendererContext->SetPosition(Float4(plotPosition2._x, plotPosition2._y, 0.0f, 1.0f));
 
 			switch (plotType)
 			{
 			case Plotter::PlotType::Circle:
 			{
 				const float kRadius = 4.0f;
-				_shapeFontRendererContext->drawCircle(kRadius);
+				_shapeFontRendererContext->DrawCircle(kRadius);
 				break;
 			}
 			case Plotter::PlotType::X:
@@ -123,8 +123,8 @@ namespace mint
 				const float kLength = 4.0f;
 				const float kHalfLength = kLength * 0.5f;
 				const float kThickness = 2.0f;
-				_shapeFontRendererContext->drawLine(plotPosition2 - Float2(kHalfLength), plotPosition2 + float2(kLength), kThickness);
-				_shapeFontRendererContext->drawLine(plotPosition2 - Float2(kHalfLength, -kLength), plotPosition2 + float2(kLength, -kHalfLength), kThickness);
+				_shapeFontRendererContext->DrawLine(plotPosition2 - Float2(kHalfLength), plotPosition2 + float2(kLength), kThickness);
+				_shapeFontRendererContext->DrawLine(plotPosition2 - Float2(kHalfLength, -kLength), plotPosition2 + float2(kLength, -kHalfLength), kThickness);
 				break;
 			}
 			case Plotter::PlotType::Triangle:
@@ -133,7 +133,7 @@ namespace mint
 				const float kHeight = 8.0f;
 				const float kHalfHeight = kHeight * 0.5f;
 				const float kHalfWidth = kHeight / kSqrt3;
-				_shapeFontRendererContext->drawSolidTriangle(
+				_shapeFontRendererContext->DrawSolidTriangle(
 					plotPosition2 + Float2(-kHalfWidth, +kHalfHeight),
 					plotPosition2 + float2(0.0f, -kHalfHeight),
 					plotPosition2 + Float2(+kHalfWidth, +kHalfHeight));
@@ -144,47 +144,47 @@ namespace mint
 			}
 		}
 
-		Float2 Plotter::computeOrigin() const noexcept
+		Float2 Plotter::ComputeOrigin() const noexcept
 		{
 			return _frameOffset + Float2(0.0f, _size._y);
 		}
 
-		Float2 Plotter::computeInFramePlotPosition(const float x, const float y) const noexcept
+		Float2 Plotter::ComputeInFramePlotPosition(const float x, const float y) const noexcept
 		{
 			const float xRatio = (x - _frameMin._x) / _frameRange._x;
 			const float yRatio = (y - _frameMin._y) / _frameRange._y;
 			return Float2(xRatio * _size._x, yRatio * _size._y);
 		}
 
-		Float2 Plotter::computePlotPosition(const float x, const float y) const noexcept
+		Float2 Plotter::ComputePlotPosition(const float x, const float y) const noexcept
 		{
-			const Float2 inFramePlotPosition = computeInFramePlotPosition(x, y);
-			const Float2 origin = computeOrigin();
+			const Float2 inFramePlotPosition = ComputeInFramePlotPosition(x, y);
+			const Float2 origin = ComputeOrigin();
 			return Float2(origin._x + inFramePlotPosition._x, origin._y - inFramePlotPosition._y);
 		}
 
-		void Plotter::drawFrame(const Float4& frameCenterPosition) noexcept
+		void Plotter::DrawFrame(const Float4& frameCenterPosition) noexcept
 		{
-			_shapeFontRendererContext->setShapeBorderColor(Color::kBlack);
+			_shapeFontRendererContext->SetShapeBorderColor(Color::kBlack);
 			_shapeFontRendererContext->SetColor(Color::kWhite);
-			_shapeFontRendererContext->setPosition(frameCenterPosition);
-			_shapeFontRendererContext->drawRectangle(_size, 1.0f, 0.0f);
+			_shapeFontRendererContext->SetPosition(frameCenterPosition);
+			_shapeFontRendererContext->DrawRectangle(_size, 1.0f, 0.0f);
 		}
 
-		void Plotter::drawLabels(const Float4& frameCenterPosition) noexcept
+		void Plotter::DrawLabels(const Float4& frameCenterPosition) noexcept
 		{
 			const float paddingY = 10.0f;
 			Float4 labelPosition = Float4(frameCenterPosition._x, frameCenterPosition._y + _size._y * 0.5f + paddingY, 0.0f, 1.0f);
 			FontRenderingOption labelRenderingOption;
 			labelRenderingOption._directionHorz = TextRenderDirectionHorz::Centered;
-			_shapeFontRendererContext->setTextColor(Color::kBlack);
-			_shapeFontRendererContext->drawDynamicText(_xLabel.c_str(), static_cast<uint32>(_xLabel.length()), labelPosition, labelRenderingOption);
+			_shapeFontRendererContext->SetTextColor(Color::kBlack);
+			_shapeFontRendererContext->DrawDynamicText(_xLabel.c_str(), static_cast<uint32>(_xLabel.length()), labelPosition, labelRenderingOption);
 
 			const float paddingX = -2.0f;
-			const float textWidth = _shapeFontRendererContext->getFontData().computeTextWidth(_yLabel.c_str(), static_cast<uint32>(_yLabel.length()));
+			const float textWidth = _shapeFontRendererContext->GetFontData().ComputeTextWidth(_yLabel.c_str(), static_cast<uint32>(_yLabel.length()));
 			labelPosition = Float4(frameCenterPosition._x - _size._x * 0.5f - paddingX, frameCenterPosition._y + textWidth * 0.5f, 0.0f, 1.0f);
 			labelRenderingOption._transformMatrix = Float4x4::RotationMatrixZ(-Math::kPiOverTwo);
-			_shapeFontRendererContext->drawDynamicText(_yLabel.c_str(), static_cast<uint32>(_yLabel.length()), labelPosition, labelRenderingOption);
+			_shapeFontRendererContext->DrawDynamicText(_yLabel.c_str(), static_cast<uint32>(_yLabel.length()), labelPosition, labelRenderingOption);
 		}
 	}
 }

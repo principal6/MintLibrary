@@ -18,34 +18,34 @@ namespace mint
 	namespace Rendering
 	{
 		inline ObjectPool::ObjectPool()
-			: _deltaTimer{ &DeltaTimer::getInstance() }
+			: _deltaTimer{ &DeltaTimer::GetInstance() }
 		{
 			__noop;
 		}
 
 		inline ObjectPool::~ObjectPool()
 		{
-			destroyObjects();
+			DestroyObjects();
 		}
 
-		MINT_INLINE Object* ObjectPool::createObject()
+		MINT_INLINE Object* ObjectPool::CreateObject()
 		{
-			return createObjectInternalXXX(MINT_NEW(Object, this));
+			return CreateObjectInternalXXX(MINT_NEW(Object, this));
 		}
 
-		MINT_INLINE CameraObject* ObjectPool::createCameraObject()
+		MINT_INLINE CameraObject* ObjectPool::CreateCameraObject()
 		{
-			return static_cast<CameraObject*>(createObjectInternalXXX(MINT_NEW(CameraObject, this)));
+			return static_cast<CameraObject*>(CreateObjectInternalXXX(MINT_NEW(CameraObject, this)));
 		}
 
-		MINT_INLINE void ObjectPool::destroyObjects()
+		MINT_INLINE void ObjectPool::DestroyObjects()
 		{
-			const uint32 objectCount = getObjectCount();
+			const uint32 objectCount = GetObjectCount();
 			for (uint32 objectIndex = 0; objectIndex < objectCount; ++objectIndex)
 			{
 				if (_objectArray[objectIndex] != nullptr)
 				{
-					destroyObjectComponents(*_objectArray[objectIndex]);
+					DestroyObjectComponents(*_objectArray[objectIndex]);
 
 					MINT_DELETE(_objectArray[objectIndex]);
 				}
@@ -53,26 +53,26 @@ namespace mint
 			_objectArray.Clear();
 		}
 
-		MINT_INLINE Object* ObjectPool::createObjectInternalXXX(Object* const object)
+		MINT_INLINE Object* ObjectPool::CreateObjectInternalXXX(Object* const object)
 		{
 			_objectArray.PushBack(object);
-			object->attachComponent(createTransformComponent()); // 모든 Object는 TransformComponent 를 필수로 가집니다.
+			object->AttachComponent(CreateTransformComponent()); // 모든 Object는 TransformComponent 를 필수로 가집니다.
 			return object;
 		}
 
-		MINT_INLINE TransformComponent* ObjectPool::createTransformComponent()
+		MINT_INLINE TransformComponent* ObjectPool::CreateTransformComponent()
 		{
 			return MINT_NEW(TransformComponent);
 		}
 
-		MINT_INLINE MeshComponent* ObjectPool::createMeshComponent()
+		MINT_INLINE MeshComponent* ObjectPool::CreateMeshComponent()
 		{
 			MeshComponent* result = MINT_NEW(MeshComponent);
 			_meshComponentArray.PushBack(std::move(result));
 			return _meshComponentArray.Back();
 		}
 
-		MINT_INLINE void ObjectPool::destroyObjectComponents(Object& object)
+		MINT_INLINE void ObjectPool::DestroyObjectComponents(Object& object)
 		{
 			const uint32 componentCount = static_cast<uint32>(object._componentArray.Size());
 			for (uint32 componentIndex = 0; componentIndex < componentCount; ++componentIndex)
@@ -80,10 +80,10 @@ namespace mint
 				IObjectComponent*& component = object._componentArray[componentIndex];
 				if (component != nullptr)
 				{
-					const ObjectComponentType componentType = component->getType();
+					const ObjectComponentType componentType = component->GetType();
 					if (componentType == ObjectComponentType::MeshComponent)
 					{
-						deregisterMeshComponent(static_cast<MeshComponent*>(component));
+						DeregisterMeshComponent(static_cast<MeshComponent*>(component));
 					}
 
 					MINT_DELETE(component);
@@ -91,7 +91,7 @@ namespace mint
 			}
 		}
 
-		MINT_INLINE void ObjectPool::registerMeshComponent(MeshComponent* const meshComponent)
+		MINT_INLINE void ObjectPool::RegisterMeshComponent(MeshComponent* const meshComponent)
 		{
 			if (meshComponent == nullptr)
 			{
@@ -101,7 +101,7 @@ namespace mint
 			const uint32 meshComponentCount = static_cast<uint32>(_meshComponentArray.Size());
 			for (uint32 meshComponentIndex = 0; meshComponentIndex < meshComponentCount; ++meshComponentIndex)
 			{
-				if (_meshComponentArray[meshComponentIndex]->getID() == meshComponent->getID())
+				if (_meshComponentArray[meshComponentIndex]->GetID() == meshComponent->GetID())
 				{
 					return;
 				}
@@ -110,7 +110,7 @@ namespace mint
 			_meshComponentArray.PushBack(meshComponent);
 		}
 
-		MINT_INLINE void ObjectPool::deregisterMeshComponent(MeshComponent* const meshComponent)
+		MINT_INLINE void ObjectPool::DeregisterMeshComponent(MeshComponent* const meshComponent)
 		{
 			if (meshComponent == nullptr)
 			{
@@ -121,7 +121,7 @@ namespace mint
 			const int32 meshComponentCount = static_cast<int32>(_meshComponentArray.Size());
 			for (int32 meshComponentIndex = 0; meshComponentIndex < meshComponentCount; ++meshComponentIndex)
 			{
-				if (_meshComponentArray[meshComponentIndex]->getID() == meshComponent->getID())
+				if (_meshComponentArray[meshComponentIndex]->GetID() == meshComponent->GetID())
 				{
 					foundIndex = meshComponentIndex;
 					break;
@@ -138,37 +138,37 @@ namespace mint
 			}
 		}
 
-		MINT_INLINE void ObjectPool::computeDeltaTime() const noexcept
+		MINT_INLINE void ObjectPool::ComputeDeltaTime() const noexcept
 		{
-			_deltaTimer->computeDeltaTimeSec();
+			_deltaTimer->ComputeDeltaTimeSec();
 		}
 
-		MINT_INLINE void ObjectPool::updateScreenSize(const Float2& screenSize)
+		MINT_INLINE void ObjectPool::UpdateScreenSize(const Float2& screenSize)
 		{
 			const float screenRatio = (screenSize._x / screenSize._y);
 			const uint32 objectCount = _objectArray.Size();
 			for (uint32 objectIndex = 0; objectIndex < objectCount; ++objectIndex)
 			{
 				Object*& object = _objectArray[objectIndex];
-				if (object->isTypeOf(ObjectType::CameraObject) == true)
+				if (object->IsTypeOf(ObjectType::CameraObject) == true)
 				{
 					CameraObject* const cameraObject = static_cast<CameraObject*>(object);
-					cameraObject->setPerspectiveScreenRatio(screenRatio);
+					cameraObject->SetPerspectiveScreenRatio(screenRatio);
 				}
 			}
 		}
 
-		MINT_INLINE const Vector<MeshComponent*>& ObjectPool::getMeshComponents() const noexcept
+		MINT_INLINE const Vector<MeshComponent*>& ObjectPool::GetMeshComponents() const noexcept
 		{
 			return _meshComponentArray;
 		}
 
-		MINT_INLINE uint32 ObjectPool::getObjectCount() const noexcept
+		MINT_INLINE uint32 ObjectPool::GetObjectCount() const noexcept
 		{
 			return _objectArray.Size();
 		}
 
-		MINT_INLINE const DeltaTimer* ObjectPool::getDeltaTimerXXX() const noexcept
+		MINT_INLINE const DeltaTimer* ObjectPool::GetDeltaTimerXXX() const noexcept
 		{
 			return _deltaTimer;
 		}

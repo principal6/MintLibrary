@@ -28,7 +28,7 @@ namespace mint
 
 #pragma region Windows Window Pool
 		static WindowsWindowPool windowsWindowPool;
-		void WindowsWindowPool::insertWindow(const HWND hWnd, WindowsWindow* const windowsWindow)
+		void WindowsWindowPool::InsertWindow(const HWND hWnd, WindowsWindow* const windowsWindow)
 		{
 			static std::mutex mutex;
 			std::lock_guard<std::mutex> lock{ mutex };
@@ -40,12 +40,12 @@ namespace mint
 			}
 		}
 
-		LRESULT WindowsWindowPool::redirectMessage(const HWND hWnd, const UINT Msg, const WPARAM wParam, const LPARAM lParam)
+		LRESULT WindowsWindowPool::RedirectMessage(const HWND hWnd, const UINT Msg, const WPARAM wParam, const LPARAM lParam)
 		{
 			if (_hWndMap.Find(hWnd).IsValid() == true)
 			{
 				const uint8 at = _hWndMap.At(hWnd);
-				return _windowArray[at]->processDefaultMessage(Msg, wParam, lParam);
+				return _windowArray[at]->ProcessDefaultMessage(Msg, wParam, lParam);
 			}
 			return ::DefWindowProcW(hWnd, Msg, wParam, lParam);
 		}
@@ -55,7 +55,7 @@ namespace mint
 #pragma region Windows Window
 		LRESULT WINAPI wndProc(_In_ HWND hWnd, _In_ UINT Msg, _In_ WPARAM wParam, _In_ LPARAM lParam)
 		{
-			return windowsWindowPool.redirectMessage(hWnd, Msg, wParam, lParam);
+			return windowsWindowPool.RedirectMessage(hWnd, Msg, wParam, lParam);
 		}
 
 
@@ -79,7 +79,7 @@ namespace mint
 			__noop;
 		}
 
-		bool WindowsWindow::create(const WindowCreationDesc& windowCreationDesc) noexcept
+		bool WindowsWindow::Create(const WindowCreationDesc& windowCreationDesc) noexcept
 		{
 			_windowCreationDesc = windowCreationDesc;
 
@@ -148,7 +148,7 @@ namespace mint
 
 			_isRunning = true;
 
-			windowsWindowPool.insertWindow(_hWnd, this);
+			windowsWindowPool.InsertWindow(_hWnd, this);
 
 			// Cursors
 			_cursorArray[static_cast<uint32>(CursorType::Arrow)] = LoadCursorW(nullptr, IDC_ARROW);
@@ -157,9 +157,9 @@ namespace mint
 			_cursorArray[static_cast<uint32>(CursorType::SizeLeftTilted)] = LoadCursorW(nullptr, IDC_SIZENWSE);
 			_cursorArray[static_cast<uint32>(CursorType::SizeRightTilted)] = LoadCursorW(nullptr, IDC_SIZENESW);
 
-			setCursorType(CursorType::Arrow);
+			SetCursorType(CursorType::Arrow);
 
-			buildWparamKeyCodePairArray();
+			BuildWparamKeyCodePairArray();
 
 
 			// For Mouse Input
@@ -183,7 +183,7 @@ namespace mint
 			::DestroyWindow(_hWnd);
 		}
 
-		void WindowsWindow::buildWparamKeyCodePairArray() noexcept
+		void WindowsWindow::BuildWparamKeyCodePairArray() noexcept
 		{
 			_wParamKeyCodePairArray.Clear();
 
@@ -238,7 +238,7 @@ namespace mint
 			_wParamKeyCodePairArray.PushBack(WparamKeyCodePair('9', Platform::KeyCode::Num9));
 		}
 
-		Platform::KeyCode WindowsWindow::convertWparamToKeyCode(const WPARAM wParam) const noexcept
+		Platform::KeyCode WindowsWindow::ConvertWparamToKeyCode(const WPARAM wParam) const noexcept
 		{
 			const uint32 count = static_cast<uint32>(_wParamKeyCodePairArray.Size());
 			for (uint32 iter = 0; iter < count; ++iter)
@@ -251,7 +251,7 @@ namespace mint
 			return Platform::KeyCode::NONE;
 		}
 
-		WPARAM WindowsWindow::convertKeyCodeToWparam(const Platform::KeyCode keyCode) const noexcept
+		WPARAM WindowsWindow::ConvertKeyCodeToWparam(const Platform::KeyCode keyCode) const noexcept
 		{
 			const uint32 count = static_cast<uint32>(_wParamKeyCodePairArray.Size());
 			for (uint32 iter = 0; iter < count; ++iter)
@@ -264,10 +264,10 @@ namespace mint
 			return 0;
 		}
 
-		bool WindowsWindow::isRunning() noexcept
+		bool WindowsWindow::IsRunning() noexcept
 		{
-			Platform::InputContext& inputContext = Platform::InputContext::getInstance();
-			inputContext.flushInputEvents();
+			Platform::InputContext& inputContext = Platform::InputContext::GetInstance();
+			inputContext.FlushInputEvents();
 
 			if (::PeekMessageW(_msg.Get(), nullptr, 0, 0, PM_REMOVE) == TRUE)
 			{
@@ -279,9 +279,9 @@ namespace mint
 				::TranslateMessage(_msg.Get());
 				::DispatchMessageW(_msg.Get());
 			}
-			inputContext.processEvents();
+			inputContext.ProcessEvents();
 
-			return __super::isRunning();
+			return __super::IsRunning();
 		}
 
 		void WindowsWindow::SetSize(const Int2& newSize, const bool onlyUpdateData) noexcept
@@ -312,21 +312,21 @@ namespace mint
 			_entireWindowSize = Int2(windowRect.right - windowRect.left, windowRect.bottom - windowRect.top);
 		}
 
-		void WindowsWindow::setPosition(const Int2& newPosition)
+		void WindowsWindow::SetPosition(const Int2& newPosition)
 		{
 			_windowCreationDesc._position = newPosition;
 
 			::SetWindowPos(_hWnd, nullptr, _windowCreationDesc._position._x, _windowCreationDesc._position._y, _entireWindowSize._x, _entireWindowSize._y, 0);
 		}
 
-		HWND WindowsWindow::getHandle() const noexcept
+		HWND WindowsWindow::GetHandle() const noexcept
 		{
 			return _hWnd;
 		}
 
-		void WindowsWindow::setCursorType(const CursorType cursorType) noexcept
+		void WindowsWindow::SetCursorType(const CursorType cursorType) noexcept
 		{
-			__super::setCursorType(cursorType);
+			__super::SetCursorType(cursorType);
 
 			POINT rawCursorPosition;
 			::GetCursorPos(&rawCursorPosition);
@@ -346,12 +346,12 @@ namespace mint
 			}
 		}
 
-		uint32 WindowsWindow::getCaretBlinkIntervalMs() const noexcept
+		uint32 WindowsWindow::GetCaretBlinkIntervalMs() const noexcept
 		{
 			return ::GetCaretBlinkTime();
 		}
 
-		void WindowsWindow::textToClipboard(const wchar_t* const text, const uint32 textLength) const noexcept
+		void WindowsWindow::TextToClipboard(const wchar_t* const text, const uint32 textLength) const noexcept
 		{
 			if (StringUtil::IsNullOrEmpty(text) == true)
 			{
@@ -378,7 +378,7 @@ namespace mint
 			::CloseClipboard();
 		}
 
-		void WindowsWindow::textFromClipboard(StringW& outText) const noexcept
+		void WindowsWindow::TextFromClipboard(StringW& outText) const noexcept
 		{
 			::OpenClipboard(_hWnd);
 
@@ -397,7 +397,7 @@ namespace mint
 			::CloseClipboard();
 		}
 
-		void WindowsWindow::showMessageBox(const std::wstring& title, const std::wstring& message, const MessageBoxType messageBoxType) const noexcept
+		void WindowsWindow::ShowMessageBox(const std::wstring& title, const std::wstring& message, const MessageBoxType messageBoxType) const noexcept
 		{
 			UINT type = MB_OK;
 			switch (messageBoxType)
@@ -416,11 +416,11 @@ namespace mint
 			::MessageBoxW(_hWnd, message.c_str(), title.c_str(), type);
 		}
 
-		LRESULT WindowsWindow::processDefaultMessage(const UINT Msg, const WPARAM wParam, const LPARAM lParam)
+		LRESULT WindowsWindow::ProcessDefaultMessage(const UINT Msg, const WPARAM wParam, const LPARAM lParam)
 		{
 			const Float2& mousePosition = Float2(static_cast<float>(GET_X_LPARAM(lParam)), static_cast<float>(GET_Y_LPARAM(lParam)));
 
-			Platform::InputContext& inputContext = Platform::InputContext::getInstance();
+			Platform::InputContext& inputContext = Platform::InputContext::GetInstance();
 			Platform::InputEvent inputEvent;
 			switch (Msg)
 			{
@@ -434,7 +434,7 @@ namespace mint
 				inputEvent._type = Platform::InputEventType::Keyboard;
 				inputEvent._keyboardData._type = Platform::InputKeyboardEventType::CharacterInput;
 				inputEvent._keyboardData._character = static_cast<wchar_t>(wParam);
-				inputContext.pushInputEvent(inputEvent);
+				inputContext.PushInputEvent(inputEvent);
 				return 0;
 			}
 			case WM_IME_CHAR:
@@ -442,7 +442,7 @@ namespace mint
 				inputEvent._type = Platform::InputEventType::Keyboard;
 				inputEvent._keyboardData._type = Platform::InputKeyboardEventType::CharacterInput;
 				inputEvent._keyboardData._character = static_cast<wchar_t>(wParam);
-				inputContext.pushInputEvent(inputEvent);
+				inputContext.PushInputEvent(inputEvent);
 				return 0;
 			}
 			case WM_IME_COMPOSITION:
@@ -460,7 +460,7 @@ namespace mint
 					inputEvent._type = Platform::InputEventType::Keyboard;
 					inputEvent._keyboardData._type = Platform::InputKeyboardEventType::CharacterInputCandidate;
 					inputEvent._keyboardData._character = static_cast<wchar_t>(wParam);
-					inputContext.pushInputEvent(inputEvent);
+					inputContext.PushInputEvent(inputEvent);
 					return 0;
 				}
 				break;
@@ -469,16 +469,16 @@ namespace mint
 			{
 				inputEvent._type = Platform::InputEventType::Keyboard;
 				inputEvent._keyboardData._type = Platform::InputKeyboardEventType::KeyPressed;
-				inputEvent._keyboardData._keyCode = convertWparamToKeyCode(wParam);
-				inputContext.pushInputEvent(inputEvent);
+				inputEvent._keyboardData._keyCode = ConvertWparamToKeyCode(wParam);
+				inputContext.PushInputEvent(inputEvent);
 				return 0;
 			}
 			case WM_KEYUP:
 			{
 				inputEvent._type = Platform::InputEventType::Keyboard;
 				inputEvent._keyboardData._type = Platform::InputKeyboardEventType::KeyReleased;
-				inputEvent._keyboardData._keyCode = convertWparamToKeyCode(wParam);
-				inputContext.pushInputEvent(inputEvent);
+				inputEvent._keyboardData._keyCode = ConvertWparamToKeyCode(wParam);
+				inputContext.PushInputEvent(inputEvent);
 				return 0;
 			}
 			case WM_MOUSEMOVE:
@@ -491,7 +491,7 @@ namespace mint
 				inputEvent._type = Platform::InputEventType::Mouse;
 				inputEvent._mouseData._type = Platform::InputMouseEventType::PointerMoved;
 				inputEvent._mouseData._position = mousePosition;
-				inputContext.pushInputEvent(inputEvent);
+				inputContext.PushInputEvent(inputEvent);
 				return 0;
 			}
 			case WM_LBUTTONDOWN:
@@ -499,7 +499,7 @@ namespace mint
 				inputEvent._type = Platform::InputEventType::Mouse;
 				inputEvent._mouseData._type = Platform::InputMouseEventType::ButtonPressed;
 				inputEvent._mouseData._button = Platform::MouseButton::Left;
-				inputContext.pushInputEvent(inputEvent);
+				inputContext.PushInputEvent(inputEvent);
 				return 0;
 			}
 			case WM_LBUTTONUP:
@@ -507,7 +507,7 @@ namespace mint
 				inputEvent._type = Platform::InputEventType::Mouse;
 				inputEvent._mouseData._type = Platform::InputMouseEventType::ButtonReleased;
 				inputEvent._mouseData._button = Platform::MouseButton::Left;
-				inputContext.pushInputEvent(inputEvent);
+				inputContext.PushInputEvent(inputEvent);
 				return 0;
 			}
 			case WM_LBUTTONDBLCLK:
@@ -515,7 +515,7 @@ namespace mint
 				inputEvent._type = Platform::InputEventType::Mouse;
 				inputEvent._mouseData._type = Platform::InputMouseEventType::ButtonDoubleClicked;
 				inputEvent._mouseData._button = Platform::MouseButton::Left;
-				inputContext.pushInputEvent(inputEvent);
+				inputContext.PushInputEvent(inputEvent);
 				return 0;
 			}
 			case WM_MBUTTONDOWN:
@@ -523,7 +523,7 @@ namespace mint
 				inputEvent._type = Platform::InputEventType::Mouse;
 				inputEvent._mouseData._type = Platform::InputMouseEventType::ButtonPressed;
 				inputEvent._mouseData._button = Platform::MouseButton::Middle;
-				inputContext.pushInputEvent(inputEvent);
+				inputContext.PushInputEvent(inputEvent);
 				return 0;
 			}
 			case WM_MBUTTONUP:
@@ -531,7 +531,7 @@ namespace mint
 				inputEvent._type = Platform::InputEventType::Mouse;
 				inputEvent._mouseData._type = Platform::InputMouseEventType::ButtonReleased;
 				inputEvent._mouseData._button = Platform::MouseButton::Middle;
-				inputContext.pushInputEvent(inputEvent);
+				inputContext.PushInputEvent(inputEvent);
 				return 0;
 			}
 			case WM_MBUTTONDBLCLK:
@@ -539,7 +539,7 @@ namespace mint
 				inputEvent._type = Platform::InputEventType::Mouse;
 				inputEvent._mouseData._type = Platform::InputMouseEventType::ButtonDoubleClicked;
 				inputEvent._mouseData._button = Platform::MouseButton::Middle;
-				inputContext.pushInputEvent(inputEvent);
+				inputContext.PushInputEvent(inputEvent);
 				return 0;
 			}
 			case WM_RBUTTONDOWN:
@@ -547,7 +547,7 @@ namespace mint
 				inputEvent._type = Platform::InputEventType::Mouse;
 				inputEvent._mouseData._type = Platform::InputMouseEventType::ButtonPressed;
 				inputEvent._mouseData._button = Platform::MouseButton::Right;
-				inputContext.pushInputEvent(inputEvent);
+				inputContext.PushInputEvent(inputEvent);
 				return 0;
 			}
 			case WM_RBUTTONUP:
@@ -555,7 +555,7 @@ namespace mint
 				inputEvent._type = Platform::InputEventType::Mouse;
 				inputEvent._mouseData._type = Platform::InputMouseEventType::ButtonReleased;
 				inputEvent._mouseData._button = Platform::MouseButton::Right;
-				inputContext.pushInputEvent(inputEvent);
+				inputContext.PushInputEvent(inputEvent);
 				return 0;
 			}
 			case WM_RBUTTONDBLCLK:
@@ -563,7 +563,7 @@ namespace mint
 				inputEvent._type = Platform::InputEventType::Mouse;
 				inputEvent._mouseData._type = Platform::InputMouseEventType::ButtonDoubleClicked;
 				inputEvent._mouseData._button = Platform::MouseButton::Right;
-				inputContext.pushInputEvent(inputEvent);
+				inputContext.PushInputEvent(inputEvent);
 				return 0;
 			}
 			case WM_MOUSEWHEEL:
@@ -575,7 +575,7 @@ namespace mint
 				inputEvent._mouseData._type = Platform::InputMouseEventType::WheelScrolled;
 				inputEvent._mouseData._wheelScroll = static_cast<float>(GET_WHEEL_DELTA_WPARAM(wParam)) / WHEEL_DELTA;
 				inputEvent._mouseData._position = mousePosition;
-				inputContext.pushInputEvent(inputEvent);
+				inputContext.PushInputEvent(inputEvent);
 				return 0;
 			}
 			case WM_INPUT:
@@ -592,7 +592,7 @@ namespace mint
 						inputEvent._type = Platform::InputEventType::Mouse;
 						inputEvent._mouseData._type = Platform::InputMouseEventType::PointerMovedDelta;
 						inputEvent._mouseData._position = Float2(static_cast<float>(rawMouse.lLastX), static_cast<float>(rawMouse.lLastY));
-						inputContext.pushInputEvent(inputEvent);
+						inputContext.PushInputEvent(inputEvent);
 					}
 				}
 				return 0;

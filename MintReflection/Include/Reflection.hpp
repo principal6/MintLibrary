@@ -29,74 +29,74 @@ namespace mint
 
 
 	template <typename T>
-	inline void TypeData<T>::serialize(BinarySerializer& serializer) const noexcept
+	inline void TypeData<T>::Serialize(BinarySerializer& serializer) const noexcept
 	{
-		serializer.serialize_internal(_typeName);
-		serializer.serialize_internal(_declarationName);
-		serializer.serialize_internal(_size);
-		serializer.serialize_internal(_alignment);
-		serializer.serialize_internal(_offset);
-		serializer.serialize_internal(_arrayItemCount);
+		serializer.SerializeInternal(_typeName);
+		serializer.SerializeInternal(_declarationName);
+		serializer.SerializeInternal(_size);
+		serializer.SerializeInternal(_alignment);
+		serializer.SerializeInternal(_offset);
+		serializer.SerializeInternal(_arrayItemCount);
 	}
 
 	template <typename T>
-	inline void TypeData<T>::serializeValue(BinarySerializer& serializer, const void* const memberPointer, const uint32 arrayItemCount) const noexcept
+	inline void TypeData<T>::SerializeValue(BinarySerializer& serializer, const void* const memberPointer, const uint32 arrayItemCount) const noexcept
 	{
 		for (uint32 arrayItemIndex = 0; arrayItemIndex < Max(static_cast<uint32>(1), arrayItemCount); ++arrayItemIndex)
 		{
 			const T* const castedMemberPointer = reinterpret_cast<const T*>(memberPointer);
-			serializer.serialize_internal(*(castedMemberPointer + arrayItemIndex));
+			serializer.SerializeInternal(*(castedMemberPointer + arrayItemIndex));
 		}
 	}
 	
 	template <typename T>
-	inline void TypeData<T>::serializeValue(JSONSerializer& serializer, const uint32 depth, const void* const memberPointer, const uint32 arrayItemCount) const noexcept
+	inline void TypeData<T>::SerializeValue(JSONSerializer& serializer, const uint32 depth, const void* const memberPointer, const uint32 arrayItemCount) const noexcept
 	{
 		if (arrayItemCount == 0)
 		{
 			const T* const castedMemberPointer = reinterpret_cast<const T*>(memberPointer);
-			serializer.serialize_internal(depth, _declarationName, *castedMemberPointer);
+			serializer.SerializeInternal(depth, _declarationName, *castedMemberPointer);
 		}
 		else
 		{
-			serializer.serialize_helper_arrayPrefix(depth, _declarationName);
+			serializer.SerializeHelper_ArrayPrefix(depth, _declarationName);
 			
 			for (uint32 arrayItemIndex = 0; arrayItemIndex < arrayItemCount; ++arrayItemIndex)
 			{
 				const T* const castedMemberPointer = reinterpret_cast<const T*>(memberPointer);
-				serializer.serialize_helper_arrayItem(depth, _declarationName, *(castedMemberPointer + arrayItemIndex), arrayItemIndex == arrayItemCount - 1);
+				serializer.SerializeHelper_ArrayItem(depth, _declarationName, *(castedMemberPointer + arrayItemIndex), arrayItemIndex == arrayItemCount - 1);
 			}
 
-			serializer.serialize_helper_arrayPostfix(depth);
+			serializer.SerializeHelper_ArrayPostfix(depth);
 		}
 	}
 
 	template <typename T>
-	inline bool TypeData<T>::deserialize(BinarySerializer& serializer) noexcept
+	inline bool TypeData<T>::Deserialize(BinarySerializer& serializer) noexcept
 	{
 		StringA deserializedTypeName;
-		serializer.deserialize_internal(deserializedTypeName);
+		serializer.DeserializeInternal(deserializedTypeName);
 		if (_typeName != deserializedTypeName)
 		{
 			MINT_LOG_ERROR("type name of the class [%s] does not match that of the source binary [%s]", _typeName.CString(), deserializedTypeName.CString());
 			return false;
 		}
 
-		serializer.deserialize_internal(_declarationName);
-		serializer.deserialize_internal(_size);
-		serializer.deserialize_internal(_alignment);
-		serializer.deserialize_internal(_offset);
-		serializer.deserialize_internal(_arrayItemCount);
+		serializer.DeserializeInternal(_declarationName);
+		serializer.DeserializeInternal(_size);
+		serializer.DeserializeInternal(_alignment);
+		serializer.DeserializeInternal(_offset);
+		serializer.DeserializeInternal(_arrayItemCount);
 		return true;
 	}
 
 	template <typename T>
-	inline void TypeData<T>::deserializeValue(BinarySerializer& serializer, void* const memberPointer, const uint32 arrayItemCount) noexcept
+	inline void TypeData<T>::DeserializeValue(BinarySerializer& serializer, void* const memberPointer, const uint32 arrayItemCount) noexcept
 	{
 		for (uint32 arrayItemIndex = 0; arrayItemIndex < Max(static_cast<uint32>(1), arrayItemCount); ++arrayItemIndex)
 		{
 			T* const castedMemberPointer = reinterpret_cast<T*>(memberPointer);
-			serializer.deserialize_internal(*(castedMemberPointer + arrayItemIndex));
+			serializer.DeserializeInternal(*(castedMemberPointer + arrayItemIndex));
 		}
 	}
 #pragma endregion
@@ -150,9 +150,9 @@ namespace mint
 
 
 	template <typename T>
-	inline bool BinarySerializer::serialize(const T& from, const char* const fileName) noexcept
+	inline bool BinarySerializer::Serialize(const T& from, const char* const fileName) noexcept
 	{
-		_writer.clear();
+		_writer.Clear();
 
 #if defined (_DEBUG_LOG_SERIALIZER_INTERNALS)
 		if constexpr (IsReflectionClass<T>::value == true)
@@ -165,13 +165,13 @@ namespace mint
 		}
 #endif
 
-		serialize_internal(from);
+		SerializeInternal(from);
 
-		return _writer.save(fileName);
+		return _writer.Save(fileName);
 	}
 
 	template <typename T>
-	inline void BinarySerializer::serialize_internal(const T& from) noexcept
+	inline void BinarySerializer::SerializeInternal(const T& from) noexcept
 	{
 		_MINT_LOG_SERIALIZATION_NOT_SPECIALIZED;
 
@@ -179,55 +179,55 @@ namespace mint
 		{
 			const ReflectionData& reflectionData = from.getReflectionData();
 			TypeBaseData* const typeData = reflectionData._typeData;
-			typeData->serialize(*this);
+			typeData->Serialize(*this);
 
 			const uint32 memberCount = reflectionData._memberTypeDatas.Size();
 			for (uint32 memberIndex = 0; memberIndex < memberCount; ++memberIndex)
 			{
 				const TypeBaseData& memberTypeData = *reflectionData._memberTypeDatas[memberIndex];
-				memberTypeData.serialize(*this);
+				memberTypeData.Serialize(*this);
 			}
 
 			for (uint32 memberIndex = 0; memberIndex < memberCount; ++memberIndex)
 			{
 				const TypeBaseData& memberTypeData = *reflectionData._memberTypeDatas[memberIndex];
-				memberTypeData.serializeValue(*this, reinterpret_cast<const char*>(&from) + memberTypeData._offset, memberTypeData._arrayItemCount);
+				memberTypeData.SerializeValue(*this, reinterpret_cast<const char*>(&from) + memberTypeData._offset, memberTypeData._arrayItemCount);
 			}
 		}
 		else
 		{
-			_writer.write(from);
+			_writer.Write(from);
 		}
 	}
 
 	template <typename T>
-	inline void BinarySerializer::serialize_internal(const String<T>& from) noexcept
+	inline void BinarySerializer::SerializeInternal(const String<T>& from) noexcept
 	{
 		_MINT_LOG_SERIALIZATION_SPECIALIZED;
 
-		serialize_internal(from.Length());
+		SerializeInternal(from.Length());
 
-		serialize_internal(from.CString());
+		SerializeInternal(from.CString());
 	}
 
 	template <typename T>
-	inline void BinarySerializer::serialize_internal(const Vector<T>& from) noexcept
+	inline void BinarySerializer::SerializeInternal(const Vector<T>& from) noexcept
 	{
 		_MINT_LOG_SERIALIZATION_SPECIALIZED;
 
 		const uint32 count = from.Size();
-		serialize_internal(count);
+		SerializeInternal(count);
 
 		for (uint32 index = 0; index < count; ++index)
 		{
-			serialize_internal(from[index]);
+			SerializeInternal(from[index]);
 		}
 	}
 
 	template <typename T>
-	inline bool BinarySerializer::deserialize(const char* const fileName, T& to) noexcept
+	inline bool BinarySerializer::Deserialize(const char* const fileName, T& to) noexcept
 	{
-		if (_reader.open(fileName) == false)
+		if (_reader.Open(fileName) == false)
 		{
 			return false;
 		}
@@ -243,11 +243,11 @@ namespace mint
 		}
 #endif
 
-		return deserialize_internal(to);
+		return DeserializeInternal(to);
 	}
 
 	template <typename T>
-	inline bool BinarySerializer::deserialize_internal(T& to) noexcept
+	inline bool BinarySerializer::DeserializeInternal(T& to) noexcept
 	{
 		_MINT_LOG_DESERIALIZATION_NOT_SPECIALIZED;
 
@@ -255,7 +255,7 @@ namespace mint
 		{
 			const ReflectionData& reflectionData = to.getReflectionData();
 			TypeBaseData* const typeData = reflectionData._typeData;
-			if (typeData->deserialize(*this) == false)
+			if (typeData->Deserialize(*this) == false)
 			{
 				return false;
 			}
@@ -264,45 +264,45 @@ namespace mint
 			for (uint32 memberIndex = 0; memberIndex < memberCount; ++memberIndex)
 			{
 				TypeBaseData* const memberTypeData = reflectionData._memberTypeDatas[memberIndex];
-				memberTypeData->deserialize(*this);
+				memberTypeData->Deserialize(*this);
 			}
 
 			for (uint32 memberIndex = 0; memberIndex < memberCount; ++memberIndex)
 			{
 				TypeBaseData* const memberTypeData = reflectionData._memberTypeDatas[memberIndex];
-				memberTypeData->deserializeValue(*this, reinterpret_cast<char*>(&to) + memberTypeData->_offset, memberTypeData->_arrayItemCount);
+				memberTypeData->DeserializeValue(*this, reinterpret_cast<char*>(&to) + memberTypeData->_offset, memberTypeData->_arrayItemCount);
 			}
 		}
 		else
 		{
-			to = *_reader.read<T>();
+			to = *_reader.Read<T>();
 		}
 
 		return true;
 	}
 
 	template <typename T>
-	inline bool BinarySerializer::deserialize_internal(String<T>& to) noexcept
+	inline bool BinarySerializer::DeserializeInternal(String<T>& to) noexcept
 	{
 		_MINT_LOG_DESERIALIZATION_SPECIALIZED;
 
-		const uint32 length = *_reader.read<uint32>();
+		const uint32 length = *_reader.Read<uint32>();
 		to.Reserve(length);
-		to = _reader.read<const T>(length + 1);
+		to = _reader.Read<const T>(length + 1);
 		return true;
 	}
 
 	template <typename T>
-	inline bool BinarySerializer::deserialize_internal(Vector<T>& to) noexcept
+	inline bool BinarySerializer::DeserializeInternal(Vector<T>& to) noexcept
 	{
 		_MINT_LOG_DESERIALIZATION_SPECIALIZED;
 
-		const uint32 count = *_reader.read<decltype(count)>();
+		const uint32 count = *_reader.Read<decltype(count)>();
 		to.Resize(count);
 
 		for (uint32 index = 0; index < count; ++index)
 		{
-			deserialize_internal(to[index]);
+			DeserializeInternal(to[index]);
 		}
 		return true;
 	}

@@ -41,24 +41,24 @@ namespace mint
 			~Plotter() = default;
 
 		public:
-			void scatter(const Vector<float>& xData, const Vector<float>& yData);
+			void Scatter(const Vector<float>& xData, const Vector<float>& yData);
 
 		private:
-			void updateFrameValues();
+			void UpdateFrameValues();
 
 		public:
-			MINT_INLINE void plotType(const PlotType nextPlotType) noexcept { _nextPlotType = nextPlotType; }
-			MINT_INLINE void xLabel(const std::wstring& label) noexcept { _xLabel = label; }
-			MINT_INLINE void yLabel(const std::wstring& label) noexcept { _yLabel = label; }
-			void render() noexcept;
+			MINT_INLINE void SetPlotType(const PlotType nextPlotType) noexcept { _nextPlotType = nextPlotType; }
+			MINT_INLINE void SetXLabel(const std::wstring& label) noexcept { _xLabel = label; }
+			MINT_INLINE void SetYLabel(const std::wstring& label) noexcept { _yLabel = label; }
+			void Render() noexcept;
 
 		private:
-			void plotScatter(const PlotType plotType, const float x, const float y, const Color& color);
-			Float2 computeOrigin() const noexcept;
-			Float2 computeInFramePlotPosition(const float x, const float y) const noexcept;
-			Float2 computePlotPosition(const float x, const float y) const noexcept;
-			void drawFrame(const Float4& frameCenterPosition) noexcept;
-			void drawLabels(const Float4& frameCenterPosition) noexcept;
+			void PlotScatter(const PlotType plotType, const float x, const float y, const Color& color);
+			Float2 ComputeOrigin() const noexcept;
+			Float2 ComputeInFramePlotPosition(const float x, const float y) const noexcept;
+			Float2 ComputePlotPosition(const float x, const float y) const noexcept;
+			void DrawFrame(const Float4& frameCenterPosition) noexcept;
+			void DrawLabels(const Float4& frameCenterPosition) noexcept;
 
 		private:
 			ShapeRendererContext* const _shapeFontRendererContext;

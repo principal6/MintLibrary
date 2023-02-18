@@ -38,7 +38,7 @@ namespace mint
 				COUNT
 			};
 
-			MINT_INLINE static constexpr uint32 getModifierTypeCount() { return static_cast<uint32>(MathExpression::ModifierType::COUNT); }
+			MINT_INLINE static constexpr uint32 GetModifierTypeCount() { return static_cast<uint32>(MathExpression::ModifierType::COUNT); }
 
 			struct Modifier
 			{
@@ -51,12 +51,12 @@ namespace mint
 			~MathExpression() = default;
 
 		public:
-			void evaluate() const noexcept;
-			MINT_INLINE bool isEvaluated() const noexcept { return _isEvaluated; }
+			void Evaluate() const noexcept;
+			MINT_INLINE bool IsEvaluated() const noexcept { return _isEvaluated; }
 
 		public:
-			const wchar_t* const getPlainString() const noexcept;
-			uint32 getPlainStringLength() const noexcept;
+			const wchar_t* const GetPlainString() const noexcept;
+			uint32 GetPlainStringLength() const noexcept;
 
 		private:
 			std::wstring _latexExpression;
@@ -78,11 +78,11 @@ namespace mint
 			void drawMathExpression(const MathExpression& mathExpression, const Float2& screenPosition) noexcept;
 
 		public:
-			void render() noexcept;
+			void Render() noexcept;
 
 		private:
-			ShapeRendererContext _shapeFontRendererContexts[MathExpression::getModifierTypeCount()];
-			BitVector _bitFlagsArray[MathExpression::getModifierTypeCount()];
+			ShapeRendererContext _shapeFontRendererContexts[MathExpression::GetModifierTypeCount()];
+			BitVector _bitFlagsArray[MathExpression::GetModifierTypeCount()];
 		};
 	}
 }

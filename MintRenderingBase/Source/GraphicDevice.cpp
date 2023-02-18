@@ -54,7 +54,7 @@ namespace mint
 			return _mappedSubresource.pData != nullptr;
 		}
 
-		void SafeResourceMapper::set(const void* const data, const uint32 size) noexcept
+		void SafeResourceMapper::Set(const void* const data, const uint32 size) noexcept
 		{
 			memcpy(_mappedSubresource.pData, data, size);
 		}
@@ -74,14 +74,14 @@ namespace mint
 			__noop;
 		}
 
-		void GraphicDevice::StateManager::setIAInputLayout(ID3D11InputLayout* const iaInputLayout) noexcept
+		void GraphicDevice::StateManager::SetIAInputLayout(ID3D11InputLayout* const iaInputLayout) noexcept
 		{
 			MINT_CHECK_STATE(_iaInputLayout, iaInputLayout);
 
 			_graphicDevice._deviceContext->IASetInputLayout(_iaInputLayout);
 		}
 
-		void GraphicDevice::StateManager::setIARenderingPrimitive(const RenderingPrimitive iaRenderingPrimitive) noexcept
+		void GraphicDevice::StateManager::SetIARenderingPrimitive(const RenderingPrimitive iaRenderingPrimitive) noexcept
 		{
 			MINT_CHECK_STATE(_iaRenderingPrimitive, iaRenderingPrimitive);
 
@@ -101,63 +101,63 @@ namespace mint
 			}
 		}
 
-		void GraphicDevice::StateManager::setIAVertexBuffers(const int32 bindingStartSlot, const uint32 bufferCount, ID3D11Buffer* const* const buffers, const uint32* const strides, const uint32* const offsets) noexcept
+		void GraphicDevice::StateManager::SetIAVertexBuffers(const int32 bindingStartSlot, const uint32 bufferCount, ID3D11Buffer* const* const buffers, const uint32* const strides, const uint32* const offsets) noexcept
 		{
 			_graphicDevice._deviceContext->IASetVertexBuffers(bindingStartSlot, bufferCount, buffers, strides, offsets);
 		}
 
-		void GraphicDevice::StateManager::setIAIndexBuffer(ID3D11Buffer* const buffer, const DXGI_FORMAT format, const uint32 offset) noexcept
+		void GraphicDevice::StateManager::SetIAIndexBuffer(ID3D11Buffer* const buffer, const DXGI_FORMAT format, const uint32 offset) noexcept
 		{
 			_graphicDevice._deviceContext->IASetIndexBuffer(buffer, format, offset);
 		}
 
-		void GraphicDevice::StateManager::setRSRasterizerState(ID3D11RasterizerState* const rsRasterizerState) noexcept
+		void GraphicDevice::StateManager::SetRSRasterizerState(ID3D11RasterizerState* const rsRasterizerState) noexcept
 		{
 			MINT_CHECK_STATE(_rsRasterizerState, rsRasterizerState);
 
 			_graphicDevice._deviceContext->RSSetState(_rsRasterizerState);
 		}
 
-		void GraphicDevice::StateManager::setRSViewport(const D3D11_VIEWPORT rsViewport) noexcept
+		void GraphicDevice::StateManager::SetRSViewport(const D3D11_VIEWPORT rsViewport) noexcept
 		{
 			MINT_CHECK_STATE(_rsViewport, rsViewport);
 
 			_graphicDevice._deviceContext->RSSetViewports(1, &rsViewport);
 		}
 
-		void GraphicDevice::StateManager::setRSScissorRectangle(const D3D11_RECT rsScissorRectangle) noexcept
+		void GraphicDevice::StateManager::SetRSScissorRectangle(const D3D11_RECT rsScissorRectangle) noexcept
 		{
 			MINT_CHECK_STATE(_rsScissorRectangle, rsScissorRectangle);
 
 			_graphicDevice._deviceContext->RSSetScissorRects(1, &rsScissorRectangle);
 		}
 
-		void GraphicDevice::StateManager::setVSShader(ID3D11VertexShader* const shader) noexcept
+		void GraphicDevice::StateManager::SetVSShader(ID3D11VertexShader* const shader) noexcept
 		{
 			MINT_CHECK_STATE(_vsShader, shader);
 
 			_graphicDevice._deviceContext->VSSetShader(shader, nullptr, 0);
 		}
 
-		void GraphicDevice::StateManager::setGSShader(ID3D11GeometryShader* const shader) noexcept
+		void GraphicDevice::StateManager::SetGSShader(ID3D11GeometryShader* const shader) noexcept
 		{
 			MINT_CHECK_STATE(_gsShader, shader);
 
 			_graphicDevice._deviceContext->GSSetShader(shader, nullptr, 0);
 		}
 
-		void GraphicDevice::StateManager::setPSShader(ID3D11PixelShader* const shader) noexcept
+		void GraphicDevice::StateManager::SetPSShader(ID3D11PixelShader* const shader) noexcept
 		{
 			MINT_CHECK_STATE(_psShader, shader);
 
 			_graphicDevice._deviceContext->PSSetShader(shader, nullptr, 0);
 		}
 
-		void GraphicDevice::StateManager::setVSResources(const DxResource& resource, uint32 bindingSlot) noexcept
+		void GraphicDevice::StateManager::SetVSResources(const DxResource& resource, uint32 bindingSlot) noexcept
 		{
 			if (bindingSlot == kUint32Max)
 			{
-				bindingSlot = resource.getRegisterIndex();
+				bindingSlot = resource.GetRegisterIndex();
 			}
 
 			Vector<GraphicObjectID>& shaderResources = _vsShaderResources;
@@ -165,20 +165,20 @@ namespace mint
 			{
 				shaderResources.Resize(bindingSlot + 1);
 			}
-			if (resource.needToBind() == true)
+			if (resource.NeedsToBind() == true)
 			{
 				shaderResources[bindingSlot] = GraphicObjectID();
 			}
-			MINT_CHECK_STATE(shaderResources[bindingSlot], resource.getID());
+			MINT_CHECK_STATE(shaderResources[bindingSlot], resource.GetID());
 
-			_graphicDevice._deviceContext->VSSetShaderResources(bindingSlot, 1, resource.getResourceView());
+			_graphicDevice._deviceContext->VSSetShaderResources(bindingSlot, 1, resource.GetResourceView());
 		}
 
-		void GraphicDevice::StateManager::setGSResources(const DxResource& resource, uint32 bindingSlot) noexcept
+		void GraphicDevice::StateManager::SetGSResources(const DxResource& resource, uint32 bindingSlot) noexcept
 		{
 			if (bindingSlot == kUint32Max)
 			{
-				bindingSlot = resource.getRegisterIndex();
+				bindingSlot = resource.GetRegisterIndex();
 			}
 
 			Vector<GraphicObjectID>& shaderResources = _gsShaderResources;
@@ -186,20 +186,20 @@ namespace mint
 			{
 				shaderResources.Resize(bindingSlot + 1);
 			}
-			if (resource.needToBind() == true)
+			if (resource.NeedsToBind() == true)
 			{
 				shaderResources[bindingSlot] = GraphicObjectID();
 			}
-			MINT_CHECK_STATE(shaderResources[bindingSlot], resource.getID());
+			MINT_CHECK_STATE(shaderResources[bindingSlot], resource.GetID());
 
-			_graphicDevice._deviceContext->GSSetShaderResources(bindingSlot, 1, resource.getResourceView());
+			_graphicDevice._deviceContext->GSSetShaderResources(bindingSlot, 1, resource.GetResourceView());
 		}
 
-		void GraphicDevice::StateManager::setPSResources(const DxResource& resource, uint32 bindingSlot) noexcept
+		void GraphicDevice::StateManager::SetPSResources(const DxResource& resource, uint32 bindingSlot) noexcept
 		{
 			if (bindingSlot == kUint32Max)
 			{
-				bindingSlot = resource.getRegisterIndex();
+				bindingSlot = resource.GetRegisterIndex();
 			}
 
 			Vector<GraphicObjectID>& shaderResources = _psShaderResources;
@@ -207,20 +207,20 @@ namespace mint
 			{
 				shaderResources.Resize(bindingSlot + 1);
 			}
-			if (resource.needToBind() == true)
+			if (resource.NeedsToBind() == true)
 			{
 				shaderResources[bindingSlot] = GraphicObjectID();
 			}
-			MINT_CHECK_STATE(shaderResources[bindingSlot], resource.getID());
+			MINT_CHECK_STATE(shaderResources[bindingSlot], resource.GetID());
 
-			_graphicDevice._deviceContext->PSSetShaderResources(bindingSlot, 1, resource.getResourceView());
+			_graphicDevice._deviceContext->PSSetShaderResources(bindingSlot, 1, resource.GetResourceView());
 		}
 
-		void GraphicDevice::StateManager::setVSConstantBuffers(const DxResource& constantBuffer, uint32 bindingSlot)
+		void GraphicDevice::StateManager::SetVSConstantBuffers(const DxResource& constantBuffer, uint32 bindingSlot)
 		{
 			if (bindingSlot == kUint32Max)
 			{
-				bindingSlot = constantBuffer.getRegisterIndex();
+				bindingSlot = constantBuffer.GetRegisterIndex();
 			}
 
 			Vector<GraphicObjectID>& constantBuffers = _vsConstantBuffers;
@@ -228,20 +228,20 @@ namespace mint
 			{
 				constantBuffers.Resize(bindingSlot + 1);
 			}
-			if (constantBuffer.needToBind() == true)
+			if (constantBuffer.NeedsToBind() == true)
 			{
 				constantBuffers[bindingSlot] = GraphicObjectID();
 			}
-			MINT_CHECK_STATE(constantBuffers[bindingSlot], constantBuffer.getID());
+			MINT_CHECK_STATE(constantBuffers[bindingSlot], constantBuffer.GetID());
 
-			_graphicDevice._deviceContext->VSSetConstantBuffers(bindingSlot, 1, constantBuffer.getBuffer());
+			_graphicDevice._deviceContext->VSSetConstantBuffers(bindingSlot, 1, constantBuffer.GetBuffer());
 		}
 
-		void GraphicDevice::StateManager::setGSConstantBuffers(const DxResource& constantBuffer, uint32 bindingSlot)
+		void GraphicDevice::StateManager::SetGSConstantBuffers(const DxResource& constantBuffer, uint32 bindingSlot)
 		{
 			if (bindingSlot == kUint32Max)
 			{
-				bindingSlot = constantBuffer.getRegisterIndex();
+				bindingSlot = constantBuffer.GetRegisterIndex();
 			}
 
 			Vector<GraphicObjectID>& constantBuffers = _gsConstantBuffers;
@@ -249,20 +249,20 @@ namespace mint
 			{
 				constantBuffers.Resize(bindingSlot + 1);
 			}
-			if (constantBuffer.needToBind() == true)
+			if (constantBuffer.NeedsToBind() == true)
 			{
 				constantBuffers[bindingSlot] = GraphicObjectID();
 			}
-			MINT_CHECK_STATE(constantBuffers[bindingSlot], constantBuffer.getID());
+			MINT_CHECK_STATE(constantBuffers[bindingSlot], constantBuffer.GetID());
 
-			_graphicDevice._deviceContext->GSSetConstantBuffers(bindingSlot, 1, constantBuffer.getBuffer());
+			_graphicDevice._deviceContext->GSSetConstantBuffers(bindingSlot, 1, constantBuffer.GetBuffer());
 		}
 
-		void GraphicDevice::StateManager::setPSConstantBuffers(const DxResource& constantBuffer, uint32 bindingSlot)
+		void GraphicDevice::StateManager::SetPSConstantBuffers(const DxResource& constantBuffer, uint32 bindingSlot)
 		{
 			if (bindingSlot == kUint32Max)
 			{
-				bindingSlot = constantBuffer.getRegisterIndex();
+				bindingSlot = constantBuffer.GetRegisterIndex();
 			}
 
 			Vector<GraphicObjectID>& constantBuffers = _psConstantBuffers;
@@ -270,13 +270,13 @@ namespace mint
 			{
 				constantBuffers.Resize(bindingSlot + 1);
 			}
-			if (constantBuffer.needToBind() == true)
+			if (constantBuffer.NeedsToBind() == true)
 			{
 				constantBuffers[bindingSlot] = GraphicObjectID();
 			}
-			MINT_CHECK_STATE(constantBuffers[bindingSlot], constantBuffer.getID());
+			MINT_CHECK_STATE(constantBuffers[bindingSlot], constantBuffer.GetID());
 
-			_graphicDevice._deviceContext->PSSetConstantBuffers(bindingSlot, 1, constantBuffer.getBuffer());
+			_graphicDevice._deviceContext->PSSetConstantBuffers(bindingSlot, 1, constantBuffer.GetBuffer());
 		}
 
 
@@ -302,24 +302,24 @@ namespace mint
 			__noop;
 		}
 
-		bool GraphicDevice::initialize()
+		bool GraphicDevice::Initialize()
 		{
-			_clearColor = _window.getBackgroundColor();
+			_clearColor = _window.GetBackgroundColor();
 			_lastWindowSize = _window.GetSize();
 
-			createDxDevice();
+			CreateDxDevice();
 
-			if (loadFontData() == false)
+			if (LoadFontData() == false)
 			{
 				return false;
 			}
 
-			_guiContext.initialize();
+			_guiContext.Initialize();
 
 			return true;
 		}
 
-		void GraphicDevice::updateScreenSize()
+		void GraphicDevice::UpdateScreenSize()
 		{
 			if (_window.GetSize() == _lastWindowSize)
 			{
@@ -333,42 +333,42 @@ namespace mint
 
 			_swapChain->ResizeBuffers(0, 0, 0, DXGI_FORMAT::DXGI_FORMAT_UNKNOWN, 0);
 
-			initializeBackBuffer();
-			initializeDepthStencilBufferAndView(_window.GetSize());
-			initializeFullScreenData(_window.GetSize());
-			initialize2DProjectionMatrix(Float2(_window.GetSize()));
+			InitializeBackBuffer();
+			InitializeDepthStencilBufferAndView(_window.GetSize());
+			InitializeFullScreenData(_window.GetSize());
+			Initialize2DProjectionMatrix(Float2(_window.GetSize()));
 
-			setDefaultRenderTargetsAndDepthStencil();
+			SetDefaultRenderTargetsAndDepthStencil();
 
 			_lastWindowSize = _window.GetSize();
 		}
 
-		void GraphicDevice::createDxDevice()
+		void GraphicDevice::CreateDxDevice()
 		{
 			const Platform::WindowsWindow& windowsWindow = static_cast<const Platform::WindowsWindow&>(_window);
 			const Int2& windowSize = windowsWindow.GetSize();
 
-			if (createSwapChain(windowSize, windowsWindow.getHandle()) == false)
+			if (CreateSwapChain(windowSize, windowsWindow.GetHandle()) == false)
 			{
 				return;
 			}
 
-			if (initializeBackBuffer() == false)
+			if (InitializeBackBuffer() == false)
 			{
 				return;
 			}
 
-			if (initializeDepthStencilBufferAndView(windowSize) == false)
+			if (InitializeDepthStencilBufferAndView(windowSize) == false)
 			{
 				return;
 			}
-			initializeDepthStencilStates();
+			InitializeDepthStencilStates();
 
-			initializeFullScreenData(windowSize);
-			initializeShaderHeaderMemory();
-			initializeShaders();
-			initializeSamplerStates();
-			initializeBlendStates();
+			InitializeFullScreenData(windowSize);
+			InitializeShaderHeaderMemory();
+			InitializeShaders();
+			InitializeSamplerStates();
+			InitializeBlendStates();
 
 			// Rasterizer states and viewport
 			{
@@ -397,36 +397,36 @@ namespace mint
 				_currentRasterizerFor3D = _rasterizerStateSolidCullBack.Get();
 			}
 
-			setDefaultRenderTargetsAndDepthStencil();
+			SetDefaultRenderTargetsAndDepthStencil();
 		}
 
-		bool GraphicDevice::loadFontData()
+		bool GraphicDevice::LoadFontData()
 		{
 			static const Path kDefaultFontPath = Path::MakeAssetPath("noto_sans_kr_medium");
 			FontLoader fontLoader;
-			if (FontLoader::doesExistFont(kDefaultFontPath) == false)
+			if (FontLoader::ExistsFont(kDefaultFontPath) == false)
 			{
-				fontLoader.pushGlyphRange(GlyphRange(0, 0x33DD));
-				fontLoader.pushGlyphRange(GlyphRange(L'가', L'힣'));
-				if (fontLoader.bakeFontData(kDefaultFontPath, kDefaultFontSize, kDefaultFontPath, 2048, 1, 1) == false)
+				fontLoader.PushGlyphRange(GlyphRange(0, 0x33DD));
+				fontLoader.PushGlyphRange(GlyphRange(L'가', L'힣'));
+				if (fontLoader.BakeFontData(kDefaultFontPath, kDefaultFontSize, kDefaultFontPath, 2048, 1, 1) == false)
 				{
 					MINT_LOG_ERROR("폰트 데이터를 Bake 하는 데 실패했습니다!");
 					return false;
 				}
 			}
 
-			if (fontLoader.loadFont(kDefaultFontPath, *this) == false)
+			if (fontLoader.LoadFont(kDefaultFontPath, *this) == false)
 			{
 				MINT_LOG_ERROR("폰트 데이터를 로드하지 못했습니다!");
 				return false;
 			}
 
-			_shapeRendererContext.initializeFontData(fontLoader.getFontData());
+			_shapeRendererContext.InitializeFontData(fontLoader.GetFontData());
 
 			return true;
 		}
 
-		bool GraphicDevice::createSwapChain(const Int2& windowSize, const HWND windowHandle)
+		bool GraphicDevice::CreateSwapChain(const Int2& windowSize, const HWND windowHandle)
 		{
 			DXGI_SWAP_CHAIN_DESC swapChainDescriptor{};
 			swapChainDescriptor.BufferCount = 1;
@@ -454,7 +454,7 @@ namespace mint
 			return true;
 		}
 
-		bool GraphicDevice::initializeBackBuffer()
+		bool GraphicDevice::InitializeBackBuffer()
 		{
 			ComPtr<ID3D11Texture2D> backBuffer;
 			_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(backBuffer.ReleaseAndGetAddressOf()));
@@ -467,7 +467,7 @@ namespace mint
 			return true;
 		}
 
-		bool GraphicDevice::initializeDepthStencilBufferAndView(const Int2& windowSize)
+		bool GraphicDevice::InitializeDepthStencilBufferAndView(const Int2& windowSize)
 		{
 			D3D11_TEXTURE2D_DESC depthStencilBufferDescriptor;
 			depthStencilBufferDescriptor.Width = static_cast<UINT>(windowSize._x);
@@ -497,7 +497,7 @@ namespace mint
 			return true;
 		}
 
-		bool GraphicDevice::initializeDepthStencilStates()
+		bool GraphicDevice::InitializeDepthStencilStates()
 		{
 			D3D11_DEPTH_STENCIL_DESC depthStencilDescriptor;
 			depthStencilDescriptor.DepthEnable = TRUE;
@@ -513,70 +513,70 @@ namespace mint
 			return true;
 		}
 
-		void GraphicDevice::initializeShaderHeaderMemory()
+		void GraphicDevice::InitializeShaderHeaderMemory()
 		{
 			const Int2 windowSize = _window.GetSize();
 
 			// Stream data
 			{
-				_cppHlslStreamData.parseCppHlslFile(Path::MakeIncludeAssetPath("CppHlsl/CppHlslStreamData.h"));
-				_cppHlslStreamData.generateHlslString(Language::CppHlsl::CppHlslFileType::StreamData);
-				_shaderHeaderMemory.pushHeader("ShaderStructDefinitions", _cppHlslStreamData.getHlslString());
+				_cppHlslStreamData.ParseCppHlslFile(Path::MakeIncludeAssetPath("CppHlsl/CppHlslStreamData.h"));
+				_cppHlslStreamData.GenerateHlslString(Language::CppHlsl::CppHlslFileType::StreamData);
+				_shaderHeaderMemory.pushHeader("ShaderStructDefinitions", _cppHlslStreamData.GetHlslString());
 			}
 
 			using namespace Language;
 
 			// Constant buffers
 			{
-				_cppHlslConstantBuffers.parseCppHlslFile(Path::MakeIncludeAssetPath("CppHlsl/CppHlslConstantBuffers.h"));
-				_cppHlslConstantBuffers.generateHlslString(Language::CppHlsl::CppHlslFileType::ConstantBuffers);
-				_shaderHeaderMemory.pushHeader("ShaderConstantBuffers", _cppHlslConstantBuffers.getHlslString());
+				_cppHlslConstantBuffers.ParseCppHlslFile(Path::MakeIncludeAssetPath("CppHlsl/CppHlslConstantBuffers.h"));
+				_cppHlslConstantBuffers.GenerateHlslString(Language::CppHlsl::CppHlslFileType::ConstantBuffers);
+				_shaderHeaderMemory.pushHeader("ShaderConstantBuffers", _cppHlslConstantBuffers.GetHlslString());
 
 				{
 					const TypeMetaData<CppHlsl::TypeCustomData>& typeMetaData = _cppHlslConstantBuffers.GetTypeMetaData(typeid(_cbViewData));
-					_cbViewID = _resourcePool.addConstantBuffer(&_cbViewData, sizeof(_cbViewData), typeMetaData._customData.getRegisterIndex());
+					_cbViewID = _resourcePool.AddConstantBuffer(&_cbViewData, sizeof(_cbViewData), typeMetaData._customData.GetRegisterIndex());
 
-					DxResource& cbView = _resourcePool.getResource(_cbViewID);
-					cbView.bindToShader(GraphicShaderType::VertexShader, cbView.getRegisterIndex());
-					cbView.bindToShader(GraphicShaderType::GeometryShader, cbView.getRegisterIndex());
-					cbView.bindToShader(GraphicShaderType::PixelShader, cbView.getRegisterIndex());
+					DxResource& cbView = _resourcePool.GetResource(_cbViewID);
+					cbView.BindToShader(GraphicShaderType::VertexShader, cbView.GetRegisterIndex());
+					cbView.BindToShader(GraphicShaderType::GeometryShader, cbView.GetRegisterIndex());
+					cbView.BindToShader(GraphicShaderType::PixelShader, cbView.GetRegisterIndex());
 				}
 
 				{
 					CB_Transform cbTransformData;
 					const TypeMetaData<CppHlsl::TypeCustomData>& typeMetaData = _cppHlslConstantBuffers.GetTypeMetaData(typeid(cbTransformData));
-					_cbTransformID = _resourcePool.addConstantBuffer(&cbTransformData, sizeof(cbTransformData), typeMetaData._customData.getRegisterIndex());
+					_cbTransformID = _resourcePool.AddConstantBuffer(&cbTransformData, sizeof(cbTransformData), typeMetaData._customData.GetRegisterIndex());
 				}
 
-				initialize2DProjectionMatrix(Float2(windowSize));
+				Initialize2DProjectionMatrix(Float2(windowSize));
 			}
 
 			// Structured buffers
 			{
-				_cppHlslStructuredBuffers.parseCppHlslFile(Path::MakeIncludeAssetPath("CppHlsl/CppHlslStructuredBuffers.h"));
-				_cppHlslStructuredBuffers.generateHlslString(Language::CppHlsl::CppHlslFileType::StructuredBuffers);
-				_shaderHeaderMemory.pushHeader("ShaderStructuredBufferDefinitions", _cppHlslStructuredBuffers.getHlslString());
+				_cppHlslStructuredBuffers.ParseCppHlslFile(Path::MakeIncludeAssetPath("CppHlsl/CppHlslStructuredBuffers.h"));
+				_cppHlslStructuredBuffers.GenerateHlslString(Language::CppHlsl::CppHlslFileType::StructuredBuffers);
+				_shaderHeaderMemory.pushHeader("ShaderStructuredBufferDefinitions", _cppHlslStructuredBuffers.GetHlslString());
 
 				{
 					SB_Transform sbTransformData;
 					const TypeMetaData<CppHlsl::TypeCustomData>& typeMetaData = _cppHlslStructuredBuffers.GetTypeMetaData(typeid(sbTransformData));
-					_sbTransformID = _resourcePool.addStructuredBuffer(&sbTransformData, sizeof(sbTransformData), 1, typeMetaData._customData.getRegisterIndex());
+					_sbTransformID = _resourcePool.AddStructuredBuffer(&sbTransformData, sizeof(sbTransformData), 1, typeMetaData._customData.GetRegisterIndex());
 				}
 
 				{
 					SB_Material sbMaterialData;
 					const TypeMetaData<CppHlsl::TypeCustomData>& typeMetaData = _cppHlslStructuredBuffers.GetTypeMetaData(typeid(sbMaterialData));
-					_sbMaterialID = _resourcePool.addStructuredBuffer(&sbMaterialData, sizeof(sbMaterialData), 1, typeMetaData._customData.getRegisterIndex());
+					_sbMaterialID = _resourcePool.AddStructuredBuffer(&sbMaterialData, sizeof(sbMaterialData), 1, typeMetaData._customData.GetRegisterIndex());
 				}
 			}
 		}
 
-		void GraphicDevice::initializeShaders()
+		void GraphicDevice::InitializeShaders()
 		{
-			_shapeRendererContext.initializeShaders();
+			_shapeRendererContext.InitializeShaders();
 		}
 
-		void GraphicDevice::initializeSamplerStates()
+		void GraphicDevice::InitializeSamplerStates()
 		{
 			{
 				D3D11_SAMPLER_DESC samplerDescriptor{};
@@ -606,7 +606,7 @@ namespace mint
 			}
 		}
 
-		void GraphicDevice::initializeBlendStates()
+		void GraphicDevice::InitializeBlendStates()
 		{
 			{
 				D3D11_BLEND_DESC blendDescriptor{};
@@ -626,7 +626,7 @@ namespace mint
 			}
 		}
 
-		void GraphicDevice::initializeFullScreenData(const Int2& windowSize)
+		void GraphicDevice::InitializeFullScreenData(const Int2& windowSize)
 		{
 			_fullScreenViewport.Width = static_cast<FLOAT>(windowSize._x);
 			_fullScreenViewport.Height = static_cast<FLOAT>(windowSize._y);
@@ -641,23 +641,23 @@ namespace mint
 			_fullScreenClipRect.Bottom(static_cast<float>(windowSize._y));
 		}
 
-		void GraphicDevice::setDefaultRenderTargetsAndDepthStencil()
+		void GraphicDevice::SetDefaultRenderTargetsAndDepthStencil()
 		{
 			_deviceContext->OMSetRenderTargets(1, _backBufferRtv.GetAddressOf(), _depthStencilView.Get());
 			_deviceContext->OMSetDepthStencilState(_depthStencilStateLessEqual.Get(), 0);
 		}
 
-		void GraphicDevice::beginRendering()
+		void GraphicDevice::BeginRendering()
 		{
 			if (_needEndRenderingCall)
 			{
-				MINT_LOG_ERROR("beginRendering() 을 두 번 연달아 호출할 수 없습니다. 먼저 endRendering() 을 호출해 주세요!");
+				MINT_LOG_ERROR("BeginRendering() 을 두 번 연달아 호출할 수 없습니다. 먼저 EndRendering() 을 호출해 주세요!");
 				return;
 			}
 
-			if (_window.isResized())
+			if (_window.IsResized())
 			{
-				updateScreenSize();
+				UpdateScreenSize();
 			}
 
 			_needEndRenderingCall = true;
@@ -665,33 +665,33 @@ namespace mint
 			_deviceContext->ClearRenderTargetView(_backBufferRtv.Get(), _clearColor);
 			_deviceContext->ClearDepthStencilView(_depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-			_shapeRendererContext.flush();
+			_shapeRendererContext.Flush();
 		}
 
-		void GraphicDevice::draw(const uint32 vertexCount, const uint32 vertexOffset) noexcept
+		void GraphicDevice::Draw(const uint32 vertexCount, const uint32 vertexOffset) noexcept
 		{
 			_deviceContext->Draw(vertexCount, vertexOffset);
 		}
 
-		void GraphicDevice::drawIndexed(const uint32 indexCount, const uint32 indexOffset, const uint32 vertexOffset) noexcept
+		void GraphicDevice::DrawIndexed(const uint32 indexCount, const uint32 indexOffset, const uint32 vertexOffset) noexcept
 		{
 			_deviceContext->DrawIndexed(indexCount, indexOffset, vertexOffset);
 		}
 
-		void GraphicDevice::endRendering()
+		void GraphicDevice::EndRendering()
 		{
 			if (_needEndRenderingCall == false)
 			{
-				MINT_LOG_ERROR("endRendering() 을 두 번 연달아 호출할 수 없습니다. 먼저 beginRendering() 을 호출해 주세요!");
+				MINT_LOG_ERROR("EndRendering() 을 두 번 연달아 호출할 수 없습니다. 먼저 BeginRendering() 을 호출해 주세요!");
 				return;
 			}
 
 #pragma region Renderer Contexts
-			useFullScreenViewport();
+			UseFullScreenViewport();
 
-			_shapeRendererContext.render();
-			_shapeRendererContext.flush();
-			_guiContext.render();
+			_shapeRendererContext.Render();
+			_shapeRendererContext.Flush();
+			_guiContext.Render();
 #pragma endregion
 
 			_swapChain->Present(0, 0);
@@ -699,72 +699,72 @@ namespace mint
 			_needEndRenderingCall = false;
 		}
 
-		void GraphicDevice::useScissorRectangles() noexcept
+		void GraphicDevice::UseScissorRectangles() noexcept
 		{
-			_stateManager.setRSRasterizerState(_rasterizerStateScissorRectangles.Get());
-			_stateManager.setRSViewport(_fullScreenViewport);
+			_stateManager.SetRSRasterizerState(_rasterizerStateScissorRectangles.Get());
+			_stateManager.SetRSViewport(_fullScreenViewport);
 		}
 
-		void GraphicDevice::useFullScreenViewport() noexcept
+		void GraphicDevice::UseFullScreenViewport() noexcept
 		{
-			_stateManager.setRSRasterizerState(_currentRasterizerFor3D);
-			_stateManager.setRSViewport(_fullScreenViewport);
+			_stateManager.SetRSRasterizerState(_currentRasterizerFor3D);
+			_stateManager.SetRSViewport(_fullScreenViewport);
 		}
 
-		void GraphicDevice::useWireFrameNoCullingRasterizer() noexcept
+		void GraphicDevice::UseWireFrameNoCullingRasterizer() noexcept
 		{
 			_currentRasterizerFor3D = _rasterizerStateWireFrameNoCulling.Get();
 		}
 
-		void GraphicDevice::useWireFrameCullBackRasterizer() noexcept
+		void GraphicDevice::UseWireFrameCullBackRasterizer() noexcept
 		{
 			_currentRasterizerFor3D = _rasterizerStateWireFrameCullBack.Get();
 		}
 
-		void GraphicDevice::useSolidCullBackRasterizer() noexcept
+		void GraphicDevice::UseSolidCullBackRasterizer() noexcept
 		{
 			_currentRasterizerFor3D = _rasterizerStateSolidCullBack.Get();
 		}
 
-		const Rect& GraphicDevice::getFullScreenClipRect() const noexcept
+		const Rect& GraphicDevice::GetFullScreenClipRect() const noexcept
 		{
 			return _fullScreenClipRect;
 		}
 
-		void GraphicDevice::initialize2DProjectionMatrix(const Float2& windowSize) noexcept
+		void GraphicDevice::Initialize2DProjectionMatrix(const Float2& windowSize) noexcept
 		{
 			_cbViewData._cb2DProjectionMatrix = Float4x4::ProjectionMatrix2DFromTopLeft(windowSize._x, windowSize._y);
 
-			DxResource& cbView = _resourcePool.getResource(_cbViewID);
-			cbView.updateBuffer(&_cbViewData, 1);
+			DxResource& cbView = _resourcePool.GetResource(_cbViewID);
+			cbView.UpdateBuffer(&_cbViewData, 1);
 		}
 
-		void GraphicDevice::setViewProjectionMatrix(const Float4x4& viewMatrix, const Float4x4& ProjectionMatrix) noexcept
+		void GraphicDevice::SetViewProjectionMatrix(const Float4x4& viewMatrix, const Float4x4& ProjectionMatrix) noexcept
 		{
 			_cbViewData._cbViewMatrix = viewMatrix;
 			_cbViewData._cb3DProjectionMatrix = ProjectionMatrix;
 			_cbViewData._cbViewProjectionMatrix = _cbViewData._cb3DProjectionMatrix * _cbViewData._cbViewMatrix;
 
-			DxResource& cbView = _resourcePool.getResource(_cbViewID);
-			cbView.updateBuffer(&_cbViewData, 1);
+			DxResource& cbView = _resourcePool.GetResource(_cbViewID);
+			cbView.UpdateBuffer(&_cbViewData, 1);
 		}
 
-		const Int2& GraphicDevice::getWindowSize() const noexcept
+		const Int2& GraphicDevice::GetWindowSize() const noexcept
 		{
 			return _window.GetSize();
 		}
 
-		Float2 GraphicDevice::getWindowSizeFloat2() const noexcept
+		Float2 GraphicDevice::GetWindowSizeFloat2() const noexcept
 		{
-			return Float2(getWindowSize());
+			return Float2(GetWindowSize());
 		}
 
-		Platform::IWindow& GraphicDevice::accessWindow() noexcept
+		Platform::IWindow& GraphicDevice::AccessWindow() noexcept
 		{
 			return _window;
 		}
 
-		const Platform::IWindow& GraphicDevice::getWindow() const noexcept
+		const Platform::IWindow& GraphicDevice::GetWindow() const noexcept
 		{
 			return _window;
 		}

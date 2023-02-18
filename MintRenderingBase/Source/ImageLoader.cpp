@@ -15,18 +15,18 @@ namespace mint
 {
 	namespace Rendering
 	{
-		bool ImageLoader::loadImage(const StringReferenceA& fileName, ByteColorImage& outByteColorImage) const
+		bool ImageLoader::LoadImage_(const StringReferenceA& fileName, ByteColorImage& outByteColorImage) const
 		{
 			BinaryFileReader binaryFileReader;
-			if (binaryFileReader.open(fileName.CString()) == false)
+			if (binaryFileReader.Open(fileName.CString()) == false)
 			{
 				return false;
 			}
-			binaryFileReader.getBytes();
-			return loadImage(binaryFileReader.getBytes(), outByteColorImage);
+			binaryFileReader.GetBytes();
+			return LoadImage_(binaryFileReader.GetBytes(), outByteColorImage);
 		}
 
-		bool ImageLoader::loadImage(const Vector<byte>& bytes, ByteColorImage& outByteColorImage) const
+		bool ImageLoader::LoadImage_(const Vector<byte>& bytes, ByteColorImage& outByteColorImage) const
 		{
 			int32 width{};
 			int32 height{};
@@ -39,7 +39,7 @@ namespace mint
 			{
 				if (at % req_comp == 0)
 				{
-					outByteColorImage.setPixel(at / req_comp, ByteColor(rawImageData[at], rawImageData[at + 1], rawImageData[at + 2], rawImageData[at + 3]));
+					outByteColorImage.SetPixel(at / req_comp, ByteColor(rawImageData[at], rawImageData[at + 1], rawImageData[at + 2], rawImageData[at + 3]));
 				}
 			}
 			stbi_image_free(rawImageData);
@@ -47,7 +47,7 @@ namespace mint
 			return true;
 		}
 
-		bool ImageLoader::loadImage(const uint32 requiredComponents, const Vector<byte>& inCompressedBytes, Vector<byte>& outDecompressedBytes) const
+		bool ImageLoader::LoadImage_(const uint32 requiredComponents, const Vector<byte>& inCompressedBytes, Vector<byte>& outDecompressedBytes) const
 		{
 			int32 width{};
 			int32 height{};
@@ -65,22 +65,22 @@ namespace mint
 			return true;
 		}
 
-		bool ImageLoader::saveImagePNG(const StringReferenceA& fileName, const ByteColorImage& byteColorImage) const
+		bool ImageLoader::SaveImagePNG(const StringReferenceA& fileName, const ByteColorImage& byteColorImage) const
 		{
-			return saveImagePNG(fileName, byteColorImage.getBytes(), byteColorImage.GetSize()._x, byteColorImage.GetSize()._y, 4);
+			return SaveImagePNG(fileName, byteColorImage.GetBytes(), byteColorImage.GetSize()._x, byteColorImage.GetSize()._y, 4);
 		}
 
-		bool ImageLoader::saveImagePNG(const StringReferenceA& fileName, const byte* decompressedBytes, const uint32 width, const uint32 height, const uint32 components) const
+		bool ImageLoader::SaveImagePNG(const StringReferenceA& fileName, const byte* decompressedBytes, const uint32 width, const uint32 height, const uint32 components) const
 		{
 			BinaryFileWriter binaryFileWriter;
-			if (saveImagePNG(decompressedBytes, width, height, components, binaryFileWriter, false) == true)
+			if (SaveImagePNG(decompressedBytes, width, height, components, binaryFileWriter, false) == true)
 			{
-				return binaryFileWriter.save(fileName.CString());
+				return binaryFileWriter.Save(fileName.CString());
 			}
 			return false;
 		}
 
-		bool ImageLoader::saveImagePNG(const byte* decompressedBytes, const uint32 width, const uint32 height, const uint32 components, BinaryFileWriter& binaryFileWriter, const bool prependLength) const
+		bool ImageLoader::SaveImagePNG(const byte* decompressedBytes, const uint32 width, const uint32 height, const uint32 components, BinaryFileWriter& binaryFileWriter, const bool prependLength) const
 		{
 			int32 length{ 0 };
 			unsigned char* png = stbi_write_png_to_mem(decompressedBytes, width * components, width, height, components, &length);
@@ -92,12 +92,12 @@ namespace mint
 
 			if (prependLength)
 			{
-				binaryFileWriter.write(length);
+				binaryFileWriter.Write(length);
 			}
 
 			for (int32 at = 0; at < length; ++at)
 			{
-				binaryFileWriter.write(png[at]);
+				binaryFileWriter.Write(png[at]);
 			}
 			STBIW_FREE(png);
 			return true;

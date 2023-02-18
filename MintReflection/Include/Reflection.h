@@ -36,13 +36,13 @@ namespace mint
 		uint32 _arrayItemCount;
 
 	public:
-		virtual void serialize(BinarySerializer& serializer) const noexcept abstract;
-		virtual void serializeValue(BinarySerializer& serializer, const void* const memberPointer, const uint32 arrayItemCount) const noexcept abstract;
-		virtual void serializeValue(JSONSerializer& serializer, const uint32 depth, const void* const memberPointer, const uint32 arrayItemCount) const noexcept abstract;
+		virtual void Serialize(BinarySerializer& serializer) const noexcept abstract;
+		virtual void SerializeValue(BinarySerializer& serializer, const void* const memberPointer, const uint32 arrayItemCount) const noexcept abstract;
+		virtual void SerializeValue(JSONSerializer& serializer, const uint32 depth, const void* const memberPointer, const uint32 arrayItemCount) const noexcept abstract;
 
 	public:
-		virtual bool deserialize(BinarySerializer& serializer) noexcept abstract;
-		virtual void deserializeValue(BinarySerializer& serializer, void* const memberPointer, const uint32 arrayItemCount) noexcept abstract;
+		virtual bool Deserialize(BinarySerializer& serializer) noexcept abstract;
+		virtual void DeserializeValue(BinarySerializer& serializer, void* const memberPointer, const uint32 arrayItemCount) noexcept abstract;
 	};
 
 	template <typename T>
@@ -53,13 +53,13 @@ namespace mint
 		virtual ~TypeData() = default;
 
 	public:
-		virtual void serialize(BinarySerializer& serializer) const noexcept override final;
-		virtual void serializeValue(BinarySerializer& serializer, const void* const memberPointer, const uint32 arrayItemCount) const noexcept override final;
-		virtual void serializeValue(JSONSerializer& serializer, const uint32 depth, const void* const memberPointer, const uint32 arrayItemCount) const noexcept override final;
+		virtual void Serialize(BinarySerializer& serializer) const noexcept override final;
+		virtual void SerializeValue(BinarySerializer& serializer, const void* const memberPointer, const uint32 arrayItemCount) const noexcept override final;
+		virtual void SerializeValue(JSONSerializer& serializer, const uint32 depth, const void* const memberPointer, const uint32 arrayItemCount) const noexcept override final;
 
 	public:
-		virtual bool deserialize(BinarySerializer& serializer) noexcept override final;
-		virtual void deserializeValue(BinarySerializer& serializer, void* const memberPointer, const uint32 arrayItemCount) noexcept override final;
+		virtual bool Deserialize(BinarySerializer& serializer) noexcept override final;
+		virtual void DeserializeValue(BinarySerializer& serializer, void* const memberPointer, const uint32 arrayItemCount) noexcept override final;
 	};
 
 
@@ -91,7 +91,7 @@ namespace mint
 
 #define REFLECTION_CLASS(className) \
  private: \
- void initializeReflection() noexcept \
+ void InitializeReflection() noexcept \
  { \
  static bool isReflectionDataBuilt = false; \
  if (isReflectionDataBuilt == false) \
@@ -162,7 +162,7 @@ namespace mint
 		REFLECTION_CLASS(ReflectionTesterInner);
 
 	public:
-		ReflectionTesterInner() { initializeReflection(); }
+		ReflectionTesterInner() { InitializeReflection(); }
 		~ReflectionTesterInner() = default;
 
 	public:
@@ -183,7 +183,7 @@ namespace mint
 		REFLECTION_CLASS(ReflectionTesterOuter);
 
 	public:
-		ReflectionTesterOuter() { initializeReflection(); }
+		ReflectionTesterOuter() { InitializeReflection(); }
 		~ReflectionTesterOuter() = default;
 
 	public:
@@ -224,31 +224,31 @@ namespace mint
 
 	public:
 		template <typename T>
-		bool serialize(const T& from, const char* const fileName) noexcept;
+		bool Serialize(const T& from, const char* const fileName) noexcept;
 
 	private:
 		template <typename T>
-		void serialize_internal(const T& from) noexcept;
+		void SerializeInternal(const T& from) noexcept;
 
 		template <typename T>
-		void serialize_internal(const String<T>& from) noexcept;
+		void SerializeInternal(const String<T>& from) noexcept;
 
 		template <typename T>
-		void serialize_internal(const Vector<T>& from) noexcept;
+		void SerializeInternal(const Vector<T>& from) noexcept;
 
 	public:
 		template <typename T>
-		bool deserialize(const char* const fileName, T& to) noexcept;
+		bool Deserialize(const char* const fileName, T& to) noexcept;
 
 	private:
 		template <typename T>
-		bool deserialize_internal(T& to) noexcept;
+		bool DeserializeInternal(T& to) noexcept;
 
 		template <typename T>
-		bool deserialize_internal(String<T>& to) noexcept;
+		bool DeserializeInternal(String<T>& to) noexcept;
 
 		template <typename T>
-		bool deserialize_internal(Vector<T>& to) noexcept;
+		bool DeserializeInternal(Vector<T>& to) noexcept;
 
 	private:
 		BinaryFileWriter _writer;

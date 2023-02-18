@@ -28,36 +28,36 @@ namespace mint
 			~ObjectPool();
 
 		public:
-			Object* createObject();
-			CameraObject* createCameraObject();
+			Object* CreateObject();
+			CameraObject* CreateCameraObject();
 
 		private:
-			void destroyObjects();
+			void DestroyObjects();
 
 		private:
-			Object* createObjectInternalXXX(Object* const object);
+			Object* CreateObjectInternalXXX(Object* const object);
 
 		public:
-			TransformComponent* createTransformComponent();
-			MeshComponent* createMeshComponent();
+			TransformComponent* CreateTransformComponent();
+			MeshComponent* CreateMeshComponent();
 
 		public:
-			void destroyObjectComponents(Object& object);
+			void DestroyObjectComponents(Object& object);
 
 		public:
-			void registerMeshComponent(MeshComponent* const meshComponent);
-			void deregisterMeshComponent(MeshComponent* const meshComponent);
+			void RegisterMeshComponent(MeshComponent* const meshComponent);
+			void DeregisterMeshComponent(MeshComponent* const meshComponent);
 
 		public:
-			void computeDeltaTime() const noexcept;
-			void updateScreenSize(const Float2& screenSize);
+			void ComputeDeltaTime() const noexcept;
+			void UpdateScreenSize(const Float2& screenSize);
 
 		public:
-			const Vector<MeshComponent*>& getMeshComponents() const noexcept;
+			const Vector<MeshComponent*>& GetMeshComponents() const noexcept;
 
 		public:
-			uint32 getObjectCount() const noexcept;
-			const DeltaTimer* getDeltaTimerXXX() const noexcept;
+			uint32 GetObjectCount() const noexcept;
+			const DeltaTimer* GetDeltaTimerXXX() const noexcept;
 
 		private:
 			const DeltaTimer* const _deltaTimer;

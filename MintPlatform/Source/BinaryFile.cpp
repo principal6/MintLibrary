@@ -22,7 +22,7 @@ namespace mint
 	}
 
 	BinaryPointerReader::BinaryPointerReader(const BinaryFileReader& binaryFileReader)
-		: BinaryPointerReader(binaryFileReader.getBytes().Data(), binaryFileReader.getFileSize())
+		: BinaryPointerReader(binaryFileReader.GetBytes().Data(), binaryFileReader.GetFileSize())
 	{
 		__noop;
 	}
@@ -30,10 +30,10 @@ namespace mint
 
 
 #pragma region Binary File Reader
-	bool BinaryFileReader::open(const char* const fileName)
+	bool BinaryFileReader::Open(const char* const fileName)
 	{
 		_bytes.Clear();
-		_binaryPointerReader.reset(nullptr, 0);
+		_binaryPointerReader.Reset(nullptr, 0);
 
 		std::ifstream ifs{ fileName, std::ifstream::binary };
 		if (ifs.is_open() == false)
@@ -46,16 +46,16 @@ namespace mint
 		ifs.seekg(0, ifs.beg);
 		_bytes.Resize(static_cast<uint32>(length));
 		ifs.read(reinterpret_cast<char*>(&_bytes[0]), length);
-		_binaryPointerReader.reset(_bytes.Data(), static_cast<uint32>(length));
+		_binaryPointerReader.Reset(_bytes.Data(), static_cast<uint32>(length));
 		return true;
 	}
 
-	bool BinaryFileReader::isOpen() const noexcept
+	bool BinaryFileReader::IsOpen() const noexcept
 	{
 		return !_bytes.IsEmpty();
 	}
 
-	uint32 BinaryFileReader::getFileSize() const noexcept
+	uint32 BinaryFileReader::GetFileSize() const noexcept
 	{
 		return static_cast<uint32>(_bytes.Size());
 	}
@@ -63,7 +63,7 @@ namespace mint
 
 
 #pragma region Binary File Writer
-	bool BinaryFileWriter::save(const char* const fileName)
+	bool BinaryFileWriter::Save(const char* const fileName)
 	{
 		std::ofstream ofs{ fileName, std::ofstream::binary };
 		if (ofs.is_open() == false)

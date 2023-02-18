@@ -18,7 +18,7 @@ namespace mint
 			, _lowLevelRendererLine{ graphicDevice }
 			, _lowLevelRendererMesh{ graphicDevice }
 		{
-			initialize();
+			Initialize();
 		}
 
 		InstantRenderer::~InstantRenderer()
@@ -26,21 +26,21 @@ namespace mint
 			__noop;
 		}
 
-		void InstantRenderer::testDraw(const Float3& worldOffset) noexcept
+		void InstantRenderer::TestDraw(const Float3& worldOffset) noexcept
 		{
-			drawBox(Transform(worldOffset), Float3(0.5f, 0.5f, 0.5f), Rendering::Color::kGreen);
-			drawCone(Transform(worldOffset + Float3(2, 0, 0)), 0.5f, 1.0f, 4, Rendering::Color::kGreen);
-			drawCylinder(Transform(worldOffset + Float3(3, 0, 0)), 0.5f, 1.0f, 1, Rendering::Color::kGreen);
-			drawGeoSphere(worldOffset + Float3(4, 0, 0), 0.5f, 0, Rendering::Color::kGreen);
-			drawSphere(worldOffset + Float3(5, 0, 0), 0.5f, 4, 4, Rendering::Color::kGreen);
-			drawCapsule(Transform(worldOffset + Float3(1, 0, 0)), 0.25f, 1.0f, 3, Rendering::Color::kGreen);
+			DrawBox(Transform(worldOffset), Float3(0.5f, 0.5f, 0.5f), Rendering::Color::kGreen);
+			DrawCone(Transform(worldOffset + Float3(2, 0, 0)), 0.5f, 1.0f, 4, Rendering::Color::kGreen);
+			DrawCylinder(Transform(worldOffset + Float3(3, 0, 0)), 0.5f, 1.0f, 1, Rendering::Color::kGreen);
+			DrawGeoSphere(worldOffset + Float3(4, 0, 0), 0.5f, 0, Rendering::Color::kGreen);
+			DrawSphere(worldOffset + Float3(5, 0, 0), 0.5f, 4, 4, Rendering::Color::kGreen);
+			DrawCapsule(Transform(worldOffset + Float3(1, 0, 0)), 0.25f, 1.0f, 3, Rendering::Color::kGreen);
 		}
 
-		void InstantRenderer::drawLine(const Float3& a, const Float3& b, const Color& color) noexcept
+		void InstantRenderer::DrawLine(const Float3& a, const Float3& b, const Color& color) noexcept
 		{
 			const uint32 materialID = _sbMaterialDatas.Size();
-			auto& vertices = _lowLevelRendererLine.vertices();
-			auto& indices = _lowLevelRendererLine.indices();
+			auto& vertices = _lowLevelRendererLine.Vertices();
+			auto& indices = _lowLevelRendererLine.Indices();
 
 			VS_INPUT vertex;
 			vertex._materialID = materialID;
@@ -60,20 +60,20 @@ namespace mint
 			_sbMaterialDatas.PushBack(sbMaterialData);
 		}
 
-		void InstantRenderer::drawBox(const Transform& worldTransform, const Float3& extents, const Color& color) noexcept
+		void InstantRenderer::DrawBox(const Transform& worldTransform, const Float3& extents, const Color& color) noexcept
 		{
 			MeshGenerator::BoxParam boxParam;
 			boxParam._width = extents._x;
 			boxParam._height = extents._y;
 			boxParam._depth = extents._z;
 			MeshData meshData;
-			MeshGenerator::generateBox(boxParam, meshData);
-			MeshGenerator::transformMeshData(meshData, worldTransform.ToMatrix());
+			MeshGenerator::GenerateBox(boxParam, meshData);
+			MeshGenerator::TransformMeshData(meshData, worldTransform.ToMatrix());
 
-			pushMeshWithMaterial(meshData, color);
+			PushMeshWithMaterial(meshData, color);
 		}
 
-		void InstantRenderer::drawCone(const Transform& worldTransform, const float radius, const float height, const uint8 detail, const Color& color) noexcept
+		void InstantRenderer::DrawCone(const Transform& worldTransform, const float radius, const float height, const uint8 detail, const Color& color) noexcept
 		{
 			MeshGenerator::ConeParam coneParam;
 			coneParam._radius = radius;
@@ -81,13 +81,13 @@ namespace mint
 			coneParam._sideCount = detail;
 			coneParam._smooth = true;
 			MeshData meshData;
-			MeshGenerator::generateCone(coneParam, meshData);
-			MeshGenerator::transformMeshData(meshData, worldTransform.ToMatrix());
+			MeshGenerator::GenerateCone(coneParam, meshData);
+			MeshGenerator::TransformMeshData(meshData, worldTransform.ToMatrix());
 
-			pushMeshWithMaterial(meshData, color);
+			PushMeshWithMaterial(meshData, color);
 		}
 
-		void InstantRenderer::drawCylinder(const Transform& worldTransform, const float radius, const float height, const uint8 subdivisionIteration, const Color& color) noexcept
+		void InstantRenderer::DrawCylinder(const Transform& worldTransform, const float radius, const float height, const uint8 subdivisionIteration, const Color& color) noexcept
 		{
 			MeshGenerator::CylinderParam cylinderParam;
 			cylinderParam._height = height;
@@ -95,13 +95,13 @@ namespace mint
 			cylinderParam._sideCount = Math::Pow2_Uint32(2 + subdivisionIteration);
 			cylinderParam._smooth = true;
 			MeshData meshData;
-			MeshGenerator::generateCylinder(cylinderParam, meshData);
-			MeshGenerator::transformMeshData(meshData, worldTransform.ToMatrix());
+			MeshGenerator::GenerateCylinder(cylinderParam, meshData);
+			MeshGenerator::TransformMeshData(meshData, worldTransform.ToMatrix());
 
-			pushMeshWithMaterial(meshData, color);
+			PushMeshWithMaterial(meshData, color);
 		}
 
-		void InstantRenderer::drawSphere(const Float3& center, const float radius, const uint8 polarDetail, const uint8 azimuthalDetail, const Color& color) noexcept
+		void InstantRenderer::DrawSphere(const Float3& center, const float radius, const uint8 polarDetail, const uint8 azimuthalDetail, const Color& color) noexcept
 		{
 			MeshGenerator::SphereParam sphereParam;
 			sphereParam._radius = radius;
@@ -109,32 +109,32 @@ namespace mint
 			sphereParam._azimuthalDetail = azimuthalDetail;
 			sphereParam._smooth = true;
 			MeshData meshData;
-			MeshGenerator::generateSphere(sphereParam, meshData);
+			MeshGenerator::GenerateSphere(sphereParam, meshData);
 
 			Float4x4 transformationMatrix;
 			transformationMatrix.SetTranslation(center);
-			MeshGenerator::transformMeshData(meshData, transformationMatrix);
+			MeshGenerator::TransformMeshData(meshData, transformationMatrix);
 
-			pushMeshWithMaterial(meshData, color);
+			PushMeshWithMaterial(meshData, color);
 		}
 
-		void InstantRenderer::drawGeoSphere(const Float3& center, const float radius, const uint8 subdivisionIteration, const Color& color) noexcept
+		void InstantRenderer::DrawGeoSphere(const Float3& center, const float radius, const uint8 subdivisionIteration, const Color& color) noexcept
 		{
 			MeshGenerator::GeoSphereParam geosphereParam;
 			geosphereParam._radius = radius;
 			geosphereParam._subdivisionIteration = subdivisionIteration;
 			geosphereParam._smooth = true;
 			MeshData meshData;
-			MeshGenerator::generateGeoSphere(geosphereParam, meshData);
+			MeshGenerator::GenerateGeoSphere(geosphereParam, meshData);
 
 			Float4x4 transformationMatrix;
 			transformationMatrix.SetTranslation(center);
-			MeshGenerator::transformMeshData(meshData, transformationMatrix);
+			MeshGenerator::TransformMeshData(meshData, transformationMatrix);
 
-			pushMeshWithMaterial(meshData, color);
+			PushMeshWithMaterial(meshData, color);
 		}
 
-		void InstantRenderer::drawCapsule(const Transform& worldTransform, const float sphereRadius, const float cylinderHeight, const uint8 subdivisionIteration, const Color& color) noexcept
+		void InstantRenderer::DrawCapsule(const Transform& worldTransform, const float sphereRadius, const float cylinderHeight, const uint8 subdivisionIteration, const Color& color) noexcept
 		{
 			MeshGenerator::CapsulePram capsulePram;
 			capsulePram._sphereRadius = sphereRadius;
@@ -142,70 +142,70 @@ namespace mint
 			capsulePram._subdivisionIteration = subdivisionIteration;
 			capsulePram._smooth = true;
 			MeshData meshData;
-			MeshGenerator::generateCapsule(capsulePram, meshData);
-			MeshGenerator::transformMeshData(meshData, worldTransform.ToMatrix());
+			MeshGenerator::GenerateCapsule(capsulePram, meshData);
+			MeshGenerator::TransformMeshData(meshData, worldTransform.ToMatrix());
 
-			pushMeshWithMaterial(meshData, color);
+			PushMeshWithMaterial(meshData, color);
 		}
 
-		void InstantRenderer::initialize() noexcept
+		void InstantRenderer::Initialize() noexcept
 		{
 			using namespace Language;
 
-			DxShaderPool& shaderPool = _graphicDevice.getShaderPool();
-			_vsDefaultID = shaderPool.addShader(Path::MakeIncludeAssetPath("Hlsl/"), "VsDefault.hlsl", "main", GraphicShaderType::VertexShader, Path::MakeIncludeAssetPath("HlslBinary/"));
+			DxShaderPool& shaderPool = _graphicDevice.GetShaderPool();
+			_vsDefaultID = shaderPool.AddShader(Path::MakeIncludeAssetPath("Hlsl/"), "VsDefault.hlsl", "main", GraphicShaderType::VertexShader, Path::MakeIncludeAssetPath("HlslBinary/"));
 
-			const CppHlsl::Interpreter& interpreter = _graphicDevice.getCppHlslSteamData();
+			const CppHlsl::Interpreter& interpreter = _graphicDevice.GetCppHlslSteamData();
 			const TypeMetaData<CppHlsl::TypeCustomData>& vsInputTypeMetaData = interpreter.GetTypeMetaData(typeid(VS_INPUT));
-			_inputLayoutDefaultID = shaderPool.addInputLayout(_vsDefaultID, vsInputTypeMetaData);
+			_inputLayoutDefaultID = shaderPool.AddInputLayout(_vsDefaultID, vsInputTypeMetaData);
 
-			_psDefaultID = shaderPool.addShader(Path::MakeIncludeAssetPath("Hlsl/"), "PsDefault.hlsl", "main", GraphicShaderType::PixelShader, Path::MakeIncludeAssetPath("HlslBinary/"));
-			_psColorID = shaderPool.addShader(Path::MakeIncludeAssetPath("Hlsl/"), "PsColor.hlsl", "main", GraphicShaderType::PixelShader, Path::MakeIncludeAssetPath("HlslBinary/"));
+			_psDefaultID = shaderPool.AddShader(Path::MakeIncludeAssetPath("Hlsl/"), "PsDefault.hlsl", "main", GraphicShaderType::PixelShader, Path::MakeIncludeAssetPath("HlslBinary/"));
+			_psColorID = shaderPool.AddShader(Path::MakeIncludeAssetPath("Hlsl/"), "PsColor.hlsl", "main", GraphicShaderType::PixelShader, Path::MakeIncludeAssetPath("HlslBinary/"));
 		}
 
-		void InstantRenderer::pushMeshWithMaterial(MeshData& meshData, const Color& diffuseColor) noexcept
+		void InstantRenderer::PushMeshWithMaterial(MeshData& meshData, const Color& diffuseColor) noexcept
 		{
 			const uint32 materialID = _sbMaterialDatas.Size();
-			MeshGenerator::setMaterialID(meshData, materialID);
+			MeshGenerator::SetMaterialID(meshData, materialID);
 
-			_lowLevelRendererMesh.pushMesh(meshData);
+			_lowLevelRendererMesh.PushMesh(meshData);
 
 			SB_Material sbMaterialData;
 			sbMaterialData._diffuseColor = diffuseColor;
 			_sbMaterialDatas.PushBack(sbMaterialData);
 		}
 
-		void InstantRenderer::render() noexcept
+		void InstantRenderer::Render() noexcept
 		{
-			DxShaderPool& shaderPool = _graphicDevice.getShaderPool();
-			shaderPool.bindInputLayoutIfNot(_inputLayoutDefaultID);
-			shaderPool.bindShaderIfNot(GraphicShaderType::VertexShader, _vsDefaultID);
-			shaderPool.unbindShader(GraphicShaderType::GeometryShader);
+			DxShaderPool& shaderPool = _graphicDevice.GetShaderPool();
+			shaderPool.BindInputLayoutIfNot(_inputLayoutDefaultID);
+			shaderPool.BindShaderIfNot(GraphicShaderType::VertexShader, _vsDefaultID);
+			shaderPool.UnbindShader(GraphicShaderType::GeometryShader);
 
-			DxResourcePool& resourcePool = _graphicDevice.getResourcePool();
-			DxResource& cbTransform = resourcePool.getResource(_graphicDevice.getCommonCbTransformID());
+			DxResourcePool& resourcePool = _graphicDevice.GetResourcePool();
+			DxResource& cbTransform = resourcePool.GetResource(_graphicDevice.GetCommonCBTransformID());
 			{
-				cbTransform.bindToShader(GraphicShaderType::VertexShader, cbTransform.getRegisterIndex());
-				cbTransform.bindToShader(GraphicShaderType::GeometryShader, cbTransform.getRegisterIndex());
+				cbTransform.BindToShader(GraphicShaderType::VertexShader, cbTransform.GetRegisterIndex());
+				cbTransform.BindToShader(GraphicShaderType::GeometryShader, cbTransform.GetRegisterIndex());
 
 				_cbTransformData._cbWorldMatrix.SetIdentity();
-				cbTransform.updateBuffer(&_cbTransformData, 1);
+				cbTransform.UpdateBuffer(&_cbTransformData, 1);
 			}
 
-			DxResource& sbMaterial = resourcePool.getResource(_graphicDevice.getCommonSBMaterialID());
+			DxResource& sbMaterial = resourcePool.GetResource(_graphicDevice.GetCommonSBMaterialID());
 			{
-				sbMaterial.bindToShader(GraphicShaderType::PixelShader, sbMaterial.getRegisterIndex());
+				sbMaterial.BindToShader(GraphicShaderType::PixelShader, sbMaterial.GetRegisterIndex());
 
-				sbMaterial.updateBuffer(&_sbMaterialDatas[0], _sbMaterialDatas.Size());
+				sbMaterial.UpdateBuffer(&_sbMaterialDatas[0], _sbMaterialDatas.Size());
 			}
 
-			shaderPool.bindShaderIfNot(GraphicShaderType::PixelShader, _psColorID);
-			_lowLevelRendererLine.render(RenderingPrimitive::LineList);
-			_lowLevelRendererLine.flush();
+			shaderPool.BindShaderIfNot(GraphicShaderType::PixelShader, _psColorID);
+			_lowLevelRendererLine.Render(RenderingPrimitive::LineList);
+			_lowLevelRendererLine.Flush();
 
-			shaderPool.bindShaderIfNot(GraphicShaderType::PixelShader, _psDefaultID);
-			_lowLevelRendererMesh.render(RenderingPrimitive::TriangleList);
-			_lowLevelRendererMesh.flush();
+			shaderPool.BindShaderIfNot(GraphicShaderType::PixelShader, _psDefaultID);
+			_lowLevelRendererMesh.Render(RenderingPrimitive::TriangleList);
+			_lowLevelRendererMesh.Flush();
 
 			_sbMaterialDatas.Clear();
 		}

@@ -80,12 +80,12 @@ namespace mint
 				return _rawID != kInvalidGraphicObjectRawID;
 			}
 
-			MINT_INLINE GraphicObjectType getObjectType() const noexcept
+			MINT_INLINE GraphicObjectType GetObjectType() const noexcept
 			{
 				return _objectType;
 			}
 
-			MINT_INLINE bool isObjectType(const GraphicObjectType objectType) const noexcept
+			MINT_INLINE bool IsObjectType(const GraphicObjectType objectType) const noexcept
 			{
 				return _objectType == objectType;
 			}
@@ -96,13 +96,13 @@ namespace mint
 			}
 
 		private:
-			MINT_INLINE void assignIDXXX() noexcept
+			MINT_INLINE void AssignIDXXX() noexcept
 			{
 				++_lastRawID;
 				_rawID = _lastRawID;
 			}
 
-			MINT_INLINE void setObjectTypeXXX(const GraphicObjectType objectType) noexcept
+			MINT_INLINE void SetObjectTypeXXX(const GraphicObjectType objectType) noexcept
 			{
 				_objectType = objectType;
 			}
@@ -126,7 +126,7 @@ namespace mint
 				: _graphicDevice{ graphicDevice }
 				, _objectID{}
 			{
-				_objectID.setObjectTypeXXX(objectType);
+				_objectID.SetObjectTypeXXX(objectType);
 			}
 			GraphicObject(const GraphicObject& rhs) = delete;
 			GraphicObject(GraphicObject&& rhs) noexcept
@@ -171,15 +171,15 @@ namespace mint
 			}
 
 		public:
-			MINT_INLINE const GraphicObjectID& getID() const noexcept
+			MINT_INLINE const GraphicObjectID& GetID() const noexcept
 			{
 				return _objectID;
 			}
 
 		protected:
-			MINT_INLINE void assignIDXXX() noexcept
+			MINT_INLINE void AssignIDXXX() noexcept
 			{
-				_objectID.assignIDXXX();
+				_objectID.AssignIDXXX();
 			}
 
 		protected:

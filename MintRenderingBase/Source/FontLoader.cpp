@@ -67,26 +67,26 @@ namespace mint
 
 
 #pragma region FontData
-		uint32 FontData::getSafeGlyphIndex(const wchar_t wideChar) const noexcept
+		uint32 FontData::GetSafeGlyphIndex(const wchar_t wideChar) const noexcept
 		{
 			return (_charCodeToGlyphIndexMap.Size() <= static_cast<uint32>(wideChar)) ? 0 : _charCodeToGlyphIndexMap[wideChar];
 		}
 
-		float FontData::computeTextWidth(const wchar_t* const wideText, const uint32 textLength) const noexcept
+		float FontData::ComputeTextWidth(const wchar_t* const wideText, const uint32 textLength) const noexcept
 		{
 			int32 totalWidth = 0;
 			for (uint32 textAt = 0; textAt < textLength; ++textAt)
 			{
 				const wchar_t& wideChar = wideText[textAt];
 
-				const uint32 glyphIndex = getSafeGlyphIndex(wideChar);
+				const uint32 glyphIndex = GetSafeGlyphIndex(wideChar);
 				const GlyphInfo& glyphInfo = _glyphInfoArray[glyphIndex];
 				totalWidth += glyphInfo._horiAdvance;
 			}
 			return static_cast<float>(totalWidth);
 		}
 
-		uint32 FontData::computeIndexFromPositionInText(const wchar_t* const wideText, const uint32 textLength, const float positionInText) const noexcept
+		uint32 FontData::ComputeIndexFromPositionInText(const wchar_t* const wideText, const uint32 textLength, const float positionInText) const noexcept
 		{
 			const int32 positionInTextInt = static_cast<int32>(positionInText);
 			int32 totalWidth = 0;
@@ -94,7 +94,7 @@ namespace mint
 			{
 				const wchar_t& wideChar = wideText[textAt];
 
-				const uint32 glyphIndex = getSafeGlyphIndex(wideChar);
+				const uint32 glyphIndex = GetSafeGlyphIndex(wideChar);
 				const GlyphInfo& glyphInfo = _glyphInfoArray[glyphIndex];
 				totalWidth += glyphInfo._horiAdvance;
 
@@ -117,16 +117,16 @@ namespace mint
 
 		FontLoader::~FontLoader()
 		{
-			deinitializeFreeType();
+			DeinitializeFreeType();
 		}
 
-		bool FontLoader::doesExistFont(const char* const fontFileNameRaw)
+		bool FontLoader::ExistsFont(const char* const fontFileNameRaw)
 		{
-			const std::string fontFileName = getFontFileNameWithExtension(fontFileNameRaw);
-			return FileUtil::exists(fontFileName.c_str());
+			const std::string fontFileName = GetFontFileNameWithExtension(fontFileNameRaw);
+			return FileUtil::Exists(fontFileName.c_str());
 		}
 
-		std::string FontLoader::getFontFileNameWithExtension(const char* const fontFileName) noexcept
+		std::string FontLoader::GetFontFileNameWithExtension(const char* const fontFileName) noexcept
 		{
 			std::string fontFileNameWithExtension = fontFileName;
 			StringUtil::ExcludeExtension(fontFileNameWithExtension);
@@ -134,7 +134,7 @@ namespace mint
 			return fontFileNameWithExtension;
 		}
 
-		void FontLoader::pushGlyphRange(const GlyphRange& glyphRange) noexcept
+		void FontLoader::PushGlyphRange(const GlyphRange& glyphRange) noexcept
 		{
 			_glyphRanges.PushBack(glyphRange);
 
@@ -168,66 +168,66 @@ namespace mint
 			}
 		}
 
-		bool FontLoader::loadFont(const char* const fontFileNameRaw, GraphicDevice& graphicDevice)
+		bool FontLoader::LoadFont(const char* const fontFileNameRaw, GraphicDevice& graphicDevice)
 		{
-			const std::string fontFileName = getFontFileNameWithExtension(fontFileNameRaw);
-			if (FileUtil::exists(fontFileName.c_str()) == false)
+			const std::string fontFileName = GetFontFileNameWithExtension(fontFileNameRaw);
+			if (FileUtil::Exists(fontFileName.c_str()) == false)
 			{
 				MINT_LOG_ERROR("해당 FontFile 이 존재하지 않습니다: %s", fontFileName.c_str());
 				return false;
 			}
 
 			BinaryFileReader binaryFileReader;
-			if (binaryFileReader.open(fontFileName.c_str()) == false)
+			if (binaryFileReader.Open(fontFileName.c_str()) == false)
 			{
 				MINT_LOG_ERROR("해당 FontFile 을 여는 데 실패했습니다: %s", fontFileName.c_str());
 				return false;
 			}
 
-			const char kMagicNumber[4]{ *binaryFileReader.read<char>(), *binaryFileReader.read<char>(), *binaryFileReader.read<char>(), *binaryFileReader.read<char>() };
+			const char kMagicNumber[4]{ *binaryFileReader.Read<char>(), *binaryFileReader.Read<char>(), *binaryFileReader.Read<char>(), *binaryFileReader.Read<char>() };
 			if (StringUtil::Equals(kMagicNumber, kFontFileMagicNumber) == false)
 			{
 				MINT_LOG_ERROR("%s 파일이 아닙니다!", kFontFileMagicNumber);
 				return false;
 			}
 
-			_fontData._fontSize = *binaryFileReader.read<int16>();
+			_fontData._fontSize = *binaryFileReader.Read<int16>();
 
-			_fontImageData._width = *binaryFileReader.read<int16>();
-			_fontImageData._height = *binaryFileReader.read<int16>();
+			_fontImageData._width = *binaryFileReader.Read<int16>();
+			_fontImageData._height = *binaryFileReader.Read<int16>();
 
-			const uint32 glyphInfoCount = *binaryFileReader.read<uint32>();
-			const uint32 charCodeToGlyphIndexMapSize = *binaryFileReader.read<uint32>();
+			const uint32 glyphInfoCount = *binaryFileReader.Read<uint32>();
+			const uint32 charCodeToGlyphIndexMapSize = *binaryFileReader.Read<uint32>();
 			_fontData._glyphInfoArray.Resize(glyphInfoCount);
 			_fontData._charCodeToGlyphIndexMap.Resize(charCodeToGlyphIndexMapSize);
 
 			for (uint32 glyphIndex = 0; glyphIndex < glyphInfoCount; ++glyphIndex)
 			{
 				GlyphInfo& glyphInfo = _fontData._glyphInfoArray[glyphIndex];
-				glyphInfo._charCode = *binaryFileReader.read<wchar_t>();
-				glyphInfo._width = *binaryFileReader.read<GlyphMetricType>();
-				glyphInfo._height = *binaryFileReader.read<GlyphMetricType>();
-				glyphInfo._horiBearingX = *binaryFileReader.read<GlyphMetricType>();
-				glyphInfo._horiBearingY = *binaryFileReader.read<GlyphMetricType>();
-				glyphInfo._horiAdvance = *binaryFileReader.read<GlyphMetricType>();
-				glyphInfo._uv0._x = *binaryFileReader.read<float>();
-				glyphInfo._uv0._y = *binaryFileReader.read<float>();
-				glyphInfo._uv1._x = *binaryFileReader.read<float>();
-				glyphInfo._uv1._y = *binaryFileReader.read<float>();
+				glyphInfo._charCode = *binaryFileReader.Read<wchar_t>();
+				glyphInfo._width = *binaryFileReader.Read<GlyphMetricType>();
+				glyphInfo._height = *binaryFileReader.Read<GlyphMetricType>();
+				glyphInfo._horiBearingX = *binaryFileReader.Read<GlyphMetricType>();
+				glyphInfo._horiBearingY = *binaryFileReader.Read<GlyphMetricType>();
+				glyphInfo._horiAdvance = *binaryFileReader.Read<GlyphMetricType>();
+				glyphInfo._uv0._x = *binaryFileReader.Read<float>();
+				glyphInfo._uv0._y = *binaryFileReader.Read<float>();
+				glyphInfo._uv1._x = *binaryFileReader.Read<float>();
+				glyphInfo._uv1._y = *binaryFileReader.Read<float>();
 
 				_fontData._charCodeToGlyphIndexMap[glyphInfo._charCode] = glyphIndex;
 			}
 
 #if defined MINT_FONT_RENDERER_COMPRESS_AS_PNG
-			const int32 pngLength = *binaryFileReader.read<int32>();
+			const int32 pngLength = *binaryFileReader.Read<int32>();
 			Vector<byte> pngData(pngLength);
 			for (int32 pngAt = 0; pngAt < pngLength; ++pngAt)
 			{
-				pngData[pngAt] = *binaryFileReader.read<byte>();
+				pngData[pngAt] = *binaryFileReader.Read<byte>();
 			}
 
 			ImageLoader imageLoader;
-			imageLoader.loadImage(1, pngData, _fontImageData._imageData);
+			imageLoader.LoadImage_(1, pngData, _fontImageData._imageData);
 #else
 			const uint32 pixelCount = *binaryFileReader.read<uint32>();
 			_fontImageData._imageData.resize(pixelCount);
@@ -237,19 +237,19 @@ namespace mint
 			}
 #endif
 
-			DxResourcePool& resourcePool = graphicDevice.getResourcePool();
-			_fontData._fontTextureID = resourcePool.addTexture2D(DxTextureFormat::R8_UNORM, &_fontImageData._imageData[0], _fontImageData._width, _fontImageData._height);
+			DxResourcePool& resourcePool = graphicDevice.GetResourcePool();
+			_fontData._fontTextureID = resourcePool.AddTexture2D(DxTextureFormat::R8_UNORM, &_fontImageData._imageData[0], _fontImageData._width, _fontImageData._height);
 			return true;
 		}
 
-		bool FontLoader::bakeFontData(const char* const fontFaceFileName, const int16 fontSize, const char* const outputFileName, const int16 textureWidth, const int16 spaceLeft, const int16 spaceTop)
+		bool FontLoader::BakeFontData(const char* const fontFaceFileName, const int16 fontSize, const char* const outputFileName, const int16 textureWidth, const int16 spaceLeft, const int16 spaceTop)
 		{
 			std::string fontFaceFileNameS = fontFaceFileName;
 			if (StringUtil::hasExtension(fontFaceFileNameS) == false)
 			{
 				fontFaceFileNameS.append(".ttf");
 			}
-			if (FileUtil::exists(fontFaceFileNameS.c_str()) == false)
+			if (FileUtil::Exists(fontFaceFileNameS.c_str()) == false)
 			{
 				StringUtil::ExcludeExtension(fontFaceFileNameS);
 				fontFaceFileNameS.append(".otf");
@@ -257,7 +257,7 @@ namespace mint
 
 			_fontData._fontSize = fontSize;
 
-			if (initializeFreeType(fontFaceFileNameS.c_str()) == false)
+			if (InitializeFreeType(fontFaceFileNameS.c_str()) == false)
 			{
 				MINT_LOG_ERROR("FreeType - 초기화에 실패했습니다.");
 				return false;
@@ -275,7 +275,7 @@ namespace mint
 			const uint32 glyphRangeCount = _glyphRanges.Size();
 			if (glyphRangeCount == 0)
 			{
-				MINT_LOG_ERROR("glyphRangeCount 가 0 입니다!! pushGlyphRange() 함수를 먼저 호출해주세요!");
+				MINT_LOG_ERROR("glyphRangeCount 가 0 입니다!! PushGlyphRange() 함수를 먼저 호출해주세요!");
 				return false;
 			}
 
@@ -292,12 +292,12 @@ namespace mint
 				const GlyphRange& glyphRange = _glyphRanges[glyphRangeIndex];
 				for (wchar_t wch = glyphRange._startWchar; wch <= glyphRange._endWchar; ++wch)
 				{
-					bakeGlyph(wch, textureWidth, spaceLeft, spaceTop, pixelArray, pixelX, pixelY);
+					BakeGlyph(wch, textureWidth, spaceLeft, spaceTop, pixelArray, pixelX, pixelY);
 				}
 			}
 
 			const int32 textureHeight = static_cast<int32>(pixelArray.Size() / textureWidth);
-			completeGlyphInfoArray(textureWidth, textureHeight);
+			CompleteGlyphInfoArray(textureWidth, textureHeight);
 
 #if defined MINT_FONT_RENDERER_SAVE_PNG_FOR_TEST
 			std::string pngFileName = outputFileName;
@@ -307,11 +307,11 @@ namespace mint
 #endif
 
 			BinaryFileWriter binaryFileWriter;
-			writeMetaData(textureWidth, textureHeight, binaryFileWriter);
+			WriteMetaData(textureWidth, textureHeight, binaryFileWriter);
 
 #if defined MINT_FONT_RENDERER_COMPRESS_AS_PNG
 			ImageLoader imageLoader;
-			imageLoader.saveImagePNG(pixelArray.Data(), textureWidth, textureHeight, 1, binaryFileWriter, true);
+			imageLoader.SaveImagePNG(pixelArray.Data(), textureWidth, textureHeight, 1, binaryFileWriter, true);
 #else
 			const uint32 pixelCount = static_cast<uint32>(pixelArray.size());
 			binaryFileWriter.write(pixelArray.size());
@@ -325,12 +325,12 @@ namespace mint
 			StringUtil::ExcludeExtension(outputFileNameS);
 			outputFileNameS.append(kFontFileExtension);
 
-			binaryFileWriter.save(outputFileNameS.c_str());
+			binaryFileWriter.Save(outputFileNameS.c_str());
 
 			return true;
 		}
 
-		bool FontLoader::initializeFreeType(const char* const fontFaceFileName)
+		bool FontLoader::InitializeFreeType(const char* const fontFaceFileName)
 		{
 			if (FT_Init_FreeType(&_ftLibrary))
 			{
@@ -353,7 +353,7 @@ namespace mint
 			return true;
 		}
 
-		void FontLoader::deinitializeFreeType()
+		void FontLoader::DeinitializeFreeType()
 		{
 			if (_ftFace != nullptr)
 			{
@@ -366,7 +366,7 @@ namespace mint
 			}
 		}
 
-		bool FontLoader::bakeGlyph(const wchar_t wch, const int16 width, const int16 spaceLeft, const int16 spaceTop, Vector<uint8>& pixelArray, int16& pixelPositionX, int16& pixelPositionY)
+		bool FontLoader::BakeGlyph(const wchar_t wch, const int16 width, const int16 spaceLeft, const int16 spaceTop, Vector<uint8>& pixelArray, int16& pixelPositionX, int16& pixelPositionY)
 		{
 			if (FT_Load_Glyph(_ftFace, FT_Get_Char_Index(_ftFace, wch), FT_LOAD_PEDANTIC | FT_FACE_FLAG_HINTER | FT_LOAD_TARGET_NORMAL))
 			{
@@ -420,7 +420,7 @@ namespace mint
 			return true;
 		}
 
-		void FontLoader::completeGlyphInfoArray(const int16 textureWidth, const int16 textureHeight)
+		void FontLoader::CompleteGlyphInfoArray(const int16 textureWidth, const int16 textureHeight)
 		{
 			const double textureWidthF = static_cast<double>(textureWidth);
 			const double textureHeightF = static_cast<double>(textureHeight);
@@ -436,30 +436,30 @@ namespace mint
 			}
 		}
 
-		void FontLoader::writeMetaData(const int16 textureWidth, const int16 textureHeight, BinaryFileWriter& binaryFileWriter) const noexcept
+		void FontLoader::WriteMetaData(const int16 textureWidth, const int16 textureHeight, BinaryFileWriter& binaryFileWriter) const noexcept
 		{
-			binaryFileWriter.write(kFontFileMagicNumber);
+			binaryFileWriter.Write(kFontFileMagicNumber);
 
-			binaryFileWriter.write(_fontData._fontSize);
+			binaryFileWriter.Write(_fontData._fontSize);
 
-			binaryFileWriter.write(textureWidth);
-			binaryFileWriter.write(textureHeight);
+			binaryFileWriter.Write(textureWidth);
+			binaryFileWriter.Write(textureHeight);
 
 			const uint32 glyphInfoCount = _fontData._glyphInfoArray.Size();
-			binaryFileWriter.write(glyphInfoCount);
+			binaryFileWriter.Write(glyphInfoCount);
 			const uint32 charCodeToGlyphIndexMapSize = _fontData._charCodeToGlyphIndexMap.Size();
-			binaryFileWriter.write(charCodeToGlyphIndexMapSize);
+			binaryFileWriter.Write(charCodeToGlyphIndexMapSize);
 			for (uint32 glyphIndex = 0; glyphIndex < glyphInfoCount; ++glyphIndex)
 			{
 				const GlyphInfo& glyphInfo = _fontData._glyphInfoArray[glyphIndex];
-				binaryFileWriter.write(glyphInfo._charCode);
-				binaryFileWriter.write(glyphInfo._width);
-				binaryFileWriter.write(glyphInfo._height);
-				binaryFileWriter.write(glyphInfo._horiBearingX);
-				binaryFileWriter.write(glyphInfo._horiBearingY);
-				binaryFileWriter.write(glyphInfo._horiAdvance);
-				binaryFileWriter.write(glyphInfo._uv0);
-				binaryFileWriter.write(glyphInfo._uv1);
+				binaryFileWriter.Write(glyphInfo._charCode);
+				binaryFileWriter.Write(glyphInfo._width);
+				binaryFileWriter.Write(glyphInfo._height);
+				binaryFileWriter.Write(glyphInfo._horiBearingX);
+				binaryFileWriter.Write(glyphInfo._horiBearingY);
+				binaryFileWriter.Write(glyphInfo._horiAdvance);
+				binaryFileWriter.Write(glyphInfo._uv0);
+				binaryFileWriter.Write(glyphInfo._uv1);
 			}
 		}
 	}

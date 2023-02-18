@@ -67,8 +67,8 @@ namespace mint
 			GraphicInputLayout& operator=(GraphicInputLayout&& rhs) noexcept = default;
 
 		public:
-			void bind() const;
-			void unbind() const;
+			void Bind() const;
+			void Unbind() const;
 
 		private:
 			DxInputElementSet _inputElementSet;
@@ -90,8 +90,8 @@ namespace mint
 			DxShader& operator=(DxShader&& rhs) noexcept = default;
 
 		public:
-			void bind() const noexcept;
-			void unbind() const noexcept;
+			void Bind() const noexcept;
+			void Unbind() const noexcept;
 
 		private:
 			ComPtr<ID3D10Blob> _shaderBlob;
@@ -129,44 +129,44 @@ namespace mint
 			virtual ~DxShaderPool() = default;
 
 		public:
-			GraphicObjectID addShaderFromMemory(const char* const shaderIdentifier, const char* const textContent, const char* const entryPoint, const GraphicShaderType shaderType);
-			GraphicObjectID addShader(const char* const inputDirectory, const char* const inputShaderFileName, const char* const entryPoint, const GraphicShaderType shaderType, const char* const outputDirectory = nullptr);
-			GraphicObjectID addInputLayout(const GraphicObjectID& vertexShaderID, const TypeMetaData<TypeCustomData>& inputElementTypeMetaData);
-			void removeShader(const GraphicObjectID& shaderID);
-			void removeInputLayout(const GraphicObjectID& shaderID);
+			GraphicObjectID AddShaderFromMemory(const char* const shaderIdentifier, const char* const textContent, const char* const entryPoint, const GraphicShaderType shaderType);
+			GraphicObjectID AddShader(const char* const inputDirectory, const char* const inputShaderFileName, const char* const entryPoint, const GraphicShaderType shaderType, const char* const outputDirectory = nullptr);
+			GraphicObjectID AddInputLayout(const GraphicObjectID& vertexShaderID, const TypeMetaData<TypeCustomData>& inputElementTypeMetaData);
+			void RemoveShader(const GraphicObjectID& shaderID);
+			void RemoveInputLayout(const GraphicObjectID& shaderID);
 
 		private:
-			GraphicObjectID addShaderInternal(const GraphicShaderType shaderType, DxShader& shader);
-			GraphicObjectID addInputLayoutInternal(const DxShader& vertexShader, const TypeMetaData<TypeCustomData>& inputElementTypeMetaData);
+			GraphicObjectID AddShaderInternal(const GraphicShaderType shaderType, DxShader& shader);
+			GraphicObjectID AddInputLayoutInternal(const DxShader& vertexShader, const TypeMetaData<TypeCustomData>& inputElementTypeMetaData);
 
 		private:
-			bool createShaderInternal(const GraphicShaderType shaderType, DxShader& shader);
-			bool createInputLayoutInternal(const DxShader& vertexShader, const TypeMetaData<TypeCustomData>& inputElementTypeMetaData, GraphicInputLayout& outInputLayout);
-			void pushInputElement(DxInputElementSet& inputElementSet, const TypeMetaData<TypeCustomData>& outerDataTypeMetaData, const TypeMetaData<TypeCustomData>& memberTypeMetaData);
+			bool CreateShaderInternal(const GraphicShaderType shaderType, DxShader& shader);
+			bool CreateInputLayoutInternal(const DxShader& vertexShader, const TypeMetaData<TypeCustomData>& inputElementTypeMetaData, GraphicInputLayout& outInputLayout);
+			void PushInputElement(DxInputElementSet& inputElementSet, const TypeMetaData<TypeCustomData>& outerDataTypeMetaData, const TypeMetaData<TypeCustomData>& memberTypeMetaData);
 
 		private:
-			bool compileShaderFromFile(const char* const inputDirectory, const char* const inputShaderFileName, const char* const entryPoint, const char* const outputDirectory, const GraphicShaderType shaderType, const bool forceCompilation, DxShader& inoutShader);
-			bool compileShaderFromFile(const char* const inputShaderFilePath, const char* const entryPoint, const char* const outputShaderFilePath, const GraphicShaderType shaderType, const bool forceCompilation, DxShader& inoutShader);
-			bool compileShaderInternalXXX(const GraphicShaderType shaderType, const DxShaderCompileParam& compileParam, const char* const entryPoint, ID3D10Blob** outBlob);
+			bool CompileShaderFromFile(const char* const inputDirectory, const char* const inputShaderFileName, const char* const entryPoint, const char* const outputDirectory, const GraphicShaderType shaderType, const bool forceCompilation, DxShader& inoutShader);
+			bool CompileShaderFromFile(const char* const inputShaderFilePath, const char* const entryPoint, const char* const outputShaderFilePath, const GraphicShaderType shaderType, const bool forceCompilation, DxShader& inoutShader);
+			bool CompileShaderInternalXXX(const GraphicShaderType shaderType, const DxShaderCompileParam& compileParam, const char* const entryPoint, ID3D10Blob** outBlob);
 
 		public:
-			void recompileAllShaders();
+			void RecompileAllShaders();
 
 		private:
-			void reportCompileError();
+			void ReportCompileError();
 
 		public:
-			void bindShaderIfNot(const GraphicShaderType shaderType, const GraphicObjectID& objectID);
-			void bindInputLayoutIfNot(const GraphicObjectID& objectID);
-			void unbindShader(const GraphicShaderType shaderType);
+			void BindShaderIfNot(const GraphicShaderType shaderType, const GraphicObjectID& objectID);
+			void BindInputLayoutIfNot(const GraphicObjectID& objectID);
+			void UnbindShader(const GraphicShaderType shaderType);
 
 		private:
-			int32 getShaderIndex(const GraphicShaderType shaderType, const GraphicObjectID& objectID) const;
-			int32 getInputLayoutIndex(const GraphicObjectID& objectID) const;
-			uint32 getShaderCount(const GraphicShaderType shaderType) const;
-			GraphicObjectID& accessBoundShaderID(const GraphicShaderType shaderType);
-			const Vector<DxShader>& getShaders(const GraphicShaderType shaderType) const;
-			Vector<DxShader>& accessShaders(const GraphicShaderType shaderType);
+			int32 GetShaderIndex(const GraphicShaderType shaderType, const GraphicObjectID& objectID) const;
+			int32 GetInputLayoutIndex(const GraphicObjectID& objectID) const;
+			uint32 GetShaderCount(const GraphicShaderType shaderType) const;
+			GraphicObjectID& AccessBoundShaderID(const GraphicShaderType shaderType);
+			const Vector<DxShader>& GetShaders(const GraphicShaderType shaderType) const;
+			Vector<DxShader>& AccessShaders(const GraphicShaderType shaderType);
 
 		private:
 			ComPtr<ID3DBlob> _errorMessageBlob;

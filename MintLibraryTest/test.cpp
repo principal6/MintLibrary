@@ -36,23 +36,23 @@ int main()
 	windowCreationDesc._backgroundColor.Set(0.875f, 0.875f, 0.875f);
 
 	WindowsWindow window;
-	if (window.create(windowCreationDesc) == false)
+	if (window.Create(windowCreationDesc) == false)
 	{
-		WindowCreationError windowCreationError = window.getWindowCreationError();
+		WindowCreationError windowCreationError = window.GetWindowCreationError();
 		return false;
 	}
 
 	GraphicDevice graphicDevice{ window };
-	graphicDevice.initialize();
+	graphicDevice.Initialize();
 
 #if defined MINT_DEBUG
 	//Logger::setOutputFileName("LOG.txt");
 	TestMath::Test();
 	TestContainers::Test();
-	TestPlatform::test();
+	TestPlatform::Test();
 	TestLanguage::Test();
-	TestReflection::test();
-	//TestRendering::test(graphicDevice);
+	TestReflection::Test();
+	//TestRendering::Test(graphicDevice);
 	TestLibrary::Test();
 #endif
 
@@ -68,57 +68,57 @@ bool run2DTestWindow(mint::Platform::IWindow& window, mint::Rendering::GraphicDe
 	using namespace Platform;
 	using namespace Rendering;
 
-	const Float2 windowSize = graphicDevice.getWindowSizeFloat2();
+	const Float2 windowSize = graphicDevice.GetWindowSizeFloat2();
 	const Float4x4 projectionMatrix = Float4x4::ProjectionMatrix2DFromTopLeft(windowSize._x, windowSize._y);
 	ImageRenderer imageRenderer{ graphicDevice, 0, ByteColor(0, 0, 0, 0) };
 	ByteColorImage byteColorImage;
 	ImageLoader imageLoader;
-	imageLoader.loadImage("Assets/Test_image.png", byteColorImage);
-	DxResourcePool& resourcePool = graphicDevice.getResourcePool();
-	const GraphicObjectID textureID = resourcePool.addTexture2D(DxTextureFormat::R8G8B8A8_UNORM, byteColorImage.getBytes(), byteColorImage.getWidth(), byteColorImage.getHeight());
-	resourcePool.getResource(textureID).bindToShader(GraphicShaderType::PixelShader, 0);
-	const Platform::InputContext& inputContext = Platform::InputContext::getInstance();
-	while (window.isRunning() == true)
+	imageLoader.LoadImage_("Assets/Test_image.png", byteColorImage);
+	DxResourcePool& resourcePool = graphicDevice.GetResourcePool();
+	const GraphicObjectID textureID = resourcePool.AddTexture2D(DxTextureFormat::R8G8B8A8_UNORM, byteColorImage.GetBytes(), byteColorImage.GetWidth(), byteColorImage.GetHeight());
+	resourcePool.GetResource(textureID).BindToShader(GraphicShaderType::PixelShader, 0);
+	const Platform::InputContext& inputContext = Platform::InputContext::GetInstance();
+	while (window.IsRunning() == true)
 	{
-		if (inputContext.isKeyPressed())
+		if (inputContext.IsKeyPressed())
 		{
-			if (inputContext.isKeyDown(Platform::KeyCode::Enter) == true)
+			if (inputContext.IsKeyDown(Platform::KeyCode::Enter) == true)
 			{
-				graphicDevice.getShaderPool().recompileAllShaders();
+				graphicDevice.GetShaderPool().RecompileAllShaders();
 			}
-			else if (inputContext.isKeyDown(Platform::KeyCode::Num1) == true)
+			else if (inputContext.IsKeyDown(Platform::KeyCode::Num1) == true)
 			{
-				graphicDevice.useSolidCullBackRasterizer();
+				graphicDevice.UseSolidCullBackRasterizer();
 			}
-			else if (inputContext.isKeyDown(Platform::KeyCode::Num2) == true)
+			else if (inputContext.IsKeyDown(Platform::KeyCode::Num2) == true)
 			{
-				graphicDevice.useWireFrameCullBackRasterizer();
+				graphicDevice.UseWireFrameCullBackRasterizer();
 			}
-			else if (inputContext.isKeyDown(Platform::KeyCode::Num3) == true)
+			else if (inputContext.IsKeyDown(Platform::KeyCode::Num3) == true)
 			{
-				graphicDevice.useWireFrameNoCullingRasterizer();
+				graphicDevice.UseWireFrameNoCullingRasterizer();
 			}
 		}
-		else if (inputContext.isKeyReleased())
+		else if (inputContext.IsKeyReleased())
 		{
 			__noop;
 		}
-		else if (inputContext.isMouseWheelScrolled())
+		else if (inputContext.IsMouseWheelScrolled())
 		{
-			const float mouseWheelScroll = inputContext.getMouseWheelScroll();
+			const float mouseWheelScroll = inputContext.GetMouseWheelScroll();
 		}
 
 		// Rendering
 		{
-			graphicDevice.beginRendering();
+			graphicDevice.BeginRendering();
 
-			graphicDevice.setViewProjectionMatrix(Float4x4::kIdentity, projectionMatrix);
+			graphicDevice.SetViewProjectionMatrix(Float4x4::kIdentity, projectionMatrix);
 
-			imageRenderer.drawImage(Float2(50, 50), Float2(80, 20), Float2(0, 0), Float2(1, 1));
-			imageRenderer.render();
-			imageRenderer.flush();
+			imageRenderer.DrawImage(Float2(50, 50), Float2(80, 20), Float2(0, 0), Float2(1, 1));
+			imageRenderer.Render();
+			imageRenderer.Flush();
 
-			graphicDevice.endRendering();
+			graphicDevice.EndRendering();
 		}
 
 		Profiler::FPSCounter::Count();
@@ -134,18 +134,18 @@ bool run3DTestWindow(mint::Platform::IWindow& window, mint::Rendering::GraphicDe
 
 
 	ObjectPool objectPool;
-	Object* const testObject = objectPool.createObject();
-	CameraObject* const testCameraObject = objectPool.createCameraObject();
-	Float2 windowSize = graphicDevice.getWindowSizeFloat2();
-	testCameraObject->setPerspectiveZRange(0.01f, 1000.0f);
-	testCameraObject->setPerspectiveScreenRatio(windowSize._x / windowSize._y);
+	Object* const testObject = objectPool.CreateObject();
+	CameraObject* const testCameraObject = objectPool.CreateCameraObject();
+	Float2 windowSize = graphicDevice.GetWindowSizeFloat2();
+	testCameraObject->SetPerspectiveZRange(0.01f, 1000.0f);
+	testCameraObject->SetPerspectiveScreenRatio(windowSize._x / windowSize._y);
 	{
-		testObject->attachComponent(objectPool.createMeshComponent());
+		testObject->AttachComponent(objectPool.CreateMeshComponent());
 
-		Transform& transform = testObject->getObjectTransform();
+		Transform& transform = testObject->GetObjectTransform();
 		transform._translation._z = -4.0f;
 	}
-	testCameraObject->rotatePitch(0.125f);
+	testCameraObject->RotatePitch(0.125f);
 
 	MeshRenderer meshRenderer{ graphicDevice };
 	InstantRenderer instantRenderer{ graphicDevice };
@@ -161,93 +161,93 @@ bool run3DTestWindow(mint::Platform::IWindow& window, mint::Rendering::GraphicDe
 	testSkeletonGenerator.BuildBindPoseModelSpace();
 	Game::Skeleton testSkeleton(testSkeletonGenerator);
 
-	const Platform::InputContext& inputContext = Platform::InputContext::getInstance();
-	GUI::GUIContext& guiContext = graphicDevice.getGUIContext();
+	const Platform::InputContext& inputContext = Platform::InputContext::GetInstance();
+	GUI::GUIContext& guiContext = graphicDevice.GetGUIContext();
 	uint64 previousFrameTimeMs = 0;
-	while (window.isRunning() == true)
+	while (window.IsRunning() == true)
 	{
-		objectPool.computeDeltaTime();
+		objectPool.ComputeDeltaTime();
 
 		// Events
-		guiContext.processEvent();
+		guiContext.ProcessEvent();
 
-		if (inputContext.isKeyPressed())
+		if (inputContext.IsKeyPressed())
 		{
-			if (inputContext.isKeyDown(Platform::KeyCode::Enter) == true)
+			if (inputContext.IsKeyDown(Platform::KeyCode::Enter) == true)
 			{
-				graphicDevice.getShaderPool().recompileAllShaders();
+				graphicDevice.GetShaderPool().RecompileAllShaders();
 			}
-			else if (inputContext.isKeyDown(Platform::KeyCode::Num1) == true)
+			else if (inputContext.IsKeyDown(Platform::KeyCode::Num1) == true)
 			{
-				graphicDevice.useSolidCullBackRasterizer();
+				graphicDevice.UseSolidCullBackRasterizer();
 			}
-			else if (inputContext.isKeyDown(Platform::KeyCode::Num2) == true)
+			else if (inputContext.IsKeyDown(Platform::KeyCode::Num2) == true)
 			{
-				graphicDevice.useWireFrameCullBackRasterizer();
+				graphicDevice.UseWireFrameCullBackRasterizer();
 			}
-			else if (inputContext.isKeyDown(Platform::KeyCode::Num3) == true)
+			else if (inputContext.IsKeyDown(Platform::KeyCode::Num3) == true)
 			{
-				graphicDevice.useWireFrameNoCullingRasterizer();
+				graphicDevice.UseWireFrameNoCullingRasterizer();
 			}
-			else if (inputContext.isKeyDown(Platform::KeyCode::Num4) == true)
+			else if (inputContext.IsKeyDown(Platform::KeyCode::Num4) == true)
 			{
 				MeshComponent* const meshComponent = static_cast<MeshComponent*>(testObject->GetComponent(ObjectComponentType::MeshComponent));
-				meshComponent->shouldDrawNormals(!meshComponent->shouldDrawNormals());
+				meshComponent->ShouldDrawNormals(!meshComponent->ShouldDrawNormals());
 			}
-			else if (inputContext.isKeyDown(Platform::KeyCode::Num5) == true)
+			else if (inputContext.IsKeyDown(Platform::KeyCode::Num5) == true)
 			{
 				MeshComponent* const meshComponent = static_cast<MeshComponent*>(testObject->GetComponent(ObjectComponentType::MeshComponent));
-				meshComponent->shouldDrawEdges(!meshComponent->shouldDrawEdges());
+				meshComponent->ShouldDrawEdges(!meshComponent->ShouldDrawEdges());
 			}
-			else if (inputContext.isKeyDown(Platform::KeyCode::Shift) == true)
+			else if (inputContext.IsKeyDown(Platform::KeyCode::Shift) == true)
 			{
-				testCameraObject->setBoostMode(true);
+				testCameraObject->SetBoostMode(true);
 			}
 		}
-		else if (inputContext.isKeyReleased())
+		else if (inputContext.IsKeyReleased())
 		{
-			if (inputContext.isKeyUp(Platform::KeyCode::Shift) == true)
+			if (inputContext.IsKeyUp(Platform::KeyCode::Shift) == true)
 			{
-				testCameraObject->setBoostMode(false);
+				testCameraObject->SetBoostMode(false);
 			}
 		}
-		else if (inputContext.isMouseWheelScrolled())
+		else if (inputContext.IsMouseWheelScrolled())
 		{
-			const float mouseWheelScroll = inputContext.getMouseWheelScroll();
+			const float mouseWheelScroll = inputContext.GetMouseWheelScroll();
 			if (mouseWheelScroll > 0.0f)
 			{
-				testCameraObject->increaseMoveSpeed();
+				testCameraObject->IncreaseMoveSpeed();
 			}
 			else
 			{
-				testCameraObject->decreaseMoveSpeed();
+				testCameraObject->DecreaseMoveSpeed();
 			}
 		}
 
-		if (window.isResized())
+		if (window.IsResized())
 		{
-			objectPool.updateScreenSize(graphicDevice.getWindowSizeFloat2());
+			objectPool.UpdateScreenSize(graphicDevice.GetWindowSizeFloat2());
 		}
 
-		testCameraObject->steer(inputContext, false);
+		testCameraObject->Steer(inputContext, false);
 
 		// Rendering
 		{
-			graphicDevice.beginRendering();
+			graphicDevice.BeginRendering();
 
 			testSkeleton.RenderSkeleton(instantRenderer, testSkeletonWorldMatrix);
 
-			graphicDevice.setViewProjectionMatrix(testCameraObject->getViewMatrix(), testCameraObject->getProjectionMatrix());
+			graphicDevice.SetViewProjectionMatrix(testCameraObject->GetViewMatrix(), testCameraObject->GetProjectionMatrix());
 
-			meshRenderer.render(objectPool);
+			meshRenderer.Render(objectPool);
 
 			// # ShapeRendererContext 테스트
-			//ShapeRendererContext& shapeFontRendererContext = graphicDevice.getShapeRendererContext();
-			//shapeFontRendererContext.testDraw(Float2(30, 60));
+			//ShapeRendererContext& shapeFontRendererContext = graphicDevice.GetShapeRendererContext();
+			//shapeFontRendererContext.TestDraw(Float2(30, 60));
 
-			instantRenderer.render();
+			instantRenderer.Render();
 
-			graphicDevice.endRendering();
+			graphicDevice.EndRendering();
 		}
 
 		Profiler::FPSCounter::Count();

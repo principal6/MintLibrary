@@ -18,7 +18,7 @@ namespace mint
 			: _graphicDevice{ graphicDevice }
 			, _lowLevelRenderer{ graphicDevice }
 		{
-			initialize();
+			Initialize();
 		}
 
 		MeshRenderer::~MeshRenderer()
@@ -26,24 +26,24 @@ namespace mint
 			__noop;
 		}
 
-		void MeshRenderer::render(const ObjectPool& objectPool) noexcept
+		void MeshRenderer::Render(const ObjectPool& objectPool) noexcept
 		{
-			const Vector<MeshComponent*>& meshComponents = objectPool.getMeshComponents();
+			const Vector<MeshComponent*>& meshComponents = objectPool.GetMeshComponents();
 
-			DxShaderPool& shaderPool = _graphicDevice.getShaderPool();
-			shaderPool.bindInputLayoutIfNot(_inputLayoutDefaultID);
-			shaderPool.bindShaderIfNot(GraphicShaderType::VertexShader, _vsDefaultID);
+			DxShaderPool& shaderPool = _graphicDevice.GetShaderPool();
+			shaderPool.BindInputLayoutIfNot(_inputLayoutDefaultID);
+			shaderPool.BindShaderIfNot(GraphicShaderType::VertexShader, _vsDefaultID);
 
-			DxResourcePool& resourcePool = _graphicDevice.getResourcePool();
-			DxResource& cbTransform = resourcePool.getResource(_graphicDevice.getCommonCbTransformID());
+			DxResourcePool& resourcePool = _graphicDevice.GetResourcePool();
+			DxResource& cbTransform = resourcePool.GetResource(_graphicDevice.GetCommonCBTransformID());
 			{
-				cbTransform.bindToShader(GraphicShaderType::VertexShader, cbTransform.getRegisterIndex());
-				cbTransform.bindToShader(GraphicShaderType::GeometryShader, cbTransform.getRegisterIndex());
+				cbTransform.BindToShader(GraphicShaderType::VertexShader, cbTransform.GetRegisterIndex());
+				cbTransform.BindToShader(GraphicShaderType::GeometryShader, cbTransform.GetRegisterIndex());
 			}
 
-			DxResource& sbMaterial = resourcePool.getResource(_graphicDevice.getCommonSBMaterialID());
+			DxResource& sbMaterial = resourcePool.GetResource(_graphicDevice.GetCommonSBMaterialID());
 			{
-				sbMaterial.bindToShader(GraphicShaderType::PixelShader, sbMaterial.getRegisterIndex());
+				sbMaterial.BindToShader(GraphicShaderType::PixelShader, sbMaterial.GetRegisterIndex());
 			}
 
 			SB_Material sbMaterialData;
@@ -51,52 +51,52 @@ namespace mint
 			for (uint32 meshCompnentIndex = 0; meshCompnentIndex < meshComponentCount; ++meshCompnentIndex)
 			{
 				const MeshComponent* const meshComponent = meshComponents[meshCompnentIndex];
-				_cbTransformData._cbWorldMatrix = meshComponent->getOwnerObject()->getObjectTransformMatrix() * meshComponent->_transform.ToMatrix();
-				cbTransform.updateBuffer(&_cbTransformData, 1);
+				_cbTransformData._cbWorldMatrix = meshComponent->getOwnerObject()->GetObjectTransformMatrix() * meshComponent->_transform.ToMatrix();
+				cbTransform.UpdateBuffer(&_cbTransformData, 1);
 
-				_lowLevelRenderer.flush();
+				_lowLevelRenderer.Flush();
 
-				_lowLevelRenderer.pushMesh(meshComponent->getMeshData());
+				_lowLevelRenderer.PushMesh(meshComponent->GetMeshData());
 
 				sbMaterialData._diffuseColor = Color::kBlue;
-				sbMaterial.updateBuffer(&sbMaterialData, 1);
+				sbMaterial.UpdateBuffer(&sbMaterialData, 1);
 
-				shaderPool.bindShaderIfNot(GraphicShaderType::PixelShader, _psDefaultID);
-				shaderPool.unbindShader(GraphicShaderType::GeometryShader);
-				_lowLevelRenderer.render(RenderingPrimitive::TriangleList);
+				shaderPool.BindShaderIfNot(GraphicShaderType::PixelShader, _psDefaultID);
+				shaderPool.UnbindShader(GraphicShaderType::GeometryShader);
+				_lowLevelRenderer.Render(RenderingPrimitive::TriangleList);
 
-				if (meshComponent->shouldDrawNormals() == true)
+				if (meshComponent->ShouldDrawNormals() == true)
 				{
-					shaderPool.bindShaderIfNot(GraphicShaderType::GeometryShader, _gsNormalID);
-					shaderPool.bindShaderIfNot(GraphicShaderType::PixelShader, _psTexCoordAsColorID);
-					_lowLevelRenderer.render(RenderingPrimitive::LineList);
+					shaderPool.BindShaderIfNot(GraphicShaderType::GeometryShader, _gsNormalID);
+					shaderPool.BindShaderIfNot(GraphicShaderType::PixelShader, _psTexCoordAsColorID);
+					_lowLevelRenderer.Render(RenderingPrimitive::LineList);
 				}
 
-				if (meshComponent->shouldDrawEdges() == true)
+				if (meshComponent->ShouldDrawEdges() == true)
 				{
-					shaderPool.bindShaderIfNot(GraphicShaderType::GeometryShader, _gsTriangleEdgeID);
-					shaderPool.bindShaderIfNot(GraphicShaderType::PixelShader, _psTexCoordAsColorID);
-					_lowLevelRenderer.render(RenderingPrimitive::TriangleList);
+					shaderPool.BindShaderIfNot(GraphicShaderType::GeometryShader, _gsTriangleEdgeID);
+					shaderPool.BindShaderIfNot(GraphicShaderType::PixelShader, _psTexCoordAsColorID);
+					_lowLevelRenderer.Render(RenderingPrimitive::TriangleList);
 				}
 			}
 		}
 
-		void MeshRenderer::initialize() noexcept
+		void MeshRenderer::Initialize() noexcept
 		{
 			using namespace Language;
 
-			DxShaderPool& shaderPool = _graphicDevice.getShaderPool();
-			_vsDefaultID = shaderPool.addShader(Path::MakeIncludeAssetPath("Hlsl/"), "VsDefault.hlsl", "main", GraphicShaderType::VertexShader, Path::MakeIncludeAssetPath("HlslBinary/"));
+			DxShaderPool& shaderPool = _graphicDevice.GetShaderPool();
+			_vsDefaultID = shaderPool.AddShader(Path::MakeIncludeAssetPath("Hlsl/"), "VsDefault.hlsl", "main", GraphicShaderType::VertexShader, Path::MakeIncludeAssetPath("HlslBinary/"));
 
-			const CppHlsl::Interpreter& interpreter = _graphicDevice.getCppHlslSteamData();
+			const CppHlsl::Interpreter& interpreter = _graphicDevice.GetCppHlslSteamData();
 			const TypeMetaData<CppHlsl::TypeCustomData>& vsInputTypeMetaData = interpreter.GetTypeMetaData(typeid(VS_INPUT));
-			_inputLayoutDefaultID = shaderPool.addInputLayout(_vsDefaultID, vsInputTypeMetaData);
+			_inputLayoutDefaultID = shaderPool.AddInputLayout(_vsDefaultID, vsInputTypeMetaData);
 
-			_psDefaultID = shaderPool.addShader(Path::MakeIncludeAssetPath("Hlsl/"), "PsDefault.hlsl", "main", GraphicShaderType::PixelShader, Path::MakeIncludeAssetPath("HlslBinary/"));
+			_psDefaultID = shaderPool.AddShader(Path::MakeIncludeAssetPath("Hlsl/"), "PsDefault.hlsl", "main", GraphicShaderType::PixelShader, Path::MakeIncludeAssetPath("HlslBinary/"));
 
-			_gsNormalID = shaderPool.addShader(Path::MakeIncludeAssetPath("Hlsl/"), "GsNormal.hlsl", "main", GraphicShaderType::GeometryShader, Path::MakeIncludeAssetPath("HlslBinary/"));
-			_gsTriangleEdgeID = shaderPool.addShader(Path::MakeIncludeAssetPath("Hlsl/"), "GsTriangleEdge.hlsl", "main", GraphicShaderType::GeometryShader, Path::MakeIncludeAssetPath("HlslBinary/"));
-			_psTexCoordAsColorID = shaderPool.addShader(Path::MakeIncludeAssetPath("Hlsl/"), "PsTexCoordAsColor.hlsl", "main", GraphicShaderType::PixelShader, Path::MakeIncludeAssetPath("HlslBinary/"));
+			_gsNormalID = shaderPool.AddShader(Path::MakeIncludeAssetPath("Hlsl/"), "GsNormal.hlsl", "main", GraphicShaderType::GeometryShader, Path::MakeIncludeAssetPath("HlslBinary/"));
+			_gsTriangleEdgeID = shaderPool.AddShader(Path::MakeIncludeAssetPath("Hlsl/"), "GsTriangleEdge.hlsl", "main", GraphicShaderType::GeometryShader, Path::MakeIncludeAssetPath("HlslBinary/"));
+			_psTexCoordAsColorID = shaderPool.AddShader(Path::MakeIncludeAssetPath("Hlsl/"), "PsTexCoordAsColor.hlsl", "main", GraphicShaderType::PixelShader, Path::MakeIncludeAssetPath("HlslBinary/"));
 		}
 	}
 }

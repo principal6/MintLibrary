@@ -36,8 +36,8 @@ namespace mint
 			virtual ~Shape2D() = default;
 
 		public:
-			virtual void debug_drawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Float2& offset) { __noop; }
-			virtual Float2 computeSupportPoint(const Float2& direction) const abstract;
+			virtual void DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Float2& offset) { __noop; }
+			virtual Float2 ComputeSupportPoint(const Float2& direction) const abstract;
 
 		public:
 			Float2 _center;
@@ -49,8 +49,8 @@ namespace mint
 			CircleShape2D(const Float2& center, const float radius);
 
 		public:
-			virtual void debug_drawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Float2& offset) override final;
-			virtual Float2 computeSupportPoint(const Float2& direction) const override final;
+			virtual void DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Float2& offset) override final;
+			virtual Float2 ComputeSupportPoint(const Float2& direction) const override final;
 
 		public:
 			float _radius;
@@ -62,8 +62,8 @@ namespace mint
 			AABBShape2D(const Float2& center, const Float2& halfSize);
 
 		public:
-			virtual void debug_drawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Float2& offset) override final;
-			virtual Float2 computeSupportPoint(const Float2& direction) const override final;
+			virtual void DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Float2& offset) override final;
+			virtual Float2 ComputeSupportPoint(const Float2& direction) const override final;
 		
 		public:
 			Float2 _halfSize;
@@ -73,23 +73,23 @@ namespace mint
 		class ConvexShape2D : public Shape2D
 		{
 		public:
-			static ConvexShape2D makeFromPoints(const Float2& center, const Vector<Float2>& points);
-			static ConvexShape2D makeMinkowskiDifferenceShape(const ConvexShape2D& a, const ConvexShape2D& b);
+			static ConvexShape2D MakeFromPoints(const Float2& center, const Vector<Float2>& points);
+			static ConvexShape2D MakeMinkowskiDifferenceShape(const ConvexShape2D& a, const ConvexShape2D& b);
 
 		public:
 			ConvexShape2D(const Float2& center, const Vector<Float2>& vertices);
 
 		public:
-			virtual void debug_drawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Float2& offset) override final;
-			virtual Float2 computeSupportPoint(const Float2& direction) const override final;
+			virtual void DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Float2& offset) override final;
+			virtual Float2 ComputeSupportPoint(const Float2& direction) const override final;
 
 		private:
 			ConvexShape2D();
 
 		private:
-			static uint32 GrahamScan_findStartPoint(const Vector<Float2>& points);
-			static void GrahamScan_sortPoints(Vector<Float2>& inoutPoints);
-			static void GrahamScan_convexify(Vector<Float2>& inoutPoints);
+			static uint32 GrahamScan_FindStartPoint(const Vector<Float2>& points);
+			static void GrahamScan_SortPoints(Vector<Float2>& inoutPoints);
+			static void GrahamScan_Convexify(Vector<Float2>& inoutPoints);
 
 		private:
 			Vector<Float2> _vertices;
@@ -104,13 +104,13 @@ namespace mint
 			GJKSimplex2D(const Float2& pointB, const Float2& pointA);
 
 		public:
-			void appendPoint(const Float2& pointA);
+			void AppendPoint(const Float2& pointA);
 		
 		public:
-			const uint8 getValidPointCount() const { return _validPointCount; }
-			const Float2& getPointA() const { return _points[_validPointCount - 1]; }
-			const Float2& getPointB() const { return _points[_validPointCount - 2]; }
-			const Float2& getPointC() const { return _points[_validPointCount - 3]; }
+			const uint8 GetValidPointCount() const { return _validPointCount; }
+			const Float2& GetPointA() const { return _points[_validPointCount - 1]; }
+			const Float2& GetPointB() const { return _points[_validPointCount - 2]; }
+			const Float2& GetPointC() const { return _points[_validPointCount - 3]; }
 
 		private:
 			Float2 _points[3];
@@ -118,9 +118,9 @@ namespace mint
 		};
 
 
-		bool intersect2D_circle_point(const Float2& circleCenter, const float circleRadius, const Float2& point);
-		bool intersect2D_aabb_point(const Rect& aabb, const Float2& point);
-		bool intersect2D_GJK(const Shape2D& shapeA, const Shape2D& shapeB);
+		bool Intersect2D_circle_point(const Float2& circleCenter, const float circleRadius, const Float2& point);
+		bool Intersect2D_aabb_point(const Rect& aabb, const Float2& point);
+		bool Intersect2D_GJK(const Shape2D& shapeA, const Shape2D& shapeB);
 	}
 }
 

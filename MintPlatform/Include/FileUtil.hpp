@@ -10,17 +10,17 @@ namespace mint
 {
 	namespace FileUtil
 	{
-		MINT_INLINE bool isFile(const char* const fileName) noexcept
+		MINT_INLINE bool IsFile(const char* const fileName) noexcept
 		{
 			return std::filesystem::is_regular_file(fileName);
 		}
 
-		MINT_INLINE bool isDirectory(const char* const fileName) noexcept
+		MINT_INLINE bool IsDirectory(const char* const fileName) noexcept
 		{
 			return std::filesystem::is_directory(fileName);
 		}
 
-		MINT_INLINE bool isReadOnly(const char* const fileName) noexcept
+		MINT_INLINE bool IsReadOnly(const char* const fileName) noexcept
 		{
 			auto status{ std::filesystem::status(fileName) };
 			auto type{ status.type() };
@@ -38,7 +38,7 @@ namespace mint
 			return false;
 		}
 
-		MINT_INLINE void unsetReadOnly(const char* const fileName) noexcept
+		MINT_INLINE void UnsetReadOnly(const char* const fileName) noexcept
 		{
 			auto status{ std::filesystem::status(fileName) };
 			auto type{ status.type() };
@@ -50,7 +50,7 @@ namespace mint
 			}
 		}
 
-		MINT_INLINE bool exists(const char* const path) noexcept
+		MINT_INLINE bool Exists(const char* const path) noexcept
 		{
 			auto status{ std::filesystem::status(path) };
 			auto type{ status.type() };
@@ -61,18 +61,18 @@ namespace mint
 			return true;
 		}
 
-		MINT_INLINE bool createDirectory(const char* const directoryName) noexcept
+		MINT_INLINE bool CreateDirectory_(const char* const directoryName) noexcept
 		{
-			if (exists(directoryName) == true)
+			if (Exists(directoryName) == true)
 			{
 				return true;
 			}
 			return std::filesystem::create_directory(directoryName);
 		}
 
-		MINT_INLINE bool deleteFile(const char* const fileName) noexcept
+		MINT_INLINE bool DeleteFile_(const char* const fileName) noexcept
 		{
-			if (exists(fileName) == true)
+			if (Exists(fileName) == true)
 			{
 				return std::filesystem::remove(fileName);
 			}

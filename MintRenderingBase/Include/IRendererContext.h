@@ -38,40 +38,40 @@ namespace mint
 			virtual ~IRendererContext();
 
 		public:
-			virtual void initializeShaders() noexcept abstract;
-			virtual void flush() noexcept abstract;
-			virtual void render() noexcept abstract;
+			virtual void InitializeShaders() noexcept abstract;
+			virtual void Flush() noexcept abstract;
+			virtual void Render() noexcept abstract;
 
 		protected:
-			void flushTransformBuffer() noexcept;
-			void prepareTransformBuffer() noexcept;
+			void FlushTransformBuffer() noexcept;
+			void PrepareTransformBuffer() noexcept;
 
 		public:
-			void setUseMultipleViewports() noexcept;
-			bool isUsingMultipleViewports() const noexcept;
+			void SetUseMultipleViewports() noexcept;
+			bool IsUsingMultipleViewports() const noexcept;
 
 		public:
-			void setPosition(const Float4& position) noexcept;
-			void setPositionZ(const float s) noexcept;
+			void SetPosition(const Float4& position) noexcept;
+			void SetPositionZ(const float s) noexcept;
 			void SetColor(const ByteColor& color) noexcept;
 			void SetColor(const Color& color) noexcept;
 			void SetColor(const Vector<Color>& colorArray) noexcept;
-			virtual void setClipRect(const Rect& clipRect) noexcept;
+			virtual void SetClipRect(const Rect& clipRect) noexcept;
 
 		protected:
 			const Float4& GetColorInternal(const uint32 index) const noexcept;
-			static float packBits2_30AsFloat(const uint32 _2bits, const uint32 _30bits) noexcept;
-			static float packBits4_28AsFloat(const uint32 _4bits, const uint32 _28bits) noexcept;
+			static float PackBits2_30AsFloat(const uint32 _2bits, const uint32 _30bits) noexcept;
+			static float PackBits4_28AsFloat(const uint32 _4bits, const uint32 _28bits) noexcept;
 
 		public:
-			LowLevelRenderer<VS_INPUT_SHAPE>& accessLowLevelRenderer() noexcept;
+			LowLevelRenderer<VS_INPUT_SHAPE>& AccessLowLevelRenderer() noexcept;
 
 		protected:
 			GraphicDevice& _graphicDevice;
 			LowLevelRenderer<VS_INPUT_SHAPE>* const _lowLevelRenderer;
 
 		private:
-			bool _doesOwnLowLevelRenderer;
+			bool _ownsLowLevelRenderer;
 
 		protected:
 			Float4 _position;

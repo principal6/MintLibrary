@@ -9,7 +9,7 @@ namespace mint
 {
 	namespace TestPlatform
 	{
-		bool test();
+		bool Test();
 		bool Test_files();
 	}
 }

@@ -47,16 +47,16 @@ namespace mint
 			IndexElementType _vertexIndexArray[kVertexCountPerFace];
 		};
 
-		MINT_INLINE constexpr float convertByteToNormalizedFloat(const byte v) { return static_cast<float>(v) / 255.0f; }
-		MINT_INLINE constexpr byte convertNormalizedFloatToByte(const float v) { return static_cast<byte>(v * 255.99f); }
+		MINT_INLINE constexpr float ConvertByteToNormalizedFloat(const byte v) { return static_cast<float>(v) / 255.0f; }
+		MINT_INLINE constexpr byte ConvertNormalizedFloatToByte(const float v) { return static_cast<byte>(v * 255.99f); }
 
 		class ByteColor
 		{
 		public:
-			static float computeAlphaFromColorKey(const ByteColor& color, const ByteColor& colorKey)
+			static float ComputeAlphaFromColorKey(const ByteColor& color, const ByteColor& colorKey)
 			{
-				const Float3 a = Float3(color.rAsFloat(), color.gAsFloat(), color.bAsFloat());
-				const Float3 b = Float3(colorKey.rAsFloat(), colorKey.gAsFloat(), colorKey.bAsFloat());
+				const Float3 a = Float3(color.RAsFloat(), color.GAsFloat(), color.BAsFloat());
+				const Float3 b = Float3(colorKey.RAsFloat(), colorKey.GAsFloat(), colorKey.BAsFloat());
 				const float distance = (b - a).Length();
 				return Min(distance, 1.0f);
 			}
@@ -66,25 +66,25 @@ namespace mint
 			constexpr ByteColor(byte c) : ByteColor(c, c, c, c) { __noop; }
 			constexpr ByteColor(byte r, byte g, byte b, byte a) : _c{ r, g, b, a } { __noop; }
 
-			MINT_INLINE byte& r() noexcept { return _c[0]; }
-			MINT_INLINE byte& g() noexcept { return _c[1]; }
-			MINT_INLINE byte& b() noexcept { return _c[2]; }
-			MINT_INLINE byte& a() noexcept { return _c[3]; }
+			MINT_INLINE byte& R() noexcept { return _c[0]; }
+			MINT_INLINE byte& G() noexcept { return _c[1]; }
+			MINT_INLINE byte& B() noexcept { return _c[2]; }
+			MINT_INLINE byte& A() noexcept { return _c[3]; }
 
-			MINT_INLINE constexpr const byte& r() const noexcept { return _c[0]; }
-			MINT_INLINE constexpr const byte& g() const noexcept { return _c[1]; }
-			MINT_INLINE constexpr const byte& b() const noexcept { return _c[2]; }
-			MINT_INLINE constexpr const byte& a() const noexcept { return _c[3]; }
+			MINT_INLINE constexpr const byte& R() const noexcept { return _c[0]; }
+			MINT_INLINE constexpr const byte& G() const noexcept { return _c[1]; }
+			MINT_INLINE constexpr const byte& B() const noexcept { return _c[2]; }
+			MINT_INLINE constexpr const byte& A() const noexcept { return _c[3]; }
 
-			MINT_INLINE constexpr float rAsFloat() const noexcept { return convertByteToNormalizedFloat(_c[0]); }
-			MINT_INLINE constexpr float gAsFloat() const noexcept { return convertByteToNormalizedFloat(_c[1]); }
-			MINT_INLINE constexpr float bAsFloat() const noexcept { return convertByteToNormalizedFloat(_c[2]); }
-			MINT_INLINE constexpr float aAsFloat() const noexcept { return convertByteToNormalizedFloat(_c[3]); }
+			MINT_INLINE constexpr float RAsFloat() const noexcept { return ConvertByteToNormalizedFloat(_c[0]); }
+			MINT_INLINE constexpr float GAsFloat() const noexcept { return ConvertByteToNormalizedFloat(_c[1]); }
+			MINT_INLINE constexpr float BAsFloat() const noexcept { return ConvertByteToNormalizedFloat(_c[2]); }
+			MINT_INLINE constexpr float AAsFloat() const noexcept { return ConvertByteToNormalizedFloat(_c[3]); }
 
-			MINT_INLINE constexpr void r(byte value) noexcept { _c[0] = value; }
-			MINT_INLINE constexpr void g(byte value) noexcept { _c[1] = value; }
-			MINT_INLINE constexpr void a(byte value) noexcept { _c[2] = value; }
-			MINT_INLINE constexpr void b(byte value) noexcept { _c[3] = value; }
+			MINT_INLINE constexpr void R(byte value) noexcept { _c[0] = value; }
+			MINT_INLINE constexpr void G(byte value) noexcept { _c[1] = value; }
+			MINT_INLINE constexpr void A(byte value) noexcept { _c[2] = value; }
+			MINT_INLINE constexpr void B(byte value) noexcept { _c[3] = value; }
 
 		private:
 			byte _c[4];
@@ -95,22 +95,22 @@ namespace mint
 		public:
 			void SetSize(const Int2& size);
 			const Int2& GetSize() const { return _size; }
-			int32 getWidth() const { return _size._x; }
-			int32 getHeight() const { return _size._y; }
+			int32 GetWidth() const { return _size._x; }
+			int32 GetHeight() const { return _size._y; }
 
-			void setPixel(const Int2& at, const ByteColor& pixel);
-			void setPixel(const int32 x, const int32 y, const ByteColor& pixel);
-			void setPixel(const int32 index, const ByteColor& pixel);
+			void SetPixel(const Int2& at, const ByteColor& pixel);
+			void SetPixel(const int32 x, const int32 y, const ByteColor& pixel);
+			void SetPixel(const int32 index, const ByteColor& pixel);
 
-			void setPixelWithAlphaBlending(const Int2& at, const ByteColor& pixel, const float alpha);
+			void SetPixelWithAlphaBlending(const Int2& at, const ByteColor& pixel, const float alpha);
 
-			uint32 getPixelCount() const;
-			const ByteColor& getPixel(const Int2& at) const;
-			const ByteColor& getPixel(const int32 x, const int32 y) const;
-			const ByteColor& getPixel(const int32 index) const;
+			uint32 GetPixelCount() const;
+			const ByteColor& GetPixel(const Int2& at) const;
+			const ByteColor& GetPixel(const int32 x, const int32 y) const;
+			const ByteColor& GetPixel(const int32 index) const;
 
-			uint32 getByteCount() const;
-			const byte* getBytes() const;
+			uint32 GetByteCount() const;
+			const byte* GetBytes() const;
 
 		private:
 			Int2 _size;
@@ -134,7 +134,7 @@ namespace mint
 		public:
 			constexpr Color() : Color(255, 255, 255) { __noop; }
 			constexpr Color(const float r, const float g, const float b, const float a) : _raw{ Math::Saturate(r), Math::Saturate(g), Math::Saturate(b), Math::Saturate(a) } { __noop; }
-			constexpr Color(const int32 r, const int32 g, const int32 b, const int32 a) : Color(convertByteToNormalizedFloat(r), convertByteToNormalizedFloat(g), convertByteToNormalizedFloat(b), convertByteToNormalizedFloat(a)) { __noop; }
+			constexpr Color(const int32 r, const int32 g, const int32 b, const int32 a) : Color(ConvertByteToNormalizedFloat(r), ConvertByteToNormalizedFloat(g), ConvertByteToNormalizedFloat(b), ConvertByteToNormalizedFloat(a)) { __noop; }
 			constexpr Color(const float r, const float g, const float b) : Color(r, g, b, 1.0f) { __noop; }
 			constexpr Color(const int32 r, const int32 g, const int32 b) : Color(r, g, b, 255) { __noop; }
 			constexpr Color(const int32 c) : Color(c, c, c, 255) { __noop; }
@@ -153,41 +153,41 @@ namespace mint
 			bool operator==(const Color& rhs) const noexcept { return _raw == rhs._raw; }
 
 		public:
-			MINT_INLINE constexpr float r() const noexcept { return _raw._x; }
-			MINT_INLINE constexpr float g() const noexcept { return _raw._y; }
-			MINT_INLINE constexpr float b() const noexcept { return _raw._z; }
-			MINT_INLINE constexpr float a() const noexcept { return _raw._w; }
+			MINT_INLINE constexpr float R() const noexcept { return _raw._x; }
+			MINT_INLINE constexpr float G() const noexcept { return _raw._y; }
+			MINT_INLINE constexpr float B() const noexcept { return _raw._z; }
+			MINT_INLINE constexpr float A() const noexcept { return _raw._w; }
 
-			MINT_INLINE constexpr byte rAsByte() const noexcept { return convertNormalizedFloatToByte(_raw._x); }
-			MINT_INLINE constexpr byte gAsByte() const noexcept { return convertNormalizedFloatToByte(_raw._y); }
-			MINT_INLINE constexpr byte bAsByte() const noexcept { return convertNormalizedFloatToByte(_raw._z); }
-			MINT_INLINE constexpr byte aAsByte() const noexcept { return convertNormalizedFloatToByte(_raw._w); }
+			MINT_INLINE constexpr byte RAsByte() const noexcept { return ConvertNormalizedFloatToByte(_raw._x); }
+			MINT_INLINE constexpr byte GAsByte() const noexcept { return ConvertNormalizedFloatToByte(_raw._y); }
+			MINT_INLINE constexpr byte BAsByte() const noexcept { return ConvertNormalizedFloatToByte(_raw._z); }
+			MINT_INLINE constexpr byte AAsByte() const noexcept { return ConvertNormalizedFloatToByte(_raw._w); }
 
-			MINT_INLINE constexpr void r(const int32 value) noexcept { _raw._x = convertByteToNormalizedFloat(value); }
-			MINT_INLINE constexpr void g(const int32 value) noexcept { _raw._y = convertByteToNormalizedFloat(value); }
-			MINT_INLINE constexpr void a(const int32 value) noexcept { _raw._w = convertByteToNormalizedFloat(value); }
-			MINT_INLINE constexpr void b(const int32 value) noexcept { _raw._z = convertByteToNormalizedFloat(value); }
+			MINT_INLINE constexpr void R(const int32 value) noexcept { _raw._x = ConvertByteToNormalizedFloat(value); }
+			MINT_INLINE constexpr void G(const int32 value) noexcept { _raw._y = ConvertByteToNormalizedFloat(value); }
+			MINT_INLINE constexpr void A(const int32 value) noexcept { _raw._w = ConvertByteToNormalizedFloat(value); }
+			MINT_INLINE constexpr void B(const int32 value) noexcept { _raw._z = ConvertByteToNormalizedFloat(value); }
 
-			MINT_INLINE constexpr void r(const float value) noexcept { _raw._x = value; }
-			MINT_INLINE constexpr void g(const float value) noexcept { _raw._y = value; }
-			MINT_INLINE constexpr void b(const float value) noexcept { _raw._z = value; }
-			MINT_INLINE constexpr void a(const float value) noexcept { _raw._w = value; }
+			MINT_INLINE constexpr void R(const float value) noexcept { _raw._x = value; }
+			MINT_INLINE constexpr void G(const float value) noexcept { _raw._y = value; }
+			MINT_INLINE constexpr void B(const float value) noexcept { _raw._z = value; }
+			MINT_INLINE constexpr void A(const float value) noexcept { _raw._w = value; }
 
 		public:
-			MINT_INLINE void set(const Color& rhs) noexcept { _raw._x = rhs._raw._x; _raw._y = rhs._raw._y; _raw._z = rhs._raw._z; }
-			MINT_INLINE void scaleR(const float s) noexcept { _raw._x *= s; }
-			MINT_INLINE void scaleG(const float s) noexcept { _raw._y *= s; }
-			MINT_INLINE void scaleB(const float s) noexcept { _raw._z *= s; }
-			MINT_INLINE void scaleA(const float s) noexcept { _raw._w *= s; }
-			MINT_INLINE Color cloneAddRGB(const float s) const noexcept { return Color(Math::Saturate(_raw._x + s), Math::Saturate(_raw._y + s), Math::Saturate(_raw._z + s), _raw._w); }
-			MINT_INLINE Color cloneAddRGB(const int32 s) const noexcept { return cloneAddRGB(convertByteToNormalizedFloat(s)); }
-			MINT_INLINE Color cloneScaleRGB(const float s) const noexcept { return Color(_raw._x * s, _raw._y * s, _raw._z * s, _raw._w); }
-			MINT_INLINE Color cloneScaleA(const float s) const noexcept { return Color(_raw._x, _raw._y, _raw._z, _raw._w * s); }
-			MINT_INLINE bool isTransparent() const noexcept { return (_raw._w <= 0.0f); }
+			MINT_INLINE void Set(const Color& rhs) noexcept { _raw._x = rhs._raw._x; _raw._y = rhs._raw._y; _raw._z = rhs._raw._z; }
+			MINT_INLINE void ScaleR(const float s) noexcept { _raw._x *= s; }
+			MINT_INLINE void ScaleG(const float s) noexcept { _raw._y *= s; }
+			MINT_INLINE void ScaleB(const float s) noexcept { _raw._z *= s; }
+			MINT_INLINE void ScaleA(const float s) noexcept { _raw._w *= s; }
+			MINT_INLINE Color CloneAddRGB(const float s) const noexcept { return Color(Math::Saturate(_raw._x + s), Math::Saturate(_raw._y + s), Math::Saturate(_raw._z + s), _raw._w); }
+			MINT_INLINE Color CloneAddRGB(const int32 s) const noexcept { return CloneAddRGB(ConvertByteToNormalizedFloat(s)); }
+			MINT_INLINE Color CloneScaleRGB(const float s) const noexcept { return Color(_raw._x * s, _raw._y * s, _raw._z * s, _raw._w); }
+			MINT_INLINE Color CloneScaleA(const float s) const noexcept { return Color(_raw._x, _raw._y, _raw._z, _raw._w * s); }
+			MINT_INLINE bool IsTransparent() const noexcept { return (_raw._w <= 0.0f); }
 
 		public:
 			// Rec. 601
-			MINT_INLINE constexpr float toLuma() const noexcept { return _raw._x * 0.299f + _raw._y * 0.587f + _raw._z * 0.114f; }
+			MINT_INLINE constexpr float ToLuma() const noexcept { return _raw._x * 0.299f + _raw._y * 0.587f + _raw._z * 0.114f; }
 
 		private:
 			Float4 _raw;
@@ -227,11 +227,11 @@ namespace mint
 				MINT_INLINE T S() const noexcept { return _m[2][1]; }
 				MINT_INLINE T SE() const noexcept { return _m[2][2]; }
 
-				MINT_INLINE T maxAdjacent() const noexcept { return Max(Max(Max(N(), S()), E()), W()); }
-				MINT_INLINE T minAdjacent() const noexcept { return Min(Min(Min(N(), S()), E()), W()); }
+				MINT_INLINE T MaxAdjacent() const noexcept { return Max(Max(Max(N(), S()), E()), W()); }
+				MINT_INLINE T MinAdjacent() const noexcept { return Min(Min(Min(N(), S()), E()), W()); }
 
-				MINT_INLINE T sumAdjacent() const noexcept { return N() + S() + E() + W(); }
-				MINT_INLINE T sumCoAdjacent() const noexcept { return NW() + NE() + SW() + SE(); }
+				MINT_INLINE T SumAdjacent() const noexcept { return N() + S() + E() + W(); }
+				MINT_INLINE T SumCoAdjacent() const noexcept { return NW() + NE() + SW() + SE(); }
 
 				T _m[3][3];
 			};
@@ -244,7 +244,7 @@ namespace mint
 					{
 						for (uint32 x = 0; x < 3; ++x)
 						{
-							_m[y][x] = colorSample3x3._m[y][x].toLuma();
+							_m[y][x] = colorSample3x3._m[y][x].ToLuma();
 						}
 					}
 				}
@@ -263,28 +263,28 @@ namespace mint
 		public:
 			void SetSize(const Int2& size) noexcept;
 			const Int2& GetSize() const noexcept;
-			int32 getWidth() const noexcept { return _size._x; }
-			int32 getHeight() const noexcept { return _size._y; }
+			int32 GetWidth() const noexcept { return _size._x; }
+			int32 GetHeight() const noexcept { return _size._y; }
 
 		public:
-			void fill(const Color& color) noexcept;
-			void fillRect(const Int2& position, const Int2& size, const Color& color) noexcept;
-			void fillCircle(const Int2& center, const int32 radius, const Color& color) noexcept;
-			void setPixel(const int32 index, const Color& color) noexcept;
-			void setPixel(const Int2& at, const Color& color) noexcept;
-			uint32 getPixelCount() const noexcept;
-			const Color& getPixel(const Int2& at) const noexcept;
-			const Color& getPixel(const int32 index) const noexcept;
-			Color getSubPixel(const Float2& at) const noexcept;
-			void getAdjacentPixels(const Int2& at, ColorImage::AdjacentPixels& outAdjacentPixels) const noexcept;
-			void getCoAdjacentPixels(const Int2& at, ColorImage::CoAdjacentPixels& outCoAdjacentPixels) const noexcept;
-			void sample3x3(const Int2& at, ColorImage::Sample3x3<Color>& outSample3x3) const noexcept;
+			void Fill(const Color& color) noexcept;
+			void FillRect(const Int2& position, const Int2& size, const Color& color) noexcept;
+			void FillCircle(const Int2& center, const int32 radius, const Color& color) noexcept;
+			void SetPixel(const int32 index, const Color& color) noexcept;
+			void SetPixel(const Int2& at, const Color& color) noexcept;
+			uint32 GetPixelCount() const noexcept;
+			const Color& GetPixel(const Int2& at) const noexcept;
+			const Color& GetPixel(const int32 index) const noexcept;
+			Color GetSubPixel(const Float2& at) const noexcept;
+			void GetAdjacentPixels(const Int2& at, ColorImage::AdjacentPixels& outAdjacentPixels) const noexcept;
+			void GetCoAdjacentPixels(const Int2& at, ColorImage::CoAdjacentPixels& outCoAdjacentPixels) const noexcept;
+			void Sample3x3_(const Int2& at, ColorImage::Sample3x3<Color>& outSample3x3) const noexcept;
 
 		public:
-			void buildPixelRgbaArray(Vector<byte>& outBytes) const noexcept;
+			void BuildPixelRGBAArray(Vector<byte>& outBytes) const noexcept;
 
 		private:
-			int32 convertXyToIndex(const uint32 x, const uint32 y) const noexcept;
+			int32 ConvertXYToIndex(const uint32 x, const uint32 y) const noexcept;
 			const Color& GetColorFromXy(const uint32 x, const uint32 y) const noexcept;
 
 		private:
@@ -300,27 +300,27 @@ namespace mint
 			~ByteColorImageAtlas() = default;
 
 		public:
-			void setInterPadding(const Int2& interPadding) { _interPadding = interPadding; }
-			const Int2& getInterPadding() const { return _interPadding; }
+			void SetInterPadding(const Int2& interPadding) { _interPadding = interPadding; }
+			const Int2& GetInterPadding() const { return _interPadding; }
 
-			void setWidth(const uint32 width) { _width = width; }
-			int32 getWidth() const { return _width; }
-			int32 getHeight() const { return _height; }
+			void SetWidth(const uint32 width) { _width = width; }
+			int32 GetWidth() const { return _width; }
+			int32 GetHeight() const { return _height; }
 
-			void clearByteColorImages();
-			int32 pushByteColorImage(ByteColorImage&& byteColorImage);
-			int32 pushByteColorImage(const ByteColorImage& byteColorImage);
-
-		public:
-			bool bakeRGBABytes();
-			const Vector<byte>& getRGBABytes() const { return _rgbaBytes; }
-			ByteColor getPixel(const Int2& positionInAtlas) const;
+			void ClearByteColorImages();
+			int32 PushByteColorImage(ByteColorImage&& byteColorImage);
+			int32 PushByteColorImage(const ByteColorImage& byteColorImage);
 
 		public:
-			Int2 computePositionInAtlas(const int32 byteColorImageIndex, const Int2& positionInByteColorImage) const;
+			bool BakeRGBABytes();
+			const Vector<byte>& GetRGBABytes() const { return _rgbaBytes; }
+			ByteColor GetPixel(const Int2& positionInAtlas) const;
+
+		public:
+			Int2 ComputePositionInAtlas(const int32 byteColorImageIndex, const Int2& positionInByteColorImage) const;
 
 		private:
-			Int2 pushColorImage_computeByteColorImagePosition(const ByteColorImage& byteColorImage) const;
+			Int2 PushColorImage_ComputeByteColorImagePosition(const ByteColorImage& byteColorImage) const;
 
 		private:
 			Int2 _interPadding;

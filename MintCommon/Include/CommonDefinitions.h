@@ -146,7 +146,7 @@ static constexpr int32 kErrorExitCode = -1;
 #define MINT_ASSURE(expression) if (!(expression)) { mint::Logger::GetInstance().LogError(" ASSUR ", "MINT", __func__, __FILE__, __LINE__, "NOT ASSURED. RETURN FALSE!"); _MINT_LOG_ERROR_ACTION; return false; }
 
 #if defined MINT_LOG_FOR_ASSURE_SILENT
-#define MINT_ASSURE_SILENT(expression) if (!(expression)) { mint::Logger::getInstance().log(" ASSUR ", "MINT", __func__, __FILE__, __LINE__, "NOT ASSURED. RETURN FALSE!"); return false; }
+#define MINT_ASSURE_SILENT(expression) if (!(expression)) { mint::Logger::GetInstance().log(" ASSUR ", "MINT", __func__, __FILE__, __LINE__, "NOT ASSURED. RETURN FALSE!"); return false; }
 #else
 #define MINT_ASSURE_SILENT(expression) if (!(expression)) { return false; }
 #endif

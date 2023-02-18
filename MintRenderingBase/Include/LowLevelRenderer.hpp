@@ -27,36 +27,36 @@ namespace mint
 		}
 
 		template <typename T>
-		MINT_INLINE Vector<T>& LowLevelRenderer<T>::vertices() noexcept
+		MINT_INLINE Vector<T>& LowLevelRenderer<T>::Vertices() noexcept
 		{
 			return _vertices;
 		}
 
 		template <typename T>
-		MINT_INLINE Vector<IndexElementType>& LowLevelRenderer<T>::indices() noexcept
+		MINT_INLINE Vector<IndexElementType>& LowLevelRenderer<T>::Indices() noexcept
 		{
 			return _indices;
 		}
 
 		template<typename T>
-		MINT_INLINE uint32 LowLevelRenderer<T>::getVertexCount() const noexcept
+		MINT_INLINE uint32 LowLevelRenderer<T>::GetVertexCount() const noexcept
 		{
 			return _vertices.Size();
 		}
 
 		template<typename T>
-		MINT_INLINE uint32 LowLevelRenderer<T>::getIndexCount() const noexcept
+		MINT_INLINE uint32 LowLevelRenderer<T>::GetIndexCount() const noexcept
 		{
 			return _indices.Size();
 		}
 
 		template<typename T>
-		MINT_INLINE void LowLevelRenderer<T>::pushMesh(const MeshData& meshData) noexcept
+		MINT_INLINE void LowLevelRenderer<T>::PushMesh(const MeshData& meshData) noexcept
 		{
-			const uint32 vertexCount = meshData.getVertexCount();
-			const uint32 indexCount = meshData.getIndexCount();
-			const VS_INPUT* const meshVertices = meshData.getVertices();
-			const IndexElementType* const meshIndices = meshData.getIndices();
+			const uint32 vertexCount = meshData.GetVertexCount();
+			const uint32 indexCount = meshData.GetIndexCount();
+			const VS_INPUT* const meshVertices = meshData.GetVertices();
+			const IndexElementType* const meshIndices = meshData.GetIndices();
 			for (uint32 vertexIter = 0; vertexIter < vertexCount; ++vertexIter)
 			{
 				_vertices.PushBack(meshVertices[vertexIter]);
@@ -64,28 +64,28 @@ namespace mint
 
 			// 여러 메시가 push 될 경우, 추가되는 메시의 vertex index 가
 			// 바로 이전 메시의 마지막 vertex index 이후부터 시작되도록 보장한다.
-			IndexElementType indexBase = getIndexBaseXXX();
+			IndexElementType indexBase = GetIndexBaseXXX();
 			for (uint32 indexIter = 0; indexIter < indexCount; ++indexIter)
 			{
 				_indices.PushBack(indexBase + meshIndices[indexIter]);
 			}
-			setIndexBaseXXX(indexBase + vertexCount);
+			SetIndexBaseXXX(indexBase + vertexCount);
 		}
 
 		template<typename T>
-		MINT_INLINE void LowLevelRenderer<T>::setIndexBaseXXX(const IndexElementType base) noexcept
+		MINT_INLINE void LowLevelRenderer<T>::SetIndexBaseXXX(const IndexElementType base) noexcept
 		{
 			_indexBase = base;
 		}
 
 		template<typename T>
-		MINT_INLINE IndexElementType LowLevelRenderer<T>::getIndexBaseXXX() const noexcept
+		MINT_INLINE IndexElementType LowLevelRenderer<T>::GetIndexBaseXXX() const noexcept
 		{
 			return _indexBase;
 		}
 
 		template <typename T>
-		MINT_INLINE void LowLevelRenderer<T>::flush() noexcept
+		MINT_INLINE void LowLevelRenderer<T>::Flush() noexcept
 		{
 			_vertices.Clear();
 			_indices.Clear();
@@ -93,39 +93,39 @@ namespace mint
 		}
 
 		template<typename T>
-		MINT_INLINE bool LowLevelRenderer<T>::isRenderable() const noexcept
+		MINT_INLINE bool LowLevelRenderer<T>::IsRenderable() const noexcept
 		{
 			return _vertices.IsEmpty() == false;
 		}
 
 		template <typename T>
-		inline void LowLevelRenderer<T>::render(const RenderingPrimitive renderingPrimitive) noexcept
+		inline void LowLevelRenderer<T>::Render(const RenderingPrimitive renderingPrimitive) noexcept
 		{
-			if (isRenderable() == false)
+			if (IsRenderable() == false)
 			{
 				return;
 			}
 
-			prepareBuffers();
+			PrepareBuffers();
 
-			DxResourcePool& resourcePool = _graphicDevice.getResourcePool();
-			DxResource& vertexBuffer = resourcePool.getResource(_vertexBufferID);
-			DxResource& indexBuffer = resourcePool.getResource(_indexBufferID);
-			vertexBuffer.bindAsInput();
-			indexBuffer.bindAsInput();
+			DxResourcePool& resourcePool = _graphicDevice.GetResourcePool();
+			DxResource& vertexBuffer = resourcePool.GetResource(_vertexBufferID);
+			DxResource& indexBuffer = resourcePool.GetResource(_indexBufferID);
+			vertexBuffer.BindAsInput();
+			indexBuffer.BindAsInput();
 
 			const uint32 vertexCount = static_cast<uint32>(_vertices.Size());
 			const uint32 indexCount = static_cast<uint32>(_indices.Size());
 
-			_graphicDevice.getStateManager().setIARenderingPrimitive(renderingPrimitive);
+			_graphicDevice.GetStateManager().SetIARenderingPrimitive(renderingPrimitive);
 
 			switch (renderingPrimitive)
 			{
 			case RenderingPrimitive::LineList:
-				_graphicDevice.draw(vertexCount, 0);
+				_graphicDevice.Draw(vertexCount, 0);
 				break;
 			case RenderingPrimitive::TriangleList:
-				_graphicDevice.drawIndexed(indexCount, 0, 0);
+				_graphicDevice.DrawIndexed(indexCount, 0, 0);
 
 				break;
 			default:
@@ -134,7 +134,7 @@ namespace mint
 		}
 
 		template<typename T>
-		MINT_INLINE void LowLevelRenderer<T>::pushRenderCommandIndexed(const RenderingPrimitive primitive, const uint32 vertexOffset, const uint32 indexOffset, const uint32 indexCount, const Rect& clipRect) noexcept
+		MINT_INLINE void LowLevelRenderer<T>::PushRenderCommandIndexed(const RenderingPrimitive primitive, const uint32 vertexOffset, const uint32 indexOffset, const uint32 indexCount, const Rect& clipRect) noexcept
 		{
 			RenderCommand newRenderCommand;
 			newRenderCommand._isOrdinal = _isOrdinalMode;
@@ -144,14 +144,14 @@ namespace mint
 			newRenderCommand._vertexCount = 0;
 			newRenderCommand._indexOffset = indexOffset;
 			newRenderCommand._indexCount = indexCount;
-			if (mergeNewRenderCommand(newRenderCommand) == false)
+			if (MergeNewRenderCommand(newRenderCommand) == false)
 			{
 				_renderCommands.PushBack(newRenderCommand);
 			}
 		}
 
 		template<typename T>
-		MINT_INLINE void LowLevelRenderer<T>::beginOrdinalRenderCommands(const uint64 key) noexcept
+		MINT_INLINE void LowLevelRenderer<T>::BeginOrdinalRenderCommands(const uint64 key) noexcept
 		{
 			_isOrdinalMode = true;
 			_isOrdinalRenderCommandGroupsSorted = false;
@@ -163,7 +163,7 @@ namespace mint
 		}
 
 		template<typename T>
-		MINT_INLINE void LowLevelRenderer<T>::endOrdinalRenderCommands() noexcept
+		MINT_INLINE void LowLevelRenderer<T>::EndOrdinalRenderCommands() noexcept
 		{
 			_isOrdinalMode = false;
 
@@ -184,7 +184,7 @@ namespace mint
 		}
 
 		template<typename T>
-		inline void LowLevelRenderer<T>::setOrdinalRenderCommandGroupPriority(const uint64 key, const uint32 priority) noexcept
+		inline void LowLevelRenderer<T>::SetOrdinalRenderCommandGroupPriority(const uint64 key, const uint32 priority) noexcept
 		{
 			if (_isOrdinalRenderCommandGroupsSorted == false)
 			{
@@ -204,18 +204,18 @@ namespace mint
 		template<typename T>
 		MINT_INLINE void LowLevelRenderer<T>::ExecuteRenderCommands() noexcept
 		{
-			if (isRenderable() == false)
+			if (IsRenderable() == false)
 			{
 				return;
 			}
 
-			prepareBuffers();
+			PrepareBuffers();
 
-			DxResourcePool& resourcePool = _graphicDevice.getResourcePool();
-			DxResource& vertexBuffer = resourcePool.getResource(_vertexBufferID);
-			DxResource& indexBuffer = resourcePool.getResource(_indexBufferID);
-			vertexBuffer.bindAsInput();
-			indexBuffer.bindAsInput();
+			DxResourcePool& resourcePool = _graphicDevice.GetResourcePool();
+			DxResource& vertexBuffer = resourcePool.GetResource(_vertexBufferID);
+			DxResource& indexBuffer = resourcePool.GetResource(_indexBufferID);
+			vertexBuffer.BindAsInput();
+			indexBuffer.BindAsInput();
 
 			const uint32 renderCommandCount = _renderCommands.Size();
 			for (uint32 renderCommandIndex = 0; renderCommandIndex < renderCommandCount; ++renderCommandIndex)
@@ -226,7 +226,7 @@ namespace mint
 					continue;
 				}
 
-				ExecuteRenderCommands_draw(renderCommand);
+				ExecuteRenderCommands_Draw(renderCommand);
 			}
 
 			// Ordinal 그릴 차례.
@@ -241,7 +241,7 @@ namespace mint
 					const uint32 end = ordinalRenderCommandGroup._endRenderCommandIndex;
 					for (uint32 renderCommandIndex = start; renderCommandIndex <= end; renderCommandIndex++)
 					{
-						ExecuteRenderCommands_draw(_renderCommands[renderCommandIndex]);
+						ExecuteRenderCommands_Draw(_renderCommands[renderCommandIndex]);
 					}
 				}
 			}
@@ -253,7 +253,7 @@ namespace mint
 		}
 
 		template<typename T>
-		MINT_INLINE bool LowLevelRenderer<T>::mergeNewRenderCommand(const RenderCommand& newRenderCommand) noexcept
+		MINT_INLINE bool LowLevelRenderer<T>::MergeNewRenderCommand(const RenderCommand& newRenderCommand) noexcept
 		{
 			if (_renderCommands.IsEmpty())
 			{
@@ -297,50 +297,50 @@ namespace mint
 		}
 
 		template <typename T>
-		inline void LowLevelRenderer<T>::prepareBuffers() noexcept
+		inline void LowLevelRenderer<T>::PrepareBuffers() noexcept
 		{
-			DxResourcePool& resourcePool = _graphicDevice.getResourcePool();
+			DxResourcePool& resourcePool = _graphicDevice.GetResourcePool();
 
 			const uint32 vertexCount = static_cast<uint32>(_vertices.Size());
 			if (_vertexBufferID.IsValid() == false && vertexCount > 0)
 			{
-				_vertexBufferID = resourcePool.addVertexBuffer(&_vertices[0], _vertexStride, vertexCount);
+				_vertexBufferID = resourcePool.AddVertexBuffer(&_vertices[0], _vertexStride, vertexCount);
 			}
 
 			if (_vertexBufferID.IsValid())
 			{
-				DxResource& vertexBuffer = resourcePool.getResource(_vertexBufferID);
-				vertexBuffer.updateBuffer(&_vertices[0], vertexCount);
+				DxResource& vertexBuffer = resourcePool.GetResource(_vertexBufferID);
+				vertexBuffer.UpdateBuffer(&_vertices[0], vertexCount);
 			}
 
 			const uint32 indexCount = static_cast<uint32>(_indices.Size());
 			if (_indexBufferID.IsValid() == false && indexCount > 0)
 			{
-				_indexBufferID = resourcePool.addIndexBuffer(&_indices[0], indexCount);
+				_indexBufferID = resourcePool.AddIndexBuffer(&_indices[0], indexCount);
 			}
 
 			if (_indexBufferID.IsValid())
 			{
-				DxResource& indexBuffer = resourcePool.getResource(_indexBufferID);
-				indexBuffer.updateBuffer(&_indices[0], indexCount);
+				DxResource& indexBuffer = resourcePool.GetResource(_indexBufferID);
+				indexBuffer.UpdateBuffer(&_indices[0], indexCount);
 			}
 		}
 
 		template<typename T>
-		inline void LowLevelRenderer<T>::ExecuteRenderCommands_draw(const RenderCommand& renderCommand) const noexcept
+		inline void LowLevelRenderer<T>::ExecuteRenderCommands_Draw(const RenderCommand& renderCommand) const noexcept
 		{
-			D3D11_RECT scissorRect = rectToD3dRect(renderCommand._clipRect);
-			_graphicDevice.getStateManager().setRSScissorRectangle(scissorRect);
+			D3D11_RECT scissorRect = RectToD3dRect(renderCommand._clipRect);
+			_graphicDevice.GetStateManager().SetRSScissorRectangle(scissorRect);
 
-			_graphicDevice.getStateManager().setIARenderingPrimitive(renderCommand._primitive);
+			_graphicDevice.GetStateManager().SetIARenderingPrimitive(renderCommand._primitive);
 
 			switch (renderCommand._primitive)
 			{
 			case RenderingPrimitive::LineList:
-				_graphicDevice.draw(renderCommand._vertexCount, renderCommand._vertexOffset);
+				_graphicDevice.Draw(renderCommand._vertexCount, renderCommand._vertexOffset);
 				break;
 			case RenderingPrimitive::TriangleList:
-				_graphicDevice.drawIndexed(renderCommand._indexCount, renderCommand._indexOffset, renderCommand._vertexOffset);
+				_graphicDevice.DrawIndexed(renderCommand._indexCount, renderCommand._indexOffset, renderCommand._vertexOffset);
 				break;
 			default:
 				break;

@@ -9,7 +9,7 @@ namespace mint
 {
 	namespace TestReflection
 	{
-		bool test();
+		bool Test();
 	}
 }
 

@@ -19,13 +19,13 @@ namespace mint
 			__noop;
 		}
 
-		const DeltaTimer& DeltaTimer::getInstance() noexcept
+		const DeltaTimer& DeltaTimer::GetInstance() noexcept
 		{
 			static DeltaTimer deltaTimer;
 			return deltaTimer;
 		}
 
-		float DeltaTimer::computeDeltaTimeSec() const noexcept
+		float DeltaTimer::ComputeDeltaTimeSec() const noexcept
 		{
 			const uint64 currTimePointUs = Profiler::GetCurrentTimeUs();
 			const uint64 deltaTimeUs = currTimePointUs - _prevTimePointUs;
@@ -39,7 +39,7 @@ namespace mint
 			return _deltaTimeS;
 		}
 
-		float DeltaTimer::getDeltaTimeSec() const noexcept
+		float DeltaTimer::GetDeltaTimeSec() const noexcept
 		{
 			return _deltaTimeS;
 		}

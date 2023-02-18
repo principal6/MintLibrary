@@ -42,39 +42,39 @@ namespace mint
 				__noop;
 			}
 
-			void GUIContext::initialize()
+			void GUIContext::Initialize()
 			{
-				//_caretBlinkIntervalMs = _graphicDevice.getWindow().getCaretBlinkIntervalMs();
+				//_caretBlinkIntervalMs = _graphicDevice.GetWindow().GetCaretBlinkIntervalMs();
 
-				const FontData& fontData = _graphicDevice.getShapeRendererContext().getFontData();
+				const FontData& fontData = _graphicDevice.GetShapeRendererContext().GetFontData();
 				_fontSize = static_cast<float>(fontData._fontSize);
-				if (_rendererContext.initializeFontData(fontData) == false)
+				if (_rendererContext.InitializeFontData(fontData) == false)
 				{
 					MINT_ASSERT(false, "ShapeRendererContext::initializeFont() 에 실패했습니다!");
 				}
 
-				_rendererContext.initializeShaders();
-				_rendererContext.setUseMultipleViewports();
+				_rendererContext.InitializeShaders();
+				_rendererContext.SetUseMultipleViewports();
 
-				const Float2& windowSize = Float2(_graphicDevice.getWindowSize());
-				updateScreenSize(windowSize);
+				const Float2& windowSize = Float2(_graphicDevice.GetWindowSize());
+				UpdateScreenSize(windowSize);
 
 				// ROOT
 				_rootControlID = ControlID(kUint64Max);
-				ControlData& rootControlData = accessControlData(_rootControlID, ControlType::COUNT);
+				ControlData& rootControlData = AccessControlData(_rootControlID, ControlType::COUNT);
 				rootControlData._absolutePosition = Float2::kZero;
 				//rootControlData._size = windowSize;
 				_controlStack.PushBack(_rootControlID);
 			}
 
-			void GUIContext::processEvent() noexcept
+			void GUIContext::ProcessEvent() noexcept
 			{
-				const InputContext& inputContext = InputContext::getInstance();
-				if (inputContext.isMouseButtonPressed())
+				const InputContext& inputContext = InputContext::GetInstance();
+				if (inputContext.IsMouseButtonPressed())
 				{
-					_mousePressedPosition = inputContext.getMousePosition();
+					_mousePressedPosition = inputContext.GetMousePosition();
 				}
-				if (inputContext.isMouseButtonReleased() == false && inputContext.isMouseButtonUp(MouseButton::Left) == true)
+				if (inputContext.IsMouseButtonReleased() == false && inputContext.IsMouseButtonUp(MouseButton::Left) == true)
 				{
 					_mousePressedPosition = Float2::kNan;
 				}
@@ -82,96 +82,96 @@ namespace mint
 				_currentCursor = CursorType::Arrow;
 			}
 
-			void GUIContext::updateScreenSize(const Float2& newScreenSize)
+			void GUIContext::UpdateScreenSize(const Float2& newScreenSize)
 			{
 				// TODO
 			}
 
-			void GUIContext::render() noexcept
+			void GUIContext::Render() noexcept
 			{
 				MINT_ASSERT(_controlStack.Size() <= 1, "begin- 호출 횟수가 end- 호출 횟수보다 많습니다!!!");
 
-				if (_focusingModule.isInteracting())
+				if (_focusingModule.IsInteracting())
 				{
 					// FocusedWindow 가 다른 Window (priority 0) 에 비해 위에 그려지도록 priority 1 로 설정.
-					_rendererContext.accessLowLevelRenderer().setOrdinalRenderCommandGroupPriority(_focusingModule.getControlID().getRawID(), 1);
+					_rendererContext.AccessLowLevelRenderer().SetOrdinalRenderCommandGroupPriority(_focusingModule.GetControlID().GetRawID(), 1);
 				}
 
 				if (_debugSwitch._raw != 0)
 				{
 					for (const ControlID& controlID : _controlIDsOfCurrentFrame)
 					{
-						ControlData& controlData = accessControlData(controlID);
-						debugRender_control(controlData);
+						ControlData& controlData = AccessControlData(controlID);
+						DebugRender_control(controlData);
 					}
 				}
 				_controlIDsOfCurrentFrame.Clear();
 
-				_graphicDevice.accessWindow().setCursorType(_currentCursor);
+				_graphicDevice.AccessWindow().SetCursorType(_currentCursor);
 
-				_rendererContext.render();
-				_rendererContext.flush();
+				_rendererContext.Render();
+				_rendererContext.Flush();
 			}
 
-			void GUIContext::nextControlSameLine()
+			void GUIContext::NextControlSameLine()
 			{
 				_nextControlDesc._sameLine = true;
 			}
 
-			void GUIContext::nextControlPosition(const Float2& position)
+			void GUIContext::NextControlPosition(const Float2& position)
 			{
 				_nextControlDesc._position = position;
 			}
 
-			void GUIContext::nextControlSize(const Float2& contentSize)
+			void GUIContext::NextControlSize(const Float2& contentSize)
 			{
 				_nextControlDesc._size = contentSize;
 			}
 
-			void GUIContext::nextControlMargin(const Rect& margin)
+			void GUIContext::NextControlMargin(const Rect& margin)
 			{
 				_nextControlDesc._margin = margin;
 			}
 
-			void GUIContext::nextControlPadding(const Rect& padding)
+			void GUIContext::NextControlPadding(const Rect& padding)
 			{
 				_nextControlDesc._padding = padding;
 			}
 
-			void GUIContext::makeLabel(const FileLine& fileLine, const LabelDesc& labelDesc)
+			void GUIContext::MakeLabel(const FileLine& fileLine, const LabelDesc& labelDesc)
 			{
 				static constexpr ControlType kControlType = ControlType::Label;
-				const ControlID parentControlID = accessStackParentControlData().getID();
-				const ControlID controlID = ControlData::generateID(fileLine, kControlType, labelDesc._text, parentControlID);
+				const ControlID parentControlID = AccessStackParentControlData().GetID();
+				const ControlID controlID = ControlData::GenerateID(fileLine, kControlType, labelDesc._text, parentControlID);
 				_controlIDsOfCurrentFrame.PushBack(controlID);
 
-				ControlData& controlData = accessControlData(controlID, kControlType);
+				ControlData& controlData = AccessControlData(controlID, kControlType);
 				controlData._parentID = parentControlID;
 				controlData._text = labelDesc._text;
-				updateControlData(controlData);
-				makeLabel_render(labelDesc, controlData);
+				UpdateControlData(controlData);
+				MakeLabel_render(labelDesc, controlData);
 			}
 
-			bool GUIContext::makeButton(const FileLine& fileLine, const ButtonDesc& buttonDesc)
+			bool GUIContext::MakeButton(const FileLine& fileLine, const ButtonDesc& buttonDesc)
 			{
 				static constexpr ControlType kControlType = ControlType::Button;
-				const ControlID parentControlID = accessStackParentControlData().getID();
-				const ControlID controlID = ControlData::generateID(fileLine, kControlType, buttonDesc._text, parentControlID);
+				const ControlID parentControlID = AccessStackParentControlData().GetID();
+				const ControlID controlID = ControlData::GenerateID(fileLine, kControlType, buttonDesc._text, parentControlID);
 				_controlIDsOfCurrentFrame.PushBack(controlID);
 
-				ControlData& controlData = accessControlData(controlID, kControlType);
+				ControlData& controlData = AccessControlData(controlID, kControlType);
 				controlData._parentID = parentControlID;
 				controlData._text = buttonDesc._text;
-				updateControlData(controlData);
-				makeButton_render(buttonDesc, controlData);
+				UpdateControlData(controlData);
+				MakeButton_render(buttonDesc, controlData);
 				return controlData._mouseInteractionState == ControlData::MouseInteractionState::Clicked;
 			}
 
-			bool GUIContext::beginWindow(const FileLine& fileLine, const WindowDesc& windowDesc)
+			bool GUIContext::BeginWindow(const FileLine& fileLine, const WindowDesc& windowDesc)
 			{
 				static constexpr ControlType kControlType = ControlType::Window;
-				const ControlID parentControlID = accessStackParentControlData().getID();
-				const ControlID controlID = ControlData::generateID(fileLine, kControlType, windowDesc._title, parentControlID);
+				const ControlID parentControlID = AccessStackParentControlData().GetID();
+				const ControlID controlID = ControlData::GenerateID(fileLine, kControlType, windowDesc._title, parentControlID);
 				_controlIDsOfCurrentFrame.PushBack(controlID);
 
 				if (_isInBeginWindow)
@@ -179,35 +179,35 @@ namespace mint
 					MINT_NEVER;
 				}
 				_isInBeginWindow = true;
-				_rendererContext.accessLowLevelRenderer().beginOrdinalRenderCommands(controlID.getRawID());
+				_rendererContext.AccessLowLevelRenderer().BeginOrdinalRenderCommands(controlID.GetRawID());
 
-				ControlData& controlData = accessControlData(controlID, kControlType);
+				ControlData& controlData = AccessControlData(controlID, kControlType);
 				controlData._parentID = parentControlID;
 				controlData._text = windowDesc._title;
-				ControlData& parentControlData = accessControlData(parentControlID);
-				const bool isNewlyCreated = (controlData.getAccessCount() == 0);
+				ControlData& parentControlData = AccessControlData(parentControlID);
+				const bool isNewlyCreated = (controlData.GetAccessCount() == 0);
 				if (isNewlyCreated)
 				{
 					ControlData::PerTypeData::WindowData& windowData = controlData._perTypeData._windowData;
 					windowData._titleBarHeight = _fontSize + _theme._titleBarPadding.Vert();
-					controlData._resizingMask.setAllTrue();
+					controlData._resizingMask.SetAllTrue();
 					controlData._resizableMinSize = Float2(windowData._titleBarHeight * 2.0f);
 					controlData._generalTraits._isFocusable = true;
 					controlData._generalTraits._isDraggable = true;
 
-					nextControlPosition(windowDesc._initialPosition);
-					nextControlSize(windowDesc._initialSize);
+					NextControlPosition(windowDesc._initialPosition);
+					NextControlSize(windowDesc._initialSize);
 				}
 				else
 				{
-					nextControlPosition(controlData.computeRelativePosition(parentControlData));
-					nextControlSize(controlData._size);
+					NextControlPosition(controlData.ComputeRelativePosition(parentControlData));
+					NextControlSize(controlData._size);
 				}
 				// No margin for window controls
-				nextControlMargin(Rect());
+				NextControlMargin(Rect());
 
-				updateControlData(controlData);
-				beginWindow_render(controlData);
+				UpdateControlData(controlData);
+				BeginWindow_render(controlData);
 				_controlStack.PushBack(controlID);
 
 				{
@@ -218,9 +218,9 @@ namespace mint
 					closeButtonDesc._customizedColorSet = _theme._closeButtonColorSet;
 					const float titleBarHeight = controlData._zones._titleBarZone.Height();
 					const float radius = _theme._systemButtonRadius;
-					nextControlPosition(Float2(controlData._size._x - _theme._titleBarPadding.Right() - radius * 2.0f, titleBarHeight * 0.5f - radius));
-					nextControlSize(Float2(radius * 2.0f));
-					if (makeButton(fileLine, closeButtonDesc))
+					NextControlPosition(Float2(controlData._size._x - _theme._titleBarPadding.Right() - radius * 2.0f, titleBarHeight * 0.5f - radius));
+					NextControlSize(Float2(radius * 2.0f));
+					if (MakeButton(fileLine, closeButtonDesc))
 					{
 
 					}
@@ -229,94 +229,94 @@ namespace mint
 				return true;
 			}
 
-			void GUIContext::endWindow()
+			void GUIContext::EndWindow()
 			{
 				_isInBeginWindow = false;
-				_rendererContext.accessLowLevelRenderer().endOrdinalRenderCommands();
+				_rendererContext.AccessLowLevelRenderer().EndOrdinalRenderCommands();
 
 				if (_controlStack.IsEmpty())
 				{
 					MINT_ASSERT(false, "end- 호출 횟수가 begin- 호출 횟수보다 많습니다!");
 					return;
 				}
-				MINT_ASSERT(accessControlData(_controlStack.Back()).getType() == ControlType::Window, "Control Stack 이 비정상적입니다!");
+				MINT_ASSERT(AccessControlData(_controlStack.Back()).GetType() == ControlType::Window, "Control Stack 이 비정상적입니다!");
 
 				_controlStack.PopBack();
 			}
 
-			void GUIContext::makeLabel_render(const LabelDesc& labelDesc, const ControlData& controlData)
+			void GUIContext::MakeLabel_render(const LabelDesc& labelDesc, const ControlData& controlData)
 			{
-				const Color& backgroundColor = labelDesc.getBackgroundColor(_theme);
-				if (backgroundColor.a() > 0.0f)
+				const Color& backgroundColor = labelDesc.GetBackgroundColor(_theme);
+				if (backgroundColor.A() > 0.0f)
 				{
 					_rendererContext.SetColor(backgroundColor);
-					_rendererContext.setPosition(computeShapePosition(controlData.getID()));
-					_rendererContext.drawRectangle(controlData._size, 0.0f, 0.0f);
+					_rendererContext.SetPosition(ComputeShapePosition(controlData.GetID()));
+					_rendererContext.DrawRectangle(controlData._size, 0.0f, 0.0f);
 				}
 				FontRenderingOption fontRenderingOption;
 				fontRenderingOption._directionHorz = labelDesc._directionHorz;
 				fontRenderingOption._directionVert = labelDesc._directionVert;
-				drawText(controlData.getID(), labelDesc.getTextColor(_theme), fontRenderingOption);
+				DrawText_(controlData.GetID(), labelDesc.GetTextColor(_theme), fontRenderingOption);
 			}
 
-			void GUIContext::makeButton_render(const ButtonDesc& buttonDesc, const ControlData& controlData)
+			void GUIContext::MakeButton_render(const ButtonDesc& buttonDesc, const ControlData& controlData)
 			{
 				const HoverPressColorSet& hoverPressColorSet = (buttonDesc._customizeColor) ? buttonDesc._customizedColorSet : _theme._hoverPressColorSet;
-				_rendererContext.SetColor(hoverPressColorSet.chooseColorByInteractionState(controlData._mouseInteractionState));
-				_rendererContext.setPosition(computeShapePosition(controlData.getID()));
+				_rendererContext.SetColor(hoverPressColorSet.ChooseColorByInteractionState(controlData._mouseInteractionState));
+				_rendererContext.SetPosition(ComputeShapePosition(controlData.GetID()));
 				if (buttonDesc._isRoundButton)
 				{
 					const float radius = controlData._size._x * 0.5f;
-					_rendererContext.drawCircle(radius);
+					_rendererContext.DrawCircle(radius);
 				}
 				else
 				{
-					_rendererContext.drawRoundedRectangle(controlData._size, computeRoundness(controlData.getID()), 0.0f, 0.0f);
+					_rendererContext.DrawRoundedRectangle(controlData._size, ComputeRoundness(controlData.GetID()), 0.0f, 0.0f);
 
 					FontRenderingOption fontRenderingOption;
 					fontRenderingOption._directionHorz = TextRenderDirectionHorz::Centered;
 					fontRenderingOption._directionVert = TextRenderDirectionVert::Centered;
-					drawText(controlData.getID(), _theme._textColor, fontRenderingOption);
+					DrawText_(controlData.GetID(), _theme._textColor, fontRenderingOption);
 				}
 			}
 
-			void GUIContext::beginWindow_render(const ControlData& controlData)
+			void GUIContext::BeginWindow_render(const ControlData& controlData)
 			{
-				_rendererContext.setPosition(computeShapePosition(controlData.getID()));
+				_rendererContext.SetPosition(ComputeShapePosition(controlData.GetID()));
 
-				const bool isFocused = _focusingModule.isInteractingWith(controlData.getID());
+				const bool isFocused = _focusingModule.IsInteractingWith(controlData.GetID());
 				const float titleBarHeight = controlData._zones._titleBarZone.Height();
 				StackVector<ShapeRendererContext::Split, 3> splits;
 				splits.PushBack(ShapeRendererContext::Split(titleBarHeight / controlData._size._y, (isFocused ? _theme._windowTitleBarFocusedColor : _theme._windowTitleBarUnfocusedColor)));
 				splits.PushBack(ShapeRendererContext::Split(1.0f, _theme._windowBackgroundColor));
-				_rendererContext.drawRoundedRectangleVertSplit(controlData._size, _theme._roundnessInPixel, splits, 0.0f);
+				_rendererContext.DrawRoundedRectangleVertSplit(controlData._size, _theme._roundnessInPixel, splits, 0.0f);
 
 				FontRenderingOption titleBarFontRenderingOption;
 				titleBarFontRenderingOption._directionHorz = TextRenderDirectionHorz::Rightward;
 				titleBarFontRenderingOption._directionVert = TextRenderDirectionVert::Centered;
-				const ControlData& parentControlData = accessControlData(controlData._parentID);
-				const Float2 titleBarTextPosition = controlData.computeRelativePosition(parentControlData) + Float2(_theme._titleBarPadding.Left(), 0.0f);
+				const ControlData& parentControlData = AccessControlData(controlData._parentID);
+				const Float2 titleBarTextPosition = controlData.ComputeRelativePosition(parentControlData) + Float2(_theme._titleBarPadding.Left(), 0.0f);
 				const Float2 titleBarSize = Float2(controlData._size._x, titleBarHeight);
-				drawText(titleBarTextPosition, titleBarSize, controlData._text, _theme._textColor, titleBarFontRenderingOption);
+				DrawText_(titleBarTextPosition, titleBarSize, controlData._text, _theme._textColor, titleBarFontRenderingOption);
 			}
 
-			ControlData& GUIContext::accessControlData(const ControlID& controlID) const
+			ControlData& GUIContext::AccessControlData(const ControlID& controlID) const
 			{
 				static ControlData invalid;
 				auto found = _controlDataMap.Find(controlID);
 				if (found.IsValid())
 				{
-					uint64& accessCount = const_cast<uint64&>(found._value->getAccessCount());
+					uint64& accessCount = const_cast<uint64&>(found._value->GetAccessCount());
 					++accessCount;
 					return *found._value;
 				}
 				return invalid;
 			}
 
-			ControlData& GUIContext::accessControlData(const ControlID& controlID, const ControlType controlType)
+			ControlData& GUIContext::AccessControlData(const ControlID& controlID, const ControlType controlType)
 			{
-				ControlData& controlData = accessControlData(controlID);
-				if (controlData.getID() != controlID)
+				ControlData& controlData = AccessControlData(controlID);
+				if (controlData.GetID() != controlID)
 				{
 					_controlDataMap.Insert(controlID, ControlData(controlID, controlType));
 					return *_controlDataMap.Find(controlID)._value;
@@ -324,10 +324,10 @@ namespace mint
 				return controlData;
 			}
 
-			ControlID GUIContext::findAncestorWindowControl(const ControlID& controlID) const
+			ControlID GUIContext::FindAncestorWindowControl(const ControlID& controlID) const
 			{
-				ControlData& controlData = accessControlData(controlID);
-				if (controlData.getType() == ControlType::Window)
+				ControlData& controlData = AccessControlData(controlID);
+				if (controlData.GetType() == ControlType::Window)
 				{
 					return controlID;
 				}
@@ -335,8 +335,8 @@ namespace mint
 				ControlID foundControlID = controlData._parentID;
 				while (foundControlID.IsValid())
 				{
-					ControlData& currentControlData = accessControlData(foundControlID);
-					if (currentControlData.getType() == ControlType::Window)
+					ControlData& currentControlData = AccessControlData(foundControlID);
+					if (currentControlData.GetType() == ControlType::Window)
 					{
 						return foundControlID;
 					}
@@ -345,33 +345,33 @@ namespace mint
 				return _rootControlID;
 			}
 
-			ControlData& GUIContext::accessStackParentControlData()
+			ControlData& GUIContext::AccessStackParentControlData()
 			{
-				return accessControlData(_controlStack.Back());
+				return AccessControlData(_controlStack.Back());
 			}
 
-			void GUIContext::updateControlData(ControlData& controlData)
+			void GUIContext::UpdateControlData(ControlData& controlData)
 			{
-				updateControlData_processResizing(controlData);
-				updateControlData_processDragging(controlData);
+				UpdateControlData_ProcessResizing(controlData);
+				UpdateControlData_ProcessDragging(controlData);
 
-				updateControlData_renderingData(controlData);
-				updateControlData_interaction(controlData);
-				updateControlData_resetNextControlDesc();
+				UpdateControlData_RenderingData(controlData);
+				UpdateControlData_Interaction(controlData);
+				UpdateControlData_ResetNextControlDesc();
 			}
 
-			void GUIContext::updateControlData_processResizing(const ControlData& controlData)
+			void GUIContext::UpdateControlData_ProcessResizing(const ControlData& controlData)
 			{
-				if (_resizingModule.isInteractingWith(controlData.getID()) == false)
+				if (_resizingModule.IsInteractingWith(controlData.GetID()) == false)
 				{
 					return;
 				}
 
-				const InputContext& inputContext = InputContext::getInstance();
-				const ControlData::ResizingFlags& resizingFlags = _resizingModule.getResizingFlags();
-				selectResizingCursorType(resizingFlags);
+				const InputContext& inputContext = InputContext::GetInstance();
+				const ControlData::ResizingFlags& resizingFlags = _resizingModule.GetResizingFlags();
+				SelectResizingCursorType(resizingFlags);
 
-				Float2 displacementSize = inputContext.getMousePosition() - _resizingModule.getMousePressedPosition();
+				Float2 displacementSize = inputContext.GetMousePosition() - _resizingModule.GetMousePressedPosition();
 				if (resizingFlags._left == false && resizingFlags._right == false)
 				{
 					displacementSize._x = 0.0f;
@@ -402,28 +402,28 @@ namespace mint
 						displacementPosition._y *= 0.0f;
 					}
 
-					const Float2 maxPosition = _resizingModule.getInitialControlPosition() + _resizingModule.getInitialControlSize() - controlData._resizableMinSize;
-					nextControlPosition(Float2::Min(_resizingModule.getInitialControlPosition() + displacementPosition, maxPosition));
+					const Float2 maxPosition = _resizingModule.GetInitialControlPosition() + _resizingModule.GetInitialControlSize() - controlData._resizableMinSize;
+					NextControlPosition(Float2::Min(_resizingModule.GetInitialControlPosition() + displacementPosition, maxPosition));
 				}
 
-				nextControlSize(Float2::Max(_resizingModule.getInitialControlSize() + displacementSize, controlData._resizableMinSize));
+				NextControlSize(Float2::Max(_resizingModule.GetInitialControlSize() + displacementSize, controlData._resizableMinSize));
 			}
 
-			void GUIContext::updateControlData_processDragging(const ControlData& controlData)
+			void GUIContext::UpdateControlData_ProcessDragging(const ControlData& controlData)
 			{
-				if (_draggingModule.isInteractingWith(controlData.getID()) == false)
+				if (_draggingModule.IsInteractingWith(controlData.GetID()) == false)
 				{
 					return;
 				}
 
-				const InputContext& inputContext = InputContext::getInstance();
-				const Float2 displacement = inputContext.getMousePosition() - _draggingModule.getMousePressedPosition();
-				const Float2 absolutePosition = _draggingModule.getInitialControlPosition() + displacement;
-				const Float2 relativePosition = absolutePosition - accessControlData(controlData._parentID)._absolutePosition;
-				nextControlPosition(relativePosition);
+				const InputContext& inputContext = InputContext::GetInstance();
+				const Float2 displacement = inputContext.GetMousePosition() - _draggingModule.GetMousePressedPosition();
+				const Float2 absolutePosition = _draggingModule.GetInitialControlPosition() + displacement;
+				const Float2 relativePosition = absolutePosition - AccessControlData(controlData._parentID)._absolutePosition;
+				NextControlPosition(relativePosition);
 			}
 
-			void GUIContext::updateControlData_renderingData(ControlData& controlData)
+			void GUIContext::UpdateControlData_RenderingData(ControlData& controlData)
 			{
 				const Float2 controlRelativePosition = _nextControlDesc._position;
 				const Float2 controlSize = _nextControlDesc._size;
@@ -432,7 +432,7 @@ namespace mint
 
 				// Position
 				const bool isAutoPositioned = controlRelativePosition.IsNAN();
-				ControlData& parentControlData = accessControlData(controlData._parentID);
+				ControlData& parentControlData = AccessControlData(controlData._parentID);
 				const Float2& parentNextChildPosition = (_nextControlDesc._sameLine ? parentControlData._nextChildSameLinePosition : parentControlData._nextChildNextLinePosition);
 				const Float2 relativePosition = (isAutoPositioned ? parentNextChildPosition : controlRelativePosition);
 				controlData._absolutePosition = relativePosition;
@@ -448,8 +448,8 @@ namespace mint
 				const bool isAutoSized = controlSize.IsNAN();
 				if (isAutoSized)
 				{
-					const FontData& fontData = _rendererContext.getFontData();
-					const float textWidth = fontData.computeTextWidth(controlData._text, StringUtil::Length(controlData._text));
+					const FontData& fontData = _rendererContext.GetFontData();
+					const float textWidth = fontData.ComputeTextWidth(controlData._text, StringUtil::Length(controlData._text));
 					controlData._size._x = textWidth + _nextControlDesc._padding.Horz();
 					controlData._size._y = _fontSize + _nextControlDesc._padding.Vert();
 				}
@@ -469,22 +469,22 @@ namespace mint
 
 				parentControlData._zones._contentZone.ExpandRightBottom(Rect(relativePosition, controlData._size));
 
-				controlData.updateZones();
+				controlData.UpdateZones();
 			}
 
-			void GUIContext::updateControlData_interaction(ControlData& controlData)
+			void GUIContext::UpdateControlData_Interaction(ControlData& controlData)
 			{
-				const InputContext& inputContext = InputContext::getInstance();
+				const InputContext& inputContext = InputContext::GetInstance();
 				controlData._mouseInteractionState = ControlData::MouseInteractionState::None;
-				const Float2& mousePosition = inputContext.getMousePosition();
-				if (_focusingModule.isInteracting())
+				const Float2& mousePosition = inputContext.GetMousePosition();
+				if (_focusingModule.IsInteracting())
 				{
-					const ControlID ancestorWindowControlID = findAncestorWindowControl(controlData.getID());
-					if (_focusingModule.isInteractingWith(ancestorWindowControlID) == false)
+					const ControlID ancestorWindowControlID = FindAncestorWindowControl(controlData.GetID());
+					if (_focusingModule.IsInteractingWith(ancestorWindowControlID) == false)
 					{
 						// FocusedWindow 에 속하지 않은 ControlData 인데, FocusedWindow 영역 내에 Mouse 가 있는 경우,
 						// interaction 을 진행하지 않는다!
-						const ControlData& focusedControlData = accessControlData(_focusingModule.getControlID());
+						const ControlData& focusedControlData = AccessControlData(_focusingModule.GetControlID());
 						const Rect focusedControlRect = Rect(focusedControlData._absolutePosition, focusedControlData._size);
 						if (focusedControlRect.Contains(mousePosition))
 						{
@@ -493,7 +493,7 @@ namespace mint
 					}
 				}
 
-				const bool isMouseLeftUp = inputContext.isMouseButtonUp(MouseButton::Left);
+				const bool isMouseLeftUp = inputContext.IsMouseButtonUp(MouseButton::Left);
 				const bool isMousePositionIn = Rect(controlData._absolutePosition, controlData._size).Contains(mousePosition);
 				const Float2 relativePressedMousePosition = _mousePressedPosition - controlData._absolutePosition;
 				if (isMousePositionIn)
@@ -506,12 +506,12 @@ namespace mint
 					}
 				}
 
-				updateControlData_interaction_focusing(controlData);
-				updateControlData_interaction_resizing(controlData);
-				updateControlData_interaction_dragging(controlData);
+				UpdateControlData_Interaction_focusing(controlData);
+				UpdateControlData_Interaction_resizing(controlData);
+				UpdateControlData_Interaction_dragging(controlData);
 			}
 
-			void GUIContext::updateControlData_interaction_focusing(ControlData& controlData)
+			void GUIContext::UpdateControlData_Interaction_focusing(ControlData& controlData)
 			{
 				if (controlData._generalTraits._isFocusable == false)
 				{
@@ -519,76 +519,76 @@ namespace mint
 				}
 
 				// 이미 Focus 되어 있는 컨트롤
-				if (_focusingModule.isInteractingWith(controlData.getID()) == true)
+				if (_focusingModule.IsInteractingWith(controlData.GetID()) == true)
 				{
 					return;
 				}
 
 				if (controlData._mouseInteractionState == ControlData::MouseInteractionState::Clicked
-					|| _draggingModule.isInteractingWith(controlData.getID()) == true
-					|| _resizingModule.isInteractingWith(controlData.getID()) == true)
+					|| _draggingModule.IsInteractingWith(controlData.GetID()) == true
+					|| _resizingModule.IsInteractingWith(controlData.GetID()) == true)
 				{
-					_focusingModule.end();
+					_focusingModule.End();
 
 					InteractionMousePressModuleInput interactionMousePressModuleInput;
-					interactionMousePressModuleInput._controlID = controlData.getID();
+					interactionMousePressModuleInput._controlID = controlData.GetID();
 					interactionMousePressModuleInput._controlPosition = controlData._absolutePosition;
 					interactionMousePressModuleInput._mousePressedPosition = _mousePressedPosition;
-					_focusingModule.begin(interactionMousePressModuleInput);
+					_focusingModule.Begin(interactionMousePressModuleInput);
 				}
 			}
 
-			void GUIContext::updateControlData_interaction_resizing(ControlData& controlData)
+			void GUIContext::UpdateControlData_Interaction_resizing(ControlData& controlData)
 			{
 				// Dragging 중에는 Resizing 을 하지 않는다.
-				if (_draggingModule.isInteracting())
+				if (_draggingModule.IsInteracting())
 				{
 					return;
 				}
 
-				const InputContext& inputContext = InputContext::getInstance();
-				const bool isMouseLeftUp = inputContext.isMouseButtonUp(MouseButton::Left);
+				const InputContext& inputContext = InputContext::GetInstance();
+				const bool isMouseLeftUp = inputContext.IsMouseButtonUp(MouseButton::Left);
 				if (isMouseLeftUp)
 				{
-					_resizingModule.end();
+					_resizingModule.End();
 				}
 
-				if (controlData._resizingMask.isAllFalse())
+				if (controlData._resizingMask.IsAllFalse())
 				{
 					return;
 				}
 
 				Rect outerRect;
 				Rect innerRect;
-				ResizingModule::makeOuterAndInenrRects(controlData, _theme._outerResizingDistances, _theme._innerResizingDistances, outerRect, innerRect);
-				const Float2& mousePosition = inputContext.getMousePosition();
+				ResizingModule::MakeOuterAndInenrRects(controlData, _theme._outerResizingDistances, _theme._innerResizingDistances, outerRect, innerRect);
+				const Float2& mousePosition = inputContext.GetMousePosition();
 				if (outerRect.Contains(mousePosition) == true && innerRect.Contains(mousePosition) == false)
 				{
 					// Hover
-					const ControlData::ResizingFlags resizingInteraction = ResizingModule::makeResizingFlags(mousePosition, controlData, outerRect, innerRect);
-					selectResizingCursorType(resizingInteraction);
+					const ControlData::ResizingFlags resizingInteraction = ResizingModule::MakeResizingFlags(mousePosition, controlData, outerRect, innerRect);
+					SelectResizingCursorType(resizingInteraction);
 				}
 
-				if (inputContext.isMouseButtonDown(MouseButton::Left))
+				if (inputContext.IsMouseButtonDown(MouseButton::Left))
 				{
 					if (outerRect.Contains(_mousePressedPosition) == true && innerRect.Contains(_mousePressedPosition) == false)
 					{
 						ResizingModuleInput resizingModuleInput;
-						resizingModuleInput._controlID = controlData.getID();
+						resizingModuleInput._controlID = controlData.GetID();
 						resizingModuleInput._controlPosition = controlData._absolutePosition;
 						resizingModuleInput._controlSize = controlData._size;
 						resizingModuleInput._mousePressedPosition = _mousePressedPosition;
-						resizingModuleInput._resizingInteraction = ResizingModule::makeResizingFlags(_mousePressedPosition, controlData, outerRect, innerRect);
-						_resizingModule.begin(resizingModuleInput);
+						resizingModuleInput._resizingInteraction = ResizingModule::MakeResizingFlags(_mousePressedPosition, controlData, outerRect, innerRect);
+						_resizingModule.Begin(resizingModuleInput);
 					}
 				}
 				else
 				{
-					_resizingModule.end();
+					_resizingModule.End();
 				}
 			}
 
-			void GUIContext::updateControlData_interaction_dragging(ControlData& controlData)
+			void GUIContext::UpdateControlData_Interaction_dragging(ControlData& controlData)
 			{
 				if (controlData._generalTraits._isDraggable == false)
 				{
@@ -596,27 +596,27 @@ namespace mint
 				}
 
 				// Resizing 중에는 Dragging 을 하지 않는다.
-				if (_resizingModule.isInteracting())
+				if (_resizingModule.IsInteracting())
 				{
 					return;
 				}
 
-				const InputContext& inputContext = InputContext::getInstance();
-				const bool isMouseLeftUp = inputContext.isMouseButtonUp(MouseButton::Left);
+				const InputContext& inputContext = InputContext::GetInstance();
+				const bool isMouseLeftUp = inputContext.IsMouseButtonUp(MouseButton::Left);
 				if (isMouseLeftUp)
 				{
-					_draggingModule.end();
+					_draggingModule.End();
 					return;
 				}
 
 				// ParentControl 에 beginDragging 을 호출했지만 ChildControl 과도 Interaction 을 하고 있다면 ParentControl 에 endDragging 을 호출한다.
-				const ControlData& parentControlData = accessControlData(controlData._parentID);
-				if (_draggingModule.isInteractingWith(parentControlData.getID()))
+				const ControlData& parentControlData = AccessControlData(controlData._parentID);
+				if (_draggingModule.IsInteractingWith(parentControlData.GetID()))
 				{
-					const Float2 draggingRelativePressedMousePosition = _draggingModule.computeRelativeMousePressedPosition() - controlData.computeRelativePosition(parentControlData);
+					const Float2 draggingRelativePressedMousePosition = _draggingModule.ComputeRelativeMousePressedPosition() - controlData.ComputeRelativePosition(parentControlData);
 					if (controlData._zones._visibleContentZone.Contains(draggingRelativePressedMousePosition))
 					{
-						_draggingModule.end();
+						_draggingModule.End();
 					}
 				}
 
@@ -625,14 +625,14 @@ namespace mint
 				if (controlData._zones._titleBarZone.Contains(relativePressedMousePosition))
 				{
 					InteractionMousePressModuleInput interactionMousePressModuleInput;
-					interactionMousePressModuleInput._controlID = controlData.getID();
+					interactionMousePressModuleInput._controlID = controlData.GetID();
 					interactionMousePressModuleInput._controlPosition = controlData._absolutePosition;
 					interactionMousePressModuleInput._mousePressedPosition = _mousePressedPosition;
-					_draggingModule.begin(interactionMousePressModuleInput);
+					_draggingModule.Begin(interactionMousePressModuleInput);
 				}
 			}
 
-			void GUIContext::updateControlData_resetNextControlDesc()
+			void GUIContext::UpdateControlData_ResetNextControlDesc()
 			{
 				_nextControlDesc._sameLine = false;
 				_nextControlDesc._position = Float2::kNan;
@@ -641,7 +641,7 @@ namespace mint
 				_nextControlDesc._padding = _theme._defaultPadding;
 			}
 
-			void GUIContext::selectResizingCursorType(const ControlData::ResizingFlags& resizingFlags)
+			void GUIContext::SelectResizingCursorType(const ControlData::ResizingFlags& resizingFlags)
 			{
 				if ((resizingFlags._top && resizingFlags._left) || (resizingFlags._bottom && resizingFlags._right))
 				{
@@ -661,15 +661,15 @@ namespace mint
 				}
 			}
 
-			void GUIContext::drawText(const ControlID& controlID, const Color& color, const FontRenderingOption& fontRenderingOption)
+			void GUIContext::DrawText_(const ControlID& controlID, const Color& color, const FontRenderingOption& fontRenderingOption)
 			{
-				const ControlData& controlData = accessControlData(controlID);
-				drawText(controlData._absolutePosition, controlData._size, controlData._text, color, fontRenderingOption);
+				const ControlData& controlData = AccessControlData(controlID);
+				DrawText_(controlData._absolutePosition, controlData._size, controlData._text, color, fontRenderingOption);
 			}
 
-			void GUIContext::drawText(const Float2& position, const Float2& size, const wchar_t* const text, const Color& color, const FontRenderingOption& fontRenderingOption)
+			void GUIContext::DrawText_(const Float2& position, const Float2& size, const wchar_t* const text, const Color& color, const FontRenderingOption& fontRenderingOption)
 			{
-				_rendererContext.setTextColor(color);
+				_rendererContext.SetTextColor(color);
 
 				const Float2 halfSize = size * 0.5f;
 				Float2 finalPosition = position + halfSize;
@@ -681,27 +681,27 @@ namespace mint
 				{
 					finalPosition._y += (fontRenderingOption._directionVert == TextRenderDirectionVert::Downward ? -halfSize._y : halfSize._y);
 				}
-				_rendererContext.drawDynamicText(text, Float4(finalPosition), fontRenderingOption);
+				_rendererContext.DrawDynamicText(text, Float4(finalPosition), fontRenderingOption);
 			}
 
-			Float4 GUIContext::computeShapePosition(const ControlID& controlID) const
+			Float4 GUIContext::ComputeShapePosition(const ControlID& controlID) const
 			{
-				const ControlData& controlData = accessControlData(controlID);
-				return computeShapePosition(controlData._absolutePosition, controlData._size);
+				const ControlData& controlData = AccessControlData(controlID);
+				return ComputeShapePosition(controlData._absolutePosition, controlData._size);
 			}
 
-			Float4 GUIContext::computeShapePosition(const Float2& position, const Float2& size) const
+			Float4 GUIContext::ComputeShapePosition(const Float2& position, const Float2& size) const
 			{
 				return Float4(position + size * 0.5f);
 			}
 
-			float GUIContext::computeRoundness(const ControlID& controlID) const
+			float GUIContext::ComputeRoundness(const ControlID& controlID) const
 			{
-				const ControlData& controlData = accessControlData(controlID);
-				return _rendererContext.computeNormalizedRoundness(controlData._size.GetMinElement(), _theme._roundnessInPixel);
+				const ControlData& controlData = AccessControlData(controlID);
+				return _rendererContext.ComputeNormalizedRoundness(controlData._size.GetMinElement(), _theme._roundnessInPixel);
 			}
 
-			void GUIContext::debugRender_control(const ControlData& controlData)
+			void GUIContext::DebugRender_control(const ControlData& controlData)
 			{
 				if (_debugSwitch._renderZoneOverlay)
 				{
@@ -710,44 +710,44 @@ namespace mint
 					if (titleBarZoneSize._x != 0.0f && titleBarZoneSize._y != 0.0f)
 					{
 						_rendererContext.SetColor(Color(1.0f, 0.5f, 0.25f, OVERLAY_ALPHA));
-						_rendererContext.setPosition(computeShapePosition(controlData._absolutePosition + controlData._zones._titleBarZone.Position(), titleBarZoneSize));
-						_rendererContext.drawRectangle(titleBarZoneSize, 0.0f, 0.0f);
+						_rendererContext.SetPosition(ComputeShapePosition(controlData._absolutePosition + controlData._zones._titleBarZone.Position(), titleBarZoneSize));
+						_rendererContext.DrawRectangle(titleBarZoneSize, 0.0f, 0.0f);
 					}
 
 					const Float2 contentZoneSize = controlData._zones._contentZone.Size();
 					if (contentZoneSize._x != 0.0f && contentZoneSize._y != 0.0f)
 					{
 						_rendererContext.SetColor(Color(0.25f, 1.0f, 0.5f, OVERLAY_ALPHA));
-						_rendererContext.setPosition(computeShapePosition(controlData._absolutePosition + controlData._zones._contentZone.Position(), contentZoneSize));
-						_rendererContext.drawRectangle(contentZoneSize, 0.0f, 0.0f);
+						_rendererContext.SetPosition(ComputeShapePosition(controlData._absolutePosition + controlData._zones._contentZone.Position(), contentZoneSize));
+						_rendererContext.DrawRectangle(contentZoneSize, 0.0f, 0.0f);
 					}
 
 					const Float2 visibleContentZoneSize = controlData._zones._visibleContentZone.Size();
 					if (visibleContentZoneSize._x != 0.0f && visibleContentZoneSize._y != 0.0f)
 					{
 						_rendererContext.SetColor(Color(0.25f, 0.25f, 1.0f, OVERLAY_ALPHA));
-						_rendererContext.setPosition(computeShapePosition(controlData._absolutePosition + controlData._zones._visibleContentZone.Position(), visibleContentZoneSize));
-						_rendererContext.drawRectangle(visibleContentZoneSize, 0.0f, 0.0f);
+						_rendererContext.SetPosition(ComputeShapePosition(controlData._absolutePosition + controlData._zones._visibleContentZone.Position(), visibleContentZoneSize));
+						_rendererContext.DrawRectangle(visibleContentZoneSize, 0.0f, 0.0f);
 					}
 				}
 
 				if (_debugSwitch._renderMousePoints)
 				{
 					static const float POINT_RADIUS = 4.0f;
-					if (_draggingModule.isInteractingWith(controlData.getID()))
+					if (_draggingModule.IsInteractingWith(controlData.GetID()))
 					{
-						const InputContext& inputContext = InputContext::getInstance();
+						const InputContext& inputContext = InputContext::GetInstance();
 						_rendererContext.SetColor(Color::kBlue);
-						_rendererContext.setPosition(Float4(_draggingModule.getMousePressedPosition()));
-						_rendererContext.drawCircle(POINT_RADIUS);
+						_rendererContext.SetPosition(Float4(_draggingModule.GetMousePressedPosition()));
+						_rendererContext.DrawCircle(POINT_RADIUS);
 
 						_rendererContext.SetColor(Color::kRed);
-						_rendererContext.setPosition(Float4(controlData._absolutePosition + _draggingModule.getMousePressedPosition() - _draggingModule.getInitialControlPosition()));
-						_rendererContext.drawCircle(POINT_RADIUS);
+						_rendererContext.SetPosition(Float4(controlData._absolutePosition + _draggingModule.GetMousePressedPosition() - _draggingModule.GetInitialControlPosition()));
+						_rendererContext.DrawCircle(POINT_RADIUS);
 					}
 				}
 
-				if (_debugSwitch._renderResizingArea && controlData._resizingMask.isAnyTrue())
+				if (_debugSwitch._renderResizingArea && controlData._resizingMask.IsAnyTrue())
 				{
 					const Rect controlRect = Rect(controlData._absolutePosition, controlData._size);
 					Rect outerRect = controlRect;
@@ -756,12 +756,12 @@ namespace mint
 					innerRect.ShrinkByQuantity(_theme._innerResizingDistances);
 
 					_rendererContext.SetColor(Color(0.0f, 0.0f, 1.0f, 0.25f));
-					_rendererContext.setPosition(computeShapePosition(outerRect.Position(), outerRect.Size()));
-					_rendererContext.drawRectangle(outerRect.Size(), 0.0f, 0.0f);
+					_rendererContext.SetPosition(ComputeShapePosition(outerRect.Position(), outerRect.Size()));
+					_rendererContext.DrawRectangle(outerRect.Size(), 0.0f, 0.0f);
 
 					_rendererContext.SetColor(Color(0.0f, 1.0f, 0.0f, 0.25f));
-					_rendererContext.setPosition(computeShapePosition(innerRect.Position(), innerRect.Size()));
-					_rendererContext.drawRectangle(innerRect.Size(), 0.0f, 0.0f);
+					_rendererContext.SetPosition(ComputeShapePosition(innerRect.Position(), innerRect.Size()));
+					_rendererContext.DrawRectangle(innerRect.Size(), 0.0f, 0.0f);
 				}
 			}
 		}

@@ -47,8 +47,8 @@ namespace mint
 			~WindowsWindowPool() = default;
 
 		public:
-			void insertWindow(const HWND hWnd, WindowsWindow* const windowsWindow);
-			LRESULT redirectMessage(const HWND hWnd, const UINT Msg, const WPARAM wParam, const LPARAM lParam);
+			void InsertWindow(const HWND hWnd, WindowsWindow* const windowsWindow);
+			LRESULT RedirectMessage(const HWND hWnd, const UINT Msg, const WPARAM wParam, const LPARAM lParam);
 
 		private:
 			Vector<WindowsWindow*> _windowArray;
@@ -76,16 +76,16 @@ namespace mint
 			virtual ~WindowsWindow() = default;
 
 		public:
-			virtual bool create(const WindowCreationDesc& windowCreationDesc) noexcept override;
+			virtual bool Create(const WindowCreationDesc& windowCreationDesc) noexcept override;
 			virtual void Destroy() noexcept override;
 
 		private:
-			void buildWparamKeyCodePairArray() noexcept;
-			Platform::KeyCode convertWparamToKeyCode(const WPARAM wParam) const noexcept;
-			WPARAM convertKeyCodeToWparam(const Platform::KeyCode keyCode) const noexcept;
+			void BuildWparamKeyCodePairArray() noexcept;
+			Platform::KeyCode ConvertWparamToKeyCode(const WPARAM wParam) const noexcept;
+			WPARAM ConvertKeyCodeToWparam(const Platform::KeyCode keyCode) const noexcept;
 
 		public:
-			virtual bool isRunning() noexcept override;
+			virtual bool IsRunning() noexcept override;
 
 		public:
 			virtual void SetSize(const Int2& newSize, const bool onlyUpdateData) noexcept override final;
@@ -94,24 +94,24 @@ namespace mint
 			void SetSizeData(const Int2& newSize);
 
 		public:
-			virtual void setPosition(const Int2& newPosition) override final;
-			HWND getHandle() const noexcept;
+			virtual void SetPosition(const Int2& newPosition) override final;
+			HWND GetHandle() const noexcept;
 
 		public:
-			virtual void setCursorType(const CursorType cursorType) noexcept override final;
+			virtual void SetCursorType(const CursorType cursorType) noexcept override final;
 
 		public:
-			virtual uint32 getCaretBlinkIntervalMs() const noexcept override final;
+			virtual uint32 GetCaretBlinkIntervalMs() const noexcept override final;
 
 		public:
-			virtual void textToClipboard(const wchar_t* const text, const uint32 textLength) const noexcept override final;
-			virtual void textFromClipboard(StringW& outText) const noexcept override final;
+			virtual void TextToClipboard(const wchar_t* const text, const uint32 textLength) const noexcept override final;
+			virtual void TextFromClipboard(StringW& outText) const noexcept override final;
 
 		public:
-			virtual void showMessageBox(const std::wstring& title, const std::wstring& message, const MessageBoxType messageBoxType) const noexcept override final;
+			virtual void ShowMessageBox(const std::wstring& title, const std::wstring& message, const MessageBoxType messageBoxType) const noexcept override final;
 
 		protected:
-			LRESULT processDefaultMessage(const UINT Msg, const WPARAM wParam, const LPARAM lParam);
+			LRESULT ProcessDefaultMessage(const UINT Msg, const WPARAM wParam, const LPARAM lParam);
 
 		protected:
 			uint32 _windowStyle;

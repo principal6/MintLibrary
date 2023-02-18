@@ -18,11 +18,11 @@ namespace mint
 			FixedTimeStepCalculator(const float fixedDeltaTime);
 
 		public:
-			void update(const float deltaTime);
+			void Update(const float deltaTime);
 		
 		public:
-			uint32 getSubstepCount() const { return _substepCount; }
-			float getLeftOverTime() const { return _leftOverTime; }
+			uint32 GetSubstepCount() const { return _substepCount; }
+			float GetLeftOverTime() const { return _leftOverTime; }
 
 		private:
 			const float kFixedDeltaTime;

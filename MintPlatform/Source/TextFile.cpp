@@ -8,7 +8,7 @@
 
 namespace mint
 {
-	bool TextFileReader::open(const char* const fileName)
+	bool TextFileReader::Open(const char* const fileName)
 	{
 		std::ifstream ifs{ fileName, std::ifstream::binary };
 		if (ifs.is_open() == false)
@@ -52,27 +52,27 @@ namespace mint
 		return true;
 	}
 
-	bool TextFileReader::isOpen() const noexcept
+	bool TextFileReader::IsOpen() const noexcept
 	{
 		return !_byteArray.IsEmpty();
 	}
 
-	uint32 TextFileReader::getFileSize() const noexcept
+	uint32 TextFileReader::GetFileSize() const noexcept
 	{
 		return static_cast<uint32>(_byteArray.Size());
 	}
 
-	char TextFileReader::get(const uint32 at) const noexcept
+	char TextFileReader::Get(const uint32 at) const noexcept
 	{
 		return static_cast<char>(_byteArray.At(at));
 	}
 
-	const char* TextFileReader::get() const noexcept
+	const char* TextFileReader::Get() const noexcept
 	{
 		return reinterpret_cast<const char*>(&_byteArray.Front());
 	}
 
-	bool TextFileWriter::save(const char* const fileName)
+	bool TextFileWriter::Save(const char* const fileName)
 	{
 		std::ofstream ofs{ fileName, std::ofstream::binary };
 		if (ofs.is_open() == false)
@@ -110,17 +110,17 @@ namespace mint
 		return false;
 	}
 
-	void TextFileWriter::clear()
+	void TextFileWriter::Clear()
 	{
 		_byteArray.Clear();
 	}
 
-	void TextFileWriter::write(const char ch) noexcept
+	void TextFileWriter::Write(const char ch) noexcept
 	{
 		_byteArray.PushBack(ch);
 	}
 
-	void TextFileWriter::write(const char* const text) noexcept
+	void TextFileWriter::Write(const char* const text) noexcept
 	{
 		if (text == nullptr)
 		{

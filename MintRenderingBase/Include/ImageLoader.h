@@ -21,13 +21,13 @@ namespace mint
 			~ImageLoader() = default;
 
 		public:
-			bool loadImage(const StringReferenceA& fileName, ByteColorImage& outByteColorImage) const;
-			bool loadImage(const Vector<byte>& bytes, ByteColorImage& outByteColorImage) const;
-			bool loadImage(const uint32 requiredComponents, const Vector<byte>& inCompressedBytes, Vector<byte>& outDecompressedBytes) const;
+			bool LoadImage_(const StringReferenceA& fileName, ByteColorImage& outByteColorImage) const;
+			bool LoadImage_(const Vector<byte>& bytes, ByteColorImage& outByteColorImage) const;
+			bool LoadImage_(const uint32 requiredComponents, const Vector<byte>& inCompressedBytes, Vector<byte>& outDecompressedBytes) const;
 
-			bool saveImagePNG(const StringReferenceA& fileName, const ByteColorImage& byteColorImage) const;
-			bool saveImagePNG(const StringReferenceA& fileName, const byte* decompressedBytes, const uint32 width, const uint32 height, const uint32 components) const;
-			bool saveImagePNG(const byte* decompressedBytes, const uint32 width, const uint32 height, const uint32 components, BinaryFileWriter& binaryFileWriter, const bool prependLength) const;
+			bool SaveImagePNG(const StringReferenceA& fileName, const ByteColorImage& byteColorImage) const;
+			bool SaveImagePNG(const StringReferenceA& fileName, const byte* decompressedBytes, const uint32 width, const uint32 height, const uint32 components) const;
+			bool SaveImagePNG(const byte* decompressedBytes, const uint32 width, const uint32 height, const uint32 components, BinaryFileWriter& binaryFileWriter, const bool prependLength) const;
 		};
 	}
 }

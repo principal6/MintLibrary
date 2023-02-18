@@ -51,7 +51,7 @@ namespace mint
 			public:
 				void Invalidate() { _rawID = 0; }
 				bool IsValid() const { return _rawID != 0; }
-				uint64 getRawID() const { return _rawID; }
+				uint64 GetRawID() const { return _rawID; }
 
 			private:
 				uint64 _rawID;
@@ -61,7 +61,7 @@ namespace mint
 			class ControlData
 			{
 			public:
-				static ControlID generateID(const FileLine& fileLine, const ControlType type, const wchar_t* const text, const ControlID& parentControlID);
+				static ControlID GenerateID(const FileLine& fileLine, const ControlType type, const wchar_t* const text, const ControlID& parentControlID);
 
 			public:
 				ControlData() : ControlData(ControlID(), ControlType::COUNT) { __noop; }
@@ -69,19 +69,19 @@ namespace mint
 				~ControlData() = default;
 
 			public:
-				void updateZones();
+				void UpdateZones();
 
 			public:
-				const ControlID& getID() const { return _ID; }
-				const ControlType& getType() const { return _type; }
-				bool hasValidType() const { return _type != ControlType::COUNT; }
-				const uint64& getAccessCount() const { return _accessCount; }
-				Float2 computeRelativePosition(const ControlData& parentControlData) const;
+				const ControlID& GetID() const { return _ID; }
+				const ControlType& GetType() const { return _type; }
+				bool HasValidType() const { return _type != ControlType::COUNT; }
+				const uint64& GetAccessCount() const { return _accessCount; }
+				Float2 ComputeRelativePosition(const ControlData& parentControlData) const;
 
 			private:
-				void computeTitleBarZone(Rect& titleBarZone);
-				void computeMenuBarZone(Rect& menuBarZone);
-				void computeContentZone(Rect& contentZone);
+				void ComputeTitleBarZone(Rect& titleBarZone);
+				void ComputeMenuBarZone(Rect& menuBarZone);
+				void ComputeContentZone(Rect& contentZone);
 
 			public:
 				ControlID _parentID;
@@ -125,11 +125,11 @@ namespace mint
 			public:
 				struct ResizingFlags
 				{
-					void setAllTrue() { _raw = 0b1111; }
-					void setAllFalse() { _raw = 0; }
-					bool isAnyTrue() const { return (_raw & 0b1111) != 0; }
-					bool isAllFalse() const { return (_raw & 0b1111) == 0; }
-					void maskBy(const ResizingFlags& mask) { _raw = _raw & mask._raw; }
+					void SetAllTrue() { _raw = 0b1111; }
+					void SetAllFalse() { _raw = 0; }
+					bool IsAnyTrue() const { return (_raw & 0b1111) != 0; }
+					bool IsAllFalse() const { return (_raw & 0b1111) == 0; }
+					void MaskBy(const ResizingFlags& mask) { _raw = _raw & mask._raw; }
 
 					union
 					{

@@ -8,7 +8,7 @@ namespace mint
 {
 	namespace TestPlatform
 	{
-		bool test()
+		bool Test()
 		{
 			MINT_ASSURE(Test_files());
 			return true;
@@ -21,27 +21,27 @@ namespace mint
 			static constexpr const char* const kFileName = "MintLibraryTest/test.bin";
 			static constexpr const char* const kRawString = "abc";
 			BinaryFileWriter bfw;
-			bfw.write(3.14f);
-			bfw.write(true);
-			bfw.write(static_cast<uint16>(0xABCD));
-			bfw.write("hello");
-			bfw.write(kRawString);
-			bfw.save(kFileName);
+			bfw.Write(3.14f);
+			bfw.Write(true);
+			bfw.Write(static_cast<uint16>(0xABCD));
+			bfw.Write("hello");
+			bfw.Write(kRawString);
+			bfw.Save(kFileName);
 
 			BinaryFileReader bfr;
-			bfr.open(kFileName);
-			if (bfr.isOpen() == true)
+			bfr.Open(kFileName);
+			if (bfr.IsOpen() == true)
 			{
-				auto a = bfr.read<float>();
-				auto b = bfr.read<bool>();
-				auto c = bfr.read<uint16>();
-				auto d = bfr.read<char>(6);
-				auto e = bfr.read<char>(4);
+				auto a = bfr.Read<float>();
+				auto b = bfr.Read<bool>();
+				auto c = bfr.Read<uint16>();
+				auto d = bfr.Read<char>(6);
+				auto e = bfr.Read<char>(4);
 				printf("File[%s] %s %s\n", kFileName, d, e);
 			}
 
 			TextFileReader tfr;
-			tfr.open("MintLibraryTest/test.cpp");
+			tfr.Open("MintLibraryTest/test.cpp");
 			return true;
 		}
 	}

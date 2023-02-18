@@ -50,7 +50,7 @@ namespace mint
 		};
 
 
-		// All draw functions use LowLevelRenderer::pushRenderCommandIndexed()
+		// All draw functions use LowLevelRenderer::PushRenderCommandIndexed()
 		class ShapeRendererContext : public IRendererContext
 		{
 		public:
@@ -79,93 +79,93 @@ namespace mint
 			virtual ~ShapeRendererContext();
 
 		public:
-			virtual void initializeShaders() noexcept override;
-			virtual void flush() noexcept override;
-			virtual void render() noexcept override;
+			virtual void InitializeShaders() noexcept override;
+			virtual void Flush() noexcept override;
+			virtual void Render() noexcept override;
 
 		protected:
-			const char* getDefaultVertexShaderString() const;
-			const char* getDefaultGeometryShaderString() const;
+			const char* GetDefaultVertexShaderString() const;
+			const char* GetDefaultGeometryShaderString() const;
 
 		public:
-			bool initializeFontData(const FontData& fontData);
-			const FontData& getFontData() const noexcept { return _fontData; }
+			bool InitializeFontData(const FontData& fontData);
+			const FontData& GetFontData() const noexcept { return _fontData; }
 
 		public:
-			void setShapeBorderColor(const Color& shapeBorderColor) noexcept;
-			void setTextColor(const Color& textColor) noexcept;
+			void SetShapeBorderColor(const Color& shapeBorderColor) noexcept;
+			void SetTextColor(const Color& textColor) noexcept;
 
 		public:
-			virtual void testDraw(Float2&& screenOffset);
-			virtual void testDraw(Float2& screenOffset);
+			virtual void TestDraw(Float2&& screenOffset);
+			virtual void TestDraw(Float2& screenOffset);
 
 		public:
-			// Independent from internal position set by setPosition() call
+			// Independent from internal position set by SetPosition() call
 			// No rotation allowed
-			void drawLine(const Float2& p0, const Float2& p1, const float thickness);
-			// Independent from internal position set by setPosition() call
+			void DrawLine(const Float2& p0, const Float2& p1, const float thickness);
+			// Independent from internal position set by SetPosition() call
 			// No rotation allowed
-			bool drawLineStrip(const Vector<Float2>& points, const float thickness);
+			bool DrawLineStrip(const Vector<Float2>& points, const float thickness);
 
-			// Independent from internal position set by setPosition() call
+			// Independent from internal position set by SetPosition() call
 			// No rotation allowed
-			void drawSolidTriangle(const Float2& pointA, const Float2& pointB, const Float2& pointC);
-			void drawCircularTriangle(const float radius, const float rotationAngle, const bool insideOut = false);
+			void DrawSolidTriangle(const Float2& pointA, const Float2& pointB, const Float2& pointC);
+			void DrawCircularTriangle(const float radius, const float rotationAngle, const bool insideOut = false);
 
-			void drawRectangle(const Float2& size, const float borderThickness, const float rotationAngle);
-			void drawTexturedRectangle(const Float2& size, const float rotationAngle);
-			void drawTaperedRectangle(const Float2& size, const float tapering, const float bias, const float rotationAngle);
-			void drawRoundedRectangle(const Float2& size, const float roundness, const float borderThickness, const float rotationAngle);
-			void drawRoundedRectangleVertSplit(const Float2& size, const float roundnessInPixel, const StackVector<Split, 3>& splits, const float rotationAngle);
-			void drawHalfRoundedRectangle(const Float2& size, const float roundness, const float rotationAngle);
+			void DrawRectangle(const Float2& size, const float borderThickness, const float rotationAngle);
+			void DrawText_uredRectangle(const Float2& size, const float rotationAngle);
+			void DrawTaperedRectangle(const Float2& size, const float tapering, const float bias, const float rotationAngle);
+			void DrawRoundedRectangle(const Float2& size, const float roundness, const float borderThickness, const float rotationAngle);
+			void DrawRoundedRectangleVertSplit(const Float2& size, const float roundnessInPixel, const StackVector<Split, 3>& splits, const float rotationAngle);
+			void DrawHalfRoundedRectangle(const Float2& size, const float roundness, const float rotationAngle);
 
-			// Independent from internal position set by setPosition() call
+			// Independent from internal position set by SetPosition() call
 			// No rotation allowed
-			void drawQuadraticBezier(const Float2& pointA, const Float2& pointB, const Float2& controlPoint, const bool validate = true);
-			void drawQuarterCircle(const float radius, const float rotationAngle);
+			void DrawQuadraticBezier(const Float2& pointA, const Float2& pointB, const Float2& controlPoint, const bool validate = true);
+			void DrawQuarterCircle(const float radius, const float rotationAngle);
 			// This function Interprets internal positon as the center of the entire circle (= center root of half circle)
-			void drawHalfCircle(const float radius, const float rotationAngle);
-			void drawCircle(const float radius, const bool insideOut = false);
-			void drawEllipse(const float xRadius, const float yRadius, const float rotationAngle);
-			void drawDoughnut(const float outerRadius, const float innerRadius);
+			void DrawHalfCircle(const float radius, const float rotationAngle);
+			void DrawCircle(const float radius, const bool insideOut = false);
+			void DrawEllipse(const float xRadius, const float yRadius, const float rotationAngle);
+			void DrawDoughnut(const float outerRadius, const float innerRadius);
 			// arcAngle = [0, +pi]
-			void drawCircularArc(const float radius, const float arcAngle, const float rotationAngle);
+			void DrawCircularArc(const float radius, const float arcAngle, const float rotationAngle);
 			// arcAngle = [0, +pi]
-			void drawDoubleCircularArc(const float outerRadius, const float innerRadius, const float arcAngle, const float rotationAngle);
+			void DrawDoubleCircularArc(const float outerRadius, const float innerRadius, const float arcAngle, const float rotationAngle);
 
 		public:
 			// This function is slow...!!!
-			void drawColorPalleteXXX(const float radius);
+			void DrawColorPalleteXXX(const float radius);
 
 			// Font
 		public:
-			void drawDynamicText(const wchar_t* const wideText, const Float4& position, const FontRenderingOption& fontRenderingOption);
-			void drawDynamicText(const wchar_t* const wideText, const uint32 textLength, const Float4& position, const FontRenderingOption& fontRenderingOption);
-			void drawDynamicTextBitFlagged(const wchar_t* const wideText, const Float4& position, const FontRenderingOption& fontRenderingOption, const BitVector& bitFlags);
-			void drawDynamicTextBitFlagged(const wchar_t* const wideText, const uint32 textLength, const Float4& position, const FontRenderingOption& fontRenderingOption, const BitVector& bitFlags);
+			void DrawDynamicText(const wchar_t* const wideText, const Float4& position, const FontRenderingOption& fontRenderingOption);
+			void DrawDynamicText(const wchar_t* const wideText, const uint32 textLength, const Float4& position, const FontRenderingOption& fontRenderingOption);
+			void DrawDynamicTextBitFlagged(const wchar_t* const wideText, const Float4& position, const FontRenderingOption& fontRenderingOption, const BitVector& bitFlags);
+			void DrawDynamicTextBitFlagged(const wchar_t* const wideText, const uint32 textLength, const Float4& position, const FontRenderingOption& fontRenderingOption, const BitVector& bitFlags);
 
 		public:
-			float computeNormalizedRoundness(const float minSize, const float roundnessInPixel) const;
+			float ComputeNormalizedRoundness(const float minSize, const float roundnessInPixel) const;
 
 			// Shape
 		protected:
-			void drawLineInternal(const Float2& p0, const Float2& p1, const float thickness);
-			void drawSolidTriangleInternal(const Float2& pointA, const Float2& pointB, const Float2& pointC, const Color& color);
-			void drawRectangleInternal(const Float2& offset, const Float2& halfSize, const Color& color, const ShapeType shapeType);
-			void drawRoundedRectangleInternal(const float radius, const Float2& halfSize, const Color& color);
-			void drawUpperHalfRoundedRectangleInternal(const Float2& offset, const Float2& size, const float roundness, const Color& color);
-			void drawLowerHalfRoundedRectangleInternal(const Float2& offset, const Float2& size, const float roundness, const Color& color);
-			void drawQuadraticBezierInternal(const Float2& pointA, const Float2& pointB, const Float2& controlPoint, const Color& color, const bool validate = true);
-			void drawQuarterCircleInternal(const Float2& offset, const float halfRadius, const Color& color);
+			void DrawLineInternal(const Float2& p0, const Float2& p1, const float thickness);
+			void DrawSolidTriangleInternal(const Float2& pointA, const Float2& pointB, const Float2& pointC, const Color& color);
+			void DrawRectangleInternal(const Float2& offset, const Float2& halfSize, const Color& color, const ShapeType shapeType);
+			void DrawRoundedRectangleInternal(const float radius, const Float2& halfSize, const Color& color);
+			void DrawUpperHalfRoundedRectangleInternal(const Float2& offset, const Float2& size, const float roundness, const Color& color);
+			void DrawLowerHalfRoundedRectangleInternal(const Float2& offset, const Float2& size, const float roundness, const Color& color);
+			void DrawQuadraticBezierInternal(const Float2& pointA, const Float2& pointB, const Float2& controlPoint, const Color& color, const bool validate = true);
+			void DrawQuarterCircleInternal(const Float2& offset, const float halfRadius, const Color& color);
 
 			// Font
 		protected:
-			void drawGlyph(const wchar_t wideChar, Float2& glyphPosition, const float scale, const bool drawShade, const bool leaveOnlySpace);
+			void DrawGlyph(const wchar_t wideChar, Float2& glyphPosition, const float scale, const bool drawShade, const bool leaveOnlySpace);
 
 		protected:
-			void pushShapeTransformToBuffer(const float rotationAngle, const bool applyInternalPosition = true);
-			void pushFontTransformToBuffer(const Float4& preTranslation, Float4x4 transformMatrix, const Float4& postTranslation);
-			float packInfoAsFloat(const ShapeType shapeType) const noexcept;
+			void PushShapeTransformToBuffer(const float rotationAngle, const bool applyInternalPosition = true);
+			void PushFontTransformToBuffer(const Float4& preTranslation, Float4x4 transformMatrix, const Float4& postTranslation);
+			float PackInfoAsFloat(const ShapeType shapeType) const noexcept;
 
 		protected:
 			GraphicObjectID _inputLayoutID;

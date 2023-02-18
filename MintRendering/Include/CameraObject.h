@@ -50,14 +50,14 @@ namespace mint
 				COUNT
 			};
 
-			MINT_INLINE constexpr float getMoveSpeedAsFloat(const MoveSpeed moveSpeed)
+			MINT_INLINE constexpr float GetMoveSpeedAsFloat(const MoveSpeed moveSpeed)
 			{
 				static_assert(static_cast<uint8>(MoveSpeed::x0_125) == 0, "Base 가 달라졌습니다!");
 				const uint8 moveSpeedUint8 = static_cast<uint8>(moveSpeed);
 				return 0.125f * static_cast<float>(Math::Pow2_Uint32(moveSpeedUint8));
 			}
 
-			MINT_INLINE constexpr MoveSpeed getFasterMoveSpeed(const MoveSpeed moveSpeed)
+			MINT_INLINE constexpr MoveSpeed GetFasterMoveSpeed(const MoveSpeed moveSpeed)
 			{
 				const uint8 moveSpeedUint8 = static_cast<uint8>(moveSpeed);
 				const uint8 moveSpeedMax = static_cast<uint8>(MoveSpeed::COUNT) - 1;
@@ -68,7 +68,7 @@ namespace mint
 				return moveSpeed;
 			}
 
-			MINT_INLINE constexpr MoveSpeed getSlowerMoveSpeed(const MoveSpeed moveSpeed)
+			MINT_INLINE constexpr MoveSpeed GetSlowerMoveSpeed(const MoveSpeed moveSpeed)
 			{
 				const uint8 moveSpeedUint8 = static_cast<uint8>(moveSpeed);
 				if (moveSpeedUint8 > 0)
@@ -85,31 +85,30 @@ namespace mint
 			virtual ~CameraObject();
 
 		public:
-			void setPerspectiveFov(const float fov);
-			void setPerspectiveZRange(const float nearZ, const float farZ);
-			void setPerspectiveScreenRatio(const float screenRatio);
+			void SetPerspectiveFov(const float fov);
+			void SetPerspectiveZRange(const float nearZ, const float farZ);
+			void SetPerspectiveScreenRatio(const float screenRatio);
 
 		public:
-			void steer(const Platform::InputContext& inputContext, const bool isMoveLocked);
-			void move(const MoveDirection moveDirection);
-			void rotatePitch(const float angle);
-			void rotateYaw(const float angle);
-			void rotateByMouseDelta(const Float2& mouseDelta);
+			void Steer(const Platform::InputContext& inputContext, const bool isMoveLocked);
+			void Move(const MoveDirection moveDirection);
+			void RotatePitch(const float angle);
+			void RotateYaw(const float angle);
+			void RotateByMouseDelta(const Float2& mouseDelta);
 
 		public:
-			void increaseMoveSpeed() noexcept;
-			void decreaseMoveSpeed() noexcept;
-			void setBoostMode(const bool isBoostMode) noexcept;
+			void IncreaseMoveSpeed() noexcept;
+			void DecreaseMoveSpeed() noexcept;
+			void SetBoostMode(const bool isBoostMode) noexcept;
 
 		public:
-			Float4x4 getViewMatrix() const noexcept;
-			const Float4x4& getProjectionMatrix() const noexcept;
+			Float4x4 GetViewMatrix() const noexcept;
+			const Float4x4& GetProjectionMatrix() const noexcept;
 
 		private:
-			void updatePerspectiveMatrix() noexcept;
-
-			Float4x4 getRotationMatrix() const noexcept;
-			float getHandednessSign() const noexcept;
+			void UpdatePerspectiveMatrix() noexcept;
+			Float4x4 GetRotationMatrix() const noexcept;
+			float GetHandednessSign() const noexcept;
 
 		private:
 			Float4x4 _projectionMatrix;
