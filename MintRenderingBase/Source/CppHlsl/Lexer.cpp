@@ -13,44 +13,44 @@ namespace mint
 			Lexer::Lexer()
 				: ILexer()
 			{
-				setStatementTerminator(';');
-				setEscaper('\\');
+				SetStatementTerminator(';');
+				SetEscaper('\\');
 
-				registerDelimiter(' ');
-				registerDelimiter('\t');
-				registerDelimiter('\r');
-				registerDelimiter('\n');
+				RegisterDelimiter(' ');
+				RegisterDelimiter('\t');
+				RegisterDelimiter('\r');
+				RegisterDelimiter('\n');
 
-				registerLineSkipper("#", LineSkipperSemantic::Preprocessor);
-				registerLineSkipper("//", LineSkipperSemantic::Comment);
-				registerLineSkipper("/*", "*/", LineSkipperSemantic::Comment);
+				RegisterLineSkipper("#", LineSkipperSemantic::Preprocessor);
+				RegisterLineSkipper("//", LineSkipperSemantic::Comment);
+				RegisterLineSkipper("/*", "*/", LineSkipperSemantic::Comment);
 
-				registerGrouper('(', ')');
-				registerGrouper('{', '}');
-				registerGrouper('[', ']');
+				RegisterGrouper('(', ')');
+				RegisterGrouper('{', '}');
+				RegisterGrouper('[', ']');
 
-				registerStringQuote('\'');
-				registerStringQuote('\"');
+				RegisterStringQuote('\'');
+				RegisterStringQuote('\"');
 
-				registerPunctuator(",");
-				registerPunctuator("#");
-				registerPunctuator("::");
+				RegisterPunctuator(",");
+				RegisterPunctuator("#");
+				RegisterPunctuator("::");
 
-				registerKeyword("struct");
-				registerKeyword("using");
-				registerKeyword("namespace");
-				registerKeyword("alignas");
+				RegisterKeyword("struct");
+				RegisterKeyword("using");
+				RegisterKeyword("namespace");
+				RegisterKeyword("alignas");
 			}
 
 			Lexer::Lexer(const std::string& source)
 				: Lexer()
 			{
-				setSource(source);
+				SetSource(source);
 			}
 
-			bool Lexer::execute() noexcept
+			bool Lexer::Execute() noexcept
 			{
-				return __super::executeDefault();
+				return __super::ExecuteDefault();
 			}
 		}
 	}

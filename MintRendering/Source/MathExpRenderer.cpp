@@ -20,29 +20,29 @@ namespace mint
 		public:
 			LatexLexer() : ILexer()
 			{
-				setEscaper('\\');
-				setParsePlainEscaper(true);
-				setDefaultSymbolClassifier(Language::SymbolClassifier::StringLiteral);
+				SetEscaper('\\');
+				SetParsePlainEscaper(true);
+				SetDefaultSymbolClassifier(Language::SymbolClassifier::StringLiteral);
 
-				registerDelimiter(' ');
-				registerDelimiter('\t');
-				registerDelimiter('\r');
-				registerDelimiter('\n');
+				RegisterDelimiter(' ');
+				RegisterDelimiter('\t');
+				RegisterDelimiter('\r');
+				RegisterDelimiter('\n');
 
-				registerGrouper('(', ')');
-				registerGrouper('{', '}');
-				registerGrouper('[', ']');
+				RegisterGrouper('(', ')');
+				RegisterGrouper('{', '}');
+				RegisterGrouper('[', ']');
 
-				registerPunctuator(",");
+				RegisterPunctuator(",");
 
-				registerKeyword("bold");
-				registerKeyword("begin");
-				registerKeyword("end");
+				RegisterKeyword("bold");
+				RegisterKeyword("begin");
+				RegisterKeyword("end");
 			}
 
-			virtual bool execute() noexcept override final
+			virtual bool Execute() noexcept override final
 			{
-				return __super::executeDefault();
+				return __super::ExecuteDefault();
 			}
 		};
 
@@ -152,8 +152,8 @@ namespace mint
 			LatexLexer lexer;
 			std::string latexExpressionStr;
 			StringUtil::ConvertWideStringToString(_latexExpression, latexExpressionStr);
-			lexer.setSource(latexExpressionStr);
-			lexer.execute();
+			lexer.SetSource(latexExpressionStr);
+			lexer.Execute();
 
 			LatexParser::parse(const_cast<MathExpression&>(*this));
 

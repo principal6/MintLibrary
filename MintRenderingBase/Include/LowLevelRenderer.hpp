@@ -188,11 +188,11 @@ namespace mint
 		{
 			if (_isOrdinalRenderCommandGroupsSorted == false)
 			{
-				mint::quickSort(_ordinalRenderCommandGroups, OrdinalRenderCommandGroup::KeyComparator());
+				mint::QuickSort(_ordinalRenderCommandGroups, OrdinalRenderCommandGroup::KeyComparator());
 				_isOrdinalRenderCommandGroupsSorted = true;
 			}
 
-			const int32 index = mint::binarySearch(_ordinalRenderCommandGroups, key, OrdinalRenderCommandGroup::Evaluator());
+			const int32 index = mint::BinarySearch(_ordinalRenderCommandGroups, key, OrdinalRenderCommandGroup::Evaluator());
 			if (IsValidIndex(index) == false)
 			{
 				return;
@@ -202,7 +202,7 @@ namespace mint
 		}
 
 		template<typename T>
-		MINT_INLINE void LowLevelRenderer<T>::executeRenderCommands() noexcept
+		MINT_INLINE void LowLevelRenderer<T>::ExecuteRenderCommands() noexcept
 		{
 			if (isRenderable() == false)
 			{
@@ -226,14 +226,14 @@ namespace mint
 					continue;
 				}
 
-				executeRenderCommands_draw(renderCommand);
+				ExecuteRenderCommands_draw(renderCommand);
 			}
 
 			// Ordinal 그릴 차례.
 			{
 				// Priority 가 작을 수록 먼저 그려진다.
 				// Priority 가 크면 화면 상 제일 위에 와야 하기 때문!
-				mint::quickSort(_ordinalRenderCommandGroups, OrdinalRenderCommandGroup::PriorityComparator());
+				mint::QuickSort(_ordinalRenderCommandGroups, OrdinalRenderCommandGroup::PriorityComparator());
 
 				for (const OrdinalRenderCommandGroup& ordinalRenderCommandGroup : _ordinalRenderCommandGroups)
 				{
@@ -241,7 +241,7 @@ namespace mint
 					const uint32 end = ordinalRenderCommandGroup._endRenderCommandIndex;
 					for (uint32 renderCommandIndex = start; renderCommandIndex <= end; renderCommandIndex++)
 					{
-						executeRenderCommands_draw(_renderCommands[renderCommandIndex]);
+						ExecuteRenderCommands_draw(_renderCommands[renderCommandIndex]);
 					}
 				}
 			}
@@ -327,7 +327,7 @@ namespace mint
 		}
 
 		template<typename T>
-		inline void LowLevelRenderer<T>::executeRenderCommands_draw(const RenderCommand& renderCommand) const noexcept
+		inline void LowLevelRenderer<T>::ExecuteRenderCommands_draw(const RenderCommand& renderCommand) const noexcept
 		{
 			D3D11_RECT scissorRect = rectToD3dRect(renderCommand._clipRect);
 			_graphicDevice.getStateManager().setRSScissorRectangle(scissorRect);

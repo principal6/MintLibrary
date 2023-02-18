@@ -8,7 +8,7 @@ namespace mint
 {
 	namespace TestLibrary
 	{
-		bool test()
+		bool Test()
 		{
 			MINT_ASSURE(Test_algorithm());
 			return true;
@@ -24,8 +24,8 @@ namespace mint
 			t0.PushBack(8);
 			t0.PushBack(6);
 			t0.PushBack(4);
-			quickSort(t0, ComparatorAscending<uint32>());
-			quickSort(t0, ComparatorDescending<uint32>());
+			QuickSort(t0, ComparatorAscending<uint32>());
+			QuickSort(t0, ComparatorDescending<uint32>());
 
 			Vector<uint32> t1;
 			t1.PushBack(3);
@@ -33,8 +33,8 @@ namespace mint
 			t1.PushBack(1);
 			t1.PushBack(4);
 			t1.PushBack(5);
-			quickSort(t1, ComparatorAscending<uint32>());
-			quickSort(t1, ComparatorDescending<uint32>());
+			QuickSort(t1, ComparatorAscending<uint32>());
+			QuickSort(t1, ComparatorDescending<uint32>());
 
 			Vector<uint32> t2;
 			t2.PushBack(3);
@@ -43,8 +43,8 @@ namespace mint
 			t2.PushBack(6);
 			t2.PushBack(7);
 			t2.PushBack(5);
-			quickSort(t2, ComparatorAscending<uint32>());
-			quickSort(t2, ComparatorDescending<uint32>());
+			QuickSort(t2, ComparatorAscending<uint32>());
+			QuickSort(t2, ComparatorDescending<uint32>());
 
 			Vector<uint32> t3;
 			t3.PushBack(1);
@@ -52,8 +52,8 @@ namespace mint
 			t3.PushBack(3);
 			t3.PushBack(4);
 			t3.PushBack(5);
-			quickSort(t3, ComparatorAscending<uint32>());
-			quickSort(t3, ComparatorDescending<uint32>());
+			QuickSort(t3, ComparatorAscending<uint32>());
+			QuickSort(t3, ComparatorDescending<uint32>());
 
 			Vector<uint32> t4;
 			t4.PushBack(4);
@@ -62,15 +62,15 @@ namespace mint
 			t4.PushBack(7);
 			t4.PushBack(6);
 			t4.PushBack(5);
-			quickSort(t4, ComparatorAscending<uint32>());
-			quickSort(t4, ComparatorDescending<uint32>());
+			QuickSort(t4, ComparatorAscending<uint32>());
+			QuickSort(t4, ComparatorDescending<uint32>());
 
 			Vector<uint32> t5;
 			t5.PushBack(0);
 			t5.PushBack(0);
 			t5.PushBack(0);
-			quickSort(t5, ComparatorAscending<uint32>());
-			quickSort(t5, ComparatorDescending<uint32>());
+			QuickSort(t5, ComparatorAscending<uint32>());
+			QuickSort(t5, ComparatorDescending<uint32>());
 
 			Vector<uint32> t6;
 			t6.PushBack(0);
@@ -78,8 +78,8 @@ namespace mint
 			t6.PushBack(1);
 			t6.PushBack(0);
 			t6.PushBack(0);
-			quickSort(t6, ComparatorAscending<uint32>());
-			quickSort(t6, ComparatorDescending<uint32>());
+			QuickSort(t6, ComparatorAscending<uint32>());
+			QuickSort(t6, ComparatorDescending<uint32>());
 
 			struct StringWithComparator
 			{
@@ -104,7 +104,7 @@ namespace mint
 			fileNames.PushBack(StringWithComparator("images\\game\\map\\forest\\forest1\\tile\\t_dg_02.pgf"));
 			fileNames.PushBack(StringWithComparator("images\\game\\map\\forest\\forest1\\tile\\t_dg_03.pgf"));
 			fileNames.PushBack(StringWithComparator("images\\game\\map\\forest\\forest1\\tile\\t_dg_04.pgf"));
-			MINT_ASSURE(binarySearch(fileNames, StringWithComparator("images\\game\\map\\forest\\forest1\\tile\\t_dg_03.bmp")) < 0);
+			MINT_ASSURE(BinarySearch(fileNames, StringWithComparator("images\\game\\map\\forest\\forest1\\tile\\t_dg_03.bmp")) < 0);
 			return true;
 		}
 	}

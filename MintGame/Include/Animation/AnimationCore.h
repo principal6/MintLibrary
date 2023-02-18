@@ -48,11 +48,11 @@ namespace mint
 			~SkeletonJoint();
 
 		public:
-			const char* getName() const noexcept;
-			bool hasParent() const noexcept;
-			JointIndexType getParentIndex() const noexcept;
-			const Float4x4& getBindPoseLocalMatrix() const noexcept;
-			const Float4x4& getBindPoseModelMatrix() const noexcept;
+			const char* GetName() const noexcept;
+			bool HasParent() const noexcept;
+			JointIndexType GetParentIndex() const noexcept;
+			const Float4x4& GetBindPoseLocalMatrix() const noexcept;
+			const Float4x4& GetBindPoseModelMatrix() const noexcept;
 
 		private:
 			char _name[kJointNameLengthMax];
@@ -72,10 +72,10 @@ namespace mint
 			~SkeletonGenerator();
 
 		public:
-			JointIndexType createJoint(const JointIndexType parentJointIndex, const char* const jointName, const Float4x4& bindPoseLocalMatrix) noexcept;
-			const SkeletonJoint* getJoint(const JointIndexType jointIndex) const noexcept;
-			const Vector<SkeletonJoint>& getJoints() const noexcept;
-			void buildBindPoseModelSpace() noexcept;
+			JointIndexType CreateJoint(const JointIndexType parentJointIndex, const char* const jointName, const Float4x4& bindPoseLocalMatrix) noexcept;
+			const SkeletonJoint* GetJoint(const JointIndexType jointIndex) const noexcept;
+			const Vector<SkeletonJoint>& GetJoints() const noexcept;
+			void BuildBindPoseModelSpace() noexcept;
 
 		private:
 			Vector<SkeletonJoint> _joints;
@@ -90,13 +90,13 @@ namespace mint
 			~Skeleton();
 
 		public:
-			bool createFromGenerator(const SkeletonGenerator& skeletonGenerator) noexcept;
+			bool CreateFromGenerator(const SkeletonGenerator& skeletonGenerator) noexcept;
 
 		public:
-			const SkeletonJoint& getJoint(const JointIndexType jointIndex) const noexcept;
+			const SkeletonJoint& GetJoint(const JointIndexType jointIndex) const noexcept;
 
 		public:
-			void renderSkeleton(Rendering::InstantRenderer& instantRenderer, const Float4x4& worldMatrix) const noexcept;
+			void RenderSkeleton(Rendering::InstantRenderer& instantRenderer, const Float4x4& worldMatrix) const noexcept;
 
 		private:
 			Vector<SkeletonJoint> _joints;

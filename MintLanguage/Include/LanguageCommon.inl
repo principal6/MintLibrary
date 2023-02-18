@@ -41,7 +41,7 @@ namespace mint
 			return !(*this == rhs);
 		}
 
-		MINT_INLINE void SymbolTableItem::clearData()
+		MINT_INLINE void SymbolTableItem::ClearData()
 		{
 			_symbolClassifier = SymbolClassifier::POST_CLEARED;
 			_symbolString.clear();
@@ -49,7 +49,7 @@ namespace mint
 			// _sourceAt 은 그냥 남겨둔다.
 		}
 
-		MINT_INLINE uint32 SymbolTableItem::index() const noexcept
+		MINT_INLINE uint32 SymbolTableItem::SymbolIndex() const noexcept
 		{
 			return _symbolIndex;
 		}

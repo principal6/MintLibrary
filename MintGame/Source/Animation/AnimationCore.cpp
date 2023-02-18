@@ -29,27 +29,27 @@ namespace mint
 			__noop;
 		}
 
-		const char* SkeletonJoint::getName() const noexcept
+		const char* SkeletonJoint::GetName() const noexcept
 		{
 			return _name;
 		}
 
-		bool SkeletonJoint::hasParent() const noexcept
+		bool SkeletonJoint::HasParent() const noexcept
 		{
 			return (_parentIndex >= 0);
 		}
 
-		JointIndexType SkeletonJoint::getParentIndex() const noexcept
+		JointIndexType SkeletonJoint::GetParentIndex() const noexcept
 		{
 			return _parentIndex;
 		}
 
-		const Float4x4& SkeletonJoint::getBindPoseLocalMatrix() const noexcept
+		const Float4x4& SkeletonJoint::GetBindPoseLocalMatrix() const noexcept
 		{
 			return _bindPoseLocalMatrix;
 		}
 
-		const Float4x4& SkeletonJoint::getBindPoseModelMatrix() const noexcept
+		const Float4x4& SkeletonJoint::GetBindPoseModelMatrix() const noexcept
 		{
 			return _bindPoseModelMatrix;
 		}
@@ -65,7 +65,7 @@ namespace mint
 			__noop;
 		}
 
-		JointIndexType SkeletonGenerator::createJoint(const JointIndexType parentJointIndex, const char* const jointName, const Float4x4& bindPoseLocalMatrix) noexcept
+		JointIndexType SkeletonGenerator::CreateJoint(const JointIndexType parentJointIndex, const char* const jointName, const Float4x4& bindPoseLocalMatrix) noexcept
 		{
 			if (_joints.IsEmpty() == false && parentJointIndex < 0)
 			{
@@ -87,17 +87,17 @@ namespace mint
 			return static_cast<JointIndexType>(_joints.Size() - 1);
 		}
 
-		const SkeletonJoint* SkeletonGenerator::getJoint(const JointIndexType jointIndex) const noexcept
+		const SkeletonJoint* SkeletonGenerator::GetJoint(const JointIndexType jointIndex) const noexcept
 		{
 			return (static_cast<uint32>(jointIndex) < _joints.Size()) ? &_joints[jointIndex] : nullptr;
 		}
 
-		const Vector<SkeletonJoint>& SkeletonGenerator::getJoints() const noexcept
+		const Vector<SkeletonJoint>& SkeletonGenerator::GetJoints() const noexcept
 		{
 			return _joints;
 		}
 
-		void SkeletonGenerator::buildBindPoseModelSpace() noexcept
+		void SkeletonGenerator::BuildBindPoseModelSpace() noexcept
 		{
 			const JointIndexType jointCount = static_cast<JointIndexType>(_joints.Size());
 			for (JointIndexType jointIndex = 0; jointIndex < jointCount; ++jointIndex)
@@ -105,7 +105,7 @@ namespace mint
 				SkeletonJoint& joint = _joints[jointIndex];
 				joint._bindPoseModelMatrix = joint._bindPoseLocalMatrix;
 
-				if (joint.hasParent())
+				if (joint.HasParent())
 				{
 					SkeletonJoint& parentJoint = _joints[joint._parentIndex];
 					joint._bindPoseModelMatrix.mulAssignReverse(parentJoint._bindPoseModelMatrix);
@@ -121,7 +121,7 @@ namespace mint
 
 		Skeleton::Skeleton(const SkeletonGenerator& skeletonGenerator)
 		{
-			createFromGenerator(skeletonGenerator);
+			CreateFromGenerator(skeletonGenerator);
 		}
 
 		Skeleton::~Skeleton()
@@ -129,18 +129,18 @@ namespace mint
 			__noop;
 		}
 
-		bool Skeleton::createFromGenerator(const SkeletonGenerator& skeletonGenerator) noexcept
+		bool Skeleton::CreateFromGenerator(const SkeletonGenerator& skeletonGenerator) noexcept
 		{
-			_joints = skeletonGenerator.getJoints();
+			_joints = skeletonGenerator.GetJoints();
 			return true;
 		}
 
-		const SkeletonJoint& Skeleton::getJoint(const JointIndexType jointIndex) const noexcept
+		const SkeletonJoint& Skeleton::GetJoint(const JointIndexType jointIndex) const noexcept
 		{
 			return (static_cast<uint32>(jointIndex) < _joints.Size()) ? _joints[jointIndex] : SkeletonJoint::kInvalidSkeletonJoint;
 		}
 
-		void Skeleton::renderSkeleton(Rendering::InstantRenderer& instantRenderer, const Float4x4& worldMatrix) const noexcept
+		void Skeleton::RenderSkeleton(Rendering::InstantRenderer& instantRenderer, const Float4x4& worldMatrix) const noexcept
 		{
 			if (_joints.IsEmpty() == true)
 			{
@@ -154,7 +154,7 @@ namespace mint
 				Float4x4 jointWorldMatrix = worldMatrix;
 				jointWorldMatrix *= joint._bindPoseModelMatrix;
 
-				if (joint.hasParent() == true)
+				if (joint.HasParent() == true)
 				{
 					const SkeletonJoint& parentJoint = _joints[joint._parentIndex];
 					Float4x4 parentJointWorldMatrix = worldMatrix;

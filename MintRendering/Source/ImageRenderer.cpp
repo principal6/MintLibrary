@@ -32,7 +32,7 @@ namespace mint
 					shaderPool.removeInputLayout(_inputLayoutID);
 				}
 				using namespace Language;
-				const TypeMetaData<CppHlsl::TypeCustomData>& typeMetaData = _graphicDevice.getCppHlslSteamData().getTypeMetaData(typeid(VS_INPUT_SHAPE));
+				const TypeMetaData<CppHlsl::TypeCustomData>& typeMetaData = _graphicDevice.getCppHlslSteamData().GetTypeMetaData(typeid(VS_INPUT_SHAPE));
 				_inputLayoutID = shaderPool.addInputLayout(_vertexShaderID, typeMetaData);
 			}
 

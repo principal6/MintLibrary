@@ -85,8 +85,8 @@ namespace mint
 			bool operator!=(const SymbolTableItem& rhs) const noexcept;
 
 		public:
-			void clearData();
-			uint32 index() const noexcept;
+			void ClearData();
+			uint32 SymbolIndex() const noexcept;
 
 		public:
 			SymbolClassifier _symbolClassifier;

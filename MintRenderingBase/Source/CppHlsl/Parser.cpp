@@ -36,24 +36,24 @@ namespace mint
 			Parser::Parser(ILexer& lexer)
 				: IParser(lexer)
 			{
-				registerTypeInternal("void", 0, true);
-				registerTypeInternal("bool", 4, true); // TypeSize = 4 임에 주의!!!
-				registerTypeInternal("int", 4, true);
-				registerTypeInternal("int1", 4, true);
-				registerTypeInternal("int2", 8, true);
-				registerTypeInternal("int3", 12, true);
-				registerTypeInternal("int4", 16, true);
-				registerTypeInternal("uint", 4, true);
-				registerTypeInternal("uint1", 4, true);
-				registerTypeInternal("uint2", 8, true);
-				registerTypeInternal("uint3", 12, true);
-				registerTypeInternal("uint4", 16, true);
-				registerTypeInternal("float", 4, true);
-				registerTypeInternal("float1", 4, true);
-				registerTypeInternal("float2", 8, true);
-				registerTypeInternal("float3", 12, true);
-				registerTypeInternal("float4", 16, true);
-				registerTypeInternal("float4x4", 64, true);
+				RegisterTypeInternal("void", 0, true);
+				RegisterTypeInternal("bool", 4, true); // TypeSize = 4 임에 주의!!!
+				RegisterTypeInternal("int", 4, true);
+				RegisterTypeInternal("int1", 4, true);
+				RegisterTypeInternal("int2", 8, true);
+				RegisterTypeInternal("int3", 12, true);
+				RegisterTypeInternal("int4", 16, true);
+				RegisterTypeInternal("uint", 4, true);
+				RegisterTypeInternal("uint1", 4, true);
+				RegisterTypeInternal("uint2", 8, true);
+				RegisterTypeInternal("uint3", 12, true);
+				RegisterTypeInternal("uint4", 16, true);
+				RegisterTypeInternal("float", 4, true);
+				RegisterTypeInternal("float1", 4, true);
+				RegisterTypeInternal("float2", 8, true);
+				RegisterTypeInternal("float3", 12, true);
+				RegisterTypeInternal("float4", 16, true);
+				RegisterTypeInternal("float4x4", 64, true);
 			}
 
 			Parser::~Parser()
@@ -61,28 +61,28 @@ namespace mint
 				__noop;
 			}
 
-			bool Parser::execute()
+			bool Parser::Execute()
 			{
-				reset();
+				Reset();
 
 				uint32 advanceCount = 0;
 				SyntaxTreeNodeData rootItem;
 				rootItem._classifier = SyntaxClassifier::ROOT;
 				rootItem._IDentifier = "ROOT";
 				SyntaxTreeNode syntaxTreeRootNode = _syntaxTree.CreateRootNode(rootItem);
-				while (continueParsing() == true)
+				while (ContinuesParsing() == true)
 				{
-					if (parseCode(getSymbolPosition(), syntaxTreeRootNode, advanceCount) == false)
+					if (parseCode(GetSymbolPosition(), syntaxTreeRootNode, advanceCount) == false)
 					{
 						break;
 					}
 
-					advanceSymbolPositionXXX(advanceCount);
+					AdvanceSymbolPositionXXX(advanceCount);
 
 					advanceCount = 0;
 				}
 
-				if (hasReportedErrors() == true)
+				if (HasReportedErrors() == true)
 				{
 					MINT_LOG_ERROR("에러가 있었습니다!!!");
 
@@ -121,9 +121,9 @@ namespace mint
 
 			bool Parser::parseNamespace(const uint32 symbolPosition, SyntaxTreeNode& currentNode, uint32& outAdvanceCount) noexcept
 			{
-				MINT_ASSURE(hasSymbol(symbolPosition + 3));
+				MINT_ASSURE(HasSymbol(symbolPosition + 3));
 				MINT_ASSURE(_symbolTable[symbolPosition + 1]._symbolClassifier == SymbolClassifier::Identifier);
-				MINT_ASSURE(IParser::findNextDepthMatchingGrouperCloseSymbol(symbolPosition + 2));
+				MINT_ASSURE(IParser::FindNextDepthMatchingGrouperCloseSymbol(symbolPosition + 2));
 
 				SyntaxTreeNodeData syntaxTreeItem;
 				syntaxTreeItem._classifier = SyntaxClassifier::Namespace;
@@ -137,13 +137,13 @@ namespace mint
 
 			bool Parser::parseStruct(const uint32 symbolPosition, SyntaxTreeNode& currentNode, uint32& outAdvanceCount) noexcept
 			{
-				MINT_ASSURE(hasSymbol(symbolPosition + 4)); // ; 까지!
+				MINT_ASSURE(HasSymbol(symbolPosition + 4)); // ; 까지!
 				MINT_ASSURE(_symbolTable[symbolPosition + 1]._symbolClassifier == SymbolClassifier::Identifier);
 
 				bool hasCustomSyntax = false;
 				if (_symbolTable[symbolPosition + 2]._symbolString == "{")
 				{
-					MINT_ASSURE(IParser::findNextDepthMatchingGrouperCloseSymbol(symbolPosition + 2));
+					MINT_ASSURE(IParser::FindNextDepthMatchingGrouperCloseSymbol(symbolPosition + 2));
 				}
 				else
 				{
@@ -176,7 +176,7 @@ namespace mint
 			{
 				const uint32 kSemicolonMinOffset = 2;
 				MINT_ASSURE_SILENT(_symbolTable[symbolPosition]._symbolClassifier != SymbolClassifier::Grouper_Close); // 최우선 검사
-				MINT_ASSURE(hasSymbol(symbolPosition + kSemicolonMinOffset));
+				MINT_ASSURE(HasSymbol(symbolPosition + kSemicolonMinOffset));
 
 				SyntaxTreeNodeData syntaxTreeItem;
 				syntaxTreeItem._classifier = SyntaxClassifier::Variable;
@@ -209,8 +209,8 @@ namespace mint
 			bool Parser::parseCustomSyntax(const uint32 symbolPosition, SyntaxTreeNode& currentNode, uint32& outAdvanceCount) noexcept
 			{
 				const uint32 kCloseParenthesisMinOffset = 3;
-				MINT_ASSURE(hasSymbol(symbolPosition + kCloseParenthesisMinOffset));
-				MINT_ASSURE(findNextDepthMatchingGrouperCloseSymbol(symbolPosition + 1) == true);
+				MINT_ASSURE(HasSymbol(symbolPosition + kCloseParenthesisMinOffset));
+				MINT_ASSURE(FindNextDepthMatchingGrouperCloseSymbol(symbolPosition + 1) == true);
 
 				SyntaxTreeNodeData syntaxTreeItem;
 				if (_symbolTable[symbolPosition]._symbolString == "CPP_HLSL_SEMANTIC_NAME")
@@ -274,7 +274,7 @@ namespace mint
 				}
 
 				TypeMetaData<TypeCustomData> typeMetaData;
-				typeMetaData.setBaseData(fullTypeName, false);
+				typeMetaData.SetBaseData(fullTypeName, false);
 
 				uint32 structSize = 0;
 				std::string streamDataTypeNameForSlots;
@@ -288,10 +288,10 @@ namespace mint
 					{
 						const uint32 attributeCount = childNode.GetChildNodeCount();
 						SyntaxTreeNode dataTypeNode = childNode.GetChildNode(0);
-						TypeMetaData<TypeCustomData> memberTypeMetaData = getTypeMetaData(dataTypeNode.GetNodeData()._IDentifier);
-						memberTypeMetaData.setByteOffset(structSize);
-						structSize += memberTypeMetaData.getSize();
-						memberTypeMetaData.setDeclName(childNodeData._IDentifier);
+						TypeMetaData<TypeCustomData> memberTypeMetaData = GetTypeMetaData(dataTypeNode.GetNodeData()._IDentifier);
+						memberTypeMetaData.SetByteOffset(structSize);
+						structSize += memberTypeMetaData.GetSize();
+						memberTypeMetaData.SetDeclName(childNodeData._IDentifier);
 						memberTypeMetaData._customData.setInputSlot(inputSlot);
 
 						if (attributeCount >= 2)
@@ -309,7 +309,7 @@ namespace mint
 							}
 						}
 
-						typeMetaData.pushMember(memberTypeMetaData);
+						typeMetaData.PushMember(memberTypeMetaData);
 					}
 					else if (childNodeData._classifier == SyntaxClassifier::RegisterIndex)
 					{
@@ -326,13 +326,13 @@ namespace mint
 						MINT_NEVER;
 					}
 				}
-				typeMetaData.setSize(structSize);
+				typeMetaData.SetSize(structSize);
 
-				pushTypeMetaData(fullTypeName, typeMetaData);
+				PushTypeMetaData(fullTypeName, typeMetaData);
 
 				if (inputSlot > 0)
 				{
-					TypeMetaData<TypeCustomData>& streamDataForSlots = accessTypeMetaData(streamDataTypeNameForSlots);
+					TypeMetaData<TypeCustomData>& streamDataForSlots = AccessTypeMetaData(streamDataTypeNameForSlots);
 					streamDataForSlots._customData.pushSlottedStreamData(typeMetaData);
 				}
 			}
@@ -367,7 +367,7 @@ namespace mint
 				const int32 digitCount = (::isdigit(typeName[typeName.size() - 2]) != 0) ? 2 : 1;
 				const int32 inputSlot = std::stoi(typeName.substr(typeName.size() - digitCount, digitCount));
 				streamDataTypeName = typeName.substr(0, typeName.size() - digitCount);
-				if (existsTypeMetaData(streamDataTypeName) == true)
+				if (ExistsTypeMetaData(streamDataTypeName) == true)
 				{
 					return inputSlot;
 				}
@@ -376,7 +376,7 @@ namespace mint
 
 			DXGI_FORMAT Parser::convertCppHlslTypeToDxgiFormat(const TypeMetaData<TypeCustomData>& typeMetaData)
 			{
-				const std::string& typeName = typeMetaData.getTypeName();
+				const std::string& typeName = typeMetaData.GetTypeName();
 				if (typeName == "float" || typeName == "float1")
 				{
 					return DXGI_FORMAT::DXGI_FORMAT_R32_FLOAT;
@@ -415,19 +415,19 @@ namespace mint
 
 			std::string Parser::serializeCppHlslTypeToHlslStreamDatum(const TypeMetaData<TypeCustomData>& typeMetaData)
 			{
-				std::string pureTypeName = TypeUtils::extractPureTypeName(typeMetaData.getTypeName());
+				std::string pureTypeName = TypeUtils::extractPureTypeName(typeMetaData.GetTypeName());
 
 				// inputSlot 0 은 나 자신이다!
 				Vector<TypeMetaData<TypeCustomData>> slottedDatas;
 				for (int32 inputSlot = 1; inputSlot < D3D11_IA_VERTEX_INPUT_RESOURCE_SLOT_COUNT; ++inputSlot)
 				{
-					std::string typeName = typeMetaData.getTypeName() + std::to_string(inputSlot);
-					if (existsTypeMetaData(typeName) == false)
+					std::string typeName = typeMetaData.GetTypeName() + std::to_string(inputSlot);
+					if (ExistsTypeMetaData(typeName) == false)
 					{
 						break;
 					}
 
-					slottedDatas.PushBack(getTypeMetaData(typeName));
+					slottedDatas.PushBack(GetTypeMetaData(typeName));
 				}
 
 				std::string result;
@@ -449,18 +449,18 @@ namespace mint
 			std::string Parser::serializeCppHlslTypeToHlslStreamDatumMembers(const TypeMetaData<TypeCustomData>& typeMetaData)
 			{
 				std::string result;
-				const uint32 memberCount = typeMetaData.getMemberCount();
+				const uint32 memberCount = typeMetaData.GetMemberCount();
 				for (uint32 memberIndex = 0; memberIndex < memberCount; ++memberIndex)
 				{
-					const TypeMetaData<TypeCustomData>& memberType = typeMetaData.getMember(memberIndex);
+					const TypeMetaData<TypeCustomData>& memberType = typeMetaData.GetMember(memberIndex);
 					result.append("\t");
-					result.append(memberType.getTypeName());
+					result.append(memberType.GetTypeName());
 					result.append(" ");
-					result.append(memberType.getDeclName());
+					result.append(memberType.GetDeclName());
 					result.append(" : ");
 					if (memberType._customData.getSemanticName().empty() == true)
 					{
-						result.append(convertDeclarationNameToHlslSemanticName(memberType.getDeclName()));
+						result.append(convertDeclarationNameToHlslSemanticName(memberType.GetDeclName()));
 					}
 					else
 					{
@@ -476,20 +476,20 @@ namespace mint
 				std::string result;
 
 				result.append("cbuffer ");
-				std::string pureTypeName = TypeUtils::extractPureTypeName(typeMetaData.getTypeName());
+				std::string pureTypeName = TypeUtils::extractPureTypeName(typeMetaData.GetTypeName());
 				result.append(pureTypeName);
 				result.append(" : register(");
 				result.append("b" + std::to_string((typeMetaData._customData.isRegisterIndexValid() == true) ? typeMetaData._customData.getRegisterIndex() : bufferIndex));
 				result.append(")\n{\n");
 
-				const uint32 memberCount = typeMetaData.getMemberCount();
+				const uint32 memberCount = typeMetaData.GetMemberCount();
 				for (uint32 memberIndex = 0; memberIndex < memberCount; ++memberIndex)
 				{
-					const TypeMetaData<TypeCustomData>& memberType = typeMetaData.getMember(memberIndex);
+					const TypeMetaData<TypeCustomData>& memberType = typeMetaData.GetMember(memberIndex);
 					result.append("\t");
-					result.append(memberType.getTypeName());
+					result.append(memberType.GetTypeName());
 					result.append(" ");
-					result.append(memberType.getDeclName());
+					result.append(memberType.GetDeclName());
 					result.append(";\n");
 				}
 				result.append("};\n\n");
@@ -500,18 +500,18 @@ namespace mint
 			{
 				std::string result;
 
-				std::string pureTypeName = TypeUtils::extractPureTypeName(typeMetaData.getTypeName());
+				std::string pureTypeName = TypeUtils::extractPureTypeName(typeMetaData.GetTypeName());
 				result.append("struct ");
 				result.append(pureTypeName);
 				result.append("\n{\n");
-				const uint32 memberCount = typeMetaData.getMemberCount();
+				const uint32 memberCount = typeMetaData.GetMemberCount();
 				for (uint32 memberIndex = 0; memberIndex < memberCount; ++memberIndex)
 				{
-					const TypeMetaData<TypeCustomData>& memberType = typeMetaData.getMember(memberIndex);
+					const TypeMetaData<TypeCustomData>& memberType = typeMetaData.GetMember(memberIndex);
 					result.append("\t");
-					result.append(memberType.getTypeName());
+					result.append(memberType.GetTypeName());
 					result.append(" ");
-					result.append(memberType.getDeclName());
+					result.append(memberType.GetDeclName());
 					result.append(";\n");
 				}
 

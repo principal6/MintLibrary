@@ -69,22 +69,22 @@ namespace mint
 			__noop;
 		}
 
-		void ILexer::setSource(const std::string& source)
+		void ILexer::SetSource(const std::string& source)
 		{
 			_source = source;
 		}
 
-		void ILexer::setEscaper(const char escaper)
+		void ILexer::SetEscaper(const char escaper)
 		{
 			_escaper = escaper;
 		}
 
-		void ILexer::setStatementTerminator(const char statementTerminator)
+		void ILexer::SetStatementTerminator(const char statementTerminator)
 		{
 			_statementTerminator = statementTerminator;
 		}
 
-		void ILexer::registerDelimiter(const char delimiter)
+		void ILexer::RegisterDelimiter(const char delimiter)
 		{
 			if (_delimiterUmap.Find(delimiter).IsValid() == false)
 			{
@@ -92,7 +92,7 @@ namespace mint
 			}
 		}
 
-		void ILexer::registerLineSkipper(const char* const lineSkipperOpen, const char* const lineSkipperClose, const LineSkipperSemantic lineSkipperSemantic)
+		void ILexer::RegisterLineSkipper(const char* const lineSkipperOpen, const char* const lineSkipperClose, const LineSkipperSemantic lineSkipperSemantic)
 		{
 			const uint32 lengthOpen = StringUtil::Length(lineSkipperOpen);
 			const uint32 lengthClose = StringUtil::Length(lineSkipperClose);
@@ -117,7 +117,7 @@ namespace mint
 
 			// Open & Close
 			{
-				const uint16 nextGroupID = getLineSkipperNextGroupID();
+				const uint16 nextGroupID = GetLineSkipperNextGroupID();
 				const uint64 keyOpen = (lengthOpen == 1) ? lineSkipperOpen[0] : static_cast<uint64>(lineSkipperOpen[1]) * 255 + lineSkipperOpen[0];
 				if (_lineSkipperUmap.Find(keyOpen).IsValid() == false)
 				{
@@ -136,7 +136,7 @@ namespace mint
 			}
 		}
 
-		void ILexer::registerLineSkipper(const char* const lineSkipper, const LineSkipperSemantic lineSkipperSemantic)
+		void ILexer::RegisterLineSkipper(const char* const lineSkipper, const LineSkipperSemantic lineSkipperSemantic)
 		{
 			const uint32 length = StringUtil::Length(lineSkipper);
 			if (length == 0 || length > 2)
@@ -154,7 +154,7 @@ namespace mint
 			}
 		}
 
-		void ILexer::registerKeyword(const char* const keyword)
+		void ILexer::RegisterKeyword(const char* const keyword)
 		{
 			const uint64 hash = ComputeHash(keyword);
 			if (_keywordUmap.Find(hash).IsValid() == false)
@@ -165,7 +165,7 @@ namespace mint
 			}
 		}
 
-		void ILexer::registerGrouper(const char grouperOpen, const char grouperClose)
+		void ILexer::RegisterGrouper(const char grouperOpen, const char grouperClose)
 		{
 			if (_grouperUmap.Find(grouperOpen).IsValid() == false)
 			{
@@ -182,7 +182,7 @@ namespace mint
 			}
 		}
 
-		void ILexer::registerStringQuote(const char stringQuote)
+		void ILexer::RegisterStringQuote(const char stringQuote)
 		{
 			if (_stringQuoteUmap.Find(stringQuote).IsValid() == false)
 			{
@@ -190,7 +190,7 @@ namespace mint
 			}
 		}
 
-		void ILexer::registerPunctuator(const char* const punctuator)
+		void ILexer::RegisterPunctuator(const char* const punctuator)
 		{
 			const uint32 length = StringUtil::Length(punctuator);
 			if (length == 0 || length > 3)
@@ -209,7 +209,7 @@ namespace mint
 			}
 		}
 
-		void ILexer::registerOperator(const char* const operator_, const OperatorClassifier operatorClassifier)
+		void ILexer::RegisterOperator(const char* const operator_, const OperatorClassifier operatorClassifier)
 		{
 			const uint32 length = StringUtil::Length(operator_);
 			if (length == 0 || length > 2)
@@ -232,14 +232,14 @@ namespace mint
 			}
 		}
 
-		uint16 ILexer::getLineSkipperNextGroupID() noexcept
+		uint16 ILexer::GetLineSkipperNextGroupID() noexcept
 		{
 			const uint16 result = _lineSkipperNextGroupID;
 			++_lineSkipperNextGroupID;
 			return result;
 		}
 
-		bool ILexer::executeDefault() noexcept
+		bool ILexer::ExecuteDefault() noexcept
 		{
 			// Preprocessor
 			// line 단위 parsing
@@ -250,16 +250,16 @@ namespace mint
 				uint32 prevSourceAt = 0;
 				uint32 sourceAt = 0;
 
-				while (continueExecution(sourceAt) == true)
+				while (ContinuesExecution(sourceAt) == true)
 				{
-					const char ch0 = getCh0(sourceAt);
-					const char ch1 = getCh1(sourceAt);
+					const char ch0 = GetCh0(sourceAt);
+					const char ch1 = GetCh1(sourceAt);
 
 					LineSkipperTableItem lineSkipperTableItem;
-					if (isLineSkipper(ch0, ch1, lineSkipperTableItem) == true)
+					if (IsLineSkipper(ch0, ch1, lineSkipperTableItem) == true)
 					{
 						bool isSuccess = false;
-						if (lineSkipperTableItem.checkClassifier(LineSkipperClassifier::SingleMarker) == true)
+						if (lineSkipperTableItem.CheckClassifier(LineSkipperClassifier::SingleMarker) == true)
 						{
 							std::string prev = _source.substr(prevSourceAt, sourceAt - prevSourceAt);
 
@@ -297,7 +297,7 @@ namespace mint
 							preprocessedSource.append(prev);
 
 							std::string line;
-							for (uint32 sourceIter = sourceAt + 2; continueExecution(sourceIter) == true; ++sourceIter)
+							for (uint32 sourceIter = sourceAt + 2; ContinuesExecution(sourceIter) == true; ++sourceIter)
 							{
 								if (_source.at(sourceIter) == '\n')
 								{
@@ -313,12 +313,12 @@ namespace mint
 								}
 							}
 
-							if (lineSkipperTableItem.checkSemantic(LineSkipperSemantic::Preprocessor) == true)
+							if (lineSkipperTableItem.CheckSemantic(LineSkipperSemantic::Preprocessor) == true)
 							{
 								// Preprocessor
 								//line;
 							}
-							else if (lineSkipperTableItem.checkSemantic(LineSkipperSemantic::Comment) == true)
+							else if (lineSkipperTableItem.CheckSemantic(LineSkipperSemantic::Comment) == true)
 							{
 								// Comment
 								preprocessedSource.append(_source.substr(prevSourceAt, sourceAt - prevSourceAt));
@@ -332,14 +332,14 @@ namespace mint
 						else
 						{
 							LineSkipperTableItem closeLineSkipperTableItem;
-							if (lineSkipperTableItem.checkClassifier(LineSkipperClassifier::OpenCloseMarker) == true)
+							if (lineSkipperTableItem.CheckClassifier(LineSkipperClassifier::OpenCloseMarker) == true)
 							{
 								uint32 sourceIter = sourceAt + 2;
-								while (continueExecution(sourceIter + 1) == true)
+								while (ContinuesExecution(sourceIter + 1) == true)
 								{
-									if (isLineSkipper(_source.at(sourceIter), _source.at(static_cast<uint64>(sourceIter) + 1), closeLineSkipperTableItem) == true)
+									if (IsLineSkipper(_source.at(sourceIter), _source.at(static_cast<uint64>(sourceIter) + 1), closeLineSkipperTableItem) == true)
 									{
-										if (closeLineSkipperTableItem.isSameString(lineSkipperTableItem) == true)
+										if (closeLineSkipperTableItem.IsSameString(lineSkipperTableItem) == true)
 										{
 											isSuccess = true;
 											prevSourceAt = sourceAt = sourceIter + 2;
@@ -349,14 +349,14 @@ namespace mint
 									++sourceIter;
 								}
 							}
-							else if (lineSkipperTableItem.checkClassifier(LineSkipperClassifier::OpenMarker) == true)
+							else if (lineSkipperTableItem.CheckClassifier(LineSkipperClassifier::OpenMarker) == true)
 							{
 								uint32 sourceIter = sourceAt + 2;
-								while (continueExecution(sourceIter + 1) == true)
+								while (ContinuesExecution(sourceIter + 1) == true)
 								{
-									if (isLineSkipper(_source.at(sourceIter), _source.at(static_cast<uint64>(sourceIter) + 1), closeLineSkipperTableItem) == true)
+									if (IsLineSkipper(_source.at(sourceIter), _source.at(static_cast<uint64>(sourceIter) + 1), closeLineSkipperTableItem) == true)
 									{
-										if (closeLineSkipperTableItem.isSameGroup(lineSkipperTableItem) == true)
+										if (closeLineSkipperTableItem.IsSameGroup(lineSkipperTableItem) == true)
 										{
 											isSuccess = true;
 											prevSourceAt = sourceAt = sourceIter + 2;
@@ -366,7 +366,7 @@ namespace mint
 									++sourceIter;
 								}
 							}
-							else if (lineSkipperTableItem.checkClassifier(LineSkipperClassifier::CloseMarker) == true)
+							else if (lineSkipperTableItem.CheckClassifier(LineSkipperClassifier::CloseMarker) == true)
 							{
 								MINT_LOG_ERROR("Open LineSkipper 가 없는데 Close LineSkipper 가 왔습니다!!!");
 								return false;
@@ -375,7 +375,7 @@ namespace mint
 
 						if (isSuccess == false)
 						{
-							MINT_LOG_ERROR("실패!! lineSkipperClassifier[%d] sourceAt[%d]", static_cast<int32>(lineSkipperTableItem.getClassifier()), sourceAt);
+							MINT_LOG_ERROR("실패!! lineSkipperClassifier[%d] sourceAt[%d]", static_cast<int32>(lineSkipperTableItem.GetClassifier()), sourceAt);
 							return false;
 						}
 					}
@@ -391,9 +391,9 @@ namespace mint
 
 			uint32 prevSourceAt = 0;
 			uint32 sourceAt = 0;
-			while (continueExecution(sourceAt) == true)
+			while (ContinuesExecution(sourceAt) == true)
 			{
-				executeInternalScanning(prevSourceAt, sourceAt);
+				ExecuteInternalScanning(prevSourceAt, sourceAt);
 			}
 
 			if (prevSourceAt < sourceAt)
@@ -403,86 +403,86 @@ namespace mint
 				_symbolTable.PushBack(SymbolTableItem(_defaultSymbolClassifier, tokenString, sourceAt));
 			}
 
-			endExecution();
+			EndExecution();
 			return true;
 		}
 
-		bool ILexer::continueExecution(const uint32 sourceAt) const noexcept
+		bool ILexer::ContinuesExecution(const uint32 sourceAt) const noexcept
 		{
 			return sourceAt < _source.length();
 		}
 
-		char ILexer::getCh0(const uint32 sourceAt) const noexcept
+		char ILexer::GetCh0(const uint32 sourceAt) const noexcept
 		{
 			return _source.at(sourceAt);
 		}
 
-		char ILexer::getCh1(const uint32 sourceAt) const noexcept
+		char ILexer::GetCh1(const uint32 sourceAt) const noexcept
 		{
 			return (static_cast<uint64>(sourceAt) + 1 < _source.length()) ? _source.at(static_cast<uint64>(sourceAt) + 1) : 0;
 		}
 
-		char ILexer::getCh2(const uint32 sourceAt) const noexcept
+		char ILexer::GetCh2(const uint32 sourceAt) const noexcept
 		{
 			return (static_cast<uint64>(sourceAt) + 2 < _source.length()) ? _source.at(static_cast<uint64>(sourceAt) + 2) : 0;
 		}
 
-		void ILexer::executeInternalScanning(uint32& prevSourceAt, uint32& sourceAt)
+		void ILexer::ExecuteInternalScanning(uint32& prevSourceAt, uint32& sourceAt)
 		{
-			const char ch0 = getCh0(sourceAt);
-			const char ch1 = getCh1(sourceAt);
-			const char ch2 = getCh2(sourceAt);
+			const char ch0 = GetCh0(sourceAt);
+			const char ch1 = GetCh1(sourceAt);
+			const char ch2 = GetCh2(sourceAt);
 
 			uint32 advance = 0;
 			SymbolClassifier symbolClassifier = _defaultSymbolClassifier;
 			OperatorTableItem operatorTableItem;
 			GrouperTableItem grouperTableItem;
 
-			if (isDelimiter(ch0) == true)
+			if (IsDelimiter(ch0) == true)
 			{
 				symbolClassifier = SymbolClassifier::Delimiter;
 				advance = 1;
 			}
-			else if (isGrouper(ch0, grouperTableItem) == true)
+			else if (IsGrouper(ch0, grouperTableItem) == true)
 			{
-				symbolClassifier = getSymbolClassifierFromGrouperClassifier(grouperTableItem.getClassifier());
+				symbolClassifier = GetSymbolClassifierFromGrouperClassifier(grouperTableItem.GetClassifier());
 				advance = 1;
 			}
-			else if (isStringQuote(ch0) == true)
+			else if (IsStringQuote(ch0) == true)
 			{
 				symbolClassifier = SymbolClassifier::StringQuote;
 				advance = 1;
 			}
-			else if (isPunctuator(ch0, ch1, ch2, advance) == true)
+			else if (IsPunctuator(ch0, ch1, ch2, advance) == true)
 			{
 				symbolClassifier = SymbolClassifier::Punctuator;
 			}
-			else if (isStatementTerminator(ch0) == true)
+			else if (IsStatementTerminator(ch0) == true)
 			{
 				symbolClassifier = SymbolClassifier::StatementTerminator;
 				advance = 1;
 			}
-			else if (isOperator(ch0, ch1, operatorTableItem) == true)
+			else if (IsOperator(ch0, ch1, operatorTableItem) == true)
 			{
-				symbolClassifier = getSymbolClassifierFromOperatorClassifier(operatorTableItem.getClassifier());
-				advance = operatorTableItem.getLength();
+				symbolClassifier = GetSymbolClassifierFromOperatorClassifier(operatorTableItem.GetClassifier());
+				advance = operatorTableItem.GetLength();
 			}
-			else if (parsePlainEscaper() == true && isEscaper(ch0) == true)
+			else if (ParsePlainEscaper() == true && IsEscaper(ch0) == true)
 			{
 				symbolClassifier = SymbolClassifier::Escaper;
 				advance = 1;
 			}
 
-			advanceExecution(symbolClassifier, advance, prevSourceAt, sourceAt);
+			AdvanceExecution(symbolClassifier, advance, prevSourceAt, sourceAt);
 		}
 
-		void ILexer::advanceExecution(const SymbolClassifier symbolClassifier, const uint32 advance, uint32& prevSourceAt, uint32& sourceAt)
+		void ILexer::AdvanceExecution(const SymbolClassifier symbolClassifier, const uint32 advance, uint32& prevSourceAt, uint32& sourceAt)
 		{
 			if (advance > 0)
 			{
-				const char ch0 = getCh0(sourceAt);
-				const char ch1 = getCh1(sourceAt);
-				const char ch2 = getCh2(sourceAt);
+				const char ch0 = GetCh0(sourceAt);
+				const char ch1 = GetCh1(sourceAt);
+				const char ch2 = GetCh2(sourceAt);
 
 				const uint32 tokenLength = sourceAt - prevSourceAt;
 				if (symbolClassifier == SymbolClassifier::Delimiter)
@@ -495,7 +495,7 @@ namespace mint
 					}
 					else if (tokenLength == 1)
 					{
-						if (isDelimiter(_source.at(prevSourceAt)) == true)
+						if (IsDelimiter(_source.at(prevSourceAt)) == true)
 						{
 							prevSourceAt = sourceAt + 1;
 							++sourceAt;
@@ -508,11 +508,11 @@ namespace mint
 				{
 					std::string tokenString = _source.substr(prevSourceAt, tokenLength);
 					SymbolClassifier tokenSymbolClassifier = _defaultSymbolClassifier;
-					if (isNumber(tokenString) == true)
+					if (IsNumber(tokenString) == true)
 					{
 						tokenSymbolClassifier = SymbolClassifier::NumberLiteral;
 					}
-					else if (isKeyword(tokenString) == true)
+					else if (IsKeyword(tokenString) == true)
 					{
 						tokenSymbolClassifier = SymbolClassifier::Keyword;
 					}
@@ -536,14 +536,14 @@ namespace mint
 			++sourceAt;
 		}
 
-		void ILexer::endExecution()
+		void ILexer::EndExecution()
 		{
-			setStringLiterals();
+			SetStringLiterals();
 
-			setSymbolIndices();
+			SetSymbolIndices();
 		}
 
-		void ILexer::setStringLiterals()
+		void ILexer::SetStringLiterals()
 		{
 			// StringQuote 사이에 있는 SymbolClassifier 를 _defaultSymbolClassifier 에서 StringLiteral 로 바꿔준다!!
 			const uint32 symbolCount = _symbolTable.Size();
@@ -569,7 +569,7 @@ namespace mint
 			}
 		}
 
-		void ILexer::setSymbolIndices()
+		void ILexer::SetSymbolIndices()
 		{
 			const uint32 symbolCount = _symbolTable.Size();
 			for (uint32 symbolIndex = 0; symbolIndex < symbolCount; ++symbolIndex)
@@ -578,12 +578,12 @@ namespace mint
 			}
 		}
 
-		bool ILexer::isDelimiter(const char input) const noexcept
+		bool ILexer::IsDelimiter(const char input) const noexcept
 		{
 			return _delimiterUmap.Find(input).IsValid() == true;
 		}
 
-		bool ILexer::isLineSkipper(const char ch0, const char ch1, LineSkipperTableItem& out) const noexcept
+		bool ILexer::IsLineSkipper(const char ch0, const char ch1, LineSkipperTableItem& out) const noexcept
 		{
 			// 먼저 길이 2 LineSkipper 인지 확인 후
 			// 아니라면 길이 1 LineSkipper 인지 확인
@@ -605,12 +605,12 @@ namespace mint
 			return true;
 		}
 
-		bool ILexer::isStatementTerminator(const char input) const noexcept
+		bool ILexer::IsStatementTerminator(const char input) const noexcept
 		{
 			return (_statementTerminator == 0) ? false : (_statementTerminator == input);
 		}
 
-		bool ILexer::isGrouper(const char input, GrouperTableItem& out) const noexcept
+		bool ILexer::IsGrouper(const char input, GrouperTableItem& out) const noexcept
 		{
 			auto found = _grouperUmap.Find(input);
 			if (found.IsValid() == false)
@@ -622,12 +622,12 @@ namespace mint
 			return true;
 		}
 
-		bool ILexer::isStringQuote(const char input) const noexcept
+		bool ILexer::IsStringQuote(const char input) const noexcept
 		{
 			return _stringQuoteUmap.Find(input).IsValid() == true;
 		}
 
-		bool ILexer::isPunctuator(const char ch0, const char ch1, const char ch2, uint32& outAdvance) const noexcept
+		bool ILexer::IsPunctuator(const char ch0, const char ch1, const char ch2, uint32& outAdvance) const noexcept
 		{
 			const char keyString3[4]{ ch0, ch1, ch2, '\0' };
 			const uint64 key3 = ComputeHash(keyString3);
@@ -660,7 +660,7 @@ namespace mint
 			return false;
 		}
 
-		bool ILexer::isOperator(const char ch0, const char ch1, OperatorTableItem& out) const noexcept
+		bool ILexer::IsOperator(const char ch0, const char ch1, OperatorTableItem& out) const noexcept
 		{
 			// 먼저 길이 2 Operator 인지 확인 후
 			// 아니라면 길이 1 Operator 인지 확인
@@ -682,7 +682,7 @@ namespace mint
 			return true;
 		}
 
-		bool ILexer::isNumber(const std::string& input) const noexcept
+		bool ILexer::IsNumber(const std::string& input) const noexcept
 		{
 			if (input.empty() == true)
 			{
@@ -711,32 +711,32 @@ namespace mint
 			return false;
 		}
 
-		bool ILexer::isKeyword(const std::string& input) const noexcept
+		bool ILexer::IsKeyword(const std::string& input) const noexcept
 		{
 			return _keywordUmap.Find(ComputeHash(input.c_str())).IsValid() == true;
 		}
 
-		bool ILexer::isEscaper(const char input) const noexcept
+		bool ILexer::IsEscaper(const char input) const noexcept
 		{
 			return _escaper == input;
 		}
 
-		uint32 ILexer::getSymbolCount() const noexcept
+		uint32 ILexer::GetSymbolCount() const noexcept
 		{
 			return static_cast<uint32>(_symbolTable.Size());
 		}
 
-		const Vector<SymbolTableItem>& ILexer::getSymbolTable() const noexcept
+		const Vector<SymbolTableItem>& ILexer::GetSymbolTable() const noexcept
 		{
 			return _symbolTable;
 		}
 
-		const SymbolTableItem& ILexer::getSymbol(const uint32 symbolIndex) const noexcept
+		const SymbolTableItem& ILexer::GetSymbol(const uint32 symbolIndex) const noexcept
 		{
 			return _symbolTable[symbolIndex];
 		}
 
-		char ILexer::getGrouperClose(const char grouperOpen) const noexcept
+		char ILexer::GetGrouperClose(const char grouperOpen) const noexcept
 		{
 			return *_grouperOpenToCloseMap.Find(grouperOpen)._value;
 		}

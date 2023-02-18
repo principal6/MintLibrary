@@ -14,7 +14,7 @@ namespace mint
 	inline constexpr uint16 kMintLibraryVersionMajor = 1;
 	inline constexpr uint16 kMintLibraryVersionMinor = 0;
 
-	void Library::initialize() noexcept
+	void Library::Initialize() noexcept
 	{
 #ifdef MINT_DEBUG
 		_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
@@ -39,7 +39,7 @@ namespace mint
 			mint::Path::SetIncludeAssetDirectory("Assets/Include/");
 		}
 
-		printVersion();
+		PrintVersion();
 
 #if !defined MINT_DEBUG
 		HWND handleToConsoleWindow = ::GetConsoleWindow();
@@ -48,23 +48,23 @@ namespace mint
 #endif
 	}
 
-	uint16 Library::getVersionMajor() noexcept
+	uint16 Library::GetVersionMajor() noexcept
 	{
 		return kMintLibraryVersionMajor;
 	}
 
-	uint16 Library::getVersionMinor() noexcept
+	uint16 Library::GetVersionMinor() noexcept
 	{
 		return kMintLibraryVersionMinor;
 	}
 
-	void Library::printVersion() noexcept
+	void Library::PrintVersion() noexcept
 	{
 		MINT_LOG_UNTAGGED("> This is MintLibrary");
-		MINT_LOG_UNTAGGED("> Version %d.%02d\n", Library::getVersionMajor(), Library::getVersionMinor());
+		MINT_LOG_UNTAGGED("> Version %d.%02d\n", Library::GetVersionMajor(), Library::GetVersionMinor());
 	}
 
-	void Library::printCoordinateSystem() noexcept
+	void Library::PrintCoordinateSystem() noexcept
 	{
 		MINT_LOG_UNTAGGED("> [MintLibrary Coordinate System]");
 		MINT_LOG_UNTAGGED("  - MintLibrary uses a right-handed coordinate system");

@@ -25,7 +25,7 @@ namespace mint
 #pragma region TypeMetaData
 		template <typename CustomDataType>
 		inline TypeMetaData<CustomDataType>::TypeMetaData()
-			: _isBuiltIn{ false }
+			: _IsBuiltIn{ false }
 			, _size{ 0 }
 			, _byteOffset{ 0 }
 		{
@@ -33,96 +33,96 @@ namespace mint
 		}
 
 		template <typename CustomDataType>
-		MINT_INLINE const TypeMetaData<CustomDataType>& TypeMetaData<CustomDataType>::getInvalid() noexcept
+		MINT_INLINE const TypeMetaData<CustomDataType>& TypeMetaData<CustomDataType>::GetInvalid() noexcept
 		{
 			static const TypeMetaData<CustomDataType> kInvalid;
 			return kInvalid;
 		}
 
 		template <typename CustomDataType>
-		MINT_INLINE void TypeMetaData<CustomDataType>::setBaseData(const std::string& typeName, const bool isBuiltIn)
+		MINT_INLINE void TypeMetaData<CustomDataType>::SetBaseData(const std::string& typeName, const bool IsBuiltIn)
 		{
 			_typeName = typeName;
-			_isBuiltIn = isBuiltIn;
+			_IsBuiltIn = IsBuiltIn;
 		}
 
 		template <typename CustomDataType>
-		MINT_INLINE void TypeMetaData<CustomDataType>::setDeclName(const std::string& declName)
+		MINT_INLINE void TypeMetaData<CustomDataType>::SetDeclName(const std::string& declName)
 		{
 			_declName = declName;
 		}
 
 		template <typename CustomDataType>
-		MINT_INLINE void TypeMetaData<CustomDataType>::setSize(const uint32 size)
+		MINT_INLINE void TypeMetaData<CustomDataType>::SetSize(const uint32 size)
 		{
 			_size = size;
 		}
 
 		template <typename CustomDataType>
-		MINT_INLINE void TypeMetaData<CustomDataType>::setByteOffset(const uint32 byteOffset)
+		MINT_INLINE void TypeMetaData<CustomDataType>::SetByteOffset(const uint32 byteOffset)
 		{
 			_byteOffset = byteOffset;
 		}
 
 		template <typename CustomDataType>
-		MINT_INLINE void TypeMetaData<CustomDataType>::pushMember(const TypeMetaData<CustomDataType>& member)
+		MINT_INLINE void TypeMetaData<CustomDataType>::PushMember(const TypeMetaData<CustomDataType>& member)
 		{
 			_memberArray.PushBack(member);
 		}
 
 		template <typename CustomDataType>
-		MINT_INLINE bool TypeMetaData<CustomDataType>::isBuiltIn() const noexcept
+		MINT_INLINE bool TypeMetaData<CustomDataType>::IsBuiltIn() const noexcept
 		{
-			return _isBuiltIn;
+			return _IsBuiltIn;
 		}
 
 		template <typename CustomDataType>
-		MINT_INLINE const std::string& TypeMetaData<CustomDataType>::getTypeName() const noexcept
+		MINT_INLINE const std::string& TypeMetaData<CustomDataType>::GetTypeName() const noexcept
 		{
 			return _typeName;
 		}
 
 		template <typename CustomDataType>
-		MINT_INLINE const std::string& TypeMetaData<CustomDataType>::getDeclName() const noexcept
+		MINT_INLINE const std::string& TypeMetaData<CustomDataType>::GetDeclName() const noexcept
 		{
 			return _declName;
 		}
 
 		template <typename CustomDataType>
-		MINT_INLINE uint32 TypeMetaData<CustomDataType>::getSize() const noexcept
+		MINT_INLINE uint32 TypeMetaData<CustomDataType>::GetSize() const noexcept
 		{
 			return _size;
 		}
 
 		template <typename CustomDataType>
-		MINT_INLINE uint32 TypeMetaData<CustomDataType>::getByteOffset() const noexcept
+		MINT_INLINE uint32 TypeMetaData<CustomDataType>::GetByteOffset() const noexcept
 		{
 			return _byteOffset;
 		}
 
 		template <typename CustomDataType>
-		MINT_INLINE uint32 TypeMetaData<CustomDataType>::getMemberCount() const noexcept
+		MINT_INLINE uint32 TypeMetaData<CustomDataType>::GetMemberCount() const noexcept
 		{
 			return _memberArray.Size();
 		}
 
 		template <typename CustomDataType>
-		MINT_INLINE const TypeMetaData<CustomDataType>& TypeMetaData<CustomDataType>::getMember(const uint32 memberIndex) const noexcept
+		MINT_INLINE const TypeMetaData<CustomDataType>& TypeMetaData<CustomDataType>::GetMember(const uint32 memberIndex) const noexcept
 		{
-			return (memberIndex < getMemberCount()) ? _memberArray[memberIndex] : TypeMetaData<CustomDataType>::getInvalid();
+			return (memberIndex < GetMemberCount()) ? _memberArray[memberIndex] : TypeMetaData<CustomDataType>::GetInvalid();
 		}
 #pragma endregion
 
 
 #pragma region IParser
 		template <typename TypeCustomDataType, typename SyntaxClassifierType>
-		MINT_INLINE constexpr const char* IParser<TypeCustomDataType, SyntaxClassifierType>::convertErrorTypeToTypeString(const ErrorType errorType)
+		MINT_INLINE constexpr const char* IParser<TypeCustomDataType, SyntaxClassifierType>::ConvertErrorTypeToTypeString(const ErrorType errorType)
 		{
 			return kErrorTypeStringArray[static_cast<uint32>(errorType)][0];
 		}
 
 		template <typename TypeCustomDataType, typename SyntaxClassifierType>
-		MINT_INLINE constexpr const char* IParser<TypeCustomDataType, SyntaxClassifierType>::convertErrorTypeToContentString(const ErrorType errorType)
+		MINT_INLINE constexpr const char* IParser<TypeCustomDataType, SyntaxClassifierType>::ConvertErrorTypeToContentString(const ErrorType errorType)
 		{
 			return kErrorTypeStringArray[static_cast<uint32>(errorType)][1];
 		}
@@ -139,9 +139,9 @@ namespace mint
 			: _sourceAt{ symbolTableItem._sourceAt }
 		{
 			_message = "ERROR[";
-			_message += convertErrorTypeToTypeString(errorType);
+			_message += ConvertErrorTypeToTypeString(errorType);
 			_message += "] ";
-			_message += convertErrorTypeToContentString(errorType);
+			_message += ConvertErrorTypeToContentString(errorType);
 			_message += " \'";
 			_message += symbolTableItem._symbolString;
 			_message += "\' #[";
@@ -168,53 +168,53 @@ namespace mint
 		}
 
 		template <typename TypeCustomDataType, typename SyntaxClassifierType>
-		inline void IParser<TypeCustomDataType, SyntaxClassifierType>::registerTypeInternal(const std::string& typeFullName, const uint32 typeSize, const bool isBuiltIn) noexcept
+		inline void IParser<TypeCustomDataType, SyntaxClassifierType>::RegisterTypeInternal(const std::string& typeFullName, const uint32 typeSize, const bool IsBuiltIn) noexcept
 		{
 			TypeMetaData<TypeCustomDataType> typeMetaData;
-			typeMetaData.setBaseData(typeFullName, isBuiltIn);
-			typeMetaData.setSize(typeSize);
+			typeMetaData.SetBaseData(typeFullName, IsBuiltIn);
+			typeMetaData.SetSize(typeSize);
 			_typeMetaDatas.PushBack(typeMetaData);
 			_typeMetaDataMap.Insert(typeFullName, _typeMetaDatas.Size() - 1);
 		}
 
 		template <typename TypeCustomDataType, typename SyntaxClassifierType>
-		inline void IParser<TypeCustomDataType, SyntaxClassifierType>::reset()
+		inline void IParser<TypeCustomDataType, SyntaxClassifierType>::Reset()
 		{
 			_symbolAt = 0;
 		}
 
 		template <typename TypeCustomDataType, typename SyntaxClassifierType>
-		inline bool IParser<TypeCustomDataType, SyntaxClassifierType>::continueParsing() const noexcept
+		inline bool IParser<TypeCustomDataType, SyntaxClassifierType>::ContinuesParsing() const noexcept
 		{
 			return _symbolAt < _symbolTable.Size();
 		}
 
 		template <typename TypeCustomDataType, typename SyntaxClassifierType>
-		inline void IParser<TypeCustomDataType, SyntaxClassifierType>::advanceSymbolPositionXXX(const uint32 advanceCount)
+		inline void IParser<TypeCustomDataType, SyntaxClassifierType>::AdvanceSymbolPositionXXX(const uint32 advanceCount)
 		{
 			_symbolAt += Max(advanceCount, static_cast<uint32>(1));
 		}
 
 		template <typename TypeCustomDataType, typename SyntaxClassifierType>
-		inline bool IParser<TypeCustomDataType, SyntaxClassifierType>::hasSymbol(const uint32 symbolPosition) const noexcept
+		inline bool IParser<TypeCustomDataType, SyntaxClassifierType>::HasSymbol(const uint32 symbolPosition) const noexcept
 		{
 			return (symbolPosition < _symbolTable.Size());
 		}
 
 		template <typename TypeCustomDataType, typename SyntaxClassifierType>
-		inline uint32 IParser<TypeCustomDataType, SyntaxClassifierType>::getSymbolPosition() const noexcept
+		inline uint32 IParser<TypeCustomDataType, SyntaxClassifierType>::GetSymbolPosition() const noexcept
 		{
 			return _symbolAt;
 		}
 
 		template <typename TypeCustomDataType, typename SyntaxClassifierType>
-		inline SymbolTableItem& IParser<TypeCustomDataType, SyntaxClassifierType>::getSymbol(const uint32 symbolPosition) const noexcept
+		inline SymbolTableItem& IParser<TypeCustomDataType, SyntaxClassifierType>::GetSymbol(const uint32 symbolPosition) const noexcept
 		{
 			return _symbolTable[symbolPosition];
 		}
 
 		template <typename TypeCustomDataType, typename SyntaxClassifierType>
-		inline bool IParser<TypeCustomDataType, SyntaxClassifierType>::findNextSymbol(const uint32 symbolPosition, const char* const cmp, uint32& outSymbolPosition) const noexcept
+		inline bool IParser<TypeCustomDataType, SyntaxClassifierType>::FindNextSymbol(const uint32 symbolPosition, const char* const cmp, uint32& outSymbolPosition) const noexcept
 		{
 			for (uint32 symbolIter = symbolPosition + 1; symbolIter < _symbolTable.Size(); ++symbolIter)
 			{
@@ -229,7 +229,7 @@ namespace mint
 		}
 
 		template <typename TypeCustomDataType, typename SyntaxClassifierType>
-		inline bool IParser<TypeCustomDataType, SyntaxClassifierType>::findNextSymbol(const uint32 symbolPosition, const SymbolClassifier symbolClassifier, uint32& outSymbolPosition) const noexcept
+		inline bool IParser<TypeCustomDataType, SyntaxClassifierType>::FindNextSymbol(const uint32 symbolPosition, const SymbolClassifier symbolClassifier, uint32& outSymbolPosition) const noexcept
 		{
 			for (uint32 symbolIter = symbolPosition + 1; symbolIter < _symbolTable.Size(); ++symbolIter)
 			{
@@ -244,7 +244,7 @@ namespace mint
 		}
 
 		template <typename TypeCustomDataType, typename SyntaxClassifierType>
-		inline bool IParser<TypeCustomDataType, SyntaxClassifierType>::findNextSymbolEither(const uint32 symbolPosition, const char* const cmp0, const char* const cmp1, uint32& outSymbolPosition) const noexcept
+		inline bool IParser<TypeCustomDataType, SyntaxClassifierType>::FindNextSymbolEither(const uint32 symbolPosition, const char* const cmp0, const char* const cmp1, uint32& outSymbolPosition) const noexcept
 		{
 			for (uint32 symbolIter = symbolPosition + 1; symbolIter < _symbolTable.Size(); ++symbolIter)
 			{
@@ -259,9 +259,9 @@ namespace mint
 		}
 
 		template <typename TypeCustomDataType, typename SyntaxClassifierType>
-		inline bool IParser<TypeCustomDataType, SyntaxClassifierType>::findNextDepthMatchingGrouperCloseSymbol(const uint32 openSymbolPosition, uint32* const outCloseSymbolPosition) const noexcept
+		inline bool IParser<TypeCustomDataType, SyntaxClassifierType>::FindNextDepthMatchingGrouperCloseSymbol(const uint32 openSymbolPosition, uint32* const outCloseSymbolPosition) const noexcept
 		{
-			const SymbolTableItem& openSymbol = getSymbol(openSymbolPosition);
+			const SymbolTableItem& openSymbol = GetSymbol(openSymbolPosition);
 			if (openSymbol._symbolClassifier != SymbolClassifier::Grouper_Open)
 			{
 				MINT_ASSERT(false, "symbolPosition 에 있는 Symbol 은 Grouper_Open 이어야 합니다!!!");
@@ -269,7 +269,7 @@ namespace mint
 			}
 
 			int32 depth = 0;
-			const char grouperClose = _lexer.getGrouperClose(openSymbol._symbolString[0]);
+			const char grouperClose = _lexer.GetGrouperClose(openSymbol._symbolString[0]);
 			for (uint32 symbolIter = openSymbolPosition + 1; symbolIter < _symbolTable.Size(); ++symbolIter)
 			{
 				const SymbolTableItem& symbol = _symbolTable[symbolIter];
@@ -297,31 +297,31 @@ namespace mint
 		}
 
 		template <typename TypeCustomDataType, typename SyntaxClassifierType>
-		inline void IParser<TypeCustomDataType, SyntaxClassifierType>::reportError(const SymbolTableItem& symbolTableItem, const ErrorType errorType)
+		inline void IParser<TypeCustomDataType, SyntaxClassifierType>::ReportError(const SymbolTableItem& symbolTableItem, const ErrorType errorType)
 		{
 			_errorMessageArray.push_back(ErrorMessage(symbolTableItem, errorType));
 		}
 
 		template <typename TypeCustomDataType, typename SyntaxClassifierType>
-		inline void IParser<TypeCustomDataType, SyntaxClassifierType>::reportError(const SymbolTableItem& symbolTableItem, const ErrorType errorType, const char* const additionalExplanation)
+		inline void IParser<TypeCustomDataType, SyntaxClassifierType>::ReportError(const SymbolTableItem& symbolTableItem, const ErrorType errorType, const char* const additionalExplanation)
 		{
 			_errorMessageArray.push_back(ErrorMessage(symbolTableItem, errorType, additionalExplanation));
 		}
 
 		template <typename TypeCustomDataType, typename SyntaxClassifierType>
-		inline bool IParser<TypeCustomDataType, SyntaxClassifierType>::hasReportedErrors() const noexcept
+		inline bool IParser<TypeCustomDataType, SyntaxClassifierType>::HasReportedErrors() const noexcept
 		{
 			return !_errorMessageArray.IsEmpty();
 		}
 
 		template <typename TypeCustomDataType, typename SyntaxClassifierType>
-		inline uint32 IParser<TypeCustomDataType, SyntaxClassifierType>::getTypeMetaDataCount() const noexcept
+		inline uint32 IParser<TypeCustomDataType, SyntaxClassifierType>::GetTypeMetaDataCount() const noexcept
 		{
 			return _typeMetaDatas.Size();
 		}
 
 		template <typename TypeCustomDataType, typename SyntaxClassifierType>
-		inline const TypeMetaData<TypeCustomDataType>& IParser<TypeCustomDataType, SyntaxClassifierType>::getTypeMetaData(const std::string& typeName) const noexcept
+		inline const TypeMetaData<TypeCustomDataType>& IParser<TypeCustomDataType, SyntaxClassifierType>::GetTypeMetaData(const std::string& typeName) const noexcept
 		{
 			KeyValuePair found = _typeMetaDataMap.Find(typeName);
 			MINT_ASSERT(found.IsValid() == true, "Type[%s] 가 존재하지 않습니다!", typeName.c_str());
@@ -331,26 +331,26 @@ namespace mint
 		}
 
 		template <typename TypeCustomDataType, typename SyntaxClassifierType>
-		inline const TypeMetaData<TypeCustomDataType>& IParser<TypeCustomDataType, SyntaxClassifierType>::getTypeMetaData(const int32 typeIndex) const noexcept
+		inline const TypeMetaData<TypeCustomDataType>& IParser<TypeCustomDataType, SyntaxClassifierType>::GetTypeMetaData(const int32 typeIndex) const noexcept
 		{
 			return _typeMetaDatas[typeIndex];
 		}
 
 		template<typename TypeCustomDataType, typename SyntaxClassifierType>
-		inline bool IParser<TypeCustomDataType, SyntaxClassifierType>::existsTypeMetaData(const std::string& typeName) const noexcept
+		inline bool IParser<TypeCustomDataType, SyntaxClassifierType>::ExistsTypeMetaData(const std::string& typeName) const noexcept
 		{
 			return _typeMetaDataMap.Find(typeName).IsValid();
 		}
 
 		template<typename TypeCustomDataType, typename SyntaxClassifierType>
-		inline void IParser<TypeCustomDataType, SyntaxClassifierType>::pushTypeMetaData(const std::string& typeName, const TypeMetaData<TypeCustomDataType>& typeMetaData) noexcept
+		inline void IParser<TypeCustomDataType, SyntaxClassifierType>::PushTypeMetaData(const std::string& typeName, const TypeMetaData<TypeCustomDataType>& typeMetaData) noexcept
 		{
 			_typeMetaDatas.PushBack(typeMetaData);
 			_typeMetaDataMap.Insert(typeName, _typeMetaDatas.Size() - 1);
 		}
 
 		template <typename TypeCustomDataType, typename SyntaxClassifierType>
-		inline TypeMetaData<TypeCustomDataType>& IParser<TypeCustomDataType, SyntaxClassifierType>::accessTypeMetaData(const std::string& typeName) noexcept
+		inline TypeMetaData<TypeCustomDataType>& IParser<TypeCustomDataType, SyntaxClassifierType>::AccessTypeMetaData(const std::string& typeName) noexcept
 		{
 			KeyValuePair found = _typeMetaDataMap.Find(typeName);
 			MINT_ASSERT(found.IsValid() == true, "Type[%s] 가 존재하지 않습니다!", typeName.c_str());

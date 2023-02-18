@@ -9,23 +9,23 @@
 namespace mint
 {
 	template <typename T>
-	int32 binarySearchInternal(const Vector<T>& vec, const T& value, const int32 indexBegin, const int32 indexEnd);
+	int32 BinarySearchInternal(const Vector<T>& vec, const T& value, const int32 indexBegin, const int32 indexEnd);
 
 	template <typename T, typename ValueType, typename Evaluator>
-	int32 binarySearchInternal(const Vector<T>& vec, const ValueType& value, Evaluator evaluator, const int32 indexBegin, const int32 indexEnd);
+	int32 BinarySearchInternal(const Vector<T>& vec, const ValueType& value, Evaluator evaluator, const int32 indexBegin, const int32 indexEnd);
 
 	template<typename T, typename Comparator>
-	void quickSortInternal(Vector<T>& vector, const int32 front, const int32 back, Comparator comparator);
+	void QuickSortInternal(Vector<T>& vector, const int32 front, const int32 back, Comparator comparator);
 
 
 	template <typename T>
-	int32 binarySearch(const Vector<T>& vec, const T& value)
+	int32 BinarySearch(const Vector<T>& vec, const T& value)
 	{
 		if (vec.IsEmpty() == true)
 		{
 			return kInvalidIndexInt32;
 		}
-		const int32 resultIndex = binarySearchInternal(vec, value, 0, static_cast<int32>(vec.Size() - 1));
+		const int32 resultIndex = BinarySearchInternal(vec, value, 0, static_cast<int32>(vec.Size() - 1));
 		if (vec[resultIndex] == value)
 		{
 			return resultIndex;
@@ -34,7 +34,7 @@ namespace mint
 	}
 
 	template <typename T>
-	int32 binarySearchInternal(const Vector<T>& vec, const T& value, const int32 indexBegin, const int32 indexEnd)
+	int32 BinarySearchInternal(const Vector<T>& vec, const T& value, const int32 indexBegin, const int32 indexEnd)
 	{
 		if (indexEnd <= indexBegin)
 		{
@@ -48,22 +48,22 @@ namespace mint
 		}
 		else if (value < vec[indexMiddle])
 		{
-			return binarySearchInternal(vec, value, indexBegin, indexMiddle - 1); // indexMiddle 이 0 일 수 있다!
+			return BinarySearchInternal(vec, value, indexBegin, indexMiddle - 1); // indexMiddle 이 0 일 수 있다!
 		}
 		else
 		{
-			return binarySearchInternal(vec, value, indexMiddle + 1, indexEnd);
+			return BinarySearchInternal(vec, value, indexMiddle + 1, indexEnd);
 		}
 	}
 
 	template<typename T, typename ValueType, typename Evaluator>
-	int32 binarySearch(const Vector<T>& vec, const ValueType& value, Evaluator evaluator)
+	int32 BinarySearch(const Vector<T>& vec, const ValueType& value, Evaluator evaluator)
 	{
 		if (vec.IsEmpty() == true)
 		{
 			return kInvalidIndexInt32;
 		}
-		const int32 resultIndex = binarySearchInternal(vec, value, evaluator, 0, static_cast<int32>(vec.Size() - 1));
+		const int32 resultIndex = BinarySearchInternal(vec, value, evaluator, 0, static_cast<int32>(vec.Size() - 1));
 		if (vec[resultIndex] == value)
 		{
 			return resultIndex;
@@ -72,7 +72,7 @@ namespace mint
 	}
 
 	template <typename T, typename ValueType, typename Evaluator>
-	int32 binarySearchInternal(const Vector<T>& vec, const ValueType& value, Evaluator evaluator, const int32 indexBegin, const int32 indexEnd)
+	int32 BinarySearchInternal(const Vector<T>& vec, const ValueType& value, Evaluator evaluator, const int32 indexBegin, const int32 indexEnd)
 	{
 		if (indexEnd <= indexBegin)
 		{
@@ -86,24 +86,24 @@ namespace mint
 		}
 		else if (evaluator(vec[indexMiddle]) > value)
 		{
-			return binarySearchInternal(vec, value, evaluator, indexBegin, indexMiddle - 1); // indexMiddle 이 0 일 수 있다!
+			return BinarySearchInternal(vec, value, evaluator, indexBegin, indexMiddle - 1); // indexMiddle 이 0 일 수 있다!
 		}
 		else
 		{
-			return binarySearchInternal(vec, value, evaluator, indexMiddle + 1, indexEnd);
+			return BinarySearchInternal(vec, value, evaluator, indexMiddle + 1, indexEnd);
 		}
 	}
 
 	template<typename T, typename Comparator>
-	void quickSort(Vector<T>& vector, Comparator comparator)
+	void QuickSort(Vector<T>& vector, Comparator comparator)
 	{
 		const int32 begin = 0;
 		const int32 end = static_cast<int32>(vector.Size() - 1);
-		quickSortInternal(vector, begin, end, comparator);
+		QuickSortInternal(vector, begin, end, comparator);
 	}
 
 	template<typename T, typename Comparator>
-	void quickSortInternal(Vector<T>& vector, const int32 front, const int32 back, Comparator comparator)
+	void QuickSortInternal(Vector<T>& vector, const int32 front, const int32 back, Comparator comparator)
 	{
 		if (back <= front)
 		{
@@ -162,7 +162,7 @@ namespace mint
 			--right;
 		}
 
-		quickSortInternal(vector, front, pivot - 1, comparator);
-		quickSortInternal(vector, pivot, back, comparator);
+		QuickSortInternal(vector, front, pivot - 1, comparator);
+		QuickSortInternal(vector, pivot, back, comparator);
 	}
 }

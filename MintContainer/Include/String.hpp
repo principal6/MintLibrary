@@ -365,8 +365,8 @@ namespace mint
 	inline uint32 String<T>::Find(const T* const target, const uint32 offset) const noexcept
 	{
 		const uint32 sourceLength = Size();
-		const uint32 targetLength = StringUtil::Length(target);
-		if (sourceLength < offset + targetLength)
+		const uint32 tarGetLength = StringUtil::Length(target);
+		if (sourceLength < offset + tarGetLength)
 		{
 			return kStringNPos;
 		}
@@ -384,7 +384,7 @@ namespace mint
 				}
 
 				++targetIter;
-				if (targetIter == targetLength)
+				if (targetIter == tarGetLength)
 				{
 					break;
 				}

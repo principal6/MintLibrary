@@ -81,8 +81,8 @@ namespace mint
 			virtual bool isRunning() noexcept { return _isRunning; }
 
 		public:
-			virtual void setSize(const Int2& newSize, const bool onlyUpdateData) noexcept { _isWindowResized = true; }
-			const Int2& getSize() const noexcept { return _windowCreationDesc._size; }
+			virtual void SetSize(const Int2& newSize, const bool onlyUpdateData) noexcept { _isWindowResized = true; }
+			const Int2& GetSize() const noexcept { return _windowCreationDesc._size; }
 			MINT_INLINE bool isResized() const noexcept { bool result = _isWindowResized; _isWindowResized = false; return result; }
 
 			virtual void setPosition(const Int2& newPosition) abstract;

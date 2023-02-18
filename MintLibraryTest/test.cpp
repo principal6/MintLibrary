@@ -22,7 +22,7 @@ bool run3DTestWindow(mint::Platform::IWindow& window, mint::Rendering::GraphicDe
 
 int main()
 {
-	mint::Library::initialize();
+	mint::Library::Initialize();
 
 	using namespace mint;
 	using namespace Platform;
@@ -50,10 +50,10 @@ int main()
 	TestMath::test();
 	TestContainers::Test();
 	TestPlatform::test();
-	TestLanguage::test();
+	TestLanguage::Test();
 	TestReflection::test();
 	//TestRendering::test(graphicDevice);
-	TestLibrary::test();
+	TestLibrary::Test();
 #endif
 
 	//run2DTestWindow(window, graphicDevice);
@@ -153,12 +153,12 @@ bool run3DTestWindow(mint::Platform::IWindow& window, mint::Rendering::GraphicDe
 	Float4x4 testSkeletonWorldMatrix;
 	testSkeletonWorldMatrix.setTranslation(1.0f, 0.0f, -4.0f);
 	Float4x4 bindPoseLocalMatrix;
-	testSkeletonGenerator.createJoint(-1, "Root", bindPoseLocalMatrix);
+	testSkeletonGenerator.CreateJoint(-1, "Root", bindPoseLocalMatrix);
 	bindPoseLocalMatrix.setTranslation(1.0f, 0.0f, 0.0f);
-	testSkeletonGenerator.createJoint(0, "Elbow", bindPoseLocalMatrix);
+	testSkeletonGenerator.CreateJoint(0, "Elbow", bindPoseLocalMatrix);
 	bindPoseLocalMatrix.setTranslation(1.0f, 0.0f, 0.0f);
-	testSkeletonGenerator.createJoint(1, "Tip", bindPoseLocalMatrix);
-	testSkeletonGenerator.buildBindPoseModelSpace();
+	testSkeletonGenerator.CreateJoint(1, "Tip", bindPoseLocalMatrix);
+	testSkeletonGenerator.BuildBindPoseModelSpace();
 	Game::Skeleton testSkeleton(testSkeletonGenerator);
 
 	const Platform::InputContext& inputContext = Platform::InputContext::getInstance();
@@ -235,7 +235,7 @@ bool run3DTestWindow(mint::Platform::IWindow& window, mint::Rendering::GraphicDe
 		{
 			graphicDevice.beginRendering();
 
-			testSkeleton.renderSkeleton(instantRenderer, testSkeletonWorldMatrix);
+			testSkeleton.RenderSkeleton(instantRenderer, testSkeletonWorldMatrix);
 
 			graphicDevice.setViewProjectionMatrix(testCameraObject->getViewMatrix(), testCameraObject->getProjectionMatrix());
 

@@ -115,12 +115,12 @@ namespace mint
 			void beginOrdinalRenderCommands(const uint64 key) noexcept;
 			void endOrdinalRenderCommands() noexcept;
 			void setOrdinalRenderCommandGroupPriority(const uint64 key, const uint32 priority) noexcept;
-			void executeRenderCommands() noexcept;
+			void ExecuteRenderCommands() noexcept;
 
 		private:
 			bool mergeNewRenderCommand(const RenderCommand& newRenderCommand) noexcept;
 			void prepareBuffers() noexcept;
-			void executeRenderCommands_draw(const RenderCommand& renderCommand) const noexcept;
+			void ExecuteRenderCommands_draw(const RenderCommand& renderCommand) const noexcept;
 
 		private:
 			GraphicDevice& _graphicDevice;

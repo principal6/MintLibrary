@@ -280,7 +280,7 @@ namespace mint
 		}
 
 
-		GraphicDevice& GraphicDevice::getInvalidInstance()
+		GraphicDevice& GraphicDevice::GetInvalidInstance()
 		{
 			static Platform::WindowsWindow invalidWindow;
 			static GraphicDevice invalidInstance(invalidWindow);
@@ -305,7 +305,7 @@ namespace mint
 		bool GraphicDevice::initialize()
 		{
 			_clearColor = _window.getBackgroundColor();
-			_lastWindowSize = _window.getSize();
+			_lastWindowSize = _window.GetSize();
 
 			createDxDevice();
 
@@ -321,7 +321,7 @@ namespace mint
 
 		void GraphicDevice::updateScreenSize()
 		{
-			if (_window.getSize() == _lastWindowSize)
+			if (_window.GetSize() == _lastWindowSize)
 			{
 				return;
 			}
@@ -334,19 +334,19 @@ namespace mint
 			_swapChain->ResizeBuffers(0, 0, 0, DXGI_FORMAT::DXGI_FORMAT_UNKNOWN, 0);
 
 			initializeBackBuffer();
-			initializeDepthStencilBufferAndView(_window.getSize());
-			initializeFullScreenData(_window.getSize());
-			initialize2DProjectionMatrix(Float2(_window.getSize()));
+			initializeDepthStencilBufferAndView(_window.GetSize());
+			initializeFullScreenData(_window.GetSize());
+			initialize2DProjectionMatrix(Float2(_window.GetSize()));
 
 			setDefaultRenderTargetsAndDepthStencil();
 
-			_lastWindowSize = _window.getSize();
+			_lastWindowSize = _window.GetSize();
 		}
 
 		void GraphicDevice::createDxDevice()
 		{
 			const Platform::WindowsWindow& windowsWindow = static_cast<const Platform::WindowsWindow&>(_window);
-			const Int2& windowSize = windowsWindow.getSize();
+			const Int2& windowSize = windowsWindow.GetSize();
 
 			if (createSwapChain(windowSize, windowsWindow.getHandle()) == false)
 			{
@@ -515,7 +515,7 @@ namespace mint
 
 		void GraphicDevice::initializeShaderHeaderMemory()
 		{
-			const Int2 windowSize = _window.getSize();
+			const Int2 windowSize = _window.GetSize();
 
 			// Stream data
 			{
@@ -533,7 +533,7 @@ namespace mint
 				_shaderHeaderMemory.pushHeader("ShaderConstantBuffers", _cppHlslConstantBuffers.getHlslString());
 
 				{
-					const TypeMetaData<CppHlsl::TypeCustomData>& typeMetaData = _cppHlslConstantBuffers.getTypeMetaData(typeid(_cbViewData));
+					const TypeMetaData<CppHlsl::TypeCustomData>& typeMetaData = _cppHlslConstantBuffers.GetTypeMetaData(typeid(_cbViewData));
 					_cbViewID = _resourcePool.addConstantBuffer(&_cbViewData, sizeof(_cbViewData), typeMetaData._customData.getRegisterIndex());
 
 					DxResource& cbView = _resourcePool.getResource(_cbViewID);
@@ -544,7 +544,7 @@ namespace mint
 
 				{
 					CB_Transform cbTransformData;
-					const TypeMetaData<CppHlsl::TypeCustomData>& typeMetaData = _cppHlslConstantBuffers.getTypeMetaData(typeid(cbTransformData));
+					const TypeMetaData<CppHlsl::TypeCustomData>& typeMetaData = _cppHlslConstantBuffers.GetTypeMetaData(typeid(cbTransformData));
 					_cbTransformID = _resourcePool.addConstantBuffer(&cbTransformData, sizeof(cbTransformData), typeMetaData._customData.getRegisterIndex());
 				}
 
@@ -559,13 +559,13 @@ namespace mint
 
 				{
 					SB_Transform sbTransformData;
-					const TypeMetaData<CppHlsl::TypeCustomData>& typeMetaData = _cppHlslStructuredBuffers.getTypeMetaData(typeid(sbTransformData));
+					const TypeMetaData<CppHlsl::TypeCustomData>& typeMetaData = _cppHlslStructuredBuffers.GetTypeMetaData(typeid(sbTransformData));
 					_sbTransformID = _resourcePool.addStructuredBuffer(&sbTransformData, sizeof(sbTransformData), 1, typeMetaData._customData.getRegisterIndex());
 				}
 
 				{
 					SB_Material sbMaterialData;
-					const TypeMetaData<CppHlsl::TypeCustomData>& typeMetaData = _cppHlslStructuredBuffers.getTypeMetaData(typeid(sbMaterialData));
+					const TypeMetaData<CppHlsl::TypeCustomData>& typeMetaData = _cppHlslStructuredBuffers.GetTypeMetaData(typeid(sbMaterialData));
 					_sbMaterialID = _resourcePool.addStructuredBuffer(&sbMaterialData, sizeof(sbMaterialData), 1, typeMetaData._customData.getRegisterIndex());
 				}
 			}
@@ -751,7 +751,7 @@ namespace mint
 
 		const Int2& GraphicDevice::getWindowSize() const noexcept
 		{
-			return _window.getSize();
+			return _window.GetSize();
 		}
 
 		Float2 GraphicDevice::getWindowSizeFloat2() const noexcept

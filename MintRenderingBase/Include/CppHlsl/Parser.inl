@@ -73,7 +73,7 @@ namespace mint
 
 			MINT_INLINE const TypeMetaData<TypeCustomData>& TypeCustomData::getSlottedStreamData(const uint32 inputSlot) const noexcept
 			{
-				return (inputSlot < getSlottedStreamDataCount()) ? _slottedStreamDatas[inputSlot] : TypeMetaData<TypeCustomData>::getInvalid();
+				return (inputSlot < getSlottedStreamDataCount()) ? _slottedStreamDatas[inputSlot] : TypeMetaData<TypeCustomData>::GetInvalid();
 			}
 #pragma endregion
 		}

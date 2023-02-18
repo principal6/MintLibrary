@@ -40,10 +40,10 @@ namespace mint
 				const char* getHlslString() const noexcept;
 
 			public:
-				uint32 getTypeMetaDataCount() const noexcept;
-				const TypeMetaData<TypeCustomData>& getTypeMetaData(const uint32 typeIndex) const noexcept;
-				const TypeMetaData<TypeCustomData>& getTypeMetaData(const std::string& typeName) const noexcept;
-				const TypeMetaData<TypeCustomData>& getTypeMetaData(const std::type_info& stdTypeInfo) const noexcept;
+				uint32 GetTypeMetaDataCount() const noexcept;
+				const TypeMetaData<TypeCustomData>& GetTypeMetaData(const uint32 typeIndex) const noexcept;
+				const TypeMetaData<TypeCustomData>& GetTypeMetaData(const std::string& typeName) const noexcept;
+				const TypeMetaData<TypeCustomData>& GetTypeMetaData(const std::type_info& stdTypeInfo) const noexcept;
 
 			private:
 				Lexer _lexer;

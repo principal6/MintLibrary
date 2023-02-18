@@ -80,7 +80,7 @@ namespace mint
 				virtual ~Parser();
 
 			public:
-				virtual bool execute() override final;
+				virtual bool Execute() override final;
 
 			private:
 				bool parseCode(const uint32 symbolPosition, SyntaxTreeNode& currentNode, uint32& outAdvanceCount) noexcept;

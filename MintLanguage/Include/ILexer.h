@@ -62,8 +62,8 @@ namespace mint
 
 		static_assert(static_cast<uint32>(SymbolClassifier::OPERATOR_ENDS) - (static_cast<uint32>(SymbolClassifier::OPERATOR_BEGINS) + 1) == static_cast<uint32>(OperatorClassifier::COUNT));
 		static_assert(static_cast<uint32>(SymbolClassifier::GROUPER_ENDS) - (static_cast<uint32>(SymbolClassifier::GROUPER_BEGINS) + 1) == static_cast<uint32>(GrouperClassifier::COUNT));
-		static constexpr SymbolClassifier getSymbolClassifierFromOperatorClassifier(const OperatorClassifier operatorClassifier);
-		static constexpr SymbolClassifier getSymbolClassifierFromGrouperClassifier(const GrouperClassifier grouperClassifier);
+		static constexpr SymbolClassifier GetSymbolClassifierFromOperatorClassifier(const OperatorClassifier operatorClassifier);
+		static constexpr SymbolClassifier GetSymbolClassifierFromGrouperClassifier(const GrouperClassifier grouperClassifier);
 
 		struct GrouperTableItem
 		{
@@ -72,7 +72,7 @@ namespace mint
 			GrouperTableItem(const char input, const GrouperClassifier grouperClassifier);
 
 		public:
-			MINT_INLINE GrouperClassifier getClassifier() const noexcept { return _grouperClassifier; }
+			MINT_INLINE GrouperClassifier GetClassifier() const noexcept { return _grouperClassifier; }
 
 		private:
 			char _input;
@@ -86,8 +86,8 @@ namespace mint
 			OperatorTableItem(const char* const string, const OperatorClassifier operatorClassifier);
 
 		public:
-			MINT_INLINE uint32 getLength() const noexcept { return _length; }
-			MINT_INLINE OperatorClassifier getClassifier() const noexcept { return _operatorClassifier; }
+			MINT_INLINE uint32 GetLength() const noexcept { return _length; }
+			MINT_INLINE OperatorClassifier GetClassifier() const noexcept { return _operatorClassifier; }
 
 		private:
 			std::string _string;
@@ -102,11 +102,11 @@ namespace mint
 			LineSkipperTableItem(const char* const string, const LineSkipperSemantic lineSkipperSemantic, const LineSkipperClassifier lineSkipperClassifier, const uint16 groupID);
 
 		public:
-			MINT_INLINE bool isSameString(const LineSkipperTableItem& rhs) const noexcept { return _string == rhs._string; }
-			MINT_INLINE bool isSameGroup(const LineSkipperTableItem& rhs) const noexcept { return _groupID == rhs._groupID; }
-			MINT_INLINE bool checkSemantic(const LineSkipperSemantic lineSkipperSemantic) const noexcept { return _lineSkipperSemantic == lineSkipperSemantic; }
-			MINT_INLINE bool checkClassifier(const LineSkipperClassifier lineSkipperClassifier) const noexcept { return _lineSkipperClassifier == lineSkipperClassifier; }
-			MINT_INLINE LineSkipperClassifier getClassifier() const noexcept { return _lineSkipperClassifier; }
+			MINT_INLINE bool IsSameString(const LineSkipperTableItem& rhs) const noexcept { return _string == rhs._string; }
+			MINT_INLINE bool IsSameGroup(const LineSkipperTableItem& rhs) const noexcept { return _groupID == rhs._groupID; }
+			MINT_INLINE bool CheckSemantic(const LineSkipperSemantic lineSkipperSemantic) const noexcept { return _lineSkipperSemantic == lineSkipperSemantic; }
+			MINT_INLINE bool CheckClassifier(const LineSkipperClassifier lineSkipperClassifier) const noexcept { return _lineSkipperClassifier == lineSkipperClassifier; }
+			MINT_INLINE LineSkipperClassifier GetClassifier() const noexcept { return _lineSkipperClassifier; }
 
 		private:
 			std::string _string;
@@ -129,64 +129,64 @@ namespace mint
 			virtual ~ILexer() = default;
 
 		public:
-			void setSource(const std::string& source);
+			void SetSource(const std::string& source);
 
 		protected:
-			void setEscaper(const char escaper);
-			void setStatementTerminator(const char statementTerminator);
-			void registerDelimiter(const char delimiter);
-			void registerLineSkipper(const char* const lineSkipperOpen, const char* const lineSkipperClose, const LineSkipperSemantic lineSkipperSemantic);
-			void registerLineSkipper(const char* const lineSkipper, const LineSkipperSemantic lineSkipperSemantic);
-			void registerKeyword(const char* const keyword);
-			void registerGrouper(const char grouperOpen, const char grouperClose);
-			void registerStringQuote(const char stringQuote);
-			void registerPunctuator(const char* const punctuator);
-			void registerOperator(const char* const operator_, const OperatorClassifier operatorClassifier);
+			void SetEscaper(const char escaper);
+			void SetStatementTerminator(const char statementTerminator);
+			void RegisterDelimiter(const char delimiter);
+			void RegisterLineSkipper(const char* const lineSkipperOpen, const char* const lineSkipperClose, const LineSkipperSemantic lineSkipperSemantic);
+			void RegisterLineSkipper(const char* const lineSkipper, const LineSkipperSemantic lineSkipperSemantic);
+			void RegisterKeyword(const char* const keyword);
+			void RegisterGrouper(const char grouperOpen, const char grouperClose);
+			void RegisterStringQuote(const char stringQuote);
+			void RegisterPunctuator(const char* const punctuator);
+			void RegisterOperator(const char* const operator_, const OperatorClassifier operatorClassifier);
 
 		private:
-			uint16 getLineSkipperNextGroupID() noexcept;
+			uint16 GetLineSkipperNextGroupID() noexcept;
 
 		protected:
-			virtual bool execute() noexcept abstract;
-			bool executeDefault() noexcept;
+			virtual bool Execute() noexcept abstract;
+			bool ExecuteDefault() noexcept;
 
 		protected:
-			bool continueExecution(const uint32 sourceAt) const noexcept;
-			char getCh0(const uint32 sourceAt) const noexcept;
-			char getCh1(const uint32 sourceAt) const noexcept;
-			char getCh2(const uint32 sourceAt) const noexcept;
-			void executeInternalScanning(uint32& prevSourceAt, uint32& sourceAt);
+			bool ContinuesExecution(const uint32 sourceAt) const noexcept;
+			char GetCh0(const uint32 sourceAt) const noexcept;
+			char GetCh1(const uint32 sourceAt) const noexcept;
+			char GetCh2(const uint32 sourceAt) const noexcept;
+			void ExecuteInternalScanning(uint32& prevSourceAt, uint32& sourceAt);
 
 		private:
-			void advanceExecution(const SymbolClassifier symbolClassifier, const uint32 advance, uint32& prevSourceAt, uint32& sourceAt);
+			void AdvanceExecution(const SymbolClassifier symbolClassifier, const uint32 advance, uint32& prevSourceAt, uint32& sourceAt);
 
 		protected:
-			void endExecution();
+			void EndExecution();
 
 		private:
-			void setStringLiterals();
-			void setSymbolIndices();
+			void SetStringLiterals();
+			void SetSymbolIndices();
 
 		protected:
-			bool isDelimiter(const char input) const noexcept;
-			bool isLineSkipper(const char ch0, const char ch1, LineSkipperTableItem& out) const noexcept;
-			bool isStatementTerminator(const char input) const noexcept;
-			bool isGrouper(const char input, GrouperTableItem& out) const noexcept;
-			bool isStringQuote(const char input) const noexcept;
-			bool isPunctuator(const char ch0, const char ch1, const char ch2, uint32& outAdvance) const noexcept;
-			bool isOperator(const char ch0, const char ch1, OperatorTableItem& out) const noexcept;
-			bool isNumber(const std::string& input) const noexcept;
-			bool isKeyword(const std::string& input) const noexcept;
-			bool isEscaper(const char input) const noexcept;
-			MINT_INLINE void setParsePlainEscaper(const bool value) noexcept { _parsePlainEscaper = value; }
-			MINT_INLINE bool parsePlainEscaper() const noexcept { return _parsePlainEscaper; }
-			MINT_INLINE void setDefaultSymbolClassifier(const SymbolClassifier defaultSymbolClassifier) noexcept { _defaultSymbolClassifier = defaultSymbolClassifier; }
+			bool IsDelimiter(const char input) const noexcept;
+			bool IsLineSkipper(const char ch0, const char ch1, LineSkipperTableItem& out) const noexcept;
+			bool IsStatementTerminator(const char input) const noexcept;
+			bool IsGrouper(const char input, GrouperTableItem& out) const noexcept;
+			bool IsStringQuote(const char input) const noexcept;
+			bool IsPunctuator(const char ch0, const char ch1, const char ch2, uint32& outAdvance) const noexcept;
+			bool IsOperator(const char ch0, const char ch1, OperatorTableItem& out) const noexcept;
+			bool IsNumber(const std::string& input) const noexcept;
+			bool IsKeyword(const std::string& input) const noexcept;
+			bool IsEscaper(const char input) const noexcept;
+			MINT_INLINE void SetParsePlainEscaper(const bool value) noexcept { _parsePlainEscaper = value; }
+			MINT_INLINE bool ParsePlainEscaper() const noexcept { return _parsePlainEscaper; }
+			MINT_INLINE void SetDefaultSymbolClassifier(const SymbolClassifier defaultSymbolClassifier) noexcept { _defaultSymbolClassifier = defaultSymbolClassifier; }
 
 		public:
-			const Vector<SymbolTableItem>& getSymbolTable() const noexcept;
-			uint32 getSymbolCount() const noexcept;
-			const SymbolTableItem& getSymbol(const uint32 symbolIndex) const noexcept;
-			char getGrouperClose(const char grouperOpen) const noexcept;
+			const Vector<SymbolTableItem>& GetSymbolTable() const noexcept;
+			uint32 GetSymbolCount() const noexcept;
+			const SymbolTableItem& GetSymbol(const uint32 symbolIndex) const noexcept;
+			char GetGrouperClose(const char grouperOpen) const noexcept;
 
 		protected:
 			std::string _source;

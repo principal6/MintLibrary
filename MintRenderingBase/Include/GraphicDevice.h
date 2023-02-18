@@ -127,7 +127,7 @@ namespace mint
 			friend StateManager;
 
 		public:
-			static GraphicDevice& getInvalidInstance();
+			static GraphicDevice& GetInvalidInstance();
 
 		public:
 			GraphicDevice(Platform::IWindow& window);

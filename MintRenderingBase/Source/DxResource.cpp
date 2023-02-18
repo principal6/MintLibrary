@@ -11,7 +11,7 @@ namespace mint
 {
 	namespace Rendering
 	{
-		DxResource DxResource::s_invalidInstance(GraphicDevice::getInvalidInstance());
+		DxResource DxResource::s_invalidInstance(GraphicDevice::GetInvalidInstance());
 		DXGI_FORMAT DxResource::getDxgiFormat(const DxTextureFormat format)
 		{
 			switch (format)
@@ -390,7 +390,7 @@ namespace mint
 
 				const GraphicObjectID graphicObjectID = resource.getID();
 				_resourceArray.PushBack(std::move(resource));
-				quickSort(_resourceArray, GraphicObject::AscendingComparator());
+				QuickSort(_resourceArray, GraphicObject::AscendingComparator());
 				return graphicObjectID;
 			}
 			MINT_ASSERT(false, "addConstantBuffer 에 실패했습니다!");
@@ -407,7 +407,7 @@ namespace mint
 
 				const GraphicObjectID graphicObjectID = resource.getID();
 				_resourceArray.PushBack(std::move(resource));
-				quickSort(_resourceArray, GraphicObject::AscendingComparator());
+				QuickSort(_resourceArray, GraphicObject::AscendingComparator());
 				return graphicObjectID;
 			}
 
@@ -425,7 +425,7 @@ namespace mint
 
 				const GraphicObjectID graphicObjectID = resource.getID();
 				_resourceArray.PushBack(std::move(resource));
-				quickSort(_resourceArray, GraphicObject::AscendingComparator());
+				QuickSort(_resourceArray, GraphicObject::AscendingComparator());
 				return graphicObjectID;
 			}
 
@@ -444,7 +444,7 @@ namespace mint
 
 				const GraphicObjectID graphicObjectID = resource.getID();
 				_resourceArray.PushBack(std::move(resource));
-				quickSort(_resourceArray, GraphicObject::AscendingComparator());
+				QuickSort(_resourceArray, GraphicObject::AscendingComparator());
 				return graphicObjectID;
 			}
 
@@ -462,7 +462,7 @@ namespace mint
 				
 				const GraphicObjectID graphicObjectID = resource.getID();
 				_resourceArray.PushBack(std::move(resource));
-				quickSort(_resourceArray, GraphicObject::AscendingComparator());
+				QuickSort(_resourceArray, GraphicObject::AscendingComparator());
 				return graphicObjectID;
 			}
 
@@ -492,7 +492,7 @@ namespace mint
 		{
 			MINT_ASSERT(objectID.isObjectType(GraphicObjectType::Resource) == true, "Invalid parameter - ObjectType !!");
 
-			const int32 index = binarySearch(_resourceArray, objectID, GraphicObject::Evaluator());
+			const int32 index = BinarySearch(_resourceArray, objectID, GraphicObject::Evaluator());
 			if (IsValidIndex(index) == false)
 			{
 				MINT_ASSERT(false, "Resource 를 찾지 못했습니다!!!");

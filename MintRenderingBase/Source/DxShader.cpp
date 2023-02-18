@@ -56,7 +56,7 @@ namespace mint
 
 
 #pragma region GraphicInputLayout
-		const GraphicInputLayout GraphicInputLayout::kNullInstance{ GraphicDevice::getInvalidInstance() };
+		const GraphicInputLayout GraphicInputLayout::kNullInstance{ GraphicDevice::GetInvalidInstance() };
 		GraphicInputLayout::GraphicInputLayout(GraphicDevice& graphicDevice)
 			: GraphicObject(graphicDevice, GraphicObjectType::InputLayout)
 		{
@@ -76,7 +76,7 @@ namespace mint
 
 
 #pragma region DxShader
-		const DxShader DxShader::kNullInstance{ GraphicDevice::getInvalidInstance(), GraphicShaderType::VertexShader };
+		const DxShader DxShader::kNullInstance{ GraphicDevice::GetInvalidInstance(), GraphicShaderType::VertexShader };
 		DxShader::DxShader(GraphicDevice& graphicDevice, const GraphicShaderType shaderType)
 			: GraphicObject(graphicDevice, GraphicObjectType::Shader), _shaderType{ shaderType }
 		{
@@ -213,7 +213,7 @@ namespace mint
 			shader.assignIDXXX();
 			const GraphicObjectID graphicObjectID = shader.getID();
 			accessShaders(shaderType).PushBack(std::move(shader));
-			quickSort(accessShaders(shaderType), GraphicObject::AscendingComparator());
+			QuickSort(accessShaders(shaderType), GraphicObject::AscendingComparator());
 			return graphicObjectID;
 		}
 
@@ -228,7 +228,7 @@ namespace mint
 			inputLayout.assignIDXXX();
 			const GraphicObjectID graphicObjectID = inputLayout.getID();
 			_inputLayouts.PushBack(std::move(inputLayout));
-			quickSort(_inputLayouts, GraphicObject::AscendingComparator());
+			QuickSort(_inputLayouts, GraphicObject::AscendingComparator());
 			return graphicObjectID;
 		}
 
@@ -274,10 +274,10 @@ namespace mint
 			outInputLayout._inputElementSet._inputElementDescriptorArray.Clear();
 
 			{
-				const uint32 memberCount = inputElementTypeMetaData.getMemberCount();
+				const uint32 memberCount = inputElementTypeMetaData.GetMemberCount();
 				for (uint32 memberIndex = 0; memberIndex < memberCount; ++memberIndex)
 				{
-					const TypeMetaData<TypeCustomData>& memberTypeMetaData = inputElementTypeMetaData.getMember(memberIndex);
+					const TypeMetaData<TypeCustomData>& memberTypeMetaData = inputElementTypeMetaData.GetMember(memberIndex);
 					pushInputElement(outInputLayout._inputElementSet, inputElementTypeMetaData, memberTypeMetaData);
 				}
 			}
@@ -287,17 +287,17 @@ namespace mint
 			for (uint32 slottedStreamDataIndex = 0; slottedStreamDataIndex < slottedStreamDataCount; ++slottedStreamDataIndex)
 			{
 				const TypeMetaData<TypeCustomData>& slottedStreamData = inputElementTypeMetaData._customData.getSlottedStreamData(slottedStreamDataIndex);
-				const uint32 memberCount = slottedStreamData.getMemberCount();
+				const uint32 memberCount = slottedStreamData.GetMemberCount();
 				for (uint32 memberIndex = 0; memberIndex < memberCount; ++memberIndex)
 				{
-					pushInputElement(outInputLayout._inputElementSet, slottedStreamData, slottedStreamData.getMember(memberIndex));
+					pushInputElement(outInputLayout._inputElementSet, slottedStreamData, slottedStreamData.GetMember(memberIndex));
 				}
 			}
 
 			if (FAILED(_graphicDevice.getDxDevice()->CreateInputLayout(outInputLayout._inputElementSet._inputElementDescriptorArray.Data(), static_cast<UINT>(outInputLayout._inputElementSet._inputElementDescriptorArray.Size()),
 				vertexShader._shaderBlob->GetBufferPointer(), vertexShader._shaderBlob->GetBufferSize(), outInputLayout._inputLayout.ReleaseAndGetAddressOf())))
 			{
-				MINT_LOG_ERROR("VertexShader [[%s]] 의 InputLayout 생성에 실패했습니다. Input 자료형 으로 [[%s]] 을 쓰는게 맞는지 확인해 주세요.", vertexShader._hlslFileName.c_str(), inputElementTypeMetaData.getTypeName().c_str());
+				MINT_LOG_ERROR("VertexShader [[%s]] 의 InputLayout 생성에 실패했습니다. Input 자료형 으로 [[%s]] 을 쓰는게 맞는지 확인해 주세요.", vertexShader._hlslFileName.c_str(), inputElementTypeMetaData.GetTypeName().c_str());
 				return false;
 			}
 			return true;
@@ -305,14 +305,14 @@ namespace mint
 
 		void DxShaderPool::pushInputElement(DxInputElementSet& inputElementSet, const TypeMetaData<TypeCustomData>& outerDataTypeMetaData, const TypeMetaData<TypeCustomData>& memberTypeMetaData)
 		{
-			inputElementSet._semanticNameArray.PushBack(Language::CppHlsl::Parser::convertDeclarationNameToHlslSemanticName(memberTypeMetaData.getDeclName()));
+			inputElementSet._semanticNameArray.PushBack(Language::CppHlsl::Parser::convertDeclarationNameToHlslSemanticName(memberTypeMetaData.GetDeclName()));
 
 			D3D11_INPUT_ELEMENT_DESC inputElementDescriptor;
 			inputElementDescriptor.SemanticName = inputElementSet._semanticNameArray.Back().c_str();
 			inputElementDescriptor.SemanticIndex = 0;
 			inputElementDescriptor.Format = Language::CppHlsl::Parser::convertCppHlslTypeToDxgiFormat(memberTypeMetaData);
 			inputElementDescriptor.InputSlot = memberTypeMetaData._customData.getInputSlot();
-			inputElementDescriptor.AlignedByteOffset = memberTypeMetaData.getByteOffset();
+			inputElementDescriptor.AlignedByteOffset = memberTypeMetaData.GetByteOffset();
 			inputElementDescriptor.InputSlotClass = D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA;
 			inputElementDescriptor.InstanceDataStepRate = outerDataTypeMetaData._customData.getInstanceDataStepRate();
 			if (inputElementDescriptor.InstanceDataStepRate > 0)
@@ -541,13 +541,13 @@ namespace mint
 		{
 			MINT_ASSERT(shaderType != GraphicShaderType::COUNT, "Invalid parameter - check ShaderType");
 			MINT_ASSERT(objectID.isObjectType(GraphicObjectType::Shader) == true, "Invalid parameter - check ObjectType");
-			return binarySearch(getShaders(shaderType), objectID, GraphicObject::Evaluator());
+			return BinarySearch(getShaders(shaderType), objectID, GraphicObject::Evaluator());
 		}
 
 		int32 DxShaderPool::getInputLayoutIndex(const GraphicObjectID& objectID) const
 		{
 			MINT_ASSERT(objectID.isObjectType(GraphicObjectType::InputLayout) == true, "Invalid parameter - check ObjectType");
-			return binarySearch(_inputLayouts, objectID, GraphicObject::Evaluator());
+			return BinarySearch(_inputLayouts, objectID, GraphicObject::Evaluator());
 		}
 
 		uint32 DxShaderPool::getShaderCount(const GraphicShaderType shaderType) const

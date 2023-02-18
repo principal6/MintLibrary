@@ -88,10 +88,10 @@ namespace mint
 			virtual bool isRunning() noexcept override;
 
 		public:
-			virtual void setSize(const Int2& newSize, const bool onlyUpdateData) noexcept override final;
+			virtual void SetSize(const Int2& newSize, const bool onlyUpdateData) noexcept override final;
 
 		private:
-			void setSizeData(const Int2& newSize);
+			void SetSizeData(const Int2& newSize);
 
 		public:
 			virtual void setPosition(const Int2& newPosition) override final;

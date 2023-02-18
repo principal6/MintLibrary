@@ -144,7 +144,7 @@ namespace mint
 				return;
 			}
 
-			quickSort(_glyphRanges, ComparatorAscending<GlyphRange>());
+			QuickSort(_glyphRanges, ComparatorAscending<GlyphRange>());
 
 			Vector<uint32> deletionList;
 			for (uint32 glyphRangeIndex = 1; glyphRangeIndex < glyphRangeCount; ++glyphRangeIndex)

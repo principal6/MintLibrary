@@ -162,7 +162,7 @@ namespace mint
 				const float theta = ::atan2f(-v._y, v._x);
 				angleIndices.PushBack(AngleIndex(theta, pointIndex));
 			}
-			quickSort(angleIndices, AngleIndexComparator());
+			QuickSort(angleIndices, AngleIndexComparator());
 			Vector<Float2> orderedPoints;
 			orderedPoints.PushBack(startPoint);
 			for (const AngleIndex& angleIndex : angleIndices)

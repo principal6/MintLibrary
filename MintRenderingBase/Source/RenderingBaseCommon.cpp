@@ -25,7 +25,7 @@ namespace mint
 
 
 #pragma region ByteColorImage
-		void ByteColorImage::setSize(const Int2& size)
+		void ByteColorImage::SetSize(const Int2& size)
 		{
 			_size = size;
 			_pixels.Resize(_size._x * _size._y);
@@ -119,7 +119,7 @@ namespace mint
 			}
 
 			const Int2 byteColorImagePosition = pushColorImage_computeByteColorImagePosition(byteColorImage);
-			const Int2 byteColorImageSize = byteColorImage.getSize();
+			const Int2 byteColorImageSize = byteColorImage.GetSize();
 			_byteColorImagePositions.PushBack(byteColorImagePosition);
 			_byteColorImageSizes.PushBack(byteColorImageSize);
 			_byteColorImages.PushBack(std::move(byteColorImage));
@@ -137,7 +137,7 @@ namespace mint
 
 			const Int2 byteColorImagePosition = pushColorImage_computeByteColorImagePosition(byteColorImage);
 			_byteColorImagePositions.PushBack(byteColorImagePosition);
-			_byteColorImageSizes.PushBack(byteColorImage.getSize());
+			_byteColorImageSizes.PushBack(byteColorImage.GetSize());
 			_byteColorImages.PushBack(byteColorImage);
 			_height = Max(_height, byteColorImagePosition._y + byteColorImage.getHeight());
 			return static_cast<int32>(_byteColorImages.Size() - 1);
@@ -255,13 +255,13 @@ namespace mint
 			return *this;
 		}
 
-		void ColorImage::setSize(const Int2& size) noexcept
+		void ColorImage::SetSize(const Int2& size) noexcept
 		{
 			_size = size;
 			_colors.Resize(_size._x * _size._y);
 		}
 
-		const Int2& ColorImage::getSize() const noexcept
+		const Int2& ColorImage::GetSize() const noexcept
 		{
 			return _size;
 		}

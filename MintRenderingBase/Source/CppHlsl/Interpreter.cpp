@@ -28,10 +28,10 @@ namespace mint
 					return;
 				}
 
-				_lexer.setSource(textFileReader.get());
-				_lexer.execute();
+				_lexer.SetSource(textFileReader.get());
+				_lexer.Execute();
 
-				_parser.execute();
+				_parser.Execute();
 			}
 
 			void Interpreter::generateHlslString(const CppHlslFileType fileType)
@@ -40,13 +40,13 @@ namespace mint
 
 				_hlslString.clear();
 
-				const uint32 typeMetaDataCount = _parser.getTypeMetaDataCount();
+				const uint32 typeMetaDataCount = _parser.GetTypeMetaDataCount();
 				if (_fileType == CppHlslFileType::StructuredBuffers)
 				{
 					for (uint32 typeMetaDataIndex = 0; typeMetaDataIndex < typeMetaDataCount; ++typeMetaDataIndex)
 					{
-						const TypeMetaData<TypeCustomData>& typeMetaData = _parser.getTypeMetaData(typeMetaDataIndex);
-						if (typeMetaData.isBuiltIn() == true)
+						const TypeMetaData<TypeCustomData>& typeMetaData = _parser.GetTypeMetaData(typeMetaDataIndex);
+						if (typeMetaData.IsBuiltIn() == true)
 						{
 							continue;
 						}
@@ -59,8 +59,8 @@ namespace mint
 				uint32 structuredBufferIndex = 0;
 				for (uint32 typeMetaDataIndex = 0; typeMetaDataIndex < typeMetaDataCount; ++typeMetaDataIndex)
 				{
-					const TypeMetaData<TypeCustomData>& typeMetaData = _parser.getTypeMetaData(typeMetaDataIndex);
-					if (typeMetaData.isBuiltIn() == true)
+					const TypeMetaData<TypeCustomData>& typeMetaData = _parser.GetTypeMetaData(typeMetaDataIndex);
+					if (typeMetaData.IsBuiltIn() == true)
 					{
 						continue;
 					}
@@ -88,22 +88,22 @@ namespace mint
 				return _hlslString.c_str();
 			}
 
-			uint32 Interpreter::getTypeMetaDataCount() const noexcept
+			uint32 Interpreter::GetTypeMetaDataCount() const noexcept
 			{
-				return _parser.getTypeMetaDataCount();
+				return _parser.GetTypeMetaDataCount();
 			}
 
-			const TypeMetaData<TypeCustomData>& Interpreter::getTypeMetaData(const uint32 typeIndex) const noexcept
+			const TypeMetaData<TypeCustomData>& Interpreter::GetTypeMetaData(const uint32 typeIndex) const noexcept
 			{
-				return _parser.getTypeMetaData(typeIndex);
+				return _parser.GetTypeMetaData(typeIndex);
 			}
 
-			const TypeMetaData<TypeCustomData>& Interpreter::getTypeMetaData(const std::string& typeName) const noexcept
+			const TypeMetaData<TypeCustomData>& Interpreter::GetTypeMetaData(const std::string& typeName) const noexcept
 			{
-				return _parser.getTypeMetaData(typeName);
+				return _parser.GetTypeMetaData(typeName);
 			}
 
-			const TypeMetaData<TypeCustomData>& Interpreter::getTypeMetaData(const std::type_info& stdTypeInfo) const noexcept
+			const TypeMetaData<TypeCustomData>& Interpreter::GetTypeMetaData(const std::type_info& stdTypeInfo) const noexcept
 			{
 				std::string stdTypeName = stdTypeInfo.name();
 				const uint64 firstSpacePosition = stdTypeName.find(' ');
@@ -111,7 +111,7 @@ namespace mint
 				{
 					stdTypeName = stdTypeName.substr(firstSpacePosition + 1);
 				}
-				return getTypeMetaData(stdTypeName);
+				return GetTypeMetaData(stdTypeName);
 			}
 		}
 	}

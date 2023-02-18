@@ -93,8 +93,8 @@ namespace mint
 		class ByteColorImage
 		{
 		public:
-			void setSize(const Int2& size);
-			const Int2& getSize() const { return _size; }
+			void SetSize(const Int2& size);
+			const Int2& GetSize() const { return _size; }
 			int32 getWidth() const { return _size._x; }
 			int32 getHeight() const { return _size._y; }
 
@@ -261,8 +261,8 @@ namespace mint
 			ColorImage& operator=(ColorImage&& rhs) noexcept;
 
 		public:
-			void setSize(const Int2& size) noexcept;
-			const Int2& getSize() const noexcept;
+			void SetSize(const Int2& size) noexcept;
+			const Int2& GetSize() const noexcept;
 			int32 getWidth() const noexcept { return _size._x; }
 			int32 getHeight() const noexcept { return _size._y; }
 

@@ -142,7 +142,7 @@ namespace mint
 			::GetWindowRect(_hWnd, &rawWindowRect);
 			_windowCreationDesc._position.set(rawWindowRect.left, rawWindowRect.top);
 
-			setSize(_windowCreationDesc._size, false);
+			SetSize(_windowCreationDesc._size, false);
 
 			::ShowWindow(_hWnd, SW_SHOWDEFAULT);
 
@@ -284,11 +284,11 @@ namespace mint
 			return __super::isRunning();
 		}
 
-		void WindowsWindow::setSize(const Int2& newSize, const bool onlyUpdateData) noexcept
+		void WindowsWindow::SetSize(const Int2& newSize, const bool onlyUpdateData) noexcept
 		{
-			__super::setSize(newSize, onlyUpdateData);
+			__super::SetSize(newSize, onlyUpdateData);
 
-			setSizeData(newSize);
+			SetSizeData(newSize);
 
 			if (onlyUpdateData)
 			{
@@ -298,7 +298,7 @@ namespace mint
 			::SetWindowPos(_hWnd, nullptr, _windowCreationDesc._position._x, _windowCreationDesc._position._y, _entireWindowSize._x, _entireWindowSize._y, 0);
 		}
 
-		void WindowsWindow::setSizeData(const Int2& newSize)
+		void WindowsWindow::SetSizeData(const Int2& newSize)
 		{
 			_windowCreationDesc._size = newSize;
 
@@ -600,7 +600,7 @@ namespace mint
 			case WM_SIZE:
 			{
 				const Int2 size{ LOWORD(lParam), HIWORD(lParam) };
-				setSize(size, true);
+				SetSize(size, true);
 				return 0;
 			}
 			default:

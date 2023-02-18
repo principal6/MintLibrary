@@ -33,7 +33,7 @@ namespace mint
 			int32 comp{};
 			const int32 req_comp{ 4 };
 			stbi_uc* rawImageData = stbi_load_from_memory(bytes.Data(), bytes.Size(), &width, &height, &comp, req_comp);
-			outByteColorImage.setSize(Int2(width, height));
+			outByteColorImage.SetSize(Int2(width, height));
 			const int32 dimension = static_cast<int32>(static_cast<int64>(width) * height * req_comp);
 			for (int32 at = 0; at < dimension; ++at)
 			{
@@ -67,7 +67,7 @@ namespace mint
 
 		bool ImageLoader::saveImagePNG(const StringReferenceA& fileName, const ByteColorImage& byteColorImage) const
 		{
-			return saveImagePNG(fileName, byteColorImage.getBytes(), byteColorImage.getSize()._x, byteColorImage.getSize()._y, 4);
+			return saveImagePNG(fileName, byteColorImage.getBytes(), byteColorImage.GetSize()._x, byteColorImage.GetSize()._y, 4);
 		}
 
 		bool ImageLoader::saveImagePNG(const StringReferenceA& fileName, const byte* decompressedBytes, const uint32 width, const uint32 height, const uint32 components) const

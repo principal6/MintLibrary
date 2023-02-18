@@ -13,13 +13,13 @@ namespace mint
 	class Library
 	{
 	public:
-		static void initialize() noexcept;
+		static void Initialize() noexcept;
 
-		static uint16 getVersionMajor() noexcept;
-		static uint16 getVersionMinor() noexcept;
+		static uint16 GetVersionMajor() noexcept;
+		static uint16 GetVersionMinor() noexcept;
 
-		static void printVersion() noexcept;
-		static void printCoordinateSystem() noexcept;
+		static void PrintVersion() noexcept;
+		static void PrintCoordinateSystem() noexcept;
 	};
 }
 
