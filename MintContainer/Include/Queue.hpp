@@ -81,7 +81,7 @@ namespace mint
 		// Tail part
 		if (headPartLength < _size)
 		{
-			MemoryRaw::MoveMemory_<T>(&backUpPointer[headPartLength], &_rawPointer[0], _tailAt + 1);
+			MemoryRaw::MoveMemory_<T>(&backUpPointer[headPartLength], &_rawPointer[0], _tailAt);
 		}
 	}
 
