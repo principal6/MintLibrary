@@ -108,6 +108,7 @@ namespace mint
 			void SetDeltaPosition(const Float2& deltaPosition) noexcept;
 			const Float2& GetPosition() const noexcept;
 			const Float2& GetDeltaPosition() const noexcept;
+			MouseButtonState GetMouseButtonState(const MouseButton mouseButton) const;
 
 		public:
 			MouseButtonState _buttonStates[GetMouseButtonCount()]{};

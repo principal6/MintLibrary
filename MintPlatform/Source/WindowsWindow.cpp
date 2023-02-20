@@ -418,8 +418,6 @@ namespace mint
 
 		LRESULT WindowsWindow::ProcessDefaultMessage(const UINT Msg, const WPARAM wParam, const LPARAM lParam)
 		{
-			const Float2& mousePosition = Float2(static_cast<float>(GET_X_LPARAM(lParam)), static_cast<float>(GET_Y_LPARAM(lParam)));
-
 			Platform::InputContext& inputContext = Platform::InputContext::GetInstance();
 			Platform::InputEvent inputEvent;
 			switch (Msg)
@@ -483,13 +481,9 @@ namespace mint
 			}
 			case WM_MOUSEMOVE:
 			{
-				//int32 mouseInfo = 0;
-				//if (wParam == MK_LBUTTON)
-				//{
-				//    mouseInfo = 1;
-				//}
 				inputEvent._type = Platform::InputEventType::Mouse;
 				inputEvent._mouseData._type = Platform::InputMouseEventType::PointerMoved;
+				const Float2& mousePosition = Float2(static_cast<float>(GET_X_LPARAM(lParam)), static_cast<float>(GET_Y_LPARAM(lParam)));
 				inputEvent._mouseData._position = mousePosition;
 				inputContext.PushInputEvent(inputEvent);
 				return 0;
@@ -568,12 +562,10 @@ namespace mint
 			}
 			case WM_MOUSEWHEEL:
 			{
-				//const WORD fwKeys = GET_KEYSTATE_WPARAM(wParam);
-				//(fwKeys & MK_MBUTTON) ? 1 : 0;
-
 				inputEvent._type = Platform::InputEventType::Mouse;
 				inputEvent._mouseData._type = Platform::InputMouseEventType::WheelScrolled;
 				inputEvent._mouseData._wheelScroll = static_cast<float>(GET_WHEEL_DELTA_WPARAM(wParam)) / WHEEL_DELTA;
+				const Float2& mousePosition = Float2(static_cast<float>(GET_X_LPARAM(lParam)), static_cast<float>(GET_Y_LPARAM(lParam)));
 				inputEvent._mouseData._position = mousePosition;
 				inputContext.PushInputEvent(inputEvent);
 				return 0;
@@ -587,6 +579,23 @@ namespace mint
 				if (rawInput.header.dwType == RIM_TYPEMOUSE)
 				{
 					const RAWMOUSE& rawMouse = rawInput.data.mouse;
+
+					// Detect mouse button events even when the cursor is outside of the window
+					if ((rawMouse.usButtonFlags & RI_MOUSE_LEFT_BUTTON_UP) && inputContext.GetMouseState().GetMouseButtonState(MouseButton::Left) == MouseButtonState::Down)
+					{
+						inputEvent._type = Platform::InputEventType::Mouse;
+						inputEvent._mouseData._type = Platform::InputMouseEventType::ButtonReleased;
+						inputEvent._mouseData._button = Platform::MouseButton::Left;
+						inputContext.PushInputEvent(inputEvent);
+					}
+					if ((rawMouse.usButtonFlags & RI_MOUSE_RIGHT_BUTTON_UP) && inputContext.GetMouseState().GetMouseButtonState(MouseButton::Right) == MouseButtonState::Down)
+					{
+						inputEvent._type = Platform::InputEventType::Mouse;
+						inputEvent._mouseData._type = Platform::InputMouseEventType::ButtonReleased;
+						inputEvent._mouseData._button = Platform::MouseButton::Right;
+						inputContext.PushInputEvent(inputEvent);
+					}
+
 					if ((rawMouse.usFlags & MOUSE_MOVE_RELATIVE) == MOUSE_MOVE_RELATIVE)
 					{
 						inputEvent._type = Platform::InputEventType::Mouse;

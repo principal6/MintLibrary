@@ -67,6 +67,11 @@ namespace mint
 			return _deltaPosition;
 		}
 
+		MouseButtonState MouseState::GetMouseButtonState(const MouseButton mouseButton) const
+		{
+			return _buttonStates[static_cast<uint32>(mouseButton)];
+		}
+
 
 		void KeyboardState::Process() noexcept
 		{
@@ -91,7 +96,7 @@ namespace mint
 
 		InputContext::InputContext()
 		{
-			__noop;
+			_events.Reserve(32);
 		}
 
 		InputContext::~InputContext()
@@ -112,6 +117,16 @@ namespace mint
 
 		void InputContext::PushInputEvent(const InputEvent& inputEvent) noexcept
 		{
+			if (_events.IsEmpty() == false && inputEvent._type == InputEventType::Mouse && inputEvent._mouseData._type == InputMouseEventType::PointerMovedDelta)
+			{
+				InputEvent& lastInputEvent = _events.Peek();
+				if (lastInputEvent._type == inputEvent._type && lastInputEvent._mouseData._type == inputEvent._mouseData._type)
+				{
+					lastInputEvent._mouseData._position += inputEvent._mouseData._position;
+					return;
+				}
+			}
+
 			_events.Push(inputEvent);
 		}
 
