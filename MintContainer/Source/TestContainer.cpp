@@ -860,9 +860,9 @@ namespace mint
 		bool Test_Queue()
 		{
 			using Type = int32;
-			//using Type = Notable<int32>;
-
 			Queue<Type> queue;
+			queue.Reserve(32);
+			
 			queue.Push(0);
 			queue.Push(1);
 			queue.Push(2);
@@ -880,7 +880,12 @@ namespace mint
 			queue.Pop();
 
 			queue.Push(9);
-
+			for (size_t i = 0; i < 25; i++)
+			{
+				queue.Push(1);
+			}
+			queue.Push(2);
+			queue.Flush();
 			return true;
 		}
 
