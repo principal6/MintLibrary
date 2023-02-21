@@ -99,12 +99,12 @@ namespace mint
 
 				// Control creation #0 make-()
 			public:
-				void MakeLabel(const FileLine& fileLine, const LabelDesc& labelDesc);
-				bool MakeButton(const FileLine& fileLine, const ButtonDesc& buttonDesc);
+				void MakeLabel(const LabelDesc& labelDesc);
+				bool MakeButton(const ButtonDesc& buttonDesc);
 
 				// Control creation #1 begin-() && end-()
 			public:
-				bool BeginWindow(const FileLine& fileLine, const WindowDesc& windowDesc);
+				bool BeginWindow(const WindowDesc& windowDesc);
 				void EndWindow();
 
 				// Control rendering
@@ -131,7 +131,7 @@ namespace mint
 				void UpdateControlData_ResetNextControlDesc();
 
 			private:
-				void SelectResizingCursorType(const ControlData::ResizingFlags& resizingFlags);
+				void SelectResizingCursorType(const ControlResizingFlags& resizingFlags);
 
 				// Internal rendering functions
 			private:

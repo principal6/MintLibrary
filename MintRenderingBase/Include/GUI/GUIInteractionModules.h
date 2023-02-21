@@ -66,20 +66,20 @@ namespace mint
 			struct ResizingModuleInput : public InteractionMousePressModuleInput
 			{
 				Float2 _controlSize;
-				ControlData::ResizingFlags _resizingInteraction;
+				ControlResizingFlags _resizingInteraction;
 			};
 			class ResizingModule final : public InteractionMousePressModule<ResizingModuleInput>
 			{
 			public:
 				static void MakeOuterAndInenrRects(const ControlData& controlData, const Rect& outerResizingDistances, const Rect& innerResizingDistances, Rect& outerRect, Rect& innerRect);
-				static ControlData::ResizingFlags MakeResizingFlags(const Float2& mousePosition, const ControlData& controlData, const Rect& outerRect, const Rect& innerRect);
+				static ControlResizingFlags MakeResizingFlags(const Float2& mousePosition, const ControlData& controlData, const Rect& outerRect, const Rect& innerRect);
 
 			public:
 				virtual bool Begin(const ResizingModuleInput& resizingModuleInput) override;
 
 			public:
 				MINT_INLINE const Float2& GetInitialControlSize() const { return _input._controlSize; }
-				MINT_INLINE const ControlData::ResizingFlags& GetResizingFlags() const { return _input._resizingInteraction; }
+				MINT_INLINE const ControlResizingFlags& GetResizingFlags() const { return _input._resizingInteraction; }
 			};
 		}
 	}

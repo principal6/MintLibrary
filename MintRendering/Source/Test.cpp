@@ -142,7 +142,7 @@ namespace mint
 			button0Desc._text = L"버튼0";
 			guiContext.NextControlPosition(Float2(100, 50));
 			guiContext.NextControlSize(Float2(100, 30));
-			if (guiContext.MakeButton(MINT_FILE_LINE, button0Desc))
+			if (guiContext.MakeButton(button0Desc))
 			{
 			}
 
@@ -150,13 +150,13 @@ namespace mint
 			window0Desc._title = L"윈도우0";
 			window0Desc._initialPosition = Float2(100, 100);
 			window0Desc._initialSize = Float2(300, 400);
-			if (guiContext.BeginWindow(MINT_FILE_LINE, window0Desc))
+			if (guiContext.BeginWindow(window0Desc))
 			{
 				ButtonDesc button1Desc;
 				button1Desc._text = L"버튼1";
 				//guiContext.NextControlPosition(Float2(100, 200));
 				//guiContext.NextControlSize(Float2(100, 50));
-				if (guiContext.MakeButton(MINT_FILE_LINE, button1Desc))
+				if (guiContext.MakeButton(button1Desc))
 				{
 				}
 
@@ -168,19 +168,19 @@ namespace mint
 				//labelDesc.SetTextColor(Color::kBlack);
 				//guiContext.NextControlPosition(Float2(100, 100));
 				//guiContext.NextControlSize(Float2(100, 50));
-				guiContext.MakeLabel(MINT_FILE_LINE, labelDesc);
+				guiContext.MakeLabel(labelDesc);
 
 				guiContext.NextControlSameLine();
 
 				ButtonDesc button2Desc;
 				button2Desc._text = L"버튼2";
-				if (guiContext.MakeButton(MINT_FILE_LINE, button2Desc))
+				if (guiContext.MakeButton(button2Desc))
 				{
 				}
 
 				ButtonDesc button3Desc;
 				button3Desc._text = L"버튼3";
-				if (guiContext.MakeButton(MINT_FILE_LINE, button3Desc))
+				if (guiContext.MakeButton(button3Desc))
 				{
 				}
 
@@ -188,13 +188,13 @@ namespace mint
 
 				ButtonDesc button4Desc;
 				button4Desc._text = L"버튼4";
-				if (guiContext.MakeButton(MINT_FILE_LINE, button4Desc))
+				if (guiContext.MakeButton(button4Desc))
 				{
 				}
 
 				ButtonDesc button5Desc;
 				button5Desc._text = L"버튼5";
-				if (guiContext.MakeButton(MINT_FILE_LINE, button5Desc))
+				if (guiContext.MakeButton(button5Desc))
 				{
 				}
 
@@ -205,7 +205,7 @@ namespace mint
 			button1Desc._text = L"버튼1";
 			guiContext.NextControlPosition(Float2(210, 50));
 			guiContext.NextControlSize(Float2(100, 30));
-			if (guiContext.MakeButton(MINT_FILE_LINE, button1Desc))
+			if (guiContext.MakeButton(button1Desc))
 			{
 			}
 
@@ -213,12 +213,12 @@ namespace mint
 			window1Desc._title = L"윈도우1";
 			window1Desc._initialPosition = Float2(450, 100);
 			window1Desc._initialSize = Float2(200, 300);
-			if (guiContext.BeginWindow(MINT_FILE_LINE, window1Desc))
+			if (guiContext.BeginWindow(window1Desc))
 			{
 
 				ButtonDesc button5Desc;
 				button5Desc._text = L"버튼1-1";
-				if (guiContext.MakeButton(MINT_FILE_LINE, button5Desc))
+				if (guiContext.MakeButton(button5Desc))
 				{
 				}
 
@@ -229,7 +229,7 @@ namespace mint
 			window2Desc._title = L"윈도우2";
 			window2Desc._initialPosition = Float2(700, 100);
 			window2Desc._initialSize = Float2(200, 200);
-			if (guiContext.BeginWindow(MINT_FILE_LINE, window2Desc))
+			if (guiContext.BeginWindow(window2Desc))
 			{
 				guiContext.EndWindow();
 			}

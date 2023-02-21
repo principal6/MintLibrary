@@ -17,9 +17,9 @@ namespace mint
 				innerRect.ShrinkByQuantity(innerResizingDistances);
 			}
 
-			ControlData::ResizingFlags ResizingModule::MakeResizingFlags(const Float2& mousePosition, const ControlData& controlData, const Rect& outerRect, const Rect& innerRect)
+			ControlResizingFlags ResizingModule::MakeResizingFlags(const Float2& mousePosition, const ControlData& controlData, const Rect& outerRect, const Rect& innerRect)
 			{
-				ControlData::ResizingFlags resizingInteraction;
+				ControlResizingFlags resizingInteraction;
 				if (mousePosition._y >= outerRect.Top() && mousePosition._y <= innerRect.Top())
 				{
 					resizingInteraction._top = true;

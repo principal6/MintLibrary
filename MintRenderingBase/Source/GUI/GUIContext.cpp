@@ -138,11 +138,11 @@ namespace mint
 				_nextControlDesc._padding = padding;
 			}
 
-			void GUIContext::MakeLabel(const FileLine& fileLine, const LabelDesc& labelDesc)
+			void GUIContext::MakeLabel(const LabelDesc& labelDesc)
 			{
 				static constexpr ControlType kControlType = ControlType::Label;
 				const ControlID parentControlID = GetStackParentControlID();
-				const ControlID controlID = ControlData::GenerateID(fileLine, kControlType, labelDesc._text, parentControlID);
+				const ControlID controlID = ControlData::GenerateID(kControlType, labelDesc._text, parentControlID);
 				_controlIDsOfCurrentFrame.PushBack(controlID);
 
 				ControlData& controlData = AccessControlData(controlID, kControlType);
@@ -152,11 +152,11 @@ namespace mint
 				MakeLabel_Render(labelDesc, controlData);
 			}
 
-			bool GUIContext::MakeButton(const FileLine& fileLine, const ButtonDesc& buttonDesc)
+			bool GUIContext::MakeButton(const ButtonDesc& buttonDesc)
 			{
 				static constexpr ControlType kControlType = ControlType::Button;
 				const ControlID parentControlID = GetStackParentControlID();
-				const ControlID controlID = ControlData::GenerateID(fileLine, kControlType, buttonDesc._text, parentControlID);
+				const ControlID controlID = ControlData::GenerateID(kControlType, buttonDesc._text, parentControlID);
 				_controlIDsOfCurrentFrame.PushBack(controlID);
 
 				ControlData& controlData = AccessControlData(controlID, kControlType);
@@ -164,14 +164,14 @@ namespace mint
 				controlData._text = buttonDesc._text;
 				UpdateControlData(controlData);
 				MakeButton_Render(buttonDesc, controlData);
-				return controlData._mouseInteractionState == ControlData::MouseInteractionState::Clicked;
+				return controlData._mouseInteractionState == MouseInteractionState::Clicked;
 			}
 
-			bool GUIContext::BeginWindow(const FileLine& fileLine, const WindowDesc& windowDesc)
+			bool GUIContext::BeginWindow(const WindowDesc& windowDesc)
 			{
 				static constexpr ControlType kControlType = ControlType::Window;
 				const ControlID parentControlID = GetStackParentControlID();
-				const ControlID controlID = ControlData::GenerateID(fileLine, kControlType, windowDesc._title, parentControlID);
+				const ControlID controlID = ControlData::GenerateID(kControlType, windowDesc._title, parentControlID);
 				_controlIDsOfCurrentFrame.PushBack(controlID);
 
 				if (_isInBeginWindow)
@@ -186,9 +186,9 @@ namespace mint
 				controlData._text = windowDesc._title;
 				ControlData& parentControlData = AccessControlData(parentControlID);
 				const bool isNewlyCreated = (controlData.GetAccessCount() == 0);
+				ControlData::PerTypeData::WindowData& windowData = controlData._perTypeData._windowData;
 				if (isNewlyCreated)
 				{
-					ControlData::PerTypeData::WindowData& windowData = controlData._perTypeData._windowData;
 					windowData._titleBarHeight = _fontSize + _theme._titleBarPadding.Vert();
 					controlData._resizingMask.SetAllTrue();
 					controlData._resizableMinSize = Float2(windowData._titleBarHeight * 2.0f);
@@ -220,9 +220,9 @@ namespace mint
 					const float radius = _theme._systemButtonRadius;
 					NextControlPosition(Float2(controlData._size._x - _theme._titleBarPadding.Right() - radius * 2.0f, titleBarHeight * 0.5f - radius));
 					NextControlSize(Float2(radius * 2.0f));
-					if (MakeButton(fileLine, closeButtonDesc))
+					if (MakeButton(closeButtonDesc))
 					{
-
+						windowData._isOpen = false;
 					}
 				}
 
@@ -282,14 +282,24 @@ namespace mint
 
 			void GUIContext::BeginWindow_Render(const ControlData& controlData)
 			{
-				_rendererContext.SetPosition(ComputeShapePosition(controlData.GetID()));
-
 				const bool isFocused = _focusingModule.IsInteractingWith(controlData.GetID());
 				const float titleBarHeight = controlData._zones._titleBarZone.Height();
-				StackVector<ShapeRendererContext::Split, 3> splits;
-				splits.PushBack(ShapeRendererContext::Split(titleBarHeight / controlData._size._y, (isFocused ? _theme._windowTitleBarFocusedColor : _theme._windowTitleBarUnfocusedColor)));
-				splits.PushBack(ShapeRendererContext::Split(1.0f, _theme._windowBackgroundColor));
-				_rendererContext.DrawRoundedRectangleVertSplit(controlData._size, _theme._roundnessInPixel, splits, 0.0f);
+				const ControlData::PerTypeData::WindowData& windowData = controlData._perTypeData._windowData;
+				if (windowData._isOpen)
+				{
+					_rendererContext.SetPosition(ComputeShapePosition(controlData.GetID()));
+
+					StackVector<ShapeRendererContext::Split, 3> splits;
+					splits.PushBack(ShapeRendererContext::Split(titleBarHeight / controlData._size._y, (isFocused ? _theme._windowTitleBarFocusedColor : _theme._windowTitleBarUnfocusedColor)));
+					splits.PushBack(ShapeRendererContext::Split(1.0f, _theme._windowBackgroundColor));
+					_rendererContext.DrawRoundedRectangleVertSplit(controlData._size, _theme._roundnessInPixel, splits, 0.0f);
+				}
+				else
+				{
+					const Float2 titleBarSize{ controlData._size._x, titleBarHeight };
+					_rendererContext.SetPosition(ComputeShapePosition(controlData._absolutePosition, titleBarSize));
+					_rendererContext.DrawRoundedRectangle(titleBarSize, _theme._roundnessInPixel, 0.0f, 0.0f);
+				}
 
 				FontRenderingOption titleBarFontRenderingOption;
 				titleBarFontRenderingOption._directionHorz = TextRenderDirectionHorz::Rightward;
@@ -306,8 +316,7 @@ namespace mint
 				auto found = _controlDataMap.Find(controlID);
 				if (found.IsValid())
 				{
-					uint64& accessCount = const_cast<uint64&>(found._value->GetAccessCount());
-					++accessCount;
+					found._value->IncreaseAccessCount();
 					return *found._value;
 				}
 				return invalid;
@@ -368,7 +377,7 @@ namespace mint
 				}
 
 				const InputContext& inputContext = InputContext::GetInstance();
-				const ControlData::ResizingFlags& resizingFlags = _resizingModule.GetResizingFlags();
+				const ControlResizingFlags& resizingFlags = _resizingModule.GetResizingFlags();
 				SelectResizingCursorType(resizingFlags);
 
 				Float2 displacementSize = inputContext.GetMousePosition() - _resizingModule.GetMousePressedPosition();
@@ -475,7 +484,7 @@ namespace mint
 			void GUIContext::UpdateControlData_Interaction(ControlData& controlData)
 			{
 				const InputContext& inputContext = InputContext::GetInstance();
-				controlData._mouseInteractionState = ControlData::MouseInteractionState::None;
+				controlData._mouseInteractionState = MouseInteractionState::None;
 				const Float2& mousePosition = inputContext.GetMousePosition();
 				if (_focusingModule.IsInteracting())
 				{
@@ -499,10 +508,10 @@ namespace mint
 				if (isMousePositionIn)
 				{
 					const bool isPressedMousePositionIn = Rect(Float2::kZero, controlData._size).Contains(relativePressedMousePosition);
-					controlData._mouseInteractionState = isPressedMousePositionIn ? ControlData::MouseInteractionState::Pressing : ControlData::MouseInteractionState::Hovering;
+					controlData._mouseInteractionState = isPressedMousePositionIn ? MouseInteractionState::Pressing : MouseInteractionState::Hovering;
 					if (isPressedMousePositionIn == true && isMouseLeftUp == true)
 					{
-						controlData._mouseInteractionState = ControlData::MouseInteractionState::Clicked;
+						controlData._mouseInteractionState = MouseInteractionState::Clicked;
 					}
 				}
 
@@ -524,7 +533,7 @@ namespace mint
 					return;
 				}
 
-				if (controlData._mouseInteractionState == ControlData::MouseInteractionState::Clicked
+				if (controlData._mouseInteractionState == MouseInteractionState::Clicked
 					|| _draggingModule.IsInteractingWith(controlData.GetID()) == true
 					|| _resizingModule.IsInteractingWith(controlData.GetID()) == true)
 				{
@@ -565,7 +574,7 @@ namespace mint
 				if (outerRect.Contains(mousePosition) == true && innerRect.Contains(mousePosition) == false)
 				{
 					// Hover
-					const ControlData::ResizingFlags resizingInteraction = ResizingModule::MakeResizingFlags(mousePosition, controlData, outerRect, innerRect);
+					const ControlResizingFlags resizingInteraction = ResizingModule::MakeResizingFlags(mousePosition, controlData, outerRect, innerRect);
 					SelectResizingCursorType(resizingInteraction);
 				}
 
@@ -641,7 +650,7 @@ namespace mint
 				_nextControlDesc._padding = _theme._defaultPadding;
 			}
 
-			void GUIContext::SelectResizingCursorType(const ControlData::ResizingFlags& resizingFlags)
+			void GUIContext::SelectResizingCursorType(const ControlResizingFlags& resizingFlags)
 			{
 				if ((resizingFlags._top && resizingFlags._left) || (resizingFlags._bottom && resizingFlags._right))
 				{

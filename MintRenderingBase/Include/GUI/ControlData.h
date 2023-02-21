@@ -13,18 +13,6 @@
 
 namespace mint
 {
-	// Use MINT_FILE_LINE macro
-	// in order to create a FileLine instance.
-	struct FileLine
-	{
-		explicit FileLine(const char* const file, const int line) : _file{ file }, _line{ line } { __noop; }
-
-		const char* _file;
-		int _line;
-	};
-#define MINT_FILE_LINE FileLine(__FILE__, __LINE__)
-
-
 	namespace Rendering
 	{
 		namespace GUI
@@ -57,11 +45,52 @@ namespace mint
 				uint64 _rawID;
 			};
 
+			enum class MouseInteractionState
+			{
+				None,
+				Hovering,
+				Pressing,
+				Clicked,
+			};
+
+			struct ControlGeneralTraits
+			{
+				union
+				{
+					uint8 _raw = 0;
+					struct
+					{
+						bool _isFocusable : 1;
+						bool _isDraggable : 1;
+					};
+				};
+			};
+
+			struct ControlResizingFlags
+			{
+				void SetAllTrue() { _raw = 0b1111; }
+				void SetAllFalse() { _raw = 0; }
+				bool IsAnyTrue() const { return (_raw & 0b1111) != 0; }
+				bool IsAllFalse() const { return (_raw & 0b1111) == 0; }
+				void MaskBy(const ControlResizingFlags& mask) { _raw = _raw & mask._raw; }
+
+				union
+				{
+					uint8 _raw{};
+					struct
+					{
+						bool _top : 1;
+						bool _bottom : 1;
+						bool _left : 1;
+						bool _right : 1;
+					};
+				};
+			};
 
 			class ControlData
 			{
 			public:
-				static ControlID GenerateID(const FileLine& fileLine, const ControlType type, const wchar_t* const text, const ControlID& parentControlID);
+				static ControlID GenerateID(const ControlType type, const wchar_t* const text, const ControlID& parentControlID);
 
 			public:
 				ControlData() : ControlData(ControlID(), ControlType::COUNT) { __noop; }
@@ -75,6 +104,7 @@ namespace mint
 				const ControlID& GetID() const { return _ID; }
 				const ControlType& GetType() const { return _type; }
 				bool HasValidType() const { return _type != ControlType::COUNT; }
+				void IncreaseAccessCount() { ++_accessCount; }
 				const uint64& GetAccessCount() const { return _accessCount; }
 				Float2 ComputeRelativePosition(const ControlData& parentControlData) const;
 
@@ -92,13 +122,6 @@ namespace mint
 				const wchar_t* _text;
 
 			public:
-				enum class MouseInteractionState
-				{
-					None,
-					Hovering,
-					Pressing,
-					Clicked,
-				};
 				MouseInteractionState _mouseInteractionState;
 
 			public:
@@ -118,48 +141,17 @@ namespace mint
 					{
 						float _titleBarHeight = 0.0f;
 						float _menuBarHeight = 0.0f;
+						bool _isOpen = true;
 					} _windowData{};
 				};
 				PerTypeData _perTypeData;
 
 			public:
-				struct ResizingFlags
-				{
-					void SetAllTrue() { _raw = 0b1111; }
-					void SetAllFalse() { _raw = 0; }
-					bool IsAnyTrue() const { return (_raw & 0b1111) != 0; }
-					bool IsAllFalse() const { return (_raw & 0b1111) == 0; }
-					void MaskBy(const ResizingFlags& mask) { _raw = _raw & mask._raw; }
-
-					union
-					{
-						uint8 _raw{};
-						struct
-						{
-							bool _top : 1;
-							bool _bottom : 1;
-							bool _left : 1;
-							bool _right : 1;
-						};
-					};
-				};
-				ResizingFlags _resizingMask;
+				ControlResizingFlags _resizingMask;
 				Float2 _resizableMinSize;
 
 			public:
-				struct GeneralTraits
-				{
-					union
-					{
-						uint8 _raw = 0;
-						struct
-						{
-							bool _isFocusable : 1;
-							bool _isDraggable : 1;
-						};
-					};
-				};
-				GeneralTraits _generalTraits;
+				ControlGeneralTraits _generalTraits;
 
 			private:
 				ControlID _ID;

@@ -38,16 +38,10 @@ namespace mint
 				__noop;
 			}
 
-			ControlID ControlData::GenerateID(const FileLine& fileLine, const ControlType type, const wchar_t* const text, const ControlID& parentControlID)
+			ControlID ControlData::GenerateID(const ControlType type, const wchar_t* const text, const ControlID& parentControlID)
 			{
-				StackStringA<512> file = fileLine._file;
 				StackStringW<512> key;
 				StackStringW<512> conv;
-				StringUtil::ConvertStackStringAToStackStringW(file, key);
-				key.Append(L"_");
-				StringUtil::ToString(fileLine._line, conv);
-				key.Append(conv);
-				key.Append(L"_");
 				key.Append(text);
 				key.Append(L"_");
 				StringUtil::ToString(static_cast<uint32>(type), conv);
