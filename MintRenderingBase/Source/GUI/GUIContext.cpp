@@ -141,7 +141,7 @@ namespace mint
 			void GUIContext::MakeLabel(const FileLine& fileLine, const LabelDesc& labelDesc)
 			{
 				static constexpr ControlType kControlType = ControlType::Label;
-				const ControlID parentControlID = AccessStackParentControlData().GetID();
+				const ControlID parentControlID = GetStackParentControlID();
 				const ControlID controlID = ControlData::GenerateID(fileLine, kControlType, labelDesc._text, parentControlID);
 				_controlIDsOfCurrentFrame.PushBack(controlID);
 
@@ -155,7 +155,7 @@ namespace mint
 			bool GUIContext::MakeButton(const FileLine& fileLine, const ButtonDesc& buttonDesc)
 			{
 				static constexpr ControlType kControlType = ControlType::Button;
-				const ControlID parentControlID = AccessStackParentControlData().GetID();
+				const ControlID parentControlID = GetStackParentControlID();
 				const ControlID controlID = ControlData::GenerateID(fileLine, kControlType, buttonDesc._text, parentControlID);
 				_controlIDsOfCurrentFrame.PushBack(controlID);
 
@@ -170,7 +170,7 @@ namespace mint
 			bool GUIContext::BeginWindow(const FileLine& fileLine, const WindowDesc& windowDesc)
 			{
 				static constexpr ControlType kControlType = ControlType::Window;
-				const ControlID parentControlID = AccessStackParentControlData().GetID();
+				const ControlID parentControlID = GetStackParentControlID();
 				const ControlID controlID = ControlData::GenerateID(fileLine, kControlType, windowDesc._title, parentControlID);
 				_controlIDsOfCurrentFrame.PushBack(controlID);
 
@@ -345,9 +345,9 @@ namespace mint
 				return _rootControlID;
 			}
 
-			ControlData& GUIContext::AccessStackParentControlData()
+			ControlID GUIContext::GetStackParentControlID()
 			{
-				return AccessControlData(_controlStack.Back());
+				return _controlStack.Back();
 			}
 
 			void GUIContext::UpdateControlData(ControlData& controlData)

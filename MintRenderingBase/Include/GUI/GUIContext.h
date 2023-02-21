@@ -116,7 +116,7 @@ namespace mint
 			private:
 				ControlData& AccessControlData(const ControlID& controlID) const;
 				ControlData& AccessControlData(const ControlID& controlID, const ControlType controlType);
-				ControlData& AccessStackParentControlData();
+				ControlID GetStackParentControlID();
 				ControlID FindAncestorWindowControl(const ControlID& controlID) const;
 
 			private:
