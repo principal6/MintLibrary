@@ -720,7 +720,8 @@ namespace mint
 			static_assert(StringUtil::CountBytesInCharCode(0b00000000) == 1);
 
 			{
-				static_assert(StringUtil::Find("abcde", "abc") == 0);
+				static_assert(StringUtil::Find("abcdeabcde", "abc") == 0);
+				static_assert(StringUtil::Find("abcdeabcde", "abc", 1) == 5);
 				static_assert(StringUtil::Find("abcde", "cde") == 2);
 				static_assert(StringUtil::Find("abcde", "def") == kStringNPos);
 				static_assert(StringUtil::Find("abc가나다라def", "다라") == 7);
@@ -728,7 +729,8 @@ namespace mint
 				static_assert(StringUtil::Find("abc가나다라def", "다라", 8) == kStringNPos);
 				static_assert(StringUtil::Find("abc가나다라def", "다라", 100) == kStringNPos);
 
-				static_assert(StringUtil::Find(L"abcde", L"abc") == 0);
+				static_assert(StringUtil::Find(L"abcdeabcde", L"abc") == 0);
+				static_assert(StringUtil::Find(L"abcdeabcde", L"abc", 1) == 5);
 				static_assert(StringUtil::Find(L"abcde", L"cde") == 2);
 				static_assert(StringUtil::Find(L"abcde", L"def") == kStringNPos);
 				static_assert(StringUtil::Find(L"abc가나다라def", L"다라") == 5);
@@ -736,13 +738,26 @@ namespace mint
 				static_assert(StringUtil::Find(L"abc가나다라def", L"다라", 6) == kStringNPos);
 				static_assert(StringUtil::Find(L"abc가나다라def", L"다라", 100) == kStringNPos);
 
-				static_assert(StringUtil::Find(u8"abcde", u8"abc") == 0);
+				static_assert(StringUtil::Find(u8"abcdeabcde", u8"abc") == 0);
+				static_assert(StringUtil::Find(u8"abcdeabcde", u8"abc", 1) == 5);
 				static_assert(StringUtil::Find(u8"abcde", u8"cde") == 2);
 				static_assert(StringUtil::Find(u8"abcde", u8"def") == kStringNPos);
 				static_assert(StringUtil::Find(u8"abc가나다라def", u8"다라") == 9);
 				static_assert(StringUtil::Find(u8"abc가나다라def", u8"다라", 9) != kStringNPos);
 				static_assert(StringUtil::Find(u8"abc가나다라def", u8"다라", 10) == kStringNPos);
 				static_assert(StringUtil::Find(u8"abc가나다라def", u8"다라", 100) == kStringNPos);
+			}
+
+			{
+				static_assert(StringUtil::FindLastOf("abcdeabcde", "abc") == 5);
+				static_assert(StringUtil::FindLastOf("abcdeabcde", "abc", 5) == 5);
+				static_assert(StringUtil::FindLastOf("abcdeabcde", "abc", 6) == kStringNPos);
+				static_assert(StringUtil::FindLastOf("abcdeabcde", "cde") == 7);
+				static_assert(StringUtil::FindLastOf("abcdeabcde", "def") == kStringNPos);
+				static_assert(StringUtil::FindLastOf("abc가나다라def", "다라") == 7);
+				static_assert(StringUtil::FindLastOf("abc가나다라def", "다라", 7) != kStringNPos);
+				static_assert(StringUtil::FindLastOf("abc가나다라def", "다라", 8) == kStringNPos);
+				static_assert(StringUtil::FindLastOf("abc가나다라def", "다라", 100) == kStringNPos);
 			}
 
 			{

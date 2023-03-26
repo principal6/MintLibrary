@@ -106,9 +106,11 @@ namespace mint
 		// returns the count of characters in the string
 		constexpr uint32 CountChars(const char8_t* const string);
 
-		// here 'offset' refers to character offset (not byte offset!)
 		template<typename T>
 		constexpr uint32 Find(const T* const string, const T* const substring, const uint32 offset = 0);
+		
+		template<typename T>
+		constexpr uint32 FindLastOf(const T* const string, const T* const substring, const uint32 offset = 0);
 		
 		template<typename T>
 		constexpr bool Contains(const T* const string, const T* const substring);

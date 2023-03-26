@@ -250,6 +250,62 @@ namespace mint
 			}
 			return kStringNPos;
 		}
+		
+		template <typename T>
+		MINT_INLINE constexpr uint32 FindLastOf(const T* const string, const T* const substring, uint32 offset)
+		{
+			const uint32 stringLength = StringUtil::Length(string);
+			const uint32 substringLength = StringUtil::Length(substring);
+			if (stringLength == 0 || substringLength == 0)
+			{
+				// Invalid string/substring
+				return kStringNPos;
+			}
+			if (stringLength < offset + substringLength)
+			{
+				// Insufficient string length
+				return kStringNPos;
+			}
+
+			uint32 lastValidStringAtCache = kStringNPos;
+			uint32 stringAtCache = 0;
+			uint32 substringAt = 0;
+			for (uint32 stringAt = offset; stringAt < stringLength; __noop)
+			{
+				if (string[stringAt] == substring[substringAt])
+				{
+					if (substringAt == 0)
+					{
+						stringAtCache = stringAt;
+					}
+
+					++substringAt;
+					++stringAt;
+
+					if (stringAt == stringLength && substringAt < substringLength)
+					{
+						// Insufficient string length
+						return lastValidStringAtCache;
+					}
+
+					if ((string[stringAt] | substring[substringAt]) == 0)
+					{
+						return stringAtCache;
+					}
+				}
+				else
+				{
+					if (substringAt == substringLength)
+					{
+						lastValidStringAtCache = stringAtCache;
+					}
+
+					substringAt = 0;
+					++stringAt;
+				}
+			}
+			return lastValidStringAtCache;
+		}
 
 		template <typename T>
 		MINT_INLINE constexpr bool Contains(const T* const string, const T* const substring)
