@@ -831,22 +831,22 @@ namespace mint
 				StackStringA<256> ssa0;
 				StackStringW<256> ssw0;
 				StackStringU8<256> ssu0;
-				StringA stra0;
-				StringW strw0;
-				StringU8 stru0;
+				StringA sa0;
+				StringW sw0;
+				StringU8 su0;
 				StringUtil::ToString(1234, ssa0);
-				StringUtil::ToString(1234, stra0);
+				StringUtil::ToString(1234, sa0);
 				StringUtil::ToString(1234, ssw0);
-				StringUtil::ToString(1234, strw0);
+				StringUtil::ToString(1234, sw0);
 				StringUtil::ToString(1234, ssu0);
-				StringUtil::ToString(1234, stru0);
+				StringUtil::ToString(1234, su0);
 
 				StringUtil::ToString(12.34f, ssa0);
-				StringUtil::ToString(12.34f, stra0);
+				StringUtil::ToString(12.34f, sa0);
 				StringUtil::ToString(12.34f, ssw0);
-				StringUtil::ToString(12.34f, strw0);
+				StringUtil::ToString(12.34f, sw0);
 				StringUtil::ToString(12.34f, ssu0);
-				StringUtil::ToString(12.34f, stru0);
+				StringUtil::ToString(12.34f, su0);
 
 				const int32 i32_0 = StringUtil::StringToInt32(StringReference("12345"));
 				const int64 i64_0 = StringUtil::StringToInt64(StringReference("1234567890"));
