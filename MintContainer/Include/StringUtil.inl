@@ -199,19 +199,20 @@ namespace mint
 		template <typename T>
 		MINT_INLINE constexpr uint32 Find(const T* const string, const T* const substring, uint32 offset)
 		{
-			if (string == nullptr || substring == nullptr)
-			{
-				return kStringNPos;
-			}
-
 			const uint32 stringLength = StringUtil::Length(string);
 			const uint32 substringLength = StringUtil::Length(substring);
+			if (stringLength == 0 || substringLength == 0)
+			{
+				// Invalid string/substring
+				return kStringNPos;
+			}
 			if (stringLength < offset + substringLength)
 			{
+				// Insufficient string length
 				return kStringNPos;
 			}
 
-			uint32 result = kStringNPos;
+			uint32 stringAtCache = 0;
 			uint32 substringAt = 0;
 			for (uint32 stringAt = offset; stringAt < stringLength; __noop)
 			{
@@ -219,83 +220,41 @@ namespace mint
 				{
 					if (substringAt == 0)
 					{
-						result = stringAt;
+						stringAtCache = stringAt;
 					}
+
 					++substringAt;
 					++stringAt;
 
-					if (substringAt > substringLength)
+					if (stringAt == stringLength && substringAt < substringLength)
 					{
-						result = stringAt;
-						break;
+						// Insufficient string length
+						return kStringNPos;
 					}
 
 					if ((string[stringAt] | substring[substringAt]) == 0)
 					{
-						return result;
+						return stringAtCache;
 					}
 				}
 				else
 				{
 					if (substringAt == substringLength)
 					{
-						result = stringAt;
-						break;
+						return stringAtCache;
 					}
 
-					result = kStringNPos;
 					substringAt = 0;
 					++stringAt;
 				}
 			}
-			return result;
+			return kStringNPos;
 		}
-		
+
 		template <typename T>
 		MINT_INLINE constexpr bool Contains(const T* const string, const T* const substring)
 		{
 			return StringUtil::Find(string, substring, 0) != kStringNPos;
-		}
-
-		template <>
-		MINT_INLINE constexpr uint32 Find(const wchar_t* const string, const wchar_t* const substring, uint32 offset)
-		{
-			if (string == nullptr || substring == nullptr)
-			{
-				return kStringNPos;
-			}
-
-			const uint32 stringLength = StringUtil::Length(string);
-			const uint32 substringLength = StringUtil::Length(substring);
-			if (stringLength < offset + substringLength)
-			{
-				return kStringNPos;
-			}
-
-			uint32 result = kStringNPos;
-			uint32 substringAt = 0;
-			for (uint32 stringAt = offset; stringAt < stringLength; ++stringAt)
-			{
-				if (string[stringAt] == substring[substringAt])
-				{
-					if (substringAt == 0)
-					{
-						result = stringAt;
-					}
-
-					++substringAt;
-					if (substringAt == substringLength)
-					{
-						break;
-					}
-				}
-				else
-				{
-					substringAt = 0;
-					result = kStringNPos;
-				}
-			}
-			return result;
 		}
 
 		template <typename T>
