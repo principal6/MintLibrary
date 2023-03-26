@@ -111,6 +111,12 @@ namespace mint
 	}
 
 	template<typename T>
+	MINT_INLINE String<T>& String<T>::operator+=(const T rhs) noexcept
+	{
+		return static_cast<String<T>&>(Append(rhs));
+	}
+	
+	template<typename T>
 	MINT_INLINE String<T>& String<T>::operator+=(const T* const rhs) noexcept
 	{
 		return Append(rhs);
@@ -194,6 +200,13 @@ namespace mint
 	}
 
 	template<typename T>
+	MINT_INLINE MutableString<T>& String<T>::Append(const T rhs)
+	{
+		T rawString[2] = { rhs, 0 };
+		return Append(rawString);
+	}
+
+	template<typename T>
 	inline String<T>& String<T>::Append(const T* const rawString) noexcept
 	{
 		if (IsNotAllocated())
@@ -206,13 +219,6 @@ namespace mint
 			return AppendInternalSmallXXX(rawString);
 		}
 		return AppendInternalLongXXX(rawString);
-	}
-
-	template<typename T>
-	MINT_INLINE String<T>& String<T>::Append(const T ch) noexcept
-	{
-		T rawString[2] = { ch, 0 };
-		return Append(rawString);
 	}
 
 	template<typename T>
@@ -402,7 +408,7 @@ namespace mint
 	inline uint32 String<T>::Find(const T target, const uint32 offset) const noexcept
 	{
 		T targets[2] = { target, 0 };
-		return find(targets, offset);
+		return Find(targets, offset);
 	}
 
 	template<typename T>

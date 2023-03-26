@@ -33,6 +33,7 @@ namespace mint
 	public:
 		String operator+(const T* const rhs) const noexcept;
 		String operator+(const String& rhs) const noexcept;
+		String& operator+=(const T rhs) noexcept;
 		String& operator+=(const T* const rhs) noexcept;
 		String& operator+=(const String& rhs) noexcept;
 
@@ -52,8 +53,8 @@ namespace mint
 
 	public:
 		virtual MutableString<T>& Append(const StringReference<T>& rhs) override;
+		virtual MutableString<T>& Append(const T rhs) override;
 		String& Append(const T* const rawString) noexcept;
-		String& Append(const T ch) noexcept;
 		String& Append(const String& rhs) noexcept;
 
 	private:

@@ -50,8 +50,8 @@ namespace mint
 		// TODO: IParser 상속해서 제대로 만들어 보기...
 		struct LatexParser
 		{
-			using StringType = std::wstring;
-			static constexpr size_t StringTypeNpos = std::wstring::npos;
+			using StringType = StringW;
+			static constexpr uint32 StringTypeNpos = kStringNPos;
 
 			static constexpr wchar_t kEscapeCh = L'\\';
 			static constexpr wchar_t kEscapeOpenCh = L'{';
@@ -62,22 +62,22 @@ namespace mint
 			{
 				const StringType& latexString = mathExpression._latexExpression;
 
-				size_t nextModifierBeginAt = 0;
-				size_t at = 0;
-				while (at < latexString.size())
+				uint32 nextModifierBeginAt = 0;
+				uint32 at = 0;
+				while (at < latexString.Size())
 				{
-					const size_t plainStringLength = mathExpression._plainString.length();
-					const wchar_t ch = latexString.at(at);
+					const uint32 plainStringLength = mathExpression._plainString.Length();
+					const wchar_t ch = latexString.At(at);
 					if (ch == kEscapeCh)
 					{
-						const size_t escapeOpenAt = latexString.find(kEscapeOpenCh, at + 1);
+						const uint32 escapeOpenAt = latexString.Find(kEscapeOpenCh, at + 1);
 						if (escapeOpenAt == StringTypeNpos)
 						{
 							MINT_LOG_ERROR("%d 이후 잘못된 형식이 나왔습니다!", at);
 							break;
 						}
 
-						const size_t escapeCloseAt = latexString.find(kEscapeCloseCh, escapeOpenAt + 1);
+						const uint32 escapeCloseAt = latexString.Find(kEscapeCloseCh, escapeOpenAt + 1);
 						if (escapeCloseAt == StringTypeNpos)
 						{
 							MINT_LOG_ERROR("%d 이후 잘못된 형식이 나왔습니다!", escapeOpenAt);
@@ -93,13 +93,13 @@ namespace mint
 						}
 
 						const StringRange modifierStringRange{ at + 1, escapeOpenAt - at - 1 };
-						StringType modifierString = latexString.substr(modifierStringRange._offset, modifierStringRange._length);
-						const uint32 modifierStringLength = static_cast<uint32>(modifierString.size());
+						StringType modifierString = latexString.Substring(modifierStringRange._offset, modifierStringRange._length);
+						const uint32 modifierStringLength = static_cast<uint32>(modifierString.Size());
 						if (modifierString == L"bold")
 						{
 							const StringRange innerStringRange{ escapeOpenAt + 1, escapeCloseAt - escapeOpenAt - 1 };
 
-							mathExpression._plainString += latexString.substr(innerStringRange._offset, innerStringRange._length);
+							mathExpression._plainString += latexString.Substring(innerStringRange._offset, innerStringRange._length);
 
 							MathExpression::Modifier modifier;
 							modifier._type = MathExpression::ModifierType::Bold;
@@ -112,9 +112,9 @@ namespace mint
 						}
 						else
 						{
-							std::string modifierStr;
+							StringA modifierStr;
 							StringUtil::ConvertWideStringToString(modifierString, modifierStr);
-							MINT_LOG_ERROR("아직 지원되지 않는 modifier 입니다! [%s]", modifierStr.c_str());
+							MINT_LOG_ERROR("아직 지원되지 않는 modifier 입니다! [%s]", modifierStr.CString());
 						}
 					}
 					else
@@ -125,17 +125,17 @@ namespace mint
 					}
 				}
 
-				if (nextModifierBeginAt < mathExpression._plainString.length() - 1)
+				if (nextModifierBeginAt < mathExpression._plainString.Length() - 1)
 				{
 					MathExpression::Modifier italicModifier;
 					italicModifier._type = MathExpression::ModifierType::Italic;
-					italicModifier._range = StringRange(nextModifierBeginAt, mathExpression._plainString.length() - nextModifierBeginAt);
+					italicModifier._range = StringRange(nextModifierBeginAt, mathExpression._plainString.Length() - nextModifierBeginAt);
 					mathExpression._modifiers.PushBack(italicModifier);
 				}
 			}
 		};
 
-		MathExpression::MathExpression(std::wstring latexString)
+		MathExpression::MathExpression(StringW latexString)
 			: _latexExpression{ latexString }
 			, _isEvaluated{ false }
 		{
@@ -150,9 +150,9 @@ namespace mint
 			}
 
 			LatexLexer lexer;
-			std::string latexExpressionStr;
+			StringA latexExpressionStr;
 			StringUtil::ConvertWideStringToString(_latexExpression, latexExpressionStr);
-			lexer.SetSource(latexExpressionStr);
+			lexer.SetSource(latexExpressionStr.CString());
 			lexer.Execute();
 
 			LatexParser::parse(const_cast<MathExpression&>(*this));
@@ -162,12 +162,12 @@ namespace mint
 
 		const wchar_t* const MathExpression::GetPlainString() const noexcept
 		{
-			return _plainString.c_str();
+			return _plainString.CString();
 		}
 
 		uint32 MathExpression::GetPlainStringLength() const noexcept
 		{
-			return static_cast<uint32>(_plainString.length());
+			return _plainString.Length();
 		}
 
 

@@ -121,6 +121,19 @@ namespace mint
 		}
 		return *this;
 	}
+	
+	template <typename T, uint32 BufferSize>
+	MutableString<T>& StackString<T, BufferSize>::Append(const T rhs)
+	{
+		if (CanInsert(1))
+		{
+			_raw[_length] = rhs;
+			++_length;
+			_raw[_length] = 0; // NULL
+			return *this;
+		}
+		return *this;
+	}
 
 	template <typename T, uint32 BufferSize>
 	inline MutableString<T>& StackString<T, BufferSize>::Assign(const StringReference<T>& rhs)

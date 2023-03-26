@@ -45,6 +45,7 @@ namespace mint
 	public:
 		virtual void Clear();
 		virtual MutableString<T>& Append(const StringReference<T>& rhs) override;
+		virtual MutableString<T>& Append(const T rhs) override;
 		virtual MutableString<T>& Assign(const StringReference<T>& rhs) override;
 		void Resize(const uint32 length) noexcept;
 

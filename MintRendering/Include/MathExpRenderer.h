@@ -47,7 +47,7 @@ namespace mint
 			};
 
 		public:
-			MathExpression(std::wstring latexString);
+			MathExpression(StringW latexString);
 			~MathExpression() = default;
 
 		public:
@@ -59,12 +59,12 @@ namespace mint
 			uint32 GetPlainStringLength() const noexcept;
 
 		private:
-			std::wstring _latexExpression;
+			StringW _latexExpression;
 			mutable bool _isEvaluated;
 
 		private:
 			Vector<Modifier> _modifiers;
-			std::wstring _plainString;
+			StringW _plainString;
 		};
 
 

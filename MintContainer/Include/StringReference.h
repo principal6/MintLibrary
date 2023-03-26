@@ -66,8 +66,10 @@ namespace mint
 		// TODO: 구현 최적화
 		MutableString<T>& operator=(StringReference<T>&& rhs);
 		MutableString<T>& operator+=(const StringReference<T>& rhs);
+		MutableString<T>& operator+=(const T rhs);
 
 		T& operator[](const uint32 index) { return At(index); }
+		const T& operator[](const uint32 index) const { return At(index); }
 
 	public:
 		virtual StringType GetStringType() const abstract;
@@ -75,12 +77,14 @@ namespace mint
 		virtual bool IsMutable() const override final { return true; }
 		virtual uint32 Capacity() const { return 0; }
 		virtual T& At(const uint32 index) { return Data()[index]; }
+		virtual const T& At(const uint32 index) const { return CString()[index]; }
 		virtual const T* CString() const abstract;
 		virtual T* Data() abstract;
 
 	public:
 		virtual void Clear() abstract;
 		virtual MutableString<T>& Append(const StringReference<T>& rhs) abstract;
+		virtual MutableString<T>& Append(const T rhs) abstract;
 		virtual MutableString<T>& Assign(const StringReference<T>& rhs) abstract;
 	};
 }

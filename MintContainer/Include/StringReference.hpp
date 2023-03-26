@@ -146,5 +146,11 @@ namespace mint
 	{
 		return Append(rhs);
 	}
+
+	template<typename T>
+	inline MutableString<T>& mint::MutableString<T>::operator+=(const T rhs)
+	{
+		return Append(rhs);
+	}
 #pragma endregion
 }
