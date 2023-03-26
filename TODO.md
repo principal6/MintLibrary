@@ -1,4 +1,9 @@
 ﻿# TODO
+## String 관련 코드 정리..
+FindLastOf() 구현 추가하자
+StringUtil::ToString() 리턴 버전 추가하자...
+String<T> 가 IsEmpty() 를 못 찾는 이유 찾기
+
 ## std::string 사용 제거
 
 ## Language library 정리
