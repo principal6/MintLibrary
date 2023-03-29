@@ -345,7 +345,7 @@ namespace mint
 	template<typename T>
 	MINT_INLINE T String<T>::Back() const
 	{
-		MINT_ASSERT(this->empty() == false, "!!!");
+		MINT_ASSERT(this->IsEmpty() == false, "!!!");
 		return CString()[Size() - 1];
 	}
 
@@ -479,7 +479,7 @@ namespace mint
 	template<typename T>
 	inline void String<T>::Erase(const uint32 at, const uint32 byteCount) noexcept
 	{
-		if (this->empty() == true)
+		if (this->IsEmpty() == true)
 		{
 			return;
 		}
@@ -510,7 +510,7 @@ namespace mint
 	template<typename T>
 	inline void String<T>::PopBack()
 	{
-		if (this->empty())
+		if (this->IsEmpty())
 		{
 			return;
 		}
@@ -568,7 +568,7 @@ namespace mint
 	template<typename T>
 	inline void String<T>::ToLongString() noexcept
 	{
-		if (IsSmallString() == false || this->empty() == true)
+		if (IsSmallString() == false || this->IsEmpty() == true)
 		{
 			return;
 		}

@@ -32,7 +32,7 @@ namespace mint
 		virtual StringType GetStringType() const { return StringType::ConstantLiteralString; }
 		virtual bool IsLiteral() const { return true; }
 		virtual bool IsMutable() const { return false; }
-		bool IsEmpty() const noexcept { return Length() == 0; }
+		bool IsEmpty() const { return Length() == 0; }
 		virtual uint32 Length() const;
 		virtual uint32 CountChars() const;
 		virtual const T& At(const uint32 index) const { return CString()[index]; }
