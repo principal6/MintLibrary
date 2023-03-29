@@ -852,9 +852,12 @@ namespace mint
 				StackStringA<256> ssa0;
 				StackStringW<256> ssw0;
 				StackStringU8<256> ssu0;
-				StringA sa0;
-				StringW sw0;
-				StringU8 su0;
+				StringA sa0 = StringUtil::ToStringA(1234);
+				StringW sw0 = StringUtil::ToStringW(1234);
+				StringU8 su0 = StringUtil::ToStringU8(1234);
+				const int64 sa0i = StringUtil::StringToInt64(sa0);
+				const int64 sw0i = StringUtil::StringToInt64(sw0);
+				const int64 su0i = StringUtil::StringToInt64(su0);
 				StringUtil::ToString(1234, ssa0);
 				StringUtil::ToString(1234, sa0);
 				StringUtil::ToString(1234, ssw0);

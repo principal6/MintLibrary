@@ -108,10 +108,10 @@ namespace mint
 
 		template<typename T>
 		constexpr uint32 Find(const T* const string, const T* const substring, const uint32 offset = 0);
-		
+
 		template<typename T>
 		constexpr uint32 FindLastOf(const T* const string, const T* const substring, const uint32 offset = 0);
-		
+
 		template<typename T>
 		constexpr bool Contains(const T* const string, const T* const substring);
 
@@ -158,6 +158,14 @@ namespace mint
 		template<typename FLT, typename T>
 		std::enable_if_t<std::is_floating_point_v<FLT>, void> ToString(const FLT f, MutableString<T>& outString);
 
+		template<typename T>
+		String<T> ToString(const int64 i);
+		StringA ToStringA(const int64 i);
+		StringW ToStringW(const int64 i);
+		StringU8 ToStringU8(const int64 i);
+		template<typename T>
+		String<T> ToString(const double f);
+
 		template <typename ValueType, typename CharType, typename = void>
 		struct isToStringAvailable : std::false_type {};
 
@@ -170,9 +178,9 @@ namespace mint
 		template<typename T>
 		int64 StringToInt64(const StringReference<T>& string);
 		template<typename T>
-		float StringToFloat(const StringReference<T>& string);
-		template<typename T>
 		double StringToDouble(const StringReference<T>& string);
+		template<typename T>
+		float StringToFloat(const StringReference<T>& string);
 	}
 }
 

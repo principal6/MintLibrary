@@ -381,27 +381,102 @@ namespace mint
 		}
 
 		template<typename T>
+		inline String<T> ToString(const int64 i)
+		{
+			constexpr uint32 kBufferSize = 32;
+			thread_local static char buffer[kBufferSize]{};
+			::sprintf_s(buffer, kBufferSize, "%lld", i);
+			return String<T>(reinterpret_cast<T*>(buffer));
+		}
+
+		template<>
+		inline String<wchar_t> ToString(const int64 i)
+		{
+			constexpr uint32 kBufferSize = 32;
+			thread_local static wchar_t buffer[kBufferSize]{};
+			::swprintf_s(buffer, kBufferSize, L"%lld", i);
+			return String<wchar_t>(buffer);
+		}
+
+		inline StringA ToStringA(const int64 i)
+		{
+			return ToString<char>(i);
+		}
+
+		inline StringW ToStringW(const int64 i)
+		{
+			return ToString<wchar_t>(i);
+		}
+
+		inline StringU8 ToStringU8(const int64 i)
+		{
+			return ToString<char8_t>(i);
+		}
+
+		template<typename T>
+		inline String<T> ToString(const double f)
+		{
+			constexpr uint32 kBufferSize = 64;
+			thread_local static char buffer[kBufferSize]{};
+			::sprintf_s(buffer, kBufferSize, "%f", f);
+			return String<T>(reinterpret_cast<T*>(buffer));
+		}
+
+		template<>
+		inline String<wchar_t> ToString(const double f)
+		{
+			constexpr uint32 kBufferSize = 64;
+			thread_local static wchar_t buffer[kBufferSize]{};
+			::swprintf_s(buffer, kBufferSize, L"%f", f);
+			return String<wchar_t>(buffer);
+		}
+
+		template<typename T>
 		inline int32 StringToInt32(const StringReference<T>& string)
 		{
-			return ::atoi(string.CString());
+			return ::atoi(reinterpret_cast<const char*>(string.CString()));
+		}
+
+		template<>
+		inline int32 StringToInt32(const StringReference<wchar_t>& string)
+		{
+			return ::_wtoi(string.CString());
 		}
 
 		template<typename T>
 		inline int64 StringToInt64(const StringReference<T>& string)
 		{
-			return ::atoll(string.CString());
+			return ::atoll(reinterpret_cast<const char*>(string.CString()));
 		}
 
-		template<typename T>
-		inline float StringToFloat(const StringReference<T>& string)
+		template<>
+		inline int64 StringToInt64(const StringReference<wchar_t>& string)
 		{
-			return static_cast<float>(::atof(string.CString()));
+			return ::_wtoll(string.CString());
 		}
 
 		template<typename T>
 		inline double StringToDouble(const StringReference<T>& string)
 		{
-			return ::atof(string.CString());
+			return ::atof(reinterpret_cast<const char*>(string.CString()));
+		}
+
+		template<>
+		inline double StringToDouble(const StringReference<wchar_t>& string)
+		{
+			return ::_wtof(string.CString());
+		}
+
+		template<typename T>
+		inline float StringToFloat(const StringReference<T>& string)
+		{
+			return static_cast<float>(StringToDouble(string));
+		}
+
+		template<>
+		inline float StringToFloat(const StringReference<wchar_t>& string)
+		{
+			return static_cast<float>(StringToDouble(string));
 		}
 	}
 }
