@@ -6,6 +6,7 @@
 
 
 #define MINT_INLINE __forceinline
+#define MINT_VARNAME(var) #var
 
 #define NOMINMAX
 

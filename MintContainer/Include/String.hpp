@@ -172,10 +172,10 @@ namespace mint
 	inline String<T>& String<T>::AssignInternalXXX(const T* const rawString) noexcept
 	{
 		const uint32 length = StringUtil::Length(rawString);
-		if (length < Short::kSmallStringCapacity)
+		if (length < Short::kShortStringCapacity)
 		{
 			_short._size = length;
-			__CopyString(_short._smallString, rawString, length);
+			__CopyString(_short._shortString, rawString, length);
 			return *this;
 		}
 		return AssignInternalLongXXX(rawString);
@@ -214,7 +214,7 @@ namespace mint
 			return Assign(rawString);
 		}
 
-		if (IsSmallString())
+		if (IsShortString())
 		{
 			return AppendInternalSmallXXX(rawString);
 		}
@@ -232,9 +232,9 @@ namespace mint
 	{
 		const uint32 rhsLength = StringUtil::Length(rhs);
 		const uint64 newLength = static_cast<uint64>(_short._size) + rhsLength;
-		if (newLength < Short::kSmallStringCapacity)
+		if (newLength < Short::kShortStringCapacity)
 		{
-			__CopyString(&_short._smallString[_short._size], rhs, rhsLength);
+			__CopyString(&_short._shortString[_short._size], rhs, rhsLength);
 			_short._size = static_cast<T>(newLength);
 			return *this;
 		}
@@ -261,7 +261,7 @@ namespace mint
 	template<typename T>
 	inline void String<T>::Reserve(const uint32 newCapacity) noexcept
 	{
-		if (newCapacity <= Capacity() || newCapacity <= Short::kSmallStringCapacity)
+		if (newCapacity <= Capacity() || newCapacity <= Short::kShortStringCapacity)
 		{
 			return;
 		}
@@ -273,7 +273,7 @@ namespace mint
 
 		const uint32 oldSize = Size();
 		T* temp = MemoryRaw::AllocateMemory<T>(oldSize + 1);
-		__CopyString(temp, (IsSmallString()) ? _short._smallString : _long._rawPointer, oldSize);
+		__CopyString(temp, (IsShortString()) ? _short._shortString : _long._rawPointer, oldSize);
 
 		Release();
 
@@ -311,7 +311,7 @@ namespace mint
 	template<typename T>
 	inline void String<T>::_SetSize(const uint32 newSize) noexcept
 	{
-		if (IsSmallString() == true)
+		if (IsShortString() == true)
 		{
 			_short._size = newSize;
 		}
@@ -326,9 +326,9 @@ namespace mint
 	{
 		_SetSize(0);
 
-		if (IsSmallString())
+		if (IsShortString())
 		{
-			_short._smallString[0] = 0;
+			_short._shortString[0] = 0;
 		}
 		else
 		{
@@ -339,7 +339,7 @@ namespace mint
 	template<typename T>
 	MINT_INLINE const T* String<T>::CString() const
 	{
-		return (IsSmallString() == true) ? _short._smallString : _long._rawPointer;
+		return (IsShortString() == true) ? _short._shortString : _long._rawPointer;
 	}
 
 	template<typename T>
@@ -352,7 +352,7 @@ namespace mint
 	template<typename T>
 	MINT_INLINE T* String<T>::Data()
 	{
-		return (IsSmallString() == true) ? _short._smallString : _long._rawPointer;
+		return (IsShortString() == true) ? _short._shortString : _long._rawPointer;
 	}
 
 	template<typename T>
@@ -556,7 +556,7 @@ namespace mint
 	template<typename T>
 	inline void String<T>::Release() noexcept
 	{
-		if (IsSmallString() == false)
+		if (IsShortString() == false)
 		{
 			MemoryRaw::DeallocateMemory<T>(_long._rawPointer);
 		}
@@ -568,13 +568,13 @@ namespace mint
 	template<typename T>
 	inline void String<T>::ToLongString() noexcept
 	{
-		if (IsSmallString() == false || this->IsEmpty() == true)
+		if (IsShortString() == false || this->IsEmpty() == true)
 		{
 			return;
 		}
 
 		Short tempShort{ _short };
-		AssignInternalLongXXX(tempShort._smallString);
+		AssignInternalLongXXX(tempShort._shortString);
 	}
 }
 

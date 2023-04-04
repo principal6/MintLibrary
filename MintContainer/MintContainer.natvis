@@ -13,17 +13,17 @@
     </Type>
     
     <Type Name="mint::String&lt;*&gt;">
-        <DisplayString Condition="_short._size &lt; Short::kSmallStringCapacity &amp;&amp; 0 &lt; _short._size">{{ Small ({_short._size, nvo})  Content = {_short._smallString} }}</DisplayString>
-        <DisplayString Condition="_short._size &lt; Short::kSmallStringCapacity &amp;&amp; _short._size == 0">{{ Small ({_short._size, nvo})  Content = NULL }}</DisplayString>
-        <DisplayString Condition="_short._size &gt;= Short::kSmallStringCapacity &amp;&amp; 0 &lt; _long._size">{{ Long ({_long._size, nvo})  Content = {_long._rawPointer} }}</DisplayString>
-        <DisplayString Condition="_short._size &gt;= Short::kSmallStringCapacity &amp;&amp; _long._size == 0">{{ Long ({_long._size, nvo})  Content = NULL }}</DisplayString>
+        <DisplayString Condition="_short._size &lt; Short::kShortStringCapacity &amp;&amp; 0 &lt; _short._size">{{ Small ({_short._size, nvo})  Content = {_short._shortString} }}</DisplayString>
+        <DisplayString Condition="_short._size &lt; Short::kShortStringCapacity &amp;&amp; _short._size == 0">{{ Small ({_short._size, nvo})  Content = NULL }}</DisplayString>
+        <DisplayString Condition="_short._size &gt;= Short::kShortStringCapacity &amp;&amp; 0 &lt; _long._size">{{ Long ({_long._size, nvo})  Content = {_long._rawPointer} }}</DisplayString>
+        <DisplayString Condition="_short._size &gt;= Short::kShortStringCapacity &amp;&amp; _long._size == 0">{{ Long ({_long._size, nvo})  Content = NULL }}</DisplayString>
         <Expand>
-            <Item Name="[Length]" Condition="_short._size &lt; Short::kSmallStringCapacity" ExcludeView="simple">_short._size</Item>
-            <Item Name="[Length]" Condition="_short._size &gt;= Short::kSmallStringCapacity" ExcludeView="simple">_long._size</Item>
-            <Item Name="[Capacity]" Condition="_short._size &lt; Short::kSmallStringCapacity" ExcludeView="simple">Short::kSmallStringCapacity</Item>
-            <Item Name="[Capacity]" Condition="_short._size &gt;= Short::kSmallStringCapacity" ExcludeView="simple">_long._capacity</Item>
-            <Item Name="[Content]" Condition="_short._size &lt; Short::kSmallStringCapacity">_short._smallString</Item>
-            <Item Name="[Content]" Condition="_short._size &gt;= Short::kSmallStringCapacity">_long._rawPointer</Item>
+            <Item Name="[Length]" Condition="_short._size &lt; Short::kShortStringCapacity" ExcludeView="simple">_short._size</Item>
+            <Item Name="[Length]" Condition="_short._size &gt;= Short::kShortStringCapacity" ExcludeView="simple">_long._size</Item>
+            <Item Name="[Capacity]" Condition="_short._size &lt; Short::kShortStringCapacity" ExcludeView="simple">Short::kShortStringCapacity</Item>
+            <Item Name="[Capacity]" Condition="_short._size &gt;= Short::kShortStringCapacity" ExcludeView="simple">_long._capacity</Item>
+            <Item Name="[Content]" Condition="_short._size &lt; Short::kShortStringCapacity">_short._shortString</Item>
+            <Item Name="[Content]" Condition="_short._size &gt;= Short::kShortStringCapacity">_long._rawPointer</Item>
         </Expand>
     </Type>
 

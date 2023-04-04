@@ -73,11 +73,12 @@ namespace mint
 
 	public:
 		virtual StringType GetStringType() const override { return StringType::MutableHeapString; }
-		virtual uint32 Capacity() const override { return static_cast<uint32>(IsSmallString() ? Short::kSmallStringCapacity : _long._capacity); }
-		MINT_INLINE uint32 Size() const noexcept { return static_cast<uint32>(IsSmallString() ? _short._size : _long._size); }
+		virtual uint32 Capacity() const override { return static_cast<uint32>(IsShortString() ? Short::kShortStringCapacity : _long._capacity); }
+		MINT_INLINE uint32 Size() const noexcept { return static_cast<uint32>(IsShortString() ? _short._size : _long._size); }
 		virtual uint32 Length() const override { return Size(); }
 		virtual const T* CString() const override;
 		T Back() const;
+		MINT_INLINE bool IsShortString() const noexcept { return _short._size < Short::kShortStringCapacity; }
 
 	private:
 		virtual T* Data() override;
@@ -100,8 +101,7 @@ namespace mint
 	private:
 		void Release() noexcept;
 		void ToLongString() noexcept;
-		MINT_INLINE bool IsSmallString() const noexcept { return _short._size < Short::kSmallStringCapacity; }
-		MINT_INLINE bool IsNotAllocated() const noexcept { return (IsSmallString() == true) ? (_short._size == 0) : (_long._rawPointer == nullptr); }
+		MINT_INLINE bool IsNotAllocated() const noexcept { return (IsShortString() == true) ? (_short._size == 0) : (_long._rawPointer == nullptr); }
 
 	private:
 		//
@@ -118,10 +118,10 @@ namespace mint
 		};
 		struct Short
 		{
-			static constexpr uint32 kSmallStringCapacity = (24 / kTypeSize) - 1;
+			static constexpr uint32 kShortStringCapacity = (24 / kTypeSize) - 1;
 
 			T _size;                              //  1 (char) or  2 (wchar_t)
-			T _smallString[kSmallStringCapacity]; // 23 (char) or 22 (wchar_t)
+			T _shortString[kShortStringCapacity]; // 23 (char) or 22 (wchar_t)
 		};
 		union
 		{
