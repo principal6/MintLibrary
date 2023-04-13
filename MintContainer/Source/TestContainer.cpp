@@ -575,10 +575,13 @@ namespace mint
 
 #pragma region String
 			StringA sa0 = StringA("Hello, there! My friend!!!");
+			MINT_ASSURE(sa0.Capacity() == sa0.Size());
 			sa0 += "I'm testing...";
 
 			StringA saSmall0 = StringA("abcde");
+			MINT_ASSURE(sa0.Capacity() > sa0.Size()); // SSO
 			saSmall0.Resize(3);
+			MINT_ASSURE(sa0.Capacity() > sa0.Size()); // SSO
 			saSmall0 += "+testing...";
 			saSmall0 += "+testing..!";
 			saSmall0.Clear();
