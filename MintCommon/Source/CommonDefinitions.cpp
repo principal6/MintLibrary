@@ -49,8 +49,8 @@ namespace mint
 	LoggerString& LoggerString::operator=(const char* const rhs)
 	{
 		const uint32 rhsLength = static_cast<uint32>(::strlen(rhs));
-		Reserve(rhsLength + 1);
-		::strcpy_s(_rawPointer, _capacity, rhs);
+		Reserve(rhsLength);
+		::strcpy_s(_rawPointer, _capacity + 1, rhs);
 		_size = rhsLength;
 		return *this;
 	}
@@ -58,7 +58,7 @@ namespace mint
 	LoggerString& LoggerString::operator+=(const char* const rhs)
 	{
 		const uint32 rhsLength = static_cast<uint32>(::strlen(rhs));
-		Reserve(Max(_capacity * 2, _size + rhsLength + 1));
+		Reserve(Max((_capacity + 1) * 2 - 1, _size + rhsLength));
 		::strcpy_s(&_rawPointer[_size], rhsLength + 1, rhs);
 		_size += rhsLength;
 		return *this;
@@ -79,7 +79,7 @@ namespace mint
 		}
 
 		MINT_DELETE_ARRAY(_rawPointer);
-		_rawPointer = MINT_NEW_ARRAY(char, newCapacity);
+		_rawPointer = MINT_NEW_ARRAY(char, newCapacity + 1);
 
 		if (_size > 0)
 		{

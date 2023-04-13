@@ -164,6 +164,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Assets\CodingConvention.md" />
+    <None Include="..\TODO.md" />
     <None Include="Include\ScopedCPUProfiler.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
