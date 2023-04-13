@@ -49,7 +49,7 @@ namespace mint
 
 	private:
 		String& AssignInternalXXX(const T* const rawString) noexcept;
-		String& AssignInternalLongXXX(const T* const rawString) noexcept;
+		String& AssignInternalLongXXX(const T* const rawString, const uint32 length) noexcept;
 
 	public:
 		virtual MutableString<T>& Append(const StringReference<T>& rhs) override;
@@ -78,7 +78,7 @@ namespace mint
 		virtual uint32 Length() const override { return Size(); }
 		virtual const T* CString() const override;
 		T Back() const;
-		MINT_INLINE bool IsShortString() const noexcept { return _short._size < Short::kShortStringCapacity; }
+		MINT_INLINE bool IsShortString() const noexcept { return _short._size <= Short::kShortStringCapacity; }
 
 	private:
 		virtual T* Data() override;
@@ -105,10 +105,10 @@ namespace mint
 
 	private:
 		//
-		// LONG                     |                capacity               |                  size                 |              rawPointer               |
-		// SHORT(1 byte-wide char ) |size| 00 | 01 | 02 | 03 | 04 | 05 | 06 | 07 | 08 | 09 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19 | 20 | 21 | 22 |
-		// SHORT(2 bytes-wide char) |   size  |    00   |    01   |    02   |    03   |    04   |    05   |    06   |    07   |    08   |    09   |    10   |
-		// SHORT(4 bytes-wide char) |        size       |         00        |         01        |         02        |         03        |         04        |
+		// LONG                     |               capacity                |                 size                  |              rawPointer               |
+		// SHORT(1 byte-wide char ) |                 size                  | 01 | 02 | 03 | 04 | 05 | 06 | 07 | 08 | 09 | 10 | 11 | 12 | 13 | 14 | 15 | \0 |
+		// SHORT(2 bytes-wide char) |                 size                  |    01   |    02   |    03   |    04   |    05   |    06   |    07   |    \0   |
+		// SHORT(4 bytes-wide char) |                 size                  |         01        |         02        |         03        |         \0        |
 		//
 		struct Long
 		{
@@ -118,10 +118,9 @@ namespace mint
 		};
 		struct Short
 		{
-			static constexpr uint32 kShortStringCapacity = (24 / kTypeSize) - 1;
-
-			T _size;                              //  1 (char) or  2 (wchar_t)
-			T _shortString[kShortStringCapacity]; // 23 (char) or 22 (wchar_t)
+			static constexpr uint32 kShortStringCapacity = (sizeof(uint64) * 2) / kTypeSize - 1;
+			uint64 _size;                             //  8 bytes
+			T _shortString[kShortStringCapacity + 1]; // 16 bytes
 		};
 		union
 		{

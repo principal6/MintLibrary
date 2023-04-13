@@ -602,14 +602,13 @@ namespace mint
 			const bool cmp0 = (sw2 == sw1);
 			const bool cmp1 = (sw2 == StringW(L"String"));
 
-
 			// small string optimization
 			StringA sa2;
 			for (uint32 i = 0; i < 5; i++)
 			{
 				sa2 += "[[Repeating string content...]]";
 			}
-			//MINT_ASSERT(sa2.IsShortString() == false, "%s must be long string!!!", MINT_VARNAME(sa2));
+			MINT_ASSERT(sa2.IsShortString() == false, "%s must be long string!!!", MINT_VARNAME(sa2));
 #pragma endregion
 
 #pragma region StringView

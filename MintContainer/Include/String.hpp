@@ -115,7 +115,7 @@ namespace mint
 	{
 		return static_cast<String<T>&>(Append(rhs));
 	}
-	
+
 	template<typename T>
 	MINT_INLINE String<T>& String<T>::operator+=(const T* const rhs) noexcept
 	{
@@ -172,23 +172,22 @@ namespace mint
 	inline String<T>& String<T>::AssignInternalXXX(const T* const rawString) noexcept
 	{
 		const uint32 length = StringUtil::Length(rawString);
-		if (length < Short::kShortStringCapacity)
+		if (length <= Short::kShortStringCapacity)
 		{
 			_short._size = length;
 			__CopyString(_short._shortString, rawString, length);
 			return *this;
 		}
-		return AssignInternalLongXXX(rawString);
+		return AssignInternalLongXXX(rawString, length);
 	}
 
 	template<typename T>
-	inline String<T>& String<T>::AssignInternalLongXXX(const T* const rawString) noexcept
+	inline String<T>& String<T>::AssignInternalLongXXX(const T* const rawString, const uint32 length) noexcept
 	{
-		const uint32 length = StringUtil::Length(rawString);
-		_long._size = length;
-		_long._capacity = _long._size + 1;
+		MINT_ASSERT(StringUtil::Length(rawString) == length, "It must be guaranteed by the caller.");
 
-		_long._rawPointer = MemoryRaw::AllocateMemory<T>(Capacity());
+		_long._capacity = _long._size = length;
+		_long._rawPointer = MemoryRaw::AllocateMemory<T>(length + 1);
 		__CopyString(_long._rawPointer, rawString, _long._size);
 		return *this;
 	}
@@ -230,27 +229,33 @@ namespace mint
 	template<typename T>
 	inline String<T>& String<T>::AppendInternalSmallXXX(const T* const rhs) noexcept
 	{
+		MINT_ASSERT(IsShortString() == true, "It must be guaranteed by the caller.");
+
+		const uint32 capacity = Capacity();
 		const uint32 rhsLength = StringUtil::Length(rhs);
 		const uint64 newLength = static_cast<uint64>(_short._size) + rhsLength;
-		if (newLength < Short::kShortStringCapacity)
+		if (newLength <= Short::kShortStringCapacity)
 		{
 			__CopyString(&_short._shortString[_short._size], rhs, rhsLength);
 			_short._size = static_cast<T>(newLength);
 			return *this;
 		}
 
-		Reserve(Max(Capacity() * 2, static_cast<uint32>(newLength + 1)));
+		Reserve(Max((capacity + 1) * 2 - 1, static_cast<uint32>(newLength)));
 		return AppendInternalLongXXX(rhs);
 	}
 
 	template<typename T>
 	inline String<T>& String<T>::AppendInternalLongXXX(const T* const rhs) noexcept
 	{
+		MINT_ASSERT(IsShortString() == false, "It must be guaranteed by the caller.");
+
+		const uint32 capacity = Capacity();
 		const uint32 rhsLength = StringUtil::Length(rhs);
 		const uint64 newLength = _long._size + rhsLength;
-		if (_long._capacity <= newLength)
+		if (capacity < newLength)
 		{
-			Reserve(Max(static_cast<uint32>(_long._capacity * 2), static_cast<uint32>(newLength + 1)));
+			Reserve(Max(capacity, static_cast<uint32>(newLength)));
 		}
 
 		__CopyString(&_long._rawPointer[_long._size], rhs, rhsLength);
@@ -261,15 +266,10 @@ namespace mint
 	template<typename T>
 	inline void String<T>::Reserve(const uint32 newCapacity) noexcept
 	{
-		if (newCapacity <= Capacity() || newCapacity <= Short::kShortStringCapacity)
+		if (newCapacity <= Capacity())
 		{
 			return;
 		}
-
-		//if (Long::kStringMaxCapacity <= newCapacity)
-		//{
-		//    MINT_NEVER;
-		//}
 
 		const uint32 oldSize = Size();
 		T* temp = MemoryRaw::AllocateMemory<T>(oldSize + 1);
@@ -277,7 +277,7 @@ namespace mint
 
 		Release();
 
-		_long._rawPointer = MemoryRaw::AllocateMemory<T>(newCapacity);
+		_long._rawPointer = MemoryRaw::AllocateMemory<T>(newCapacity + 1);
 		__CopyString(_long._rawPointer, temp, oldSize);
 		_long._capacity = newCapacity;
 		_long._size = oldSize;
@@ -288,9 +288,9 @@ namespace mint
 	template<typename T>
 	inline void String<T>::Resize(const uint32 newSize, const T fillCharacter) noexcept
 	{
-		if (Capacity() <= newSize)
+		if (Capacity() < newSize)
 		{
-			Reserve(newSize + 1);
+			Reserve(newSize);
 		}
 
 		T* const dataPointer = Data();
@@ -574,7 +574,7 @@ namespace mint
 		}
 
 		Short tempShort{ _short };
-		AssignInternalLongXXX(tempShort._shortString);
+		AssignInternalLongXXX(tempShort._shortString, StringUtil::Length(tempShort._shortString));
 	}
 }
 
