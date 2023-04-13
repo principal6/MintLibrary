@@ -130,6 +130,10 @@ namespace mint
 	};
 
 
+	template <typename T>
+	String<T> operator+(const T* lhs, String<T>& rhs);
+
+
 	using StringA = String<char>;
 	using StringW = String<wchar_t>;
 	using StringU8 = String<char8_t>;

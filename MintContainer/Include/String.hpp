@@ -576,6 +576,17 @@ namespace mint
 		Short tempShort{ _short };
 		AssignInternalLongXXX(tempShort._shortString, StringUtil::Length(tempShort._shortString));
 	}
+
+
+	template <typename T>
+	MINT_INLINE String<T> operator+(const T* lhs, String<T>& rhs)
+	{
+		String<T> third;
+		third.Reserve(StringUtil::Length(lhs) + rhs.Length());
+		third = lhs;
+		third += rhs;
+		return third;
+	}
 }
 
 
