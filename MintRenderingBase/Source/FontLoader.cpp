@@ -245,7 +245,7 @@ namespace mint
 		bool FontLoader::BakeFontData(const char* const fontFaceFileName, const int16 fontSize, const char* const outputFileName, const int16 textureWidth, const int16 spaceLeft, const int16 spaceTop)
 		{
 			std::string fontFaceFileNameS = fontFaceFileName;
-			if (StringUtil::hasExtension(fontFaceFileNameS) == false)
+			if (StringUtil::HasExtension(fontFaceFileNameS) == false)
 			{
 				fontFaceFileNameS.append(".ttf");
 			}

@@ -130,6 +130,9 @@ namespace mint
 
 
 	template <typename T>
+	String<T> operator+(const T* lhs, String<T>&& rhs);
+	
+	template <typename T>
 	String<T> operator+(const T* lhs, String<T>& rhs);
 
 

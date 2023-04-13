@@ -590,6 +590,16 @@ namespace mint
 
 
 	template <typename T>
+	MINT_INLINE String<T> operator+(const T* lhs, String<T>&& rhs)
+	{
+		String<T> third;
+		third.Reserve(StringUtil::Length(lhs) + rhs.Length());
+		third = lhs;
+		third += rhs;
+		return third;
+	}
+
+	template <typename T>
 	MINT_INLINE String<T> operator+(const T* lhs, String<T>& rhs)
 	{
 		String<T> third;
