@@ -146,6 +146,9 @@ namespace mint
 		template <uint32 BufferSize>
 		void ConvertStackStringAToStackStringW(const StackStringA<BufferSize>& source, StackStringW<BufferSize>& destination) noexcept;
 
+		bool HasExtension(std::string& inoutText);
+		template <typename T>
+		bool HasExtension(StringReference<T>& inoutText);
 		void ExcludeExtension(std::string& inoutText);
 		template <typename T>
 		void ExcludeExtension(String<T>& inoutText);

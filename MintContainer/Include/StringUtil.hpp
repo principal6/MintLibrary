@@ -286,10 +286,17 @@ namespace mint
 			return std::string::npos;
 		}
 
-		MINT_INLINE bool hasExtension(std::string& inoutText)
+		MINT_INLINE bool HasExtension(std::string& inoutText)
 		{
 			const size_t found = computeExtenstionAt(inoutText);
 			return (found != std::string::npos);
+		}
+
+		template <typename T>
+		MINT_INLINE bool HasExtension(StringReference<T>& inoutText)
+		{
+			const uint32 found = computeExtenstionAt(inoutText);
+			return (found != kStringNPos);
 		}
 
 		MINT_INLINE void ExcludeExtension(std::string& inoutText)
