@@ -75,7 +75,7 @@ namespace mint
 	template <typename T, uint32 BufferSize>
 	MINT_INLINE uint32 StackString<T, BufferSize>::Capacity() const
 	{
-		return BufferSize;
+		return BufferSize - 1;
 	}
 
 	template <typename T, uint32 BufferSize>
