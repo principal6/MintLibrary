@@ -27,6 +27,27 @@ namespace mint
 	}
 
 	template<typename T>
+	uint32 StringReference<T>::Find(const T token, const uint32 offset) const
+	{
+		const uint32 sourceLength = Length();
+		if (sourceLength < offset + 1)
+		{
+			return kStringNPos;
+		}
+
+		const T* const sourceString = CString();
+		uint32 result = kStringNPos;
+		for (uint32 sourceIter = offset; sourceIter < sourceLength; ++sourceIter)
+		{
+			if (sourceString[sourceIter] == token)
+			{
+				return sourceIter;
+			}
+		}
+		return result;
+	}
+
+	template<typename T>
 	uint32 StringReference<T>::Find(const StringReference<T>& token, const uint32 offset) const
 	{
 		const uint32 sourceLength = Length();

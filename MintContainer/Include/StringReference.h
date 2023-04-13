@@ -37,6 +37,7 @@ namespace mint
 		virtual uint32 CountChars() const;
 		virtual const T& At(const uint32 index) const { return CString()[index]; }
 		virtual const T* CString() const { return _literalString; }
+		virtual uint32 Find(const T token, const uint32 offset = 0) const;
 		virtual uint32 Find(const StringReference<T>& token, const uint32 offset = 0) const;
 		uint32 RFind(const StringReference<T>& token, const uint32 offset = 0) const;
 		virtual bool Contains(const StringReference<T>& token, const uint32 offset = 0) const;
