@@ -101,7 +101,6 @@ namespace mint
 	private:
 		void Release() noexcept;
 		void ToLongString() noexcept;
-		MINT_INLINE bool IsNotAllocated() const noexcept { return (IsShortString() == true) ? (_short._size == 0) : (_long._rawPointer == nullptr); }
 
 	private:
 		//

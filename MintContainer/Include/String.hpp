@@ -80,6 +80,8 @@ namespace mint
 	{
 		if (this != &rhs)
 		{
+			Release();
+
 			_long = rhs._long;
 
 			rhs._long._capacity = 0;
@@ -155,16 +157,12 @@ namespace mint
 	template<typename T>
 	inline MutableString<T>& String<T>::Assign(const StringReference<T>& rhs)
 	{
-		Release();
-
 		return AssignInternalXXX(rhs.CString());
 	}
 
 	template<typename T>
 	inline String<T>& String<T>::Assign(const T* const rawString) noexcept
 	{
-		Release();
-
 		return AssignInternalXXX(rawString);
 	}
 
@@ -186,8 +184,17 @@ namespace mint
 	{
 		MINT_ASSERT(StringUtil::Length(rawString) == length, "It must be guaranteed by the caller.");
 
+		if (_long._capacity == 0)
+		{
+			_long._rawPointer = MemoryRaw::AllocateMemory<T>(length + 1);
+		}
+		else if (length > _long._capacity)
+		{
+			Release();
+			_long._rawPointer = MemoryRaw::AllocateMemory<T>(length + 1);
+		}
+
 		_long._capacity = _long._size = length;
-		_long._rawPointer = MemoryRaw::AllocateMemory<T>(length + 1);
 		__CopyString(_long._rawPointer, rawString, _long._size);
 		return *this;
 	}
@@ -208,11 +215,6 @@ namespace mint
 	template<typename T>
 	inline String<T>& String<T>::Append(const T* const rawString) noexcept
 	{
-		if (IsNotAllocated())
-		{
-			return Assign(rawString);
-		}
-
 		if (IsShortString())
 		{
 			return AppendInternalSmallXXX(rawString);
@@ -255,7 +257,7 @@ namespace mint
 		const uint64 newLength = _long._size + rhsLength;
 		if (capacity < newLength)
 		{
-			Reserve(Max(capacity, static_cast<uint32>(newLength)));
+			Reserve(Max((capacity + 1) * 2 - 1, static_cast<uint32>(newLength)));
 		}
 
 		__CopyString(&_long._rawPointer[_long._size], rhs, rhsLength);
@@ -272,6 +274,15 @@ namespace mint
 		}
 
 		const uint32 oldSize = Size();
+		if (oldSize == 0)
+		{
+			_long._rawPointer = MemoryRaw::AllocateMemory<T>(newCapacity + 1);
+			_long._rawPointer[0] = 0;
+			_long._capacity = newCapacity;
+			_long._size = 0;
+			return;
+		}
+
 		T* temp = MemoryRaw::AllocateMemory<T>(oldSize + 1);
 		__CopyString(temp, (IsShortString()) ? _short._shortString : _long._rawPointer, oldSize);
 
@@ -566,7 +577,7 @@ namespace mint
 	}
 
 	template<typename T>
-	inline void String<T>::ToLongString() noexcept
+	MINT_INLINE void String<T>::ToLongString() noexcept
 	{
 		if (IsShortString() == false || this->IsEmpty() == true)
 		{
