@@ -147,6 +147,8 @@ namespace mint
 		void ConvertStackStringAToStackStringW(const StackStringA<BufferSize>& source, StackStringW<BufferSize>& destination) noexcept;
 
 		void ExcludeExtension(std::string& inoutText);
+		template <typename T>
+		void ExcludeExtension(String<T>& inoutText);
 
 		template <typename T>
 		void Tokenize(const std::basic_string<T>& inputString, const T delimiter, Vector<std::basic_string<T>>& outTokens);

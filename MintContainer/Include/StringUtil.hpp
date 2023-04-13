@@ -262,7 +262,7 @@ namespace mint
 			uint32 found = inoutText.Find('.', 1);
 			while (found < Length - 1)
 			{
-				if (::isalpha(inoutText[found - 1]) == true && ::isalpha(inoutText[found + 1]) == true)
+				if (::isalpha(inoutText[found - 1]) && ::isalpha(inoutText[found + 1]))
 				{
 					return found;
 				}
@@ -299,6 +299,18 @@ namespace mint
 			{
 				inoutText = inoutText.substr(0, found);
 			}
+		}
+
+		template <typename T>
+		MINT_INLINE void ExcludeExtension(String<T>& inoutText)
+		{
+			const uint32 found = computeExtenstionAt<T>(inoutText);
+			if (found == kStringNPos)
+			{
+				return;
+			}
+
+			inoutText = inoutText.Substring(0, found);
 		}
 
 		template <typename T>
