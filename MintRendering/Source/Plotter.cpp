@@ -109,6 +109,8 @@ namespace mint
 
 			_shapeFontRendererContext->Render();
 			_shapeFontRendererContext->Flush();
+
+			Clear();
 		}
 
 		void Plotter::PlotScatter(const PlotType plotType, const float x, const float y, const Color& color)
