@@ -273,10 +273,17 @@ namespace mint
 			}
 			else
 			{
-				SafeResourceMapper safeResourceMapper{ _graphicDevice, _resource.Get(), 0 };
-				if (safeResourceMapper.IsValid() == true)
+				if (_resourceType >= DxResourceType::Texture2D)
 				{
-					safeResourceMapper.Set(resourceContent, _elementStride * elementCount);
+					_graphicDevice.GetDxDeviceContext()->UpdateSubresource(_resource.Get(), 0, nullptr, resourceContent, _elementStride * width, 0);
+				}
+				else
+				{
+					SafeResourceMapper safeResourceMapper{ _graphicDevice, _resource.Get(), 0 };
+					if (safeResourceMapper.IsValid() == true)
+					{
+						safeResourceMapper.Set(resourceContent, _elementStride * elementCount);
+					}
 				}
 			}
 		}

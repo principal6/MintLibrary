@@ -70,5 +70,10 @@ namespace mint
 		{
 			return _device.Get();
 		}
+
+		MINT_INLINE ID3D11DeviceContext* GraphicDevice::GetDxDeviceContext() noexcept
+		{
+			return _deviceContext.Get();
+		}
 	}
 }
