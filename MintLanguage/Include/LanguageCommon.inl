@@ -13,7 +13,7 @@ namespace mint
 			__noop;
 		}
 
-		inline SymbolTableItem::SymbolTableItem(const SymbolClassifier symbolClassifier, const std::string& symbolString, const uint32 sourceAt)
+		inline SymbolTableItem::SymbolTableItem(const SymbolClassifier symbolClassifier, const StringA& symbolString, const uint32 sourceAt)
 			: _symbolClassifier{ symbolClassifier }
 			, _symbolString{ symbolString }
 			, _symbolIndex{ kUint32Max }
@@ -22,7 +22,7 @@ namespace mint
 			__noop;
 		}
 
-		inline SymbolTableItem::SymbolTableItem(const SymbolClassifier symbolClassifier, const std::string& symbolString)
+		inline SymbolTableItem::SymbolTableItem(const SymbolClassifier symbolClassifier, const StringA& symbolString)
 			: _symbolClassifier{ symbolClassifier }
 			, _symbolString{ symbolString }
 			, _symbolIndex{ kUint32Max }
@@ -44,7 +44,7 @@ namespace mint
 		MINT_INLINE void SymbolTableItem::ClearData()
 		{
 			_symbolClassifier = SymbolClassifier::POST_CLEARED;
-			_symbolString.clear();
+			_symbolString.Clear();
 			_symbolIndex = kUint32Max;
 			// _sourceAt 은 그냥 남겨둔다.
 		}

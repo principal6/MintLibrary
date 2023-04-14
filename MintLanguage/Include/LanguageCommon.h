@@ -77,8 +77,8 @@ namespace mint
 
 		public:
 			SymbolTableItem();
-			SymbolTableItem(const SymbolClassifier symbolClassifier, const std::string& symbolString, const uint32 sourceAt);
-			SymbolTableItem(const SymbolClassifier symbolClassifier, const std::string& symbolString);
+			SymbolTableItem(const SymbolClassifier symbolClassifier, const StringA& symbolString, const uint32 sourceAt);
+			SymbolTableItem(const SymbolClassifier symbolClassifier, const StringA& symbolString);
 
 		public:
 			bool operator==(const SymbolTableItem& rhs) const noexcept;
@@ -90,7 +90,7 @@ namespace mint
 
 		public:
 			SymbolClassifier _symbolClassifier;
-			std::string _symbolString;
+			StringA _symbolString;
 
 		private:
 			uint32 _symbolIndex;

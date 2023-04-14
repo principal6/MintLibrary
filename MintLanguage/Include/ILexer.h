@@ -90,7 +90,7 @@ namespace mint
 			MINT_INLINE OperatorClassifier GetClassifier() const noexcept { return _operatorClassifier; }
 
 		private:
-			std::string _string;
+			StringA _string;
 			uint32 _length;
 			OperatorClassifier _operatorClassifier;
 		};
@@ -109,7 +109,7 @@ namespace mint
 			MINT_INLINE LineSkipperClassifier GetClassifier() const noexcept { return _lineSkipperClassifier; }
 
 		private:
-			std::string _string;
+			StringA _string;
 			uint16 _groupID;
 			LineSkipperSemantic _lineSkipperSemantic;
 			LineSkipperClassifier _lineSkipperClassifier;
@@ -129,7 +129,7 @@ namespace mint
 			virtual ~ILexer() = default;
 
 		public:
-			void SetSource(const std::string& source);
+			void SetSource(const StringA& source);
 
 		protected:
 			void SetEscaper(const char escaper);
@@ -175,8 +175,8 @@ namespace mint
 			bool IsStringQuote(const char input) const noexcept;
 			bool IsPunctuator(const char ch0, const char ch1, const char ch2, uint32& outAdvance) const noexcept;
 			bool IsOperator(const char ch0, const char ch1, OperatorTableItem& out) const noexcept;
-			bool IsNumber(const std::string& input) const noexcept;
-			bool IsKeyword(const std::string& input) const noexcept;
+			bool IsNumber(const StringA& input) const noexcept;
+			bool IsKeyword(const StringA& input) const noexcept;
 			bool IsEscaper(const char input) const noexcept;
 			MINT_INLINE void SetParsePlainEscaper(const bool value) noexcept { _parsePlainEscaper = value; }
 			MINT_INLINE bool ParsePlainEscaper() const noexcept { return _parsePlainEscaper; }
@@ -189,7 +189,7 @@ namespace mint
 			char GetGrouperClose(const char grouperOpen) const noexcept;
 
 		protected:
-			std::string _source;
+			StringA _source;
 			uint32 _totalTimeMs;
 
 		private:
@@ -207,7 +207,7 @@ namespace mint
 			uint16 _lineSkipperNextGroupID;
 
 		protected:
-			Vector<std::string> _keywordTable;
+			Vector<StringA> _keywordTable;
 			HashMap<uint64, uint32> _keywordUmap;
 
 		protected:
@@ -219,7 +219,7 @@ namespace mint
 			HashMap<char, int8> _stringQuoteUmap;
 
 		protected:
-			Vector<std::string> _punctuatorTable;
+			Vector<StringA> _punctuatorTable;
 			HashMap<uint64, uint32> _punctuatorUmap;
 
 		protected:

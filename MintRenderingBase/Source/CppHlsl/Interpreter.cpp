@@ -38,7 +38,7 @@ namespace mint
 			{
 				_fileType = fileType;
 
-				_hlslString.clear();
+				_hlslString.Clear();
 
 				const uint32 typeMetaDataCount = _parser.GetTypeMetaDataCount();
 				if (_fileType == CppHlslFileType::StructuredBuffers)
@@ -51,7 +51,7 @@ namespace mint
 							continue;
 						}
 
-						_hlslString.append(_parser.SerializeCppHlslTypeToHlslStructuredBufferDefinition(typeMetaData));
+						_hlslString.Append(_parser.SerializeCppHlslTypeToHlslStructuredBufferDefinition(typeMetaData));
 					}
 				}
 
@@ -67,17 +67,17 @@ namespace mint
 
 					if (_fileType == CppHlslFileType::StreamData)
 					{
-						_hlslString.append(_parser.SerializeCppHlslTypeToHlslStreamDatum(typeMetaData));
+						_hlslString.Append(_parser.SerializeCppHlslTypeToHlslStreamDatum(typeMetaData));
 					}
 					else if (_fileType == CppHlslFileType::ConstantBuffers)
 					{
-						_hlslString.append(_parser.SerializeCppHlslTypeToHlslConstantBuffer(typeMetaData, bufferIndex));
+						_hlslString.Append(_parser.SerializeCppHlslTypeToHlslConstantBuffer(typeMetaData, bufferIndex));
 
 						++bufferIndex;
 					}
 				}
 
-				if (_hlslString.empty() == true)
+				if (_hlslString.IsEmpty() == true)
 				{
 					MINT_LOG_ERROR("Hlsl String 을 Generate 하지 못했습니다!! typeMetaDataCount: %d", typeMetaDataCount);
 				}
@@ -85,7 +85,7 @@ namespace mint
 
 			const char* Interpreter::GetHlslString() const noexcept
 			{
-				return _hlslString.c_str();
+				return _hlslString.CString();
 			}
 
 			uint32 Interpreter::GetTypeMetaDataCount() const noexcept
@@ -98,18 +98,18 @@ namespace mint
 				return _parser.GetTypeMetaData(typeIndex);
 			}
 
-			const TypeMetaData<TypeCustomData>& Interpreter::GetTypeMetaData(const std::string& typeName) const noexcept
+			const TypeMetaData<TypeCustomData>& Interpreter::GetTypeMetaData(const StringA& typeName) const noexcept
 			{
 				return _parser.GetTypeMetaData(typeName);
 			}
 
 			const TypeMetaData<TypeCustomData>& Interpreter::GetTypeMetaData(const std::type_info& stdTypeInfo) const noexcept
 			{
-				std::string stdTypeName = stdTypeInfo.name();
-				const uint64 firstSpacePosition = stdTypeName.find(' ');
-				if (firstSpacePosition != std::string::npos)
+				StringA stdTypeName = stdTypeInfo.name();
+				const uint32 firstSpacePosition = stdTypeName.Find(' ');
+				if (firstSpacePosition != kStringNPos)
 				{
-					stdTypeName = stdTypeName.substr(firstSpacePosition + 1);
+					stdTypeName = stdTypeName.Substring(firstSpacePosition + 1);
 				}
 				return GetTypeMetaData(stdTypeName);
 			}

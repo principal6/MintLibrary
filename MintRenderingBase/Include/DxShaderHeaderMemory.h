@@ -8,6 +8,7 @@
 #include <MintCommon/Include/CommonDefinitions.h>
 
 #include <MintContainer/Include/Vector.h>
+#include <MintContainer/Include/String.h>
 
 #include <d3dcommon.h>
 
@@ -30,8 +31,8 @@ namespace mint
 			HRESULT Close(LPCVOID pData) override final;
 
 		private:
-			Vector<std::string> _fileNameArray;
-			Vector<std::string> _fileContentArray;
+			Vector<StringA> _fileNameArray;
+			Vector<StringA> _fileContentArray;
 		};
 	}
 }

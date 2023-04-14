@@ -36,7 +36,7 @@ namespace mint
 			: _string{ string }
 			, _operatorClassifier{ operatorClassifier }
 		{
-			_length = static_cast<uint32>(_string.length());
+			_length = static_cast<uint32>(_string.Length());
 		}
 
 
@@ -69,7 +69,7 @@ namespace mint
 			__noop;
 		}
 
-		void ILexer::SetSource(const std::string& source)
+		void ILexer::SetSource(const StringA& source)
 		{
 			_source = source;
 		}
@@ -245,7 +245,7 @@ namespace mint
 			// line 단위 parsing
 			// comment 도 거르기!
 			{
-				std::string preprocessedSource;
+				StringA preprocessedSource;
 
 				uint32 prevSourceAt = 0;
 				uint32 sourceAt = 0;
@@ -261,13 +261,13 @@ namespace mint
 						bool isSuccess = false;
 						if (lineSkipperTableItem.CheckClassifier(LineSkipperClassifier::SingleMarker) == true)
 						{
-							std::string prev = _source.substr(prevSourceAt, sourceAt - prevSourceAt);
+							StringA prev = _source.Substring(prevSourceAt, sourceAt - prevSourceAt);
 
 							// Trim
 							{
 								// Front
 								uint32 trimFront = 0;
-								while (trimFront < prev.size())
+								while (trimFront < prev.Size())
 								{
 									if (prev[trimFront] == '\r' || prev[trimFront] == '\n')
 									{
@@ -278,14 +278,14 @@ namespace mint
 										break;
 									}
 								}
-								prev = prev.substr(trimFront);
+								prev = prev.Substring(trimFront);
 
 								// Back
-								while (prev.size() > 0)
+								while (prev.Size() > 0)
 								{
-									if (prev.back() == '\r' || prev.back() == '\n')
+									if (prev.Back() == '\r' || prev.Back() == '\n')
 									{
-										prev.pop_back();
+										prev.PopBack();
 									}
 									else
 									{
@@ -294,17 +294,17 @@ namespace mint
 								}
 							}
 
-							preprocessedSource.append(prev);
+							preprocessedSource.Append(prev);
 
-							std::string line;
+							StringA line;
 							for (uint32 sourceIter = sourceAt + 2; ContinuesExecution(sourceIter) == true; ++sourceIter)
 							{
-								if (_source.at(sourceIter) == '\n')
+								if (_source.At(sourceIter) == '\n')
 								{
-									line = _source.substr(prevSourceAt, sourceIter - prevSourceAt);
-									if (line.back() == '\r')
+									line = _source.Substring(prevSourceAt, sourceIter - prevSourceAt);
+									if (line.Back() == '\r')
 									{
-										line.pop_back();
+										line.PopBack();
 									}
 
 									isSuccess = true;
@@ -321,7 +321,7 @@ namespace mint
 							else if (lineSkipperTableItem.CheckSemantic(LineSkipperSemantic::Comment) == true)
 							{
 								// Comment
-								preprocessedSource.append(_source.substr(prevSourceAt, sourceAt - prevSourceAt));
+								preprocessedSource.Append(_source.Substring(prevSourceAt, sourceAt - prevSourceAt));
 							}
 							else
 							{
@@ -337,7 +337,7 @@ namespace mint
 								uint32 sourceIter = sourceAt + 2;
 								while (ContinuesExecution(sourceIter + 1) == true)
 								{
-									if (IsLineSkipper(_source.at(sourceIter), _source.at(static_cast<uint64>(sourceIter) + 1), closeLineSkipperTableItem) == true)
+									if (IsLineSkipper(_source.At(sourceIter), _source.At(static_cast<uint64>(sourceIter) + 1), closeLineSkipperTableItem) == true)
 									{
 										if (closeLineSkipperTableItem.IsSameString(lineSkipperTableItem) == true)
 										{
@@ -354,7 +354,7 @@ namespace mint
 								uint32 sourceIter = sourceAt + 2;
 								while (ContinuesExecution(sourceIter + 1) == true)
 								{
-									if (IsLineSkipper(_source.at(sourceIter), _source.at(static_cast<uint64>(sourceIter) + 1), closeLineSkipperTableItem) == true)
+									if (IsLineSkipper(_source.At(sourceIter), _source.At(static_cast<uint64>(sourceIter) + 1), closeLineSkipperTableItem) == true)
 									{
 										if (closeLineSkipperTableItem.IsSameGroup(lineSkipperTableItem) == true)
 										{
@@ -383,7 +383,7 @@ namespace mint
 					++sourceAt;
 				}
 
-				preprocessedSource.append(_source.substr(prevSourceAt, sourceAt - prevSourceAt));
+				preprocessedSource.Append(_source.Substring(prevSourceAt, sourceAt - prevSourceAt));
 
 				std::swap(_source, preprocessedSource);
 			}
@@ -399,7 +399,7 @@ namespace mint
 			if (prevSourceAt < sourceAt)
 			{
 				const uint32 tokenLength = sourceAt - prevSourceAt;
-				std::string tokenString = _source.substr(prevSourceAt, tokenLength);
+				StringA tokenString = _source.Substring(prevSourceAt, tokenLength);
 				_symbolTable.PushBack(SymbolTableItem(_defaultSymbolClassifier, tokenString, sourceAt));
 			}
 
@@ -409,22 +409,22 @@ namespace mint
 
 		bool ILexer::ContinuesExecution(const uint32 sourceAt) const noexcept
 		{
-			return sourceAt < _source.length();
+			return sourceAt < _source.Length();
 		}
 
 		char ILexer::GetCh0(const uint32 sourceAt) const noexcept
 		{
-			return _source.at(sourceAt);
+			return _source.At(sourceAt);
 		}
 
 		char ILexer::GetCh1(const uint32 sourceAt) const noexcept
 		{
-			return (static_cast<uint64>(sourceAt) + 1 < _source.length()) ? _source.at(static_cast<uint64>(sourceAt) + 1) : 0;
+			return (static_cast<uint64>(sourceAt) + 1 < _source.Length()) ? _source.At(static_cast<uint64>(sourceAt) + 1) : 0;
 		}
 
 		char ILexer::GetCh2(const uint32 sourceAt) const noexcept
 		{
-			return (static_cast<uint64>(sourceAt) + 2 < _source.length()) ? _source.at(static_cast<uint64>(sourceAt) + 2) : 0;
+			return (static_cast<uint64>(sourceAt) + 2 < _source.Length()) ? _source.At(static_cast<uint64>(sourceAt) + 2) : 0;
 		}
 
 		void ILexer::ExecuteInternalScanning(uint32& prevSourceAt, uint32& sourceAt)
@@ -495,7 +495,7 @@ namespace mint
 					}
 					else if (tokenLength == 1)
 					{
-						if (IsDelimiter(_source.at(prevSourceAt)) == true)
+						if (IsDelimiter(_source.At(prevSourceAt)) == true)
 						{
 							prevSourceAt = sourceAt + 1;
 							++sourceAt;
@@ -506,7 +506,7 @@ namespace mint
 
 				if (tokenLength > 0)
 				{
-					std::string tokenString = _source.substr(prevSourceAt, tokenLength);
+					StringA tokenString = _source.Substring(prevSourceAt, tokenLength);
 					SymbolClassifier tokenSymbolClassifier = _defaultSymbolClassifier;
 					if (IsNumber(tokenString) == true)
 					{
@@ -682,9 +682,9 @@ namespace mint
 			return true;
 		}
 
-		bool ILexer::IsNumber(const std::string& input) const noexcept
+		bool ILexer::IsNumber(const StringA& input) const noexcept
 		{
-			if (input.empty() == true)
+			if (input.IsEmpty() == true)
 			{
 				return false;
 			}
@@ -692,13 +692,13 @@ namespace mint
 			static constexpr char kNumberZero = '0';
 			static constexpr char kNumberNine = '9';
 			static constexpr char kPeriod = '.';
-			const char firstCh = input.at(0);
+			const char firstCh = input.At(0);
 			if (firstCh == kPeriod || ((kNumberZero <= firstCh) && (firstCh <= kNumberNine)))
 			{
-				const uint64 inputLength = input.length();
-				for (uint64 inputAt = 1; inputAt < inputLength; ++inputAt)
+				const uint32 inputLength = input.Length();
+				for (uint32 inputAt = 1; inputAt < inputLength; ++inputAt)
 				{
-					const char ch = input.at(inputAt);
+					const char ch = input.At(inputAt);
 					if (ch == kPeriod || ((firstCh < kNumberZero) || (kNumberNine < firstCh)))
 					{
 						return false;
@@ -711,9 +711,9 @@ namespace mint
 			return false;
 		}
 
-		bool ILexer::IsKeyword(const std::string& input) const noexcept
+		bool ILexer::IsKeyword(const StringA& input) const noexcept
 		{
-			return _keywordUmap.Find(ComputeHash(input.c_str())).IsValid() == true;
+			return _keywordUmap.Find(ComputeHash(input.CString())).IsValid() == true;
 		}
 
 		bool ILexer::IsEscaper(const char input) const noexcept

@@ -470,7 +470,7 @@ namespace mint
 
 		bool Test_HashMap()
 		{
-			HashMap<std::string, std::string> hashMap;
+			HashMap<StringA, StringA> hashMap;
 			hashMap.Insert("1", "a");
 			hashMap.Insert("5", "b");
 			hashMap.Insert("11", "c");

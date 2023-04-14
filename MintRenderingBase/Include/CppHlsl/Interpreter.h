@@ -42,7 +42,7 @@ namespace mint
 			public:
 				uint32 GetTypeMetaDataCount() const noexcept;
 				const TypeMetaData<TypeCustomData>& GetTypeMetaData(const uint32 typeIndex) const noexcept;
-				const TypeMetaData<TypeCustomData>& GetTypeMetaData(const std::string& typeName) const noexcept;
+				const TypeMetaData<TypeCustomData>& GetTypeMetaData(const StringA& typeName) const noexcept;
 				const TypeMetaData<TypeCustomData>& GetTypeMetaData(const std::type_info& stdTypeInfo) const noexcept;
 
 			private:
@@ -51,7 +51,7 @@ namespace mint
 
 			private:
 				CppHlslFileType _fileType;
-				std::string _hlslString;
+				StringA _hlslString;
 			};
 		}
 	}

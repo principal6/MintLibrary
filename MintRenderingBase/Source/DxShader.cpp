@@ -297,7 +297,7 @@ namespace mint
 			if (FAILED(_graphicDevice.GetDxDevice()->CreateInputLayout(outInputLayout._inputElementSet._inputElementDescriptorArray.Data(), static_cast<UINT>(outInputLayout._inputElementSet._inputElementDescriptorArray.Size()),
 				vertexShader._shaderBlob->GetBufferPointer(), vertexShader._shaderBlob->GetBufferSize(), outInputLayout._inputLayout.ReleaseAndGetAddressOf())))
 			{
-				MINT_LOG_ERROR("VertexShader [[%s]] 의 InputLayout 생성에 실패했습니다. Input 자료형 으로 [[%s]] 을 쓰는게 맞는지 확인해 주세요.", vertexShader._hlslFileName.c_str(), inputElementTypeMetaData.GetTypeName().c_str());
+				MINT_LOG_ERROR("VertexShader [[%s]] 의 InputLayout 생성에 실패했습니다. Input 자료형 으로 [[%s]] 을 쓰는게 맞는지 확인해 주세요.", vertexShader._hlslFileName.CString(), inputElementTypeMetaData.GetTypeName().CString());
 				return false;
 			}
 			return true;
@@ -308,7 +308,7 @@ namespace mint
 			inputElementSet._semanticNameArray.PushBack(Language::CppHlsl::Parser::ConvertDeclarationNameToHlslSemanticName(memberTypeMetaData.GetDeclName()));
 
 			D3D11_INPUT_ELEMENT_DESC inputElementDescriptor;
-			inputElementDescriptor.SemanticName = inputElementSet._semanticNameArray.Back().c_str();
+			inputElementDescriptor.SemanticName = inputElementSet._semanticNameArray.Back().CString();
 			inputElementDescriptor.SemanticIndex = 0;
 			inputElementDescriptor.Format = Language::CppHlsl::Parser::ConvertCppHlslTypeToDxgiFormat(memberTypeMetaData);
 			inputElementDescriptor.InputSlot = memberTypeMetaData._customData.GetInputSlot();
@@ -333,7 +333,7 @@ namespace mint
 				return false;
 			}
 
-			std::string outputShaderFilePath{ inputShaderFileName };
+			StringA outputShaderFilePath{ inputShaderFileName };
 			StringUtil::ExcludeExtension(outputShaderFilePath);
 			if (outputDirectory != nullptr)
 			{
@@ -348,9 +348,9 @@ namespace mint
 			{
 				outputShaderFilePath = inputDirectory + outputShaderFilePath;
 			}
-			outputShaderFilePath.append(kCompiledShaderFileExtension);
+			outputShaderFilePath.Append(kCompiledShaderFileExtension);
 
-			return CompileShaderFromFile(inputShaderFilePath.CString(), entryPoint, outputShaderFilePath.c_str(), shaderType, forceCompilation, inoutShader);
+			return CompileShaderFromFile(inputShaderFilePath.CString(), entryPoint, outputShaderFilePath.CString(), shaderType, forceCompilation, inoutShader);
 		}
 
 		bool DxShaderPool::CompileShaderFromFile(const char* const inputShaderFilePath, const char* const entryPoint, const char* const outputShaderFilePath, const GraphicShaderType shaderType, const bool forceCompilation, DxShader& inoutShader)
@@ -423,9 +423,9 @@ namespace mint
 
 			if (compileParam._outputFileName != nullptr)
 			{
-				std::wstring outputFileNameWideString;
-				StringUtil::ConvertStringToWideString(compileParam._outputFileName, outputFileNameWideString);
-				if (FAILED(D3DWriteBlobToFile(*outBlob, outputFileNameWideString.c_str(), TRUE)))
+				StringW outputFileNameWideString;
+				StringUtil::ConvertStringAToStringW(compileParam._outputFileName, outputFileNameWideString);
+				if (FAILED(D3DWriteBlobToFile(*outBlob, outputFileNameWideString.CString(), TRUE)))
 				{
 					return false;
 				}
@@ -450,7 +450,7 @@ namespace mint
 				for (uint32 shaderIndex = 0; shaderIndex < shaderCount; ++shaderIndex)
 				{
 					DxShader& shader = AccessShaders(shaderType)[shaderIndex];
-					CompileShaderFromFile(shader._hlslFileName.c_str(), shader._entryPoint.c_str(), shader._hlslBinaryFileName.c_str(), shader._shaderType, true, shader);
+					CompileShaderFromFile(shader._hlslFileName.CString(), shader._entryPoint.CString(), shader._hlslBinaryFileName.CString(), shader._shaderType, true, shader);
 					CreateShaderInternal(shaderType, shader);
 				}
 			}
@@ -469,13 +469,13 @@ namespace mint
 
 		void DxShaderPool::ReportCompileError()
 		{
-			std::string errorMessages(reinterpret_cast<char*>(_errorMessageBlob->GetBufferPointer()));
+			StringA errorMessages(reinterpret_cast<char*>(_errorMessageBlob->GetBufferPointer()));
 
-			const size_t firstNewLinePos = errorMessages.find('\n');
-			const size_t secondNewLinePos = errorMessages.find('\n', firstNewLinePos + 1);
-			errorMessages = errorMessages.substr(0, secondNewLinePos);
+			const uint32 firstNewLinePos = errorMessages.Find('\n');
+			const uint32 secondNewLinePos = errorMessages.Find('\n', firstNewLinePos + 1);
+			errorMessages = errorMessages.Substring(0, secondNewLinePos);
 
-			MINT_LOG_ERROR("Shader Compile Error\n\n%s", errorMessages.c_str());
+			MINT_LOG_ERROR("Shader Compile Error\n\n%s", errorMessages.CString());
 		}
 
 		void DxShaderPool::BindShaderIfNot(const GraphicShaderType shaderType, const GraphicObjectID& objectID)

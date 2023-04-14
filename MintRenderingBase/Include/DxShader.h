@@ -39,7 +39,7 @@ namespace mint
 
 		struct DxInputElementSet
 		{
-			Vector<std::string> _semanticNameArray;
+			Vector<StringA> _semanticNameArray;
 			Vector<D3D11_INPUT_ELEMENT_DESC> _inputElementDescriptorArray;
 		};
 
@@ -97,9 +97,9 @@ namespace mint
 			ComPtr<ID3D10Blob> _shaderBlob;
 			ComPtr<ID3D11DeviceChild> _shader;
 			GraphicShaderType _shaderType;
-			std::string _hlslFileName;
-			std::string _hlslBinaryFileName;
-			std::string _entryPoint;
+			StringA _hlslFileName;
+			StringA _hlslBinaryFileName;
+			StringA _entryPoint;
 
 		public:
 			static const DxShader kNullInstance;

@@ -27,8 +27,8 @@ namespace mint
 
 			//private:
 			ClassifierType _classifier;
-			std::string _Identifier;
-			std::string _value;
+			StringA _Identifier;
+			StringA _value;
 		};
 
 
@@ -43,8 +43,8 @@ namespace mint
 			static const TypeMetaData& GetInvalid() noexcept;
 
 		public:
-			void SetBaseData(const std::string& typeName, const bool isBuiltIn);
-			void SetDeclName(const std::string& declName);
+			void SetBaseData(const StringA& typeName, const bool isBuiltIn);
+			void SetDeclName(const StringA& declName);
 			void SetSize(const uint32 size);
 			void SetByteOffset(const uint32 byteOffset);
 			void PushMember(const TypeMetaData& member);
@@ -53,8 +53,8 @@ namespace mint
 			bool IsBuiltIn() const noexcept;
 
 		public:
-			const std::string& GetTypeName() const noexcept;
-			const std::string& GetDeclName() const noexcept;
+			const StringA& GetTypeName() const noexcept;
+			const StringA& GetDeclName() const noexcept;
 			uint32 GetSize() const noexcept;
 			uint32 GetByteOffset() const noexcept;
 			uint32 GetMemberCount() const noexcept;
@@ -62,8 +62,8 @@ namespace mint
 
 		private:
 			bool _isBuiltIn;
-			std::string _typeName; // namespace + name
-			std::string _declName;
+			StringA _typeName; // namespace + name
+			StringA _declName;
 			uint32 _size; // Byte count
 			uint32 _byteOffset;
 			Vector<TypeMetaData> _memberArray; // Member variables
@@ -123,7 +123,7 @@ namespace mint
 
 			private:
 				const uint32 _sourceAt;
-				std::string _message;
+				StringA _message;
 			};
 
 		public:
@@ -131,7 +131,7 @@ namespace mint
 			virtual ~IParser() = default;
 
 		protected:
-			void RegisterTypeInternal(const std::string& typeFullName, const uint32 typeSize, const bool IsBuiltIn = false) noexcept;
+			void RegisterTypeInternal(const StringA& typeFullName, const uint32 typeSize, const bool IsBuiltIn = false) noexcept;
 
 		public:
 			virtual bool Execute() abstract;
@@ -163,13 +163,13 @@ namespace mint
 
 		public:
 			uint32 GetTypeMetaDataCount() const noexcept;
-			const TypeMetaData<TypeCustomDataType>& GetTypeMetaData(const std::string& typeName) const noexcept;
+			const TypeMetaData<TypeCustomDataType>& GetTypeMetaData(const StringA& typeName) const noexcept;
 			const TypeMetaData<TypeCustomDataType>& GetTypeMetaData(const int32 typeIndex) const noexcept;
 
 		protected:
-			bool ExistsTypeMetaData(const std::string& typeName) const noexcept;
-			void PushTypeMetaData(const std::string& typeName, const TypeMetaData<TypeCustomDataType>& typeMetaData) noexcept;
-			TypeMetaData<TypeCustomDataType>& AccessTypeMetaData(const std::string& typeName) noexcept;
+			bool ExistsTypeMetaData(const StringA& typeName) const noexcept;
+			void PushTypeMetaData(const StringA& typeName, const TypeMetaData<TypeCustomDataType>& typeMetaData) noexcept;
+			TypeMetaData<TypeCustomDataType>& AccessTypeMetaData(const StringA& typeName) noexcept;
 
 		protected:
 			ILexer& _lexer;
@@ -184,10 +184,10 @@ namespace mint
 
 		protected:
 			Vector<TypeMetaData<TypeCustomDataType>> _typeMetaDatas;
-			HashMap<std::string, uint32> _typeMetaDataMap;
+			HashMap<StringA, uint32> _typeMetaDataMap;
 
 		protected:
-			HashMap<std::string, uint32> _builtInTypeUmap;
+			HashMap<StringA, uint32> _builtInTypeUmap;
 		};
 	}
 }

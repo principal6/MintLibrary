@@ -20,7 +20,7 @@ namespace mint
 			{
 			public:
 				Lexer();
-				Lexer(const std::string& source);
+				Lexer(const StringA& source);
 				virtual ~Lexer() = default;
 
 			public:

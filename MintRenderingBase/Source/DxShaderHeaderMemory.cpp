@@ -21,8 +21,8 @@ namespace mint
 			{
 				if (_fileNameArray[fileIndex] == pFileName)
 				{
-					*ppData = _fileContentArray[fileIndex].c_str();
-					*pBytes = static_cast<UINT>(_fileContentArray[fileIndex].length());
+					*ppData = _fileContentArray[fileIndex].CString();
+					*pBytes = static_cast<UINT>(_fileContentArray[fileIndex].Length());
 					return S_OK;
 				}
 			}

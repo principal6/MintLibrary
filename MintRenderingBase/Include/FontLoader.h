@@ -7,6 +7,7 @@
 
 #include <MintCommon/Include/CommonDefinitions.h>
 #include <MintContainer/Include/Vector.h>
+#include <MintContainer/Include/String.h>
 #include <MintMath/Include/Float2.h>
 
 
@@ -100,7 +101,7 @@ namespace mint
 
 		public:
 			static bool ExistsFont(const char* const fontFileNameRaw);
-			static std::string GetFontFileNameWithExtension(const char* const fontFileName) noexcept;
+			static StringA GetFontFileNameWithExtension(const char* const fontFileName) noexcept;
 
 		public:
 			void PushGlyphRange(const GlyphRange& glyphRange) noexcept;

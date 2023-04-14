@@ -40,14 +40,14 @@ namespace mint
 		}
 
 		template <typename CustomDataType>
-		MINT_INLINE void TypeMetaData<CustomDataType>::SetBaseData(const std::string& typeName, const bool isBuiltIn)
+		MINT_INLINE void TypeMetaData<CustomDataType>::SetBaseData(const StringA& typeName, const bool isBuiltIn)
 		{
 			_typeName = typeName;
 			_isBuiltIn = isBuiltIn;
 		}
 
 		template <typename CustomDataType>
-		MINT_INLINE void TypeMetaData<CustomDataType>::SetDeclName(const std::string& declName)
+		MINT_INLINE void TypeMetaData<CustomDataType>::SetDeclName(const StringA& declName)
 		{
 			_declName = declName;
 		}
@@ -77,13 +77,13 @@ namespace mint
 		}
 
 		template <typename CustomDataType>
-		MINT_INLINE const std::string& TypeMetaData<CustomDataType>::GetTypeName() const noexcept
+		MINT_INLINE const StringA& TypeMetaData<CustomDataType>::GetTypeName() const noexcept
 		{
 			return _typeName;
 		}
 
 		template <typename CustomDataType>
-		MINT_INLINE const std::string& TypeMetaData<CustomDataType>::GetDeclName() const noexcept
+		MINT_INLINE const StringA& TypeMetaData<CustomDataType>::GetDeclName() const noexcept
 		{
 			return _declName;
 		}
@@ -168,7 +168,7 @@ namespace mint
 		}
 
 		template <typename TypeCustomDataType, typename SyntaxClassifierType>
-		inline void IParser<TypeCustomDataType, SyntaxClassifierType>::RegisterTypeInternal(const std::string& typeFullName, const uint32 typeSize, const bool IsBuiltIn) noexcept
+		inline void IParser<TypeCustomDataType, SyntaxClassifierType>::RegisterTypeInternal(const StringA& typeFullName, const uint32 typeSize, const bool IsBuiltIn) noexcept
 		{
 			TypeMetaData<TypeCustomDataType> typeMetaData;
 			typeMetaData.SetBaseData(typeFullName, IsBuiltIn);
@@ -321,10 +321,10 @@ namespace mint
 		}
 
 		template <typename TypeCustomDataType, typename SyntaxClassifierType>
-		inline const TypeMetaData<TypeCustomDataType>& IParser<TypeCustomDataType, SyntaxClassifierType>::GetTypeMetaData(const std::string& typeName) const noexcept
+		inline const TypeMetaData<TypeCustomDataType>& IParser<TypeCustomDataType, SyntaxClassifierType>::GetTypeMetaData(const StringA& typeName) const noexcept
 		{
 			KeyValuePair found = _typeMetaDataMap.Find(typeName);
-			MINT_ASSERT(found.IsValid() == true, "Type[%s] 가 존재하지 않습니다!", typeName.c_str());
+			MINT_ASSERT(found.IsValid() == true, "Type[%s] 가 존재하지 않습니다!", typeName.CString());
 
 			const uint32 typeIndex = *found._value;
 			return _typeMetaDatas[typeIndex];
@@ -337,23 +337,23 @@ namespace mint
 		}
 
 		template<typename TypeCustomDataType, typename SyntaxClassifierType>
-		inline bool IParser<TypeCustomDataType, SyntaxClassifierType>::ExistsTypeMetaData(const std::string& typeName) const noexcept
+		inline bool IParser<TypeCustomDataType, SyntaxClassifierType>::ExistsTypeMetaData(const StringA& typeName) const noexcept
 		{
 			return _typeMetaDataMap.Find(typeName).IsValid();
 		}
 
 		template<typename TypeCustomDataType, typename SyntaxClassifierType>
-		inline void IParser<TypeCustomDataType, SyntaxClassifierType>::PushTypeMetaData(const std::string& typeName, const TypeMetaData<TypeCustomDataType>& typeMetaData) noexcept
+		inline void IParser<TypeCustomDataType, SyntaxClassifierType>::PushTypeMetaData(const StringA& typeName, const TypeMetaData<TypeCustomDataType>& typeMetaData) noexcept
 		{
 			_typeMetaDatas.PushBack(typeMetaData);
 			_typeMetaDataMap.Insert(typeName, _typeMetaDatas.Size() - 1);
 		}
 
 		template <typename TypeCustomDataType, typename SyntaxClassifierType>
-		inline TypeMetaData<TypeCustomDataType>& IParser<TypeCustomDataType, SyntaxClassifierType>::AccessTypeMetaData(const std::string& typeName) noexcept
+		inline TypeMetaData<TypeCustomDataType>& IParser<TypeCustomDataType, SyntaxClassifierType>::AccessTypeMetaData(const StringA& typeName) noexcept
 		{
 			KeyValuePair found = _typeMetaDataMap.Find(typeName);
-			MINT_ASSERT(found.IsValid() == true, "Type[%s] 가 존재하지 않습니다!", typeName.c_str());
+			MINT_ASSERT(found.IsValid() == true, "Type[%s] 가 존재하지 않습니다!", typeName.CString());
 
 			const uint32 typeIndex = *found._value;
 			return _typeMetaDatas[typeIndex];

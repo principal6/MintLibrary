@@ -16,7 +16,7 @@ namespace mint
 				__noop;
 			}
 
-			MINT_INLINE void TypeCustomData::SetSemanticName(const std::string& semanticName)
+			MINT_INLINE void TypeCustomData::SetSemanticName(const StringA& semanticName)
 			{
 				_semanticName = semanticName;
 			}
@@ -46,7 +46,7 @@ namespace mint
 				return (_registerIndex != kInvalidRegisterIndex);
 			}
 
-			MINT_INLINE const std::string& TypeCustomData::GetSemanticName() const noexcept
+			MINT_INLINE const StringA& TypeCustomData::GetSemanticName() const noexcept
 			{
 				return _semanticName;
 			}

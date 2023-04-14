@@ -44,7 +44,7 @@ namespace mint
 				~TypeCustomData() = default;
 
 			public:
-				void SetSemanticName(const std::string& semanticName);
+				void SetSemanticName(const StringA& semanticName);
 				void SetRegisterIndex(const uint32 registerIndex);
 				void SetInputSlot(const uint32 inputSlot);
 				void SetInstanceDataStepRate(const uint32 instanceDataStepRate);
@@ -54,7 +54,7 @@ namespace mint
 				bool IsRegisterIndexValid() const noexcept;
 
 			public:
-				const std::string& GetSemanticName() const noexcept;
+				const StringA& GetSemanticName() const noexcept;
 				uint32 GetRegisterIndex() const noexcept;
 				uint32 GetInputSlot() const noexcept;
 				uint32 GetInstanceDataStepRate() const noexcept;
@@ -65,7 +65,7 @@ namespace mint
 				static constexpr uint32 kInvalidRegisterIndex = kUint32Max;
 
 			private:
-				std::string _semanticName;
+				StringA _semanticName;
 				uint32 _registerIndex;
 				uint32 _inputSlot;
 				uint32 _instanceDataStepRate;
@@ -95,21 +95,21 @@ namespace mint
 				void BuildTypeMetaData(const SyntaxTreeNode& structNode) noexcept;
 
 			private:
-				int32 GetSlottedStreamDataInputSlot(const std::string& typeName, std::string& streamDataTypeName) const noexcept;
+				int32 GetSlottedStreamDataInputSlot(const StringA& typeName, StringA& streamDataTypeName) const noexcept;
 
 			public:
-				static std::string ConvertDeclarationNameToHlslSemanticName(const std::string& declarationName);
+				static StringA ConvertDeclarationNameToHlslSemanticName(const StringA& declarationName);
 				static DXGI_FORMAT ConvertCppHlslTypeToDxgiFormat(const TypeMetaData<TypeCustomData>& typeMetaData);
 
 			public:
-				std::string SerializeCppHlslTypeToHlslStreamDatum(const TypeMetaData<TypeCustomData>& typeMetaData);
+				StringA SerializeCppHlslTypeToHlslStreamDatum(const TypeMetaData<TypeCustomData>& typeMetaData);
 
 			private:
-				std::string SerializeCppHlslTypeToHlslStreamDatumMembers(const TypeMetaData<TypeCustomData>& typeMetaData);
+				StringA SerializeCppHlslTypeToHlslStreamDatumMembers(const TypeMetaData<TypeCustomData>& typeMetaData);
 
 			public:
-				std::string SerializeCppHlslTypeToHlslConstantBuffer(const TypeMetaData<TypeCustomData>& typeMetaData, const uint32 bufferIndex);
-				std::string SerializeCppHlslTypeToHlslStructuredBufferDefinition(const TypeMetaData<TypeCustomData>& typeMetaData);
+				StringA SerializeCppHlslTypeToHlslConstantBuffer(const TypeMetaData<TypeCustomData>& typeMetaData, const uint32 bufferIndex);
+				StringA SerializeCppHlslTypeToHlslStructuredBufferDefinition(const TypeMetaData<TypeCustomData>& typeMetaData);
 			};
 		}
 	}

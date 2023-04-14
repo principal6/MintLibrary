@@ -122,15 +122,15 @@ namespace mint
 
 		bool FontLoader::ExistsFont(const char* const fontFileNameRaw)
 		{
-			const std::string fontFileName = GetFontFileNameWithExtension(fontFileNameRaw);
-			return FileUtil::Exists(fontFileName.c_str());
+			const StringA fontFileName = GetFontFileNameWithExtension(fontFileNameRaw);
+			return FileUtil::Exists(fontFileName.CString());
 		}
 
-		std::string FontLoader::GetFontFileNameWithExtension(const char* const fontFileName) noexcept
+		StringA FontLoader::GetFontFileNameWithExtension(const char* const fontFileName) noexcept
 		{
-			std::string fontFileNameWithExtension = fontFileName;
+			StringA fontFileNameWithExtension = fontFileName;
 			StringUtil::ExcludeExtension(fontFileNameWithExtension);
-			fontFileNameWithExtension.append(kFontFileExtension);
+			fontFileNameWithExtension.Append(kFontFileExtension);
 			return fontFileNameWithExtension;
 		}
 
@@ -170,17 +170,17 @@ namespace mint
 
 		bool FontLoader::LoadFont(const char* const fontFileNameRaw, GraphicDevice& graphicDevice)
 		{
-			const std::string fontFileName = GetFontFileNameWithExtension(fontFileNameRaw);
-			if (FileUtil::Exists(fontFileName.c_str()) == false)
+			const StringA fontFileName = GetFontFileNameWithExtension(fontFileNameRaw);
+			if (FileUtil::Exists(fontFileName.CString()) == false)
 			{
-				MINT_LOG_ERROR("해당 FontFile 이 존재하지 않습니다: %s", fontFileName.c_str());
+				MINT_LOG_ERROR("해당 FontFile 이 존재하지 않습니다: %s", fontFileName.CString());
 				return false;
 			}
 
 			BinaryFileReader binaryFileReader;
-			if (binaryFileReader.Open(fontFileName.c_str()) == false)
+			if (binaryFileReader.Open(fontFileName.CString()) == false)
 			{
-				MINT_LOG_ERROR("해당 FontFile 을 여는 데 실패했습니다: %s", fontFileName.c_str());
+				MINT_LOG_ERROR("해당 FontFile 을 여는 데 실패했습니다: %s", fontFileName.CString());
 				return false;
 			}
 
@@ -244,20 +244,20 @@ namespace mint
 
 		bool FontLoader::BakeFontData(const char* const fontFaceFileName, const int16 fontSize, const char* const outputFileName, const int16 textureWidth, const int16 spaceLeft, const int16 spaceTop)
 		{
-			std::string fontFaceFileNameS = fontFaceFileName;
+			StringA fontFaceFileNameS = fontFaceFileName;
 			if (StringUtil::HasExtension(fontFaceFileNameS) == false)
 			{
-				fontFaceFileNameS.append(".ttf");
+				fontFaceFileNameS.Append(".ttf");
 			}
-			if (FileUtil::Exists(fontFaceFileNameS.c_str()) == false)
+			if (FileUtil::Exists(fontFaceFileNameS.CString()) == false)
 			{
 				StringUtil::ExcludeExtension(fontFaceFileNameS);
-				fontFaceFileNameS.append(".otf");
+				fontFaceFileNameS.Append(".otf");
 			}
 
 			_fontData._fontSize = fontSize;
 
-			if (InitializeFreeType(fontFaceFileNameS.c_str()) == false)
+			if (InitializeFreeType(fontFaceFileNameS.CString()) == false)
 			{
 				MINT_LOG_ERROR("FreeType - 초기화에 실패했습니다.");
 				return false;
@@ -300,10 +300,10 @@ namespace mint
 			CompleteGlyphInfoArray(textureWidth, textureHeight);
 
 #if defined MINT_FONT_RENDERER_SAVE_PNG_FOR_TEST
-			std::string pngFileName = outputFileName;
+			StringA pngFileName = outputFileName;
 			StringUtil::ExcludeExtension(pngFileName);
-			pngFileName.append(".png");
-			stbi_write_png(pngFileName.c_str(), textureWidth, textureHeight, 1, &pixelArray[0], textureWidth * 1);
+			pngFileName.Append(".png");
+			stbi_write_png(pngFileName.CString(), textureWidth, textureHeight, 1, &pixelArray[0], textureWidth * 1);
 #endif
 
 			BinaryFileWriter binaryFileWriter;
@@ -321,11 +321,11 @@ namespace mint
 			}
 #endif
 
-			std::string outputFileNameS = outputFileName;
+			StringA outputFileNameS = outputFileName;
 			StringUtil::ExcludeExtension(outputFileNameS);
-			outputFileNameS.append(kFontFileExtension);
+			outputFileNameS.Append(kFontFileExtension);
 
-			binaryFileWriter.Save(outputFileNameS.c_str());
+			binaryFileWriter.Save(outputFileNameS.CString());
 
 			return true;
 		}

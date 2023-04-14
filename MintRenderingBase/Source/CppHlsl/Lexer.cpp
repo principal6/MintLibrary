@@ -42,7 +42,7 @@ namespace mint
 				RegisterKeyword("alignas");
 			}
 
-			Lexer::Lexer(const std::string& source)
+			Lexer::Lexer(const StringA& source)
 				: Lexer()
 			{
 				SetSource(source);
