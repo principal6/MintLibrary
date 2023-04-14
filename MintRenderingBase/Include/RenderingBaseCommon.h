@@ -64,6 +64,7 @@ namespace mint
 		public:
 			constexpr ByteColor() : ByteColor(255) { __noop; }
 			constexpr ByteColor(byte c) : ByteColor(c, c, c, c) { __noop; }
+			constexpr ByteColor(byte r, byte g, byte b) : ByteColor(r, g, b, 255) { __noop; }
 			constexpr ByteColor(byte r, byte g, byte b, byte a) : _c{ r, g, b, a } { __noop; }
 
 			MINT_INLINE byte& R() noexcept { return _c[0]; }
