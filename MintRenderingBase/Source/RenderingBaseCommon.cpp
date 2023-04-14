@@ -31,6 +31,14 @@ namespace mint
 			_pixels.Resize(_size._x * _size._y);
 		}
 
+		void ByteColorImage::Fill(const ByteColor& byteColor)
+		{
+			for (ByteColor& pixel : _pixels)
+			{
+				pixel = byteColor;
+			}
+		}
+
 		void ByteColorImage::SetPixel(const Int2& at, const ByteColor& pixel)
 		{
 			SetPixel(at._x, at._y, pixel);

@@ -98,6 +98,7 @@ namespace mint
 			int32 GetWidth() const { return _size._x; }
 			int32 GetHeight() const { return _size._y; }
 
+			void Fill(const ByteColor& byteColor);
 			void SetPixel(const Int2& at, const ByteColor& pixel);
 			void SetPixel(const int32 x, const int32 y, const ByteColor& pixel);
 			void SetPixel(const int32 index, const ByteColor& pixel);
