@@ -8,6 +8,7 @@
 
 #pragma optimize("", off)
 
+
 //#define MINT_TEST_PERFORMANCE
 
 
@@ -897,30 +898,52 @@ namespace mint
 			using Type = int32;
 			Queue<Type> queue;
 			queue.Reserve(32);
+			MINT_ASSURE(queue.HeadAt() == 0 && queue.TailAt() == 31);
 
 			queue.Push(0);
+			MINT_ASSURE(queue.HeadAt() == 0 && queue.TailAt() == 0);
+			MINT_ASSURE(queue.Size() == 1);
+			
 			queue.Push(1);
+			MINT_ASSURE(queue.HeadAt() == 0 && queue.TailAt() == 1);
+			MINT_ASSURE(queue.Size() == 2);
+
 			queue.Push(2);
+			MINT_ASSURE(queue.HeadAt() == 0 && queue.TailAt() == 2);
+			MINT_ASSURE(queue.Size() == 3);
+
 			queue.Push(3);
 			queue.Push(4);
 			queue.Push(5);
 			queue.Push(6);
 			queue.Push(7);
+			MINT_ASSURE(queue.Size() == 8);
 
 			queue.Pop();
+			MINT_ASSURE(queue.Size() == 7);
 
 			queue.Push(8);
+			MINT_ASSURE(queue.Size() == 8);
 
 			queue.Pop();
 			queue.Pop();
 
 			queue.Push(9);
+			MINT_ASSURE(queue.HeadAt() == 3 && queue.TailAt() == 9);
+			MINT_ASSURE(queue.Size() == 7);
+
 			for (size_t i = 0; i < 25; i++)
 			{
 				queue.Push(1);
 			}
+			MINT_ASSURE(queue.Size() == queue.Capacity() && queue.Capacity() == 32);
+
 			queue.Push(2);
+			MINT_ASSURE(queue.Size() == 33 && queue.Capacity() == 64);
+
 			queue.Flush();
+			MINT_ASSURE(queue.HeadAt() == 33 && queue.TailAt() == 32);
+			MINT_ASSURE(queue.Size() == 0);
 			return true;
 		}
 

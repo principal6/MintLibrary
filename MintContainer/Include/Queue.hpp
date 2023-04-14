@@ -44,6 +44,9 @@ namespace mint
 			MemoryRaw::DeallocateMemory<T>(_rawPointer);
 			_rawPointer = MemoryRaw::AllocateMemory<T>(capacity);
 			_capacity = capacity;
+			// Reset head and tail position!!!
+			_headAt = 0;
+			_tailAt = _capacity - 1;
 			return;
 		}
 

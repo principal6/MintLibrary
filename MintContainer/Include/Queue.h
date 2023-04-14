@@ -34,6 +34,10 @@ namespace mint
 	public:
 		T& Peek() noexcept;
 		const T& Peek() const noexcept;
+	
+	public:
+		MINT_INLINE uint32 HeadAt() const { return _headAt; }
+		MINT_INLINE uint32 TailAt() const { return _tailAt; }
 
 	private:
 		void SaveBackup(T*& backUpPointer) noexcept;
