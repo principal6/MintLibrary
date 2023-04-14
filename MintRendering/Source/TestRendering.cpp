@@ -1,4 +1,4 @@
-﻿#include <MintRendering/Include/Test.h>
+﻿#include <MintRendering/Include/TestRendering.h>
 #include <MintRendering/Include/AllHeaders.h>
 #include <MintRendering/Include/AllHpps.h>
 
@@ -7,15 +7,6 @@ namespace mint
 {
 	namespace TestRendering
 	{
-		bool test(Rendering::GraphicDevice& graphicDevice)
-		{
-			MINT_ASSURE(Test_SplineGenerator(graphicDevice));
-			MINT_ASSURE(Test_Plotter(graphicDevice));
-			MINT_ASSURE(Test_MathExpressionRenderer(graphicDevice));
-			MINT_ASSURE(Test_GUI(graphicDevice));
-			return true;
-		}
-
 		bool Test_SplineGenerator(Rendering::GraphicDevice& graphicDevice)
 		{
 			using namespace Rendering;
@@ -96,12 +87,12 @@ namespace mint
 			return true;
 		}
 
-		bool Test_Plotter(Rendering::GraphicDevice& graphicDevice)
+		bool Test_Plotter(Rendering::Plotter& plotter)
 		{
 			using namespace Rendering;
 
-			ShapeRendererContext& shapeFontRendererContext = graphicDevice.GetShapeRendererContext();
-			Plotter plotter(shapeFontRendererContext);
+			plotter.Clear();
+
 			plotter.SetXLabel(L"weight");
 			plotter.SetYLabel(L"length");
 
@@ -119,22 +110,20 @@ namespace mint
 			return true;
 		}
 
-		bool Test_MathExpressionRenderer(Rendering::GraphicDevice& graphicDevice)
+		bool Test_MathExpressionRenderer(Rendering::MathExpressionRenderer& mathExpressionRenderer)
 		{
 			using namespace Rendering;
 
-			MathExpressionRenderer mathExpressionRenderer(graphicDevice);
 			mathExpressionRenderer.drawMathExpression(MathExpression(L"\\bold{aba} is it even possibile? AB=C"), Float2(100, 100));
 			mathExpressionRenderer.Render();
 			return true;
 		}
 
-		bool Test_GUI(Rendering::GraphicDevice& graphicDevice)
+		bool Test_GUI(Rendering::GUI::GUIContext& guiContext)
 		{
 			using namespace Rendering;
 			using namespace GUI;
 
-			GUI::GUIContext& guiContext = graphicDevice.GetGUIContext();
 			//guiContext._debugSwitch._renderZoneOverlay = true;
 			//guiContext._debugSwitch._renderMousePoints = true;
 			//guiContext._debugSwitch._renderResizingArea = true;

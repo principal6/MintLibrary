@@ -63,7 +63,7 @@
     <ClInclude Include="Include\ImageRenderer.h">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Test.h">
+    <ClInclude Include="Include\TestRendering.h">
       <Filter>Include</Filter>
     </ClInclude>
   </ItemGroup>
@@ -107,7 +107,7 @@
     <ClCompile Include="Source\ImageRenderer.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Test.cpp">
+    <ClCompile Include="Source\TestRendering.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>

@@ -24,6 +24,14 @@ namespace mint
 			_max._y = -Math::kFloatMax;
 		}
 
+		void Plotter::Clear()
+		{
+			_xDataSets.Clear();
+			_yDataSets.Clear();
+			_colorArray.Clear();
+			_plotTypeArray.Clear();
+		}
+
 		void Plotter::Scatter(const Vector<float>& xData, const Vector<float>& yData)
 		{
 			_xDataSets.PushBack(xData);

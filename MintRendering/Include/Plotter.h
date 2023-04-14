@@ -41,6 +41,7 @@ namespace mint
 			~Plotter() = default;
 
 		public:
+			void Clear();
 			void Scatter(const Vector<float>& xData, const Vector<float>& yData);
 
 		private:

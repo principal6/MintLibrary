@@ -7,7 +7,7 @@
 #include <MintPlatform/Include/Test.h>
 #include <MintLanguage/Include/Test.h>
 #include <MintReflection/Include/TestReflection.h>
-#include <MintRendering/Include/Test.h>
+#include <MintRendering/Include/TestRendering.h>
 #include <MintLibrary/Include/Test.h>
 
 
@@ -52,7 +52,6 @@ int main()
 	TestPlatform::Test();
 	TestLanguage::Test();
 	TestReflection::Test();
-	//TestRendering::Test(graphicDevice);
 	TestLibrary::Test();
 #endif
 
@@ -165,6 +164,7 @@ bool Run3DTestWindow(mint::Platform::IWindow& window, mint::Rendering::GraphicDe
 		testSkeleton.CreateFromGenerator(testSkeletonGenerator);
 	}
 
+	Plotter plotter(graphicDevice.GetShapeRendererContext());
 	while (window.IsRunning() == true)
 	{
 		objectPool.ComputeDeltaTime();
@@ -243,11 +243,16 @@ bool Run3DTestWindow(mint::Platform::IWindow& window, mint::Rendering::GraphicDe
 
 			meshRenderer.Render(objectPool);
 
-			// # ShapeRendererContext 테스트
-			//ShapeRendererContext& shapeRendererContext = graphicDevice.GetShapeRendererContext();
-			//shapeRendererContext.TestDraw(Float2(30, 60));
-
 			instantRenderer.Render();
+
+			//TestRendering::Test_Plotter(plotter);
+
+			//ShapeRendererContext& shapeRendererContext = graphicDevice.GetShapeRendererContext();
+			//StackStringW<100> fpsString;
+			//FormatString(fpsString, L"FPS: %d", Profiler::FPSCounter::GetFps());
+			//shapeRendererContext.DrawDynamicText(fpsString.CString(), Float4(10, 10, 0, 0), FontRenderingOption());
+			// # ShapeRendererContext 테스트
+			//shapeRendererContext.TestDraw(Float2(30, 60));
 
 			graphicDevice.EndRendering();
 		}

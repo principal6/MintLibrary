@@ -35,7 +35,7 @@
     <ClInclude Include="Include\Plotter.h" />
     <ClInclude Include="Include\SplineGenerator.h" />
     <ClInclude Include="Include\ImageRenderer.h" />
-    <ClInclude Include="Include\Test.h" />
+    <ClInclude Include="Include\TestRendering.h" />
     <ClInclude Include="Include\TransformComponent.h" />
   </ItemGroup>
   <ItemGroup>
@@ -111,7 +111,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="Source\Test.cpp" />
+    <ClCompile Include="Source\TestRendering.cpp" />
     <ClCompile Include="Source\_UnityBuild.cpp" />
   </ItemGroup>
   <ItemGroup>
