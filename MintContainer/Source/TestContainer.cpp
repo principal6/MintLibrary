@@ -760,12 +760,12 @@ namespace mint
 			}
 
 			{
-				static_assert(StringUtil::FindLastOf("abcdeabcde", "abc") == 5);
-				static_assert(StringUtil::FindLastOf("abcdeabcde", "abc", 5) == 5);
+				static_assert(StringUtil::FindLastOf("abcdeabcde", "abc") == 7);
+				static_assert(StringUtil::FindLastOf("abcdeabcde", "abc", 5) == 7);
 				static_assert(StringUtil::FindLastOf("abcdeabcde", "abc", 6) == kStringNPos);
-				static_assert(StringUtil::FindLastOf("abcdeabcde", "cde") == 7);
+				static_assert(StringUtil::FindLastOf("abcdeabcde", "cde") == 9);
 				static_assert(StringUtil::FindLastOf("abcdeabcde", "def") == kStringNPos);
-				static_assert(StringUtil::FindLastOf("abc가나다라def", "다라") == 7);
+				static_assert(StringUtil::FindLastOf("abc가나다라def", "다라") == 10);
 				static_assert(StringUtil::FindLastOf("abc가나다라def", "다라", 7) != kStringNPos);
 				static_assert(StringUtil::FindLastOf("abc가나다라def", "다라", 8) == kStringNPos);
 				static_assert(StringUtil::FindLastOf("abc가나다라def", "다라", 100) == kStringNPos);

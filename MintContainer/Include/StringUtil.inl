@@ -285,19 +285,19 @@ namespace mint
 					if (stringAt == stringLength && substringAt < substringLength)
 					{
 						// Insufficient string length
-						return lastValidStringAtCache;
+						return kStringNPos;
 					}
 
 					if ((string[stringAt] | substring[substringAt]) == 0)
 					{
-						return stringAtCache;
+						return stringAtCache + substringLength - 1;
 					}
 				}
 				else
 				{
 					if (substringAt == substringLength)
 					{
-						lastValidStringAtCache = stringAtCache;
+						lastValidStringAtCache = stringAtCache + substringLength - 1;
 					}
 
 					substringAt = 0;
