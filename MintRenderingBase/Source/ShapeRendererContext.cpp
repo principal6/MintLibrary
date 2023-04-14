@@ -444,7 +444,7 @@ namespace mint
 			PushShapeTransformToBuffer(rotationAngle);
 		}
 
-		void ShapeRendererContext::DrawText_uredRectangle(const Float2& size, const float rotationAngle)
+		void ShapeRendererContext::DrawTexturedRectangle(const Float2& size, const float rotationAngle)
 		{
 			const Float2 halfSize = size * 0.5f;
 			const ShapeType shapeType = ShapeType::TexturedTriangle;

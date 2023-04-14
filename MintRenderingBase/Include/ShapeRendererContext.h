@@ -113,7 +113,7 @@ namespace mint
 			void DrawCircularTriangle(const float radius, const float rotationAngle, const bool insideOut = false);
 
 			void DrawRectangle(const Float2& size, const float borderThickness, const float rotationAngle);
-			void DrawText_uredRectangle(const Float2& size, const float rotationAngle);
+			void DrawTexturedRectangle(const Float2& size, const float rotationAngle);
 			void DrawTaperedRectangle(const Float2& size, const float tapering, const float bias, const float rotationAngle);
 			void DrawRoundedRectangle(const Float2& size, const float roundness, const float borderThickness, const float rotationAngle);
 			void DrawRoundedRectangleVertSplit(const Float2& size, const float roundnessInPixel, const StackVector<Split, 3>& splits, const float rotationAngle);
