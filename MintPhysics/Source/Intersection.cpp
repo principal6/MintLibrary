@@ -320,6 +320,11 @@ namespace mint
 		{
 			Float2 direction = Float2(1, 0);
 			Float2 minkowskiDifferenceVertex = GJK2D_getMinkowskiDifferenceVertex(shapeA, shapeB, direction);
+			if (minkowskiDifferenceVertex == Float2::kZero)
+			{
+				// The origin is included in the Minkowski Sum, thus the two shapes intersect.
+				return true;
+			}
 
 			GJKSimplex2D simplex{ minkowskiDifferenceVertex };
 			// minkowskiDifferenceVertex to origin
