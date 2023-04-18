@@ -1147,6 +1147,11 @@ namespace mint
 			}
 		}
 
+		void ShapeRendererContext::DrawDynamicText(const wchar_t* const wideText, const Float2& position, const FontRenderingOption& fontRenderingOption)
+		{
+			DrawDynamicText(wideText, Float4(position._x, position._y, 0.0f, 1.0f), fontRenderingOption);
+		}
+
 		void ShapeRendererContext::DrawDynamicText(const wchar_t* const wideText, const Float4& position, const FontRenderingOption& fontRenderingOption)
 		{
 			const uint32 textLength = StringUtil::Length(wideText);
