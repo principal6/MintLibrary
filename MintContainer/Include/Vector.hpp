@@ -442,6 +442,18 @@ namespace mint
 	{
 		return Iterator(&_rawPointer[_size]);
 	}
+
+	template<typename T>
+	MINT_INLINE Vector<T>::ConstIterator<T> Vector<T>::begin() const noexcept
+	{
+		return ConstIterator(&_rawPointer[0]);
+	}
+
+	template<typename T>
+	MINT_INLINE Vector<T>::ConstIterator<T> Vector<T>::end() const noexcept
+	{
+		return ConstIterator(&_rawPointer[_size]);
+	}
 }
 
 

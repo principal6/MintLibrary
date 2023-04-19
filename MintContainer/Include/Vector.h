@@ -103,8 +103,43 @@ namespace mint
 			T* _rawPointer;
 		};
 
+		template<typename T>
+		class ConstIterator
+		{
+		public:
+			ConstIterator(const T* rawPointer) : _rawPointer{ rawPointer } { __noop; }
+
+		public:
+			bool operator==(const ConstIterator& rhs) const noexcept
+			{
+				return _rawPointer == rhs._rawPointer;
+			}
+
+			bool operator!=(const ConstIterator& rhs) const noexcept
+			{
+				return !(*this == rhs);
+			}
+
+			ConstIterator& operator++() noexcept
+			{
+				++_rawPointer;
+				return *this;
+			}
+
+			const T& operator*() const noexcept
+			{
+				return *_rawPointer;
+			}
+
+		private:
+			const T* _rawPointer;
+		};
+
 		Iterator<T> begin() noexcept;
 		Iterator<T> end() noexcept;
+		
+		ConstIterator<T> begin() const noexcept;
+		ConstIterator<T> end() const noexcept;
 
 	private:
 		T* _rawPointer;
