@@ -7,6 +7,5 @@ test 추가
 CPPHLSL 코드 정리, 로직 개선
 
 ## GUI 개편
-Script Language 를 만들든 이용하든.. Hot Reload 가능한 UI 만들자.. 그러려면
-EVENT 시스템 있어야 할 듯???
+컨트롤 배치 등 꾸미는 쪽은 Script 이용해서 Hot Reload 가능하면 좋을 듯!
 

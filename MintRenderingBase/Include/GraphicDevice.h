@@ -16,8 +16,6 @@
 #include <MintRenderingBase/Include/LowLevelRenderer.h>
 #include <MintRenderingBase/Include/ShapeRendererContext.h>
 
-#include <MintRenderingBase/Include/GUI/GUIContext.h>
-
 #include <MintRenderingBase/Include/CppHlsl/Interpreter.h>
 
 #include <MintMath/Include/Float4x4.h>
@@ -171,7 +169,6 @@ namespace mint
 			DxShaderPool& GetShaderPool() noexcept;
 			DxResourcePool& GetResourcePool() noexcept;
 			ShapeRendererContext& GetShapeRendererContext() noexcept;
-			GUI::GUIContext& GetGUIContext() noexcept;
 			const Language::CppHlsl::Interpreter& GetCppHlslSteamData() const noexcept;
 			const Language::CppHlsl::Interpreter& GetCppHlslConstantBuffers() const noexcept;
 			StateManager& GetStateManager() noexcept;
@@ -252,9 +249,6 @@ namespace mint
 		private:
 			ShapeRendererContext _shapeRendererContext;
 			bool _needEndRenderingCall;
-
-		private:
-			GUI::GUIContext _guiContext;
 		};
 	}
 }

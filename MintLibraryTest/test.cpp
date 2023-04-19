@@ -135,7 +135,6 @@ bool Run3DTestWindow(mint::Platform::IWindow& window, mint::Rendering::GraphicDe
 	InstantRenderer instantRenderer{ graphicDevice };
 	ObjectPool objectPool;
 	const Platform::InputContext& inputContext = Platform::InputContext::GetInstance();
-	GUI::GUIContext& guiContext = graphicDevice.GetGUIContext();
 
 	Object* const testObject = objectPool.CreateObject();
 	CameraObject* const testCameraObject = objectPool.CreateCameraObject();
@@ -168,9 +167,6 @@ bool Run3DTestWindow(mint::Platform::IWindow& window, mint::Rendering::GraphicDe
 	while (window.IsRunning() == true)
 	{
 		objectPool.ComputeDeltaTime();
-
-		// Events
-		guiContext.ProcessEvent();
 
 		if (inputContext.IsKeyPressed())
 		{

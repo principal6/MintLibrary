@@ -297,7 +297,6 @@ namespace mint
 			, _stateManager{ *this }
 			, _shapeRendererContext{ *this }
 			, _needEndRenderingCall{ false }
-			, _guiContext{ *this }
 		{
 			__noop;
 		}
@@ -313,9 +312,6 @@ namespace mint
 			{
 				return false;
 			}
-
-			_guiContext.Initialize();
-
 			return true;
 		}
 
@@ -691,7 +687,6 @@ namespace mint
 
 			_shapeRendererContext.Render();
 			_shapeRendererContext.Flush();
-			_guiContext.Render();
 #pragma endregion
 
 			_swapChain->Present(0, 0);

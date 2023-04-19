@@ -19,12 +19,6 @@
     <Filter Include="Source\CppHlsl">
       <UniqueIdentifier>{defe00fb-a822-402c-9509-712cdebd06c3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\GUI">
-      <UniqueIdentifier>{e1cc7fd8-c15d-4f82-be33-76c921770f9a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Include\GUI">
-      <UniqueIdentifier>{83c1bdb0-bf77-4546-8c67-a8f1e58dcdfa}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\DxResource.h">
@@ -78,26 +72,8 @@
     <ClInclude Include="Include\CppHlsl\CppHlslTypes.h">
       <Filter>Include\CppHlsl</Filter>
     </ClInclude>
-    <ClInclude Include="Include\GUI\GUIContext.h">
-      <Filter>Include\GUI</Filter>
-    </ClInclude>
     <ClInclude Include="Include\FontLoader.h">
       <Filter>Include</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\GUI\ControlData.h">
-      <Filter>Include\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\GUI\ControlData.hpp">
-      <Filter>Include\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\GUI\GUIInteractionModules.h">
-      <Filter>Include\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\GUI\GUITheme.h">
-      <Filter>Include\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\GUI\GUIInteractionModule.hpp">
-      <Filter>Include\GUI</Filter>
     </ClInclude>
     <ClInclude Include="..\Assets\Include\CppHlsl\CppHlslConstantBuffers.h">
       <Filter>Assets\CppHlsl</Filter>
@@ -163,14 +139,8 @@
     <ClCompile Include="Source\_UnityBuild.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Source\GUI\GUIContext.cpp">
-      <Filter>Source\GUI</Filter>
-    </ClCompile>
     <ClCompile Include="Source\FontLoader.cpp">
       <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\GUI\GUIInteractionModules.cpp">
-      <Filter>Source\GUI</Filter>
     </ClCompile>
     <ClCompile Include="Source\ImageLoader.cpp">
       <Filter>Source</Filter>

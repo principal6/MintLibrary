@@ -12,12 +12,6 @@ namespace mint
 		class GraphicDevice;
 		class Plotter;
 		class MathExpressionRenderer;
-
-
-		namespace GUI
-		{
-			class GUIContext;
-		}
 	}
 
 
@@ -26,7 +20,6 @@ namespace mint
 		bool Test_SplineGenerator(Rendering::GraphicDevice& graphicDevice);
 		bool Test_Plotter(Rendering::Plotter& plotter);
 		bool Test_MathExpressionRenderer(Rendering::MathExpressionRenderer& mathExpressionRenderer);
-		bool Test_GUI(Rendering::GUI::GUIContext& guiContext);
 	}
 }
 
