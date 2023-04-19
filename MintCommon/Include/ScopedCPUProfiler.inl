@@ -37,7 +37,7 @@ namespace mint
 			_previousTimeUs = currentTimeUs;
 		}
 
-		MINT_INLINE uint64 FPSCounter::GetFps() noexcept
+		MINT_INLINE uint64 FPSCounter::GetFPS() noexcept
 		{
 			return _fps;
 		}

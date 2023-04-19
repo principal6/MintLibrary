@@ -249,7 +249,7 @@ bool Run3DTestWindow(mint::Platform::IWindow& window, mint::Rendering::GraphicDe
 
 			ShapeRendererContext& shapeRendererContext = graphicDevice.GetShapeRendererContext();
 			StackStringW<100> fpsString;
-			FormatString(fpsString, L"FPS: %d", Profiler::FPSCounter::GetFps());
+			FormatString(fpsString, L"FPS: %d", Profiler::FPSCounter::GetFPS());
 			shapeRendererContext.SetTextColor(Color::kBlack);
 			shapeRendererContext.DrawDynamicText(fpsString.CString(), Float2(10, 10), FontRenderingOption());
 			// # ShapeRendererContext 테스트

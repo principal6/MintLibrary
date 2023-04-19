@@ -27,7 +27,7 @@ namespace mint
 
 		public:
 			static void Count() noexcept;
-			static uint64 GetFps() noexcept;
+			static uint64 GetFPS() noexcept;
 			static uint64 GetFrameTimeUs() noexcept;
 			static double GetFrameTimeMs() noexcept;
 
