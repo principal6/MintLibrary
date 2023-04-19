@@ -1,5 +1,5 @@
 ﻿# TODO
-## std::string 사용 제거
+## 2D Rendering 에 Shape 정의, Shape Render 기능 넣기!!! (그래야 찍어내기 가능!)
 
 ## Language library 정리
 ILexer, IParse 등 코드 정리
