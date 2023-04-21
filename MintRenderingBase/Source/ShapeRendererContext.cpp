@@ -375,7 +375,6 @@ namespace mint
 				indices.PushBack(vertexOffset + index);
 			}
 
-			const uint32 indexCount = _lowLevelRenderer->GetIndexCount() - indexOffset;
 			_lowLevelRenderer->PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, shape._indices.Size(), _clipRect);
 
 			PushShapeTransformToBuffer(0.0f);
