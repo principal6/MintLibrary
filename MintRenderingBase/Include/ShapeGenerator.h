@@ -24,7 +24,11 @@ namespace mint
 		class ShapeGenerator abstract final
 		{
 		public:
-			static void MakeCircle(float radius, uint8 sideCount, const ByteColor& byteColor, Shape& outShape);
+			static void GenerateCircle(float radius, uint8 sideCount, const ByteColor& byteColor, Shape& outShape, const Float2& offset = Float2::kZero);
+			static void GenerateHalfCircle(float radius, uint8 sideCount, float angle, const ByteColor& byteColor, Shape& outShape, const Float2& offset = Float2::kZero);
+			static void GenerateQuarterCircle(float radius, uint8 sideCount, float angle, const ByteColor& byteColor, Shape& outShape, const Float2& offset = Float2::kZero);
+			static void GenerateRectangle(const Float2& size, const ByteColor& byteColor, Shape& outShape, const Float2& offset = Float2::kZero);
+			static void GenerateRoundRectangle(const Float2& size, float roundness, uint8 roundSideCount, const ByteColor& byteColor, Shape& outShape, const Float2& offset = Float2::kZero);
 		};
 	}
 }
