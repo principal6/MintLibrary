@@ -21,6 +21,9 @@ namespace mint
 
 	namespace Rendering
 	{
+		struct Shape;
+
+
 		struct FontRenderingOption
 		{
 			FontRenderingOption()
@@ -100,6 +103,8 @@ namespace mint
 			virtual void TestDraw(Float2& screenOffset);
 
 		public:
+			void AddShape(const Shape& shape);
+
 			// Independent from internal position set by SetPosition() call
 			// No rotation allowed
 			void DrawLine(const Float2& p0, const Float2& p1, const float thickness);

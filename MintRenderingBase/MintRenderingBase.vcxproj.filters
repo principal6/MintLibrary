@@ -87,6 +87,9 @@
     <ClInclude Include="Include\ImageLoader.h">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="Include\ShapeGenerator.h">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Include\GraphicDevice.inl">
@@ -143,6 +146,9 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\ImageLoader.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ShapeGenerator.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>

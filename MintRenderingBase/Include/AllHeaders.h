@@ -13,6 +13,7 @@
 #include <MintRenderingBase/Include/GraphicDevice.h>
 #include <MintRenderingBase/Include/GraphicObject.h>
 #include <MintRenderingBase/Include/IRendererContext.h>
+#include <MintRenderingBase/Include/ShapeGenerator.h>
 #include <MintRenderingBase/Include/ShapeRendererContext.h>
 #include <MintRenderingBase/Include/LowLevelRenderer.h>
 #include <MintRenderingBase/Include/ImageLoader.h>

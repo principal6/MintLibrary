@@ -251,6 +251,11 @@ bool Run3DTestWindow(mint::Platform::IWindow& window, mint::Rendering::GraphicDe
 			// # ShapeRendererContext 테스트
 			//shapeRendererContext.TestDraw(Float2(30, 60));
 
+			Shape shape;
+			ShapeGenerator::MakeCircle(16.0f, 16, ByteColor(255, 0, 0), shape);
+			shapeRendererContext.SetPosition(Float4(100, 60, 0, 1));
+			shapeRendererContext.AddShape(shape);
+
 			graphicDevice.EndRendering();
 		}
 

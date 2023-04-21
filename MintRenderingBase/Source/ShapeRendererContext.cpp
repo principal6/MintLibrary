@@ -7,6 +7,7 @@
 
 #include <MintRenderingBase/Include/GraphicDevice.h>
 #include <MintRenderingBase/Include/LowLevelRenderer.hpp>
+#include <MintRenderingBase/Include/ShapeGenerator.h>
 
 #include <MintMath/Include/Float2x2.h>
 #include <MintMath/Include/Float3x3.h>
@@ -351,6 +352,33 @@ namespace mint
 				FontRenderingOption fontRenderingOption;
 				DrawDynamicText(L"Testing`!@#$%^&*()_+ 검사 중...", Float4(screenOffset), fontRenderingOption);
 			}
+		}
+
+		void ShapeRendererContext::AddShape(const Shape& shape)
+		{
+			const uint32 vertexOffset = _lowLevelRenderer->GetVertexCount();
+			const uint32 indexOffset = _lowLevelRenderer->GetIndexCount();
+
+			VS_INPUT_SHAPE v;
+			auto& vertices = _lowLevelRenderer->Vertices();
+			for (const VS_INPUT_SHAPE& vertex : shape._vertices)
+			{
+				v._color = vertex._color;
+				v._position = vertex._position;
+				v._info._x = PackInfoAsFloat(ShapeType::SolidTriangle);
+				vertices.PushBack(v);
+			}
+
+			auto& indices = _lowLevelRenderer->Indices();
+			for (const IndexElementType index : shape._indices)
+			{
+				indices.PushBack(vertexOffset + index);
+			}
+
+			const uint32 indexCount = _lowLevelRenderer->GetIndexCount() - indexOffset;
+			_lowLevelRenderer->PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, shape._indices.Size(), _clipRect);
+
+			PushShapeTransformToBuffer(0.0f);
 		}
 
 		void ShapeRendererContext::DrawLine(const Float2& p0, const Float2& p1, const float thickness)
