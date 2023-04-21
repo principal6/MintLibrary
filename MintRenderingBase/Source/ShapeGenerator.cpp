@@ -1,4 +1,5 @@
 ﻿#include <MintRenderingBase/Include/ShapeGenerator.h>
+#include <MintMath/Include/Float2x2.h>
 #include <Assets/Include/CppHlsl/CppHlslStreamData.h>
 
 
@@ -6,6 +7,36 @@ namespace mint
 {
 	namespace Rendering
 	{
+		ScopedShapeTransformer::ScopedShapeTransformer(Shape& shape, const ShapeTransform& shapeTransform) 
+			: _shape{ shape }
+			, _shapeTransform{ shapeTransform } 
+		{
+			_shapeVertexOffset = _shape._vertices.Size();
+		}
+
+		ScopedShapeTransformer::~ScopedShapeTransformer()
+		{
+			const uint32 shapeVertexCount = _shape._vertices.Size();
+			if (_shapeVertexOffset == shapeVertexCount)
+			{
+				return;
+			}
+
+			const Float2x2 rotationMatrix = Float2x2::RotationMatrix(-_shapeTransform._rotation);
+			Float2 rotatedXY;
+			for (uint32 i = _shapeVertexOffset; i < shapeVertexCount; ++i)
+			{
+				VS_INPUT_SHAPE& vertex = _shape._vertices[i];
+				rotatedXY = rotationMatrix.Mul(Float2(vertex._position._x, vertex._position._y));
+				vertex._position._x = rotatedXY._x;
+				vertex._position._y = rotatedXY._y;
+
+				vertex._position._x += _shapeTransform._translation._x;
+				vertex._position._y += _shapeTransform._translation._y;
+			}
+		}
+
+
 		MINT_INLINE float4 convertByteColorToFloat4(const ByteColor& byteColor)
 		{
 			return float4(byteColor.RAsFloat(), byteColor.GAsFloat(), byteColor.BAsFloat(), byteColor.AAsFloat());
@@ -212,6 +243,33 @@ namespace mint
 			GenerateQuarterCircle(radius, roundSideCount, Math::kPiOverTwo, byteColor, outShape, offset + Float2(-(halfSize._x - radius), -(halfSize._y - radius)));
 			GenerateQuarterCircle(radius, roundSideCount, Math::kPi, byteColor, outShape, offset + Float2(-(halfSize._x - radius), (halfSize._y - radius)));
 			GenerateQuarterCircle(radius, roundSideCount, -Math::kPiOverTwo, byteColor, outShape, offset + Float2((halfSize._x - radius), (halfSize._y - radius)));
+		}
+
+		void ShapeGenerator::GenerateLine(const Float2& positionA, const Float2& positionB, float thickness, uint8 roundSideCount, const ByteColor& byteColor, Shape& outShape)
+		{
+			MINT_ASSERT(thickness > 0.0f, "thickness must be equal or greater than 0");
+			MINT_ASSERT(roundSideCount > 1, "roundSideCount must be greater than 1");
+
+			if (thickness == 0.0f)
+			{
+				return;
+			}
+
+			roundSideCount = Max(roundSideCount, static_cast<uint8>(2));
+
+			const Float2 center = (positionA + positionB) * 0.5f;
+			const Float2 aToB = positionB - positionA;
+			const float length = aToB.Length();
+			if (length <= 1.0f)
+			{
+				GenerateCircle(thickness, roundSideCount * 2, byteColor, outShape, center);
+				return;
+			}
+
+			const float theta = ::atan2f(-aToB._y, aToB._x);
+			const ScopedShapeTransformer scopedShapeTransformer{ outShape, ShapeTransform(theta, center) };
+			GenerateRoundRectangle(Float2(length, thickness), 1.0f, roundSideCount, byteColor, outShape);
+			// ...
 		}
 	}
 }

@@ -244,17 +244,17 @@ bool Run3DTestWindow(mint::Platform::IWindow& window, mint::Rendering::GraphicDe
 			//TestRendering::Test_Plotter(plotter);
 
 			ShapeRendererContext& shapeRendererContext = graphicDevice.GetShapeRendererContext();
-			
+
 			// # ShapeRendererContext 테스트
 			//shapeRendererContext.TestDraw(Float2(30, 60));
 
 			Shape circleShape;
-			ShapeGenerator::GenerateCircle(16.0f, 16, ByteColor(255, 0, 0), circleShape);
-			shapeRendererContext.SetPosition(Float4(100, 60, 0, 1));
+			ShapeGenerator::GenerateCircle(16.0f, 16, ByteColor(255, 0, 0, 127), circleShape);
+			shapeRendererContext.SetPosition(Float4(80, 60, 0, 1));
 			shapeRendererContext.AddShape(circleShape);
-			
+
 			Shape halfCircleShape;
-			ShapeGenerator::GenerateHalfCircle(16.0f, 16, 0.0f, ByteColor(255, 127, 0), halfCircleShape);
+			ShapeGenerator::GenerateHalfCircle(16.0f, 16, 0.0f, ByteColor(255, 127, 0, 63), halfCircleShape);
 			shapeRendererContext.SetPosition(Float4(160, 60, 0, 1));
 			shapeRendererContext.AddShape(halfCircleShape);
 
@@ -262,11 +262,24 @@ bool Run3DTestWindow(mint::Platform::IWindow& window, mint::Rendering::GraphicDe
 			ShapeGenerator::GenerateRectangle(Float2(64.0f, 32.0f), ByteColor(255, 255, 0), rectangleShape);
 			shapeRendererContext.SetPosition(Float4(240, 60, 0, 1));
 			shapeRendererContext.AddShape(rectangleShape);
-			
+
 			Shape roundRectangleShape;
 			ShapeGenerator::GenerateRoundRectangle(Float2(64.0f, 32.0f), 0.5f, 2, ByteColor(0, 255, 0), roundRectangleShape);
 			shapeRendererContext.SetPosition(Float4(320, 60, 0, 1));
 			shapeRendererContext.AddShape(roundRectangleShape);
+
+			Shape roundRectangleShape1;
+			{
+				const ScopedShapeTransformer scopedShapeTransformer{ roundRectangleShape1, ShapeTransform(0.2f, Float2(40.0f, 0.0f)) };
+				ShapeGenerator::GenerateRoundRectangle(Float2(64.0f, 32.0f), 0.5f, 2, ByteColor(0, 255, 0), roundRectangleShape1);
+			}
+			shapeRendererContext.SetPosition(Float4(400, 60, 0, 1));
+			shapeRendererContext.AddShape(roundRectangleShape1);
+			
+			Shape lineShape;
+			ShapeGenerator::GenerateLine(Float2(320.0f, 64.0f), Float2(440.0f, 32.0f), 8.0f, 4, ByteColor(0, 127, 255), lineShape);
+			shapeRendererContext.AddTransformedShape(lineShape);
+
 
 			StackStringW<100> fpsString;
 			FormatString(fpsString, L"FPS: %d", Profiler::FPSCounter::GetFPS());

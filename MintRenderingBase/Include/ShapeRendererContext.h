@@ -104,6 +104,7 @@ namespace mint
 
 		public:
 			void AddShape(const Shape& shape);
+			void AddTransformedShape(const Shape& shape);
 
 			// Independent from internal position set by SetPosition() call
 			// No rotation allowed

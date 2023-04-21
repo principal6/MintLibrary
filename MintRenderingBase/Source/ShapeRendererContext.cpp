@@ -379,6 +379,32 @@ namespace mint
 
 			PushShapeTransformToBuffer(0.0f);
 		}
+		
+		void ShapeRendererContext::AddTransformedShape(const Shape& shape)
+		{
+			const uint32 vertexOffset = _lowLevelRenderer->GetVertexCount();
+			const uint32 indexOffset = _lowLevelRenderer->GetIndexCount();
+
+			VS_INPUT_SHAPE v;
+			auto& vertices = _lowLevelRenderer->Vertices();
+			for (const VS_INPUT_SHAPE& vertex : shape._vertices)
+			{
+				v._color = vertex._color;
+				v._position = vertex._position;
+				v._info._x = PackInfoAsFloat(ShapeType::SolidTriangle);
+				vertices.PushBack(v);
+			}
+
+			auto& indices = _lowLevelRenderer->Indices();
+			for (const IndexElementType index : shape._indices)
+			{
+				indices.PushBack(vertexOffset + index);
+			}
+
+			_lowLevelRenderer->PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, shape._indices.Size(), _clipRect);
+
+			PushShapeTransformToBuffer(0.0f, false);
+		}
 
 		void ShapeRendererContext::DrawLine(const Float2& p0, const Float2& p1, const float thickness)
 		{

@@ -51,7 +51,7 @@ namespace mint
 		bool isInvertible() const noexcept;
 
 	public:
-		Float2 mul(const Float2& vec) const noexcept;
+		Float2 Mul(const Float2& vec) const noexcept;
 
 	public:
 		union
