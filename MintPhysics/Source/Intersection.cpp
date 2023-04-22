@@ -8,6 +8,18 @@ namespace mint
 {
 	namespace Physics
 	{
+		void PointShape2D::DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Float2& offset)
+		{
+			shapeRendererContext.SetColor(color);
+			shapeRendererContext.SetPosition(Float4(_center + offset));
+			shapeRendererContext.DrawCircle(2.0f);
+		}
+
+		Float2 PointShape2D::ComputeSupportPoint(const Float2& direction) const
+		{
+			return _center;
+		}
+
 		void CircleShape2D::DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Float2& offset)
 		{
 			shapeRendererContext.SetColor(color);
@@ -264,6 +276,11 @@ namespace mint
 				{
 					// origin is enclosed by the segment region AB
 					outDirection = GJK2D_computePerpABToAC(ab, ao);
+					if (outDirection == Float2::kZero)
+					{
+						// EDGE_CASE: ab and ao are colineaer!
+						return true;
+					}
 					return false;
 				}
 				else
@@ -322,7 +339,7 @@ namespace mint
 			Float2 minkowskiDifferenceVertex = GJK2D_getMinkowskiDifferenceVertex(shapeA, shapeB, direction);
 			if (minkowskiDifferenceVertex == Float2::kZero)
 			{
-				// The origin is included in the Minkowski Sum, thus the two shapes intersect.
+				// EDGE_CASE: The origin is included in the Minkowski Sum, thus the two shapes intersect.
 				return true;
 			}
 
@@ -334,6 +351,12 @@ namespace mint
 			while (true)
 			{
 				minkowskiDifferenceVertex = GJK2D_getMinkowskiDifferenceVertex(shapeA, shapeB, direction);
+				if (minkowskiDifferenceVertex == Float2::kZero)
+				{
+					// EDGE_CASE: The origin is included in the Minkowski Sum, thus the two shapes intersect.
+					return true;
+				}
+
 				if (minkowskiDifferenceVertex.Dot(direction) < 0.0f)
 				{
 					// MinkowskiDifferenceVertex did not pass the origin
