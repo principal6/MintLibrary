@@ -43,6 +43,16 @@ namespace mint
 			Float2 _center;
 		};
 
+		class PointShape2D : public Shape2D
+		{
+		public:
+			PointShape2D(const Float2& center);
+
+		public:
+			virtual void DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Float2& offset) override final;
+			virtual Float2 ComputeSupportPoint(const Float2& direction) const override final;
+		};
+		
 		class CircleShape2D : public Shape2D
 		{
 		public:

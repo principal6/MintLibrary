@@ -10,10 +10,9 @@ namespace mint
 {
 	namespace Physics
 	{
-#pragma region Shape2D - AABBShape2D
-		inline AABBShape2D::AABBShape2D(const Float2& center, const Float2& halfSize)
-			: Shape2D( center )
-			, _halfSize{ halfSize }
+#pragma region Shape2D - PointShape2D
+		inline PointShape2D::PointShape2D(const Float2& center)
+			: Shape2D(center)
 		{
 			__noop;
 		}
@@ -25,6 +24,15 @@ namespace mint
 			, _radius{ radius }
 		{
 			MINT_ASSERT(radius > 0.0f, "radius(%f) 가 0 이하입니다. 의도한 게 맞나요?", radius);
+		}
+#pragma endregion
+
+#pragma region Shape2D - AABBShape2D
+		inline AABBShape2D::AABBShape2D(const Float2& center, const Float2& halfSize)
+			: Shape2D(center)
+			, _halfSize{ halfSize }
+		{
+			__noop;
 		}
 #pragma endregion
 
