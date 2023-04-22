@@ -118,8 +118,8 @@ namespace mint
 		};
 
 
-		bool Intersect2D_circle_point(const Float2& circleCenter, const float circleRadius, const Float2& point);
-		bool Intersect2D_aabb_point(const Rect& aabb, const Float2& point);
+		bool Intersect2D_Circle_Point(const Float2& circleCenter, const float circleRadius, const Float2& point);
+		bool Intersect2D_AABB_Point(const Rect& aabb, const Float2& point);
 		bool Intersect2D_GJK(const Shape2D& shapeA, const Shape2D& shapeB);
 	}
 }
