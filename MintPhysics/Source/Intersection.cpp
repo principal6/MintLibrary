@@ -1,6 +1,7 @@
 ﻿#include <MintPhysics/Include/Intersection.h>
 #include <MintPhysics/Include/Intersection.hpp>
 #include <MintRenderingBase/Include/ShapeRendererContext.h>
+#include <MintRenderingBase/Include/ShapeGenerator.h>
 #include <MintLibrary/Include/Algorithm.hpp>
 
 
@@ -69,6 +70,25 @@ namespace mint
 			return shape;
 		}
 
+		GJKConvexShape2D GJKConvexShape2D::MakeFromShape(const Float2& center, const Rendering::Shape& renderingShape)
+		{
+			const uint32 vertexCount = renderingShape._vertices.Size();
+			if (vertexCount == 0)
+			{
+				return GJKConvexShape2D(center, Vector<Float2>());
+			}
+
+			Vector<Float2> points;
+			points.Resize(vertexCount);
+			for (uint32 i = 0; i < vertexCount; ++i)
+			{
+				points[i] = renderingShape._vertices[i]._position.GetXY();
+			}
+			GJKConvexShape2D shape(center, points);
+			GrahamScan_Convexify(shape._vertices);
+			return shape;
+		}
+
 		GJKConvexShape2D GJKConvexShape2D::MakeMinkowskiDifferenceShape(const GJKConvexShape2D& a, const GJKConvexShape2D& b)
 		{
 			GJKConvexShape2D shape;
@@ -93,8 +113,9 @@ namespace mint
 			const uint32 vertexCount = _vertices.Size();
 			for (uint32 vertexIndex = 1; vertexIndex < vertexCount; ++vertexIndex)
 			{
-				shapeRendererContext.DrawLine(offset + _vertices[vertexIndex - 1], offset + _vertices[vertexIndex], 1.0f);
+				shapeRendererContext.DrawLine(_center + offset + _vertices[vertexIndex - 1], _center + offset + _vertices[vertexIndex], 1.0f);
 			}
+			shapeRendererContext.DrawLine(_center + offset + _vertices[vertexCount - 1], _center + offset + _vertices[0], 1.0f);
 		}
 
 		Float2 GJKConvexShape2D::ComputeSupportPoint(const Float2& direction) const

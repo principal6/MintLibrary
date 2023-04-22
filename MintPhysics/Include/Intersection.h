@@ -17,6 +17,7 @@ namespace mint
 
 	namespace Rendering
 	{
+		struct Shape;
 		class ShapeRendererContext;
 		class ByteColor;
 	}
@@ -49,7 +50,7 @@ namespace mint
 			GJKPointShape2D(const Float2& center);
 
 		public:
-			virtual void DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Float2& offset) override final;
+			virtual void DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Float2& offset = Float2::kZero) override final;
 			virtual Float2 ComputeSupportPoint(const Float2& direction) const override final;
 		};
 		
@@ -59,7 +60,7 @@ namespace mint
 			GJKCircleShape2D(const Float2& center, const float radius);
 
 		public:
-			virtual void DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Float2& offset) override final;
+			virtual void DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Float2& offset = Float2::kZero) override final;
 			virtual Float2 ComputeSupportPoint(const Float2& direction) const override final;
 
 		public:
@@ -72,7 +73,7 @@ namespace mint
 			GJKAABBShape2D(const Float2& center, const Float2& halfSize);
 
 		public:
-			virtual void DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Float2& offset) override final;
+			virtual void DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Float2& offset = Float2::kZero) override final;
 			virtual Float2 ComputeSupportPoint(const Float2& direction) const override final;
 		
 		public:
@@ -84,13 +85,14 @@ namespace mint
 		{
 		public:
 			static GJKConvexShape2D MakeFromPoints(const Float2& center, const Vector<Float2>& points);
+			static GJKConvexShape2D MakeFromShape(const Float2& center, const Rendering::Shape& shape);
 			static GJKConvexShape2D MakeMinkowskiDifferenceShape(const GJKConvexShape2D& a, const GJKConvexShape2D& b);
 
 		public:
 			GJKConvexShape2D(const Float2& center, const Vector<Float2>& vertices);
 
 		public:
-			virtual void DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Float2& offset) override final;
+			virtual void DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Float2& offset = Float2::kZero) override final;
 			virtual Float2 ComputeSupportPoint(const Float2& direction) const override final;
 
 		private:
