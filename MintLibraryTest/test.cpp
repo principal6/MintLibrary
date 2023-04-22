@@ -254,7 +254,7 @@ bool Run3DTestWindow(mint::Platform::IWindow& window, mint::Rendering::GraphicDe
 			shapeRendererContext.AddShape(circleShape);
 
 			Shape halfCircleShape;
-			ShapeGenerator::GenerateHalfCircle(16.0f, 16, 0.0f, ByteColor(255, 127, 0, 63), halfCircleShape);
+			ShapeGenerator::GenerateHalfCircle(16.0f, 16, ByteColor(255, 127, 0, 63), halfCircleShape);
 			shapeRendererContext.SetPosition(Float4(160, 60, 0, 1));
 			shapeRendererContext.AddShape(halfCircleShape);
 
@@ -269,13 +269,13 @@ bool Run3DTestWindow(mint::Platform::IWindow& window, mint::Rendering::GraphicDe
 			shapeRendererContext.AddShape(roundRectangleShape);
 
 			Shape roundRectangleShape1;
-			{
-				const ScopedShapeTransformer scopedShapeTransformer{ roundRectangleShape1, ShapeTransform(0.2f, Float2(40.0f, 0.0f)) };
-				ShapeGenerator::GenerateRoundRectangle(Float2(64.0f, 32.0f), 0.5f, 2, ByteColor(0, 255, 0), roundRectangleShape1);
-			}
 			shapeRendererContext.SetPosition(Float4(400, 60, 0, 1));
+			ShapeTransform shapeTransform{ 0.25f, Float2(40.0f, 0.0f) };
+			ShapeGenerator::GenerateRoundRectangle(Float2(64.0f, 32.0f), 0.5f, 2, ByteColor(0, 255, 0), roundRectangleShape1, shapeTransform);
+			shapeTransform *= ShapeTransform(0.0f, Float2(64.0f, 0.0f));
+			ShapeGenerator::GenerateRoundRectangle(Float2(64.0f, 32.0f), 0.5f, 2, ByteColor(0, 255, 0), roundRectangleShape1, shapeTransform);
 			shapeRendererContext.AddShape(roundRectangleShape1);
-			
+
 			Shape lineShape;
 			ShapeGenerator::GenerateLine(Float2(320.0f, 64.0f), Float2(440.0f, 32.0f), 8.0f, 4, ByteColor(0, 127, 255), lineShape);
 			shapeRendererContext.AddTransformedShape(lineShape);
