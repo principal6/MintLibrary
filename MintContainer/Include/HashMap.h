@@ -66,6 +66,7 @@ namespace mint
 
 
 	// Hopscotch algorithm
+	// Key must be default_constructible and must have bool operator==(const Key&) defined
 	template<typename Key, typename Value>
 	class HashMap final
 	{
