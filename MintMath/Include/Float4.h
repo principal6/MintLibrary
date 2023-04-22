@@ -77,6 +77,7 @@ namespace mint
 		Float4 GetXYZ0() const noexcept;
 		Float4 GetXYZ1() const noexcept;
 		Float3 GetXYZ() const noexcept;
+		Float2 GetXY() const noexcept;
 		float GetMaxComponent() const noexcept;
 		float GetMinComponent() const noexcept;
 

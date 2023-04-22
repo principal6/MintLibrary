@@ -90,6 +90,11 @@ namespace mint
 	{
 		return Float3(_x, _y, _z);
 	}
+	
+	Float2 Float4::GetXY() const noexcept
+	{
+		return Float2(_x, _y);
+	}
 
 	float Float4::LengthSqaure() const noexcept
 	{
