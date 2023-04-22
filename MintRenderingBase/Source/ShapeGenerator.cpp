@@ -269,7 +269,7 @@ namespace mint
 			GenerateQuarterCircle(radius, roundSideCount, byteColor, outShape, shapeTransform * ShapeTransform(-Math::kPiOverTwo, Float2((halfSize._x - radius), (halfSize._y - radius))));
 		}
 
-		void ShapeGenerator::GenerateLine(const Float2& positionA, const Float2& positionB, float thickness, uint8 roundSideCount, const ByteColor& byteColor, Shape& outShape)
+		void ShapeGenerator::GenerateLine(const Float2& positionA, const Float2& positionB, float thickness, uint8 roundSideCount, const ByteColor& byteColor, Shape& outShape, const ShapeTransform& shapeTransform)
 		{
 			MINT_ASSERT(thickness > 0.0f, "thickness must be equal or greater than 0");
 			MINT_ASSERT(roundSideCount > 1, "roundSideCount must be greater than 1");
@@ -291,7 +291,25 @@ namespace mint
 			}
 
 			const float theta = ::atan2f(-aToB._y, aToB._x);
-			GenerateRoundRectangle(Float2(length, thickness), 1.0f, roundSideCount, byteColor, outShape, ShapeTransform(theta, center));
+			GenerateRoundRectangle(Float2(length, thickness), 1.0f, roundSideCount, byteColor, outShape, shapeTransform * ShapeTransform(theta, center));
+		}
+
+		void ShapeGenerator::GenerateTestShapeSet(Shape& outShape, const ShapeTransform& shapeTransform)
+		{
+			ShapeGenerator::GenerateCircle(16.0f, 16, ByteColor(255, 0, 0, 127), outShape, shapeTransform * ShapeTransform(Float2(80, 60)));
+
+			ShapeGenerator::GenerateHalfCircle(16.0f, 16, ByteColor(255, 127, 0, 63), outShape, shapeTransform * ShapeTransform(Float2(160, 60)));
+
+			ShapeGenerator::GenerateRectangle(Float2(64.0f, 32.0f), ByteColor(255, 255, 0), outShape, shapeTransform * ShapeTransform(Float2(240, 60)));
+
+			ShapeGenerator::GenerateRoundRectangle(Float2(64.0f, 32.0f), 0.5f, 2, ByteColor(0, 255, 0), outShape, shapeTransform * ShapeTransform(Float2(320, 60)));
+
+			ShapeTransform shapeTransformCache = shapeTransform * ShapeTransform(0.25f, Float2(440.0f, 60.0f));
+			ShapeGenerator::GenerateRoundRectangle(Float2(64.0f, 32.0f), 0.5f, 2, ByteColor(0, 255, 0), outShape, shapeTransformCache);
+			shapeTransformCache *= ShapeTransform(0.0f, Float2(64.0f, 0.0f));
+			ShapeGenerator::GenerateRoundRectangle(Float2(64.0f, 32.0f), 0.5f, 2, ByteColor(0, 255, 0), outShape, shapeTransformCache);
+
+			ShapeGenerator::GenerateLine(Float2(320.0f, 64.0f), Float2(440.0f, 32.0f), 8.0f, 4, ByteColor(0, 127, 255), outShape, shapeTransform);
 		}
 	}
 }

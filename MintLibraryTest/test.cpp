@@ -248,38 +248,9 @@ bool Run3DTestWindow(mint::Platform::IWindow& window, mint::Rendering::GraphicDe
 			// # ShapeRendererContext 테스트
 			//shapeRendererContext.TestDraw(Float2(30, 60));
 
-			Shape circleShape;
-			ShapeGenerator::GenerateCircle(16.0f, 16, ByteColor(255, 0, 0, 127), circleShape);
-			shapeRendererContext.SetPosition(Float4(80, 60, 0, 1));
-			shapeRendererContext.AddShape(circleShape);
-
-			Shape halfCircleShape;
-			ShapeGenerator::GenerateHalfCircle(16.0f, 16, ByteColor(255, 127, 0, 63), halfCircleShape);
-			shapeRendererContext.SetPosition(Float4(160, 60, 0, 1));
-			shapeRendererContext.AddShape(halfCircleShape);
-
-			Shape rectangleShape;
-			ShapeGenerator::GenerateRectangle(Float2(64.0f, 32.0f), ByteColor(255, 255, 0), rectangleShape);
-			shapeRendererContext.SetPosition(Float4(240, 60, 0, 1));
-			shapeRendererContext.AddShape(rectangleShape);
-
-			Shape roundRectangleShape;
-			ShapeGenerator::GenerateRoundRectangle(Float2(64.0f, 32.0f), 0.5f, 2, ByteColor(0, 255, 0), roundRectangleShape);
-			shapeRendererContext.SetPosition(Float4(320, 60, 0, 1));
-			shapeRendererContext.AddShape(roundRectangleShape);
-
-			Shape roundRectangleShape1;
-			shapeRendererContext.SetPosition(Float4(400, 60, 0, 1));
-			ShapeTransform shapeTransform{ 0.25f, Float2(40.0f, 0.0f) };
-			ShapeGenerator::GenerateRoundRectangle(Float2(64.0f, 32.0f), 0.5f, 2, ByteColor(0, 255, 0), roundRectangleShape1, shapeTransform);
-			shapeTransform *= ShapeTransform(0.0f, Float2(64.0f, 0.0f));
-			ShapeGenerator::GenerateRoundRectangle(Float2(64.0f, 32.0f), 0.5f, 2, ByteColor(0, 255, 0), roundRectangleShape1, shapeTransform);
-			shapeRendererContext.AddShape(roundRectangleShape1);
-
-			Shape lineShape;
-			ShapeGenerator::GenerateLine(Float2(320.0f, 64.0f), Float2(440.0f, 32.0f), 8.0f, 4, ByteColor(0, 127, 255), lineShape);
-			shapeRendererContext.AddTransformedShape(lineShape);
-
+			Shape testShapeSet;
+			ShapeGenerator::GenerateTestShapeSet(testShapeSet);
+			shapeRendererContext.AddShape(testShapeSet);
 
 			StackStringW<100> fpsString;
 			FormatString(fpsString, L"FPS: %d", Profiler::FPSCounter::GetFPS());
