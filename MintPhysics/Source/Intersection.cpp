@@ -14,7 +14,7 @@ namespace mint
 
 			const uint32 kSideCount = 32;
 			const float kThetaUnit = Math::kTwoPi / kSideCount;
-			for (uint32 sideIndex = 1; sideIndex < kSideCount; ++sideIndex)
+			for (uint32 sideIndex = 1; sideIndex <= kSideCount; ++sideIndex)
 			{
 				const float thetaA = kThetaUnit * (sideIndex - 1);
 				const float thetaB = kThetaUnit * sideIndex;
