@@ -1,4 +1,5 @@
-﻿#include <MintPhysics/Include/AllHeaders.h>
+﻿#include <MintPhysics/Include/TestPhysics.h>
+#include <MintPhysics/Include/AllHeaders.h>
 #include <MintPhysics/Include/AllHpps.h>
 
 
@@ -6,6 +7,12 @@ namespace mint
 {
 	namespace TestPhysics
 	{
+		bool Test()
+		{
+			MINT_ASSURE(TestIntersections());
+			return true;
+		}
+
 		bool TestIntersections()
 		{
 			{

@@ -1,9 +1,9 @@
 ﻿#include <MintLibrary/Include/AllHeaders.h>
 #include <MintLibrary/Include/AllHpps.h>
 
-
-#include <MintMath/Include/Test.h>
 #include <MintContainer/Include/TestContainer.h>
+#include <MintMath/Include/Test.h>
+#include <MintPhysics/Include/TestPhysics.h>
 #include <MintPlatform/Include/Test.h>
 #include <MintLanguage/Include/Test.h>
 #include <MintReflection/Include/TestReflection.h>
@@ -47,8 +47,9 @@ int main()
 
 #if defined MINT_DEBUG
 	//Logger::SetOutputFileName("LOG.txt");
-	TestMath::Test();
 	TestContainers::Test();
+	TestMath::Test();
+	TestPhysics::Test();
 	TestPlatform::Test();
 	TestLanguage::Test();
 	TestReflection::Test();
@@ -247,7 +248,6 @@ bool Run3DTestWindow(mint::Platform::IWindow& window, mint::Rendering::GraphicDe
 
 			// # ShapeRendererContext 테스트
 			//shapeRendererContext.TestDraw(Float2(30, 60));
-
 			Shape testShapeSet;
 			ShapeGenerator::GenerateTestShapeSet(testShapeSet);
 			shapeRendererContext.AddShape(testShapeSet);

@@ -8,6 +8,7 @@ namespace mint
 {
 	namespace TestPhysics
 	{
+		bool Test();
 		bool TestIntersections();
 	}
 }
