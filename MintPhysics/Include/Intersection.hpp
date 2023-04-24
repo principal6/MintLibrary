@@ -35,6 +35,16 @@ namespace mint
 			__noop;
 		}
 #pragma endregion
+		
+#pragma region GJKShape2D - GJKBoxShape2D
+		inline GJKBoxShape2D::GJKBoxShape2D(const Float2& center, const Float2& halfSize, const float angle)
+			: GJKShape2D(center)
+			, _halfSize{ halfSize }
+			, _angle{ angle }
+		{
+			__noop;
+		}
+#pragma endregion
 
 #pragma region GJKShape2D - GJKConvexShape2D
 		inline GJKConvexShape2D::GJKConvexShape2D(const Float2& center, const Vector<Float2>& vertices)

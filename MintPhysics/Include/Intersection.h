@@ -29,6 +29,15 @@ namespace mint
 		using mint::Rendering::ByteColor;
 
 
+		enum class GJKShapeType
+		{
+			Point,
+			Circle,
+			AABB,
+			Box,
+			Convex,
+		};
+
 		class GJKShape2D
 		{
 		public:
@@ -37,8 +46,9 @@ namespace mint
 			virtual ~GJKShape2D() = default;
 
 		public:
-			virtual void DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Float2& offset) { __noop; }
+			virtual void DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Float2& offset = Float2::kZero) const { __noop; }
 			virtual Float2 ComputeSupportPoint(const Float2& direction) const abstract;
+			virtual GJKShapeType GetShapeType() const abstract;
 
 		public:
 			Float2 _center;
@@ -50,8 +60,9 @@ namespace mint
 			GJKPointShape2D(const Float2& center);
 
 		public:
-			virtual void DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Float2& offset = Float2::kZero) override final;
+			virtual void DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Float2& offset = Float2::kZero) const override final;
 			virtual Float2 ComputeSupportPoint(const Float2& direction) const override final;
+			virtual GJKShapeType GetShapeType() const override final { return GJKShapeType::Point; }
 		};
 		
 		class GJKCircleShape2D : public GJKShape2D
@@ -60,8 +71,9 @@ namespace mint
 			GJKCircleShape2D(const Float2& center, const float radius);
 
 		public:
-			virtual void DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Float2& offset = Float2::kZero) override final;
+			virtual void DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Float2& offset = Float2::kZero) const  override final;
 			virtual Float2 ComputeSupportPoint(const Float2& direction) const override final;
+			virtual GJKShapeType GetShapeType() const override final { return GJKShapeType::Circle; }
 
 		public:
 			float _radius;
@@ -73,11 +85,27 @@ namespace mint
 			GJKAABBShape2D(const Float2& center, const Float2& halfSize);
 
 		public:
-			virtual void DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Float2& offset = Float2::kZero) override final;
+			virtual void DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Float2& offset = Float2::kZero) const override final;
 			virtual Float2 ComputeSupportPoint(const Float2& direction) const override final;
-		
+			virtual GJKShapeType GetShapeType() const override final { return GJKShapeType::AABB; }
+
 		public:
 			Float2 _halfSize;
+		};
+		
+		class GJKBoxShape2D : public GJKShape2D
+		{
+		public:
+			GJKBoxShape2D(const Float2& center, const Float2& halfSize, const float angle);
+
+		public:
+			virtual void DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Float2& offset = Float2::kZero) const override final;
+			virtual Float2 ComputeSupportPoint(const Float2& direction) const override final;
+			virtual GJKShapeType GetShapeType() const override final { return GJKShapeType::Box; }
+
+		public:
+			Float2 _halfSize;
+			float _angle;
 		};
 
 		// CCW winding
@@ -85,15 +113,20 @@ namespace mint
 		{
 		public:
 			static GJKConvexShape2D MakeFromPoints(const Float2& center, const Vector<Float2>& points);
-			static GJKConvexShape2D MakeFromShape(const Float2& center, const Rendering::Shape& shape);
+			static GJKConvexShape2D MakeFromBoxShape2D(const GJKBoxShape2D& shape);
+			static GJKConvexShape2D MakeFromCircleShape2D(const GJKCircleShape2D& shape);
+			static GJKConvexShape2D MakeFromShape2D(const GJKShape2D& shape);
+			static GJKConvexShape2D MakeFromRenderingShape(const Float2& center, const Rendering::Shape& renderingShape);
+			static GJKConvexShape2D MakeMinkowskiDifferenceShape(const GJKShape2D& a, const GJKShape2D& b);
 			static GJKConvexShape2D MakeMinkowskiDifferenceShape(const GJKConvexShape2D& a, const GJKConvexShape2D& b);
 
 		public:
 			GJKConvexShape2D(const Float2& center, const Vector<Float2>& vertices);
 
 		public:
-			virtual void DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Float2& offset = Float2::kZero) override final;
+			virtual void DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Float2& offset = Float2::kZero) const override final;
 			virtual Float2 ComputeSupportPoint(const Float2& direction) const override final;
+			virtual GJKShapeType GetShapeType() const override final { return GJKShapeType::Convex; }
 
 		private:
 			GJKConvexShape2D();
@@ -112,6 +145,7 @@ namespace mint
 		class GJKSimplex2D
 		{
 		public:
+			GJKSimplex2D();
 			GJKSimplex2D(const Float2& pointA);
 			GJKSimplex2D(const Float2& pointB, const Float2& pointA);
 
@@ -133,6 +167,8 @@ namespace mint
 		bool Intersect2D_Circle_Point(const Float2& circleCenter, const float circleRadius, const Float2& point);
 		bool Intersect2D_AABB_Point(const Rect& aabb, const Float2& point);
 		bool Intersect2D_GJK(const GJKShape2D& shapeA, const GJKShape2D& shapeB);
+
+		void Debug_Intersect2D_GJK_StepByStep(const uint32 maxStep, ShapeRendererContext& shapeRendererContext, const Float2& offset, const GJKShape2D& shapeA, const GJKShape2D& shapeB);
 	}
 }
 
