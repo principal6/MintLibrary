@@ -40,8 +40,8 @@ namespace mint
 		Float2x2 operator*(const Float2x2& rhs) const noexcept;
 
 	public:
-		void set(const uint32 row, const uint32 col, const float newValue) noexcept;
-		float get(const uint32 row, const uint32 col) const noexcept;
+		void Set(const uint32 row, const uint32 col, const float newValue) noexcept;
+		float Get(const uint32 row, const uint32 col) const noexcept;
 		void SetZero() noexcept;
 		void SetIdentity() noexcept;
 

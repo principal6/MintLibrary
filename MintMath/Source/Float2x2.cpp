@@ -7,12 +7,12 @@ namespace mint
 {
 	Float2x2 Float2x2::RotationMatrix(const float angle) noexcept
 	{
-		const float cosAngle = cos(angle);
-		const float sinAngle = sin(angle);
+		const float cosTheta = cos(angle);
+		const float sinTheta = sin(angle);
 		return Float2x2
 		(
-			cosAngle, -sinAngle,
-			sinAngle, cosAngle
+			cosTheta, -sinTheta,
+			sinTheta, cosTheta
 		);
 	}
 
@@ -61,12 +61,12 @@ namespace mint
 		return result;
 	}
 
-	void Float2x2::set(const uint32 row, const uint32 col, const float newValue) noexcept
+	void Float2x2::Set(const uint32 row, const uint32 col, const float newValue) noexcept
 	{
 		_m[Min(row - 1, Float2x2::kMaxIndex)][Min(col - 1, Float2x2::kMaxIndex)] = newValue;
 	}
 
-	float Float2x2::get(const uint32 row, const uint32 col) const noexcept
+	float Float2x2::Get(const uint32 row, const uint32 col) const noexcept
 	{
 		return _m[Min(row - 1, Float2x2::kMaxIndex)][Min(col - 1, Float2x2::kMaxIndex)];
 	}
