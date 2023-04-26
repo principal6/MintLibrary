@@ -1,5 +1,9 @@
 ﻿# TODO
+## OwnPtr SharedPtr SharedPtrViewer 작업!!
+
 ## GUI 렌더링!!
+
+## wchar_t => UTF8 로 변환!! UTF8 FontData, DrawDynamicText 등
 
 ## Language library 정리
 ILexer, IParse 등 코드 정리
