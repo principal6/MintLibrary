@@ -311,5 +311,14 @@ namespace mint
 
 			ShapeGenerator::GenerateLine(Float2(320.0f, 64.0f), Float2(440.0f, 32.0f), 8.0f, 4, ByteColor(0, 127, 255), outShape, shapeTransform);
 		}
+
+		void ShapeGenerator::FillColor(Shape& inoutShape, const ByteColor& byteColor)
+		{
+			const float4 color = convertByteColorToFloat4(byteColor);
+			for (auto& vertex : inoutShape._vertices)
+			{
+				vertex._color = color;
+			}
+		}
 	}
 }
