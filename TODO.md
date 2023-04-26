@@ -1,5 +1,5 @@
 ﻿# TODO
-## Physics GenerateAABB 추가하기 (충돌 최적화용), GJKBoxShape2D/GJKCapsuleShape2D 추가!
+## Physics GenerateAABB 추가하기 (충돌 최적화용), CapsuleShape2D 추가!
 
 ## 2D Rendering 에 Shape 정의, Shape Render 기능 넣기!!! (그래야 찍어내기 가능!) => 이게 돼야 GUI 렌더링이 쉬워짐!!
 
