@@ -471,19 +471,25 @@ namespace mint
 
 		bool Test_HashMap()
 		{
-			HashMap<StringA, StringA> hashMap;
-			hashMap.Insert("1", "a");
-			hashMap.Insert("5", "b");
-			hashMap.Insert("11", "c");
-			hashMap.Insert("21", "d");
-			hashMap.Insert("33", "e");
-			hashMap.Insert("41", "f");
+			static_assert(HasMethodComputeHash<StringA>::value == true, "StringA must have ComputeHash() method.");
+			static_assert(HasMethodComputeHash<StringW>::value == true, "StringW must have ComputeHash() method.");
+			static_assert(HasMethodComputeHash<StringU8>::value == true, "StringU8 must have ComputeHash() method.");
 
-			KeyValuePair keyValuePair0 = hashMap.Find("1");
+			HashMap<StringA, StringA> hashMap0;
+			hashMap0.Insert("1", "a");
+			hashMap0.Insert("5", "b");
+			hashMap0.Insert("11", "c");
+			hashMap0.Insert("21", "d");
+			hashMap0.Insert("33", "e");
+			hashMap0.Insert("41", "f");
 
-			hashMap.Erase("21");
+			KeyValuePair keyValuePair0 = hashMap0.Find("1");
+			hashMap0.Erase("21");
+			KeyValuePair keyValuePair1 = hashMap0.Find("21");
 
-			KeyValuePair keyValuePair1 = hashMap.Find("21");
+			HashMap<StringU8, uint32> hashMap1;
+			hashMap1.Insert(u8"ABC", 1);
+			MINT_ASSURE(hashMap1.Find(u8"ABC").IsValid());
 
 			return true;
 		}
@@ -903,7 +909,7 @@ namespace mint
 			queue.Push(0);
 			MINT_ASSURE(queue.HeadAt() == 0 && queue.TailAt() == 0);
 			MINT_ASSURE(queue.Size() == 1);
-			
+
 			queue.Push(1);
 			MINT_ASSURE(queue.HeadAt() == 0 && queue.TailAt() == 1);
 			MINT_ASSURE(queue.Size() == 2);

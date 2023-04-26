@@ -43,6 +43,13 @@ namespace mint
 		return ComputeHash(rhsA, rhsLength * 2);
 	}
 
+	MINT_INLINE uint64 ComputeHash(const char8_t* const rhs) noexcept
+	{
+		const uint32 rhsLength = StringUtil::Length(rhs);
+		const char* const rhsA = reinterpret_cast<const char*>(rhs);
+		return ComputeHash(rhsA, rhsLength);
+	}
+
 	template <typename T>
 	uint64 ComputeHash(const T& value) noexcept
 	{
@@ -67,18 +74,18 @@ namespace mint
 	template<typename T>
 	inline uint64 Hasher<T>::operator()(const T& value) const noexcept
 	{
-		return ComputeHash<T>(value);
-		//return uint64(value); // ### FOR TEST ###
+		if constexpr (HasMethodComputeHash<T>::value == true)
+		{
+			return value.ComputeHash();
+		}
+		else
+		{
+			return ComputeHash<T>(value);
+		}
 	}
 
 	inline uint64 Hasher<std::string>::operator()(const std::string& value) const noexcept
 	{
 		return ComputeHash(value.c_str(), static_cast<uint32>(value.length()));
-	}
-
-	template<typename T>
-	inline uint64 Hasher<String<T>>::operator()(const String<T>& value) const noexcept
-	{
-		return value.ComputeHash();
 	}
 }
