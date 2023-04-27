@@ -10,7 +10,6 @@
 
 namespace mint
 {
-	// TODO: OwnPtr SharedPtr SharedPtrViewer
 	template<typename T>
 	class OwnPtr
 	{
