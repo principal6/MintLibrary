@@ -496,10 +496,22 @@ namespace mint
 
 		bool Test_SharedPtr()
 		{
-			SharedPtr<StringA> sp0;
-			sp0 = MakeShared<StringA>();
-			sp0 = MakeShared<StringA>("abc");
-			sp0 = MakeShared<StringA>("abcasad sads dsa qew w eq d asd s z");
+			SharedPtrViewer<StringA> spv0;
+			{
+				SharedPtr<StringA> sp0;
+				sp0 = MakeShared<StringA>();
+				sp0 = MakeShared<StringA>("abc");
+				sp0 = MakeShared<StringA>("abcasad sads dsa qew w eq d asd s z");
+				{
+					SharedPtr<StringA> sp1 = sp0;
+					SharedPtr<StringA> sp2 = MakeShared<StringA>("New");
+					sp2 = sp1;
+
+					spv0 = sp1;
+					MINT_ASSURE(spv0.IsValid() == true);
+				}
+			}
+			MINT_ASSURE(spv0.IsValid() == false);
 			return true;
 		}
 
@@ -572,8 +584,8 @@ namespace mint
 				for (uint32 i = 0; i < kCount; ++i)
 				{
 					sArray[i] = "abcdefg";
-				}
 			}
+		}
 
 			auto logArray = Profiler::ScopedCPUProfiler::GetEntireLogData();
 			const bool IsEmpty = logArray.empty();
@@ -670,7 +682,7 @@ namespace mint
 			}
 
 			return true;
-		}
+	}
 
 		bool Test_StringUtil()
 		{
@@ -986,5 +998,5 @@ namespace mint
 #endif
 			return true;
 		}
-	}
+}
 }

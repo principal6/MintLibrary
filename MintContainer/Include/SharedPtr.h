@@ -14,8 +14,11 @@ namespace mint
 	class SharedPtr;
 
 	template<typename T>
+	class SharedPtrViewer;
+
+	template<typename T>
 	static SharedPtr<T> MakeShared();
-	
+
 	template<typename T>
 	static SharedPtr<T> MakeShared(T&& rhs);
 
@@ -23,44 +26,47 @@ namespace mint
 	class ReferenceCounter
 	{
 	public:
-		ReferenceCounter()
-			: _referenceCount{ 1 }
-		{
-			__noop;
-		}
+		ReferenceCounter() : _strongReferenceCount{ 0 }, _weakReferenceCount{ 0 } { __noop; }
 		ReferenceCounter(const ReferenceCounter& rhs) = delete;
 		ReferenceCounter(ReferenceCounter&& rhs) noexcept
-			: _referenceCount{ rhs._referenceCount }
+			: _strongReferenceCount{ rhs._strongReferenceCount }
+			, _weakReferenceCount{ rhs._weakReferenceCount }
 		{
-			rhs._referenceCount = 0;
+			rhs._strongReferenceCount = 0;
+			rhs._weakReferenceCount = 0;
 		}
-		~ReferenceCounter()
-		{
-			--_referenceCount;
-		}
-	public:
+		~ReferenceCounter() { __noop; }
 		ReferenceCounter& operator=(const ReferenceCounter& rhs) = delete;
 		ReferenceCounter& operator=(ReferenceCounter&& rhs) noexcept
 		{
 			if (this != &rhs)
 			{
-				_referenceCount = rhs._referenceCount;
-				rhs._referenceCount = 0;
+				_strongReferenceCount = rhs._strongReferenceCount;
+				_weakReferenceCount = rhs._weakReferenceCount;
+
+				rhs._strongReferenceCount = 0;
+				rhs._weakReferenceCount = 0;
 			}
 			return *this;
 		}
 	public:
-		MINT_INLINE void IncreaseReferenceCount() { ++_referenceCount; }
-		MINT_INLINE void DecreaseReferenceCount() { --_referenceCount; }
-		MINT_INLINE int32 GetReferenceCount() const { return _referenceCount; }
+		MINT_INLINE void IncreaseStrongReferenceCount() { ++_strongReferenceCount; }
+		MINT_INLINE void IncreaseWeakReferenceCount() { ++_weakReferenceCount; }
+		MINT_INLINE void DecreaseStrongReferenceCount() { --_strongReferenceCount; }
+		MINT_INLINE void DecreaseWeakReferenceCount() { --_weakReferenceCount; }
+		MINT_INLINE int32 GetStrongReferenceCount() const { return _strongReferenceCount; }
+		MINT_INLINE int32 GetWeakReferenceCount() const { return _weakReferenceCount; }
 	private:
-		int32 _referenceCount;
+		int32 _strongReferenceCount;
+		int32 _weakReferenceCount;
 	};
 
 
 	template<typename T>
 	class SharedPtr
 	{
+		friend SharedPtrViewer;
+
 		template<typename T>
 		friend static SharedPtr<T> MakeShared();
 
@@ -68,114 +74,258 @@ namespace mint
 		friend static SharedPtr<T> MakeShared(T&& rhs);
 
 	public:
-		SharedPtr()
-			: _referenceCounter{ nullptr }
-			, _rawPointer{ nullptr }
-		{
-			__noop;
-		}
+		SharedPtr() = default;
 		SharedPtr(const SharedPtr& rhs)
 			: _referenceCounter{ rhs._referenceCounter }
-			, _rawPointer{ rhs._rawPointer }
+			, _rawPtr{ rhs._rawPtr }
 		{
-			if (_referenceCounter == nullptr)
+			if (_referenceCounter != nullptr)
 			{
-				return;
+				_referenceCounter->IncreaseStrongReferenceCount();
 			}
-			_referenceCounter->IncreaseReferenceCount();
 		}
 		SharedPtr(SharedPtr&& rhs)
 			: _referenceCounter{ rhs._referenceCounter }
-			, _rawPointer{ rhs._rawPointer }
+			, _rawPtr{ rhs._rawPtr }
 		{
 			rhs._referenceCounter = nullptr;
-			rhs._rawPointer = nullptr;
+			rhs._rawPtr = nullptr;
 		}
 		~SharedPtr()
 		{
-			if (_referenceCounter == nullptr)
+			if (_referenceCounter != nullptr)
 			{
-				return;
-			}
-			_referenceCounter->DecreaseReferenceCount();
-			if (_referenceCounter->GetReferenceCount() == 0)
-			{
-				MINT_DELETE(_referenceCounter);
-				MINT_DELETE(_rawPointer);
-			}
-		}
+				_referenceCounter->DecreaseStrongReferenceCount();
 
-	public:
-		SharedPtr& operator=(const SharedPtr& rhs) noexcept
-		{
-			if (this != &rhs)
-			{
-				if (_referenceCounter != nullptr)
+				if (_referenceCounter->GetStrongReferenceCount() == 0)
 				{
-					_referenceCounter->DecreaseReferenceCount();
-					if (_referenceCounter->GetReferenceCount() == 0)
+					MINT_DELETE(_rawPtr);
+
+					if (_referenceCounter->GetWeakReferenceCount() == 0)
 					{
 						MINT_DELETE(_referenceCounter);
-						MINT_DELETE(_rawPointer);
 					}
 				}
+			}
+		}
+		SharedPtr& operator=(const SharedPtr& rhs) noexcept
+		{
+			if (this == &rhs)
+			{
+				return *this;
+			}
 
-				_referenceCounter = rhs._referenceCounter;
-				_rawPointer = rhs._rawPointer;
+			if (_referenceCounter != nullptr)
+			{
+				_referenceCounter->DecreaseStrongReferenceCount();
 
-				if (_referenceCounter != nullptr)
+				if (_referenceCounter->GetStrongReferenceCount() == 0)
 				{
-					_referenceCounter->IncreaseReferenceCount();
+					MINT_DELETE(_rawPtr);
+
+					if (_referenceCounter->GetWeakReferenceCount() == 0)
+					{
+						MINT_DELETE(_referenceCounter);
+					}
 				}
+			}
+
+			_referenceCounter = rhs._referenceCounter;
+			_rawPtr = rhs._rawPtr;
+
+			if (_referenceCounter != nullptr)
+			{
+				_referenceCounter->IncreaseStrongReferenceCount();
 			}
 			return *this;
 		}
 		SharedPtr& operator=(SharedPtr&& rhs) noexcept
 		{
-			if (this != &rhs)
+			if (this == &rhs)
 			{
-				if (_referenceCounter != nullptr)
+				return *this;
+			}
+
+			if (_referenceCounter != nullptr)
+			{
+				_referenceCounter->DecreaseStrongReferenceCount();
+
+				if (_referenceCounter->GetStrongReferenceCount() == 0)
 				{
-					_referenceCounter->DecreaseReferenceCount();
-					if (_referenceCounter->GetReferenceCount() == 0)
+					MINT_DELETE(_rawPtr);
+
+					if (_referenceCounter->GetWeakReferenceCount() == 0)
 					{
 						MINT_DELETE(_referenceCounter);
-						MINT_DELETE(_rawPointer);
 					}
 				}
-
-				_referenceCounter = rhs._referenceCounter;
-				_rawPointer = rhs._rawPointer;
-
-				rhs._rawPointer = nullptr;
-				rhs._referenceCounter = nullptr;
 			}
+
+			_referenceCounter = rhs._referenceCounter;
+			_rawPtr = rhs._rawPtr;
+
+			rhs._referenceCounter = nullptr;
+			rhs._rawPtr = nullptr;
 			return *this;
 		}
 
 	public:
 		// this is really dangerous ...
-		//T* operator&() noexcept { return _rawPointer; }
-		T& operator*() noexcept { return *_rawPointer; }
-		const T& operator*() const noexcept { return *_rawPointer; }
-		T* operator->() noexcept { return _rawPointer; }
-		const T* operator->() const noexcept { return _rawPointer; }
+		//T* operator&() noexcept { return _rawPtr; }
+		T& operator*() noexcept { return *_rawPtr; }
+		const T& operator*() const noexcept { return *_rawPtr; }
+		T* operator->() noexcept { return _rawPtr; }
+		const T* operator->() const noexcept { return _rawPtr; }
 
 	public:
-		constexpr uint64 Size() { return sizeof(T); }
-		bool IsValid() const { return (_referenceCounter == nullptr ? false : _referenceCounter->GetReferenceCount() > 0); }
+		bool IsValid() const { return (_referenceCounter == nullptr ? false : _referenceCounter->GetStrongReferenceCount() != 0); }
 
 	private:
 		SharedPtr(T* const rawPointer)
 			: _referenceCounter{ MINT_NEW(ReferenceCounter) }
-			, _rawPointer{ rawPointer }
+			, _rawPtr{ rawPointer }
 		{
-			__noop;
+			_referenceCounter->IncreaseStrongReferenceCount();
 		}
 
 	private:
 		ReferenceCounter* _referenceCounter;
-		T* _rawPointer;
+		T* _rawPtr;
+	};
+
+	template<typename T>
+	class SharedPtrViewer
+	{
+	public:
+		SharedPtrViewer() = default;
+		SharedPtrViewer(const SharedPtr<T>& rhs)
+			: _referenceCounter{ rhs._referenceCounter }
+			, _rawPtr{ rhs._rawPtr }
+		{
+			if (_referenceCounter != nullptr)
+			{
+				_referenceCounter->IncreaseWeakReferenceCount();
+			}
+		}
+		SharedPtrViewer(const SharedPtrViewer& rhs)
+			: _referenceCounter{ rhs._referenceCounter }
+			, _rawPtr{ rhs._rawPtr }
+		{
+			if (_referenceCounter != nullptr)
+			{
+				_referenceCounter->IncreaseWeakReferenceCount();
+			}
+		}
+		SharedPtrViewer(SharedPtrViewer&& rhs)
+			: _referenceCounter{ rhs._referenceCounter }
+			, _rawPtr{ rhs._rawPtr }
+		{
+			rhs._referenceCounter = nullptr;
+			rhs._rawPtr = nullptr;
+		}
+		~SharedPtrViewer()
+		{
+			if (_referenceCounter != nullptr)
+			{
+				_referenceCounter->DecreaseWeakReferenceCount();
+
+				if (_referenceCounter->GetStrongReferenceCount() == 0 && _referenceCounter->GetWeakReferenceCount() == 0)
+				{
+					MINT_DELETE(_referenceCounter);
+				}
+			}
+		}
+		SharedPtrViewer& operator=(const SharedPtr<T>& rhs) noexcept
+		{
+			if (_referenceCounter == rhs._referenceCounter)
+			{
+				return *this;
+			}
+
+			if (_referenceCounter != nullptr)
+			{
+				_referenceCounter->DecreaseWeakReferenceCount();
+
+				if (_referenceCounter->GetStrongReferenceCount() == 0 && _referenceCounter->GetWeakReferenceCount() == 0)
+				{
+					MINT_DELETE(_referenceCounter);
+				}
+			}
+
+			_referenceCounter = rhs._referenceCounter;
+			_rawPtr = rhs._rawPtr;
+
+			if (_referenceCounter != nullptr)
+			{
+				_referenceCounter->IncreaseWeakReferenceCount();
+			}
+			return *this;
+		}
+		SharedPtrViewer& operator=(const SharedPtrViewer& rhs) noexcept
+		{
+			if (this == &rhs)
+			{
+				return *this;
+			}
+
+			if (_referenceCounter != nullptr)
+			{
+				_referenceCounter->DecreaseWeakReferenceCount();
+
+				if (_referenceCounter->GetStrongReferenceCount() == 0 && _referenceCounter->GetWeakReferenceCount() == 0)
+				{
+					MINT_DELETE(_referenceCounter);
+				}
+			}
+
+			_referenceCounter = rhs._referenceCounter;
+			_rawPtr = rhs._rawPtr;
+
+			if (_referenceCounter != nullptr)
+			{
+				_referenceCounter->IncreaseWeakReferenceCount();
+			}
+			return *this;
+		}
+		SharedPtrViewer& operator=(SharedPtrViewer&& rhs) noexcept
+		{
+			if (this == &rhs)
+			{
+				return *this;
+			}
+
+			if (_referenceCounter != nullptr)
+			{
+				_referenceCounter->DecreaseWeakReferenceCount();
+
+				if (_referenceCounter->GetStrongReferenceCount() == 0 && _referenceCounter->GetWeakReferenceCount() == 0)
+				{
+					MINT_DELETE(_referenceCounter);
+				}
+			}
+
+			_referenceCounter = rhs._referenceCounter;
+			_rawPtr = rhs._rawPtr;
+
+			rhs._referenceCounter = nullptr;
+			rhs._rawPtr = nullptr;
+			return *this;
+		}
+
+	public:
+		// this is really dangerous ...
+		//T* operator&() noexcept { return _rawPtr; }
+		T& operator*() noexcept { return *_rawPtr; }
+		const T& operator*() const noexcept { return *_rawPtr; }
+		T* operator->() noexcept { return _rawPtr; }
+		const T* operator->() const noexcept { return _rawPtr; }
+
+	public:
+		bool IsValid() const { return (_referenceCounter == nullptr ? false : _referenceCounter->GetStrongReferenceCount() != 0); }
+
+	private:
+		ReferenceCounter* _referenceCounter;
+		T* _rawPtr;
 	};
 
 
