@@ -164,10 +164,25 @@ bool Run3DTestWindow(mint::Platform::IWindow& window, mint::Rendering::GraphicDe
 		testSkeleton.CreateFromGenerator(testSkeletonGenerator);
 	}
 
-	Plotter plotter(graphicDevice.GetShapeRendererContext());
+	GUISystem guiSystem{ graphicDevice };
+	{
+		GUIControlDesc controlDesc{ u8"RoundButton0" };
+		ShapeGenerator::GenerateCircle(16.0f, 16, ByteColor(255, 0, 0), controlDesc._normalShape);
+		ShapeGenerator::GenerateCircle(17.0f, 16, ByteColor(255, 64, 32), controlDesc._hoveredShape);
+		ShapeGenerator::GenerateCircle(17.0f, 16, ByteColor(255, 128, 64), controlDesc._pressedShape);
+		guiSystem.DefineControl(controlDesc);
+	}
+	const GUIControlID buttonControlID = guiSystem.AddControl(u8"RoundButton0");
+	GUIControl& buttonControl = guiSystem.AccessControl(buttonControlID);
+	buttonControl.SetPosition(Float2(100, 100));
+	buttonControl.SetText(L"RoundButton0");
+
+	Plotter plotter{ graphicDevice.GetShapeRendererContext() };
 	while (window.IsRunning() == true)
 	{
 		objectPool.ComputeDeltaTime();
+
+		guiSystem.Update();
 
 		if (inputContext.IsKeyPressed())
 		{
@@ -248,9 +263,11 @@ bool Run3DTestWindow(mint::Platform::IWindow& window, mint::Rendering::GraphicDe
 
 			// # ShapeRendererContext 테스트
 			//shapeRendererContext.TestDraw(Float2(30, 60));
-			Shape testShapeSet;
-			ShapeGenerator::GenerateTestShapeSet(testShapeSet);
-			shapeRendererContext.AddShape(testShapeSet);
+			//Shape testShapeSet;
+			//ShapeGenerator::GenerateTestShapeSet(testShapeSet);
+			//shapeRendererContext.AddShape(testShapeSet);
+
+			guiSystem.Render();
 
 			StackStringW<100> fpsString;
 			FormatString(fpsString, L"FPS: %d", Profiler::FPSCounter::GetFPS());

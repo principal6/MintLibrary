@@ -17,6 +17,7 @@
 #include <MintRenderingBase/Include/ShapeRendererContext.h>
 #include <MintRenderingBase/Include/LowLevelRenderer.h>
 #include <MintRenderingBase/Include/ImageLoader.h>
+#include <MintRenderingBase/Include/GUI/GUISystem.h>
 
 
 #endif // !_MINT_RENDERING_BASE_ALL_HEADERS_H_
