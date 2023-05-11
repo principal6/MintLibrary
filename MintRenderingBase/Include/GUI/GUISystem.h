@@ -56,9 +56,10 @@ namespace mint
 			void SetText(const StringW& text) { _text = text; }
 			bool CheckControlState(const GUIControlState controlState) const { return _controlState == controlState; }
 		private:
-			GUIControlID _controlID;
-			GUIControlState _controlState = GUIControlState::Normal;
 			uint32 _controlDefinitionIndex = 0;
+			GUIControlID _controlID;
+		private:
+			GUIControlState _controlState = GUIControlState::Normal;
 			Float2 _position;
 			// TODO: StringU8 로 변경할 것.
 			StringW _text;
@@ -86,40 +87,45 @@ namespace mint
 			GraphicDevice& _graphicDevice;
 
 		private:
+			bool _isUpdated;
 			struct GUIControlUpdateContext
 			{
 				Float2 _mouseLeftButtonPressedPosition;
-			};
+			} _controlUpdateContext;
+
 			// ControlDefinitionData
 			struct GUIControlDefinition;
 			class GUIControlManager
 			{
 			public:
 				GUIControlManager();
+
 			public:
 				void DefineControl(const GUIControlDesc& controlDesc);
 				GUIControlID AddControl(const StringU8& controlName);
 				void RemoveControl(const GUIControlID& controlID);
+
 			public:
 				void UpdateControls(const GUIControlUpdateContext& controlUpdateContext);
+
 			public:
 				GUIControl& AccessControl(const GUIControlID& controlID);
 				HashMap<GUIControlID, GUIControl>& AccessControlInstanceMap();
 				const GUIControlDefinition& GetControlDefinition(const uint32 controlDefinitionIndex);
+
 			private:
 				void UpdateControl(const GUIControlUpdateContext& controlUpdateContext, GUIControl& control);
+
 			private:
 				Vector<GUIControlDefinition> _controlDefinitions;
 				HashMap<StringU8, uint32> _controlDefinitionMap;
+
 			private:
 				uint64 _nextControlRawID;
 				HashMap<GUIControlID, GUIControl> _controlInstanceMap;
+
 			private:
 			} _controlManager;
-
-		private:
-			GUIControlUpdateContext _controlUpdateContext;
-			bool _isUpdated;
 		};
 	}
 }
