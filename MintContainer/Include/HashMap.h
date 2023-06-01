@@ -81,11 +81,8 @@ namespace mint
 		bool Contains(const Key& key) const noexcept;
 
 	public:
-		template<typename V = Value>
-		std::enable_if_t<std::is_copy_constructible<V>::value == true || std::is_default_constructible<V>::value, void> Insert(const Key& key, const V& value) noexcept;
-
-		template<typename V = Value>
-		std::enable_if_t<std::is_copy_constructible<V>::value == false, void> Insert(const Key& key, V&& value) noexcept;
+		void Insert(const Key& key, const Value& value) noexcept;
+		void Insert(const Key& key, Value&& value) noexcept;
 		
 		void Erase(const Key& key) noexcept;
 		void Clear() noexcept;

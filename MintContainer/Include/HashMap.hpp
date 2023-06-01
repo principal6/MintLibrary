@@ -83,8 +83,7 @@ namespace mint
 	}
 
 	template<typename Key, typename Value>
-	template<typename V>
-	inline std::enable_if_t<std::is_copy_constructible<V>::value == true || std::is_default_constructible<V>::value, void> HashMap<Key, Value>::Insert(const Key& key, const V& value) noexcept
+	void HashMap<Key, Value>::Insert(const Key& key, const Value& value) noexcept
 	{
 		const uint64 keyHash = Hasher<Key>()(key);
 		const uint32 startBucketIndex = ComputeStartBucketIndex(keyHash);
@@ -132,8 +131,7 @@ namespace mint
 	}
 
 	template<typename Key, typename Value>
-	template<typename V>
-	inline std::enable_if_t<std::is_copy_constructible<V>::value == false, void> HashMap<Key, Value>::Insert(const Key& key, V&& value) noexcept
+	inline void HashMap<Key, Value>::Insert(const Key& key, Value&& value) noexcept
 	{
 		const uint64 keyHash = Hasher<Key>()(key);
 		const uint32 startBucketIndex = ComputeStartBucketIndex(keyHash);
@@ -177,7 +175,7 @@ namespace mint
 		}
 
 		Resize();
-		insert(key, std::move(value));
+		Insert(key, std::move(value));
 	}
 
 	template<typename Key, typename Value>
