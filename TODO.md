@@ -1,5 +1,5 @@
 ﻿# TODO
-## OwnPtr SharedPtr SharedPtrViewer 작업!!
+## Index 클래스 만들기?
 
 ## GUI 렌더링!!
 
