@@ -8,12 +8,19 @@
 #include <MintContainer/Include/HashMap.h>
 #include <MintContainer/Include/StringReference.h>
 #include <MintContainer/Include/OwnPtr.h>
+#include <MintContainer/Include/SharedPtr.h>
 #include <MintRenderingBase/Include/RenderingBaseCommon.h>
 #include <MintRenderingBase/Include/ShapeGenerator.h>
 
 
 namespace mint
 {
+	namespace Physics
+	{
+		class ConvexShape2D;
+	}
+
+
 	namespace Rendering
 	{
 		class GraphicDevice;
@@ -56,7 +63,8 @@ namespace mint
 			void SetText(const StringW& text) { _text = text; }
 			bool CheckControlState(const GUIControlState controlState) const { return _controlState == controlState; }
 		private:
-			uint32 _controlDefinitionIndex = 0;
+			SharedPtrViewer<GUIControlDesc> _controlDesc;
+			SharedPtrViewer<Physics::ConvexShape2D> _collisionShape;
 			GUIControlID _controlID;
 		private:
 			GUIControlState _controlState = GUIControlState::Normal;
@@ -110,19 +118,17 @@ namespace mint
 
 			public:
 				GUIControl& AccessControl(const GUIControlID& controlID);
-				HashMap<GUIControlID, GUIControl>& AccessControlInstanceMap();
-				const GUIControlDefinition& GetControlDefinition(const uint32 controlDefinitionIndex);
+				HashMap<GUIControlID, SharedPtr<GUIControl>>& AccessControlInstanceMap();
 
 			private:
 				void UpdateControl(const GUIControlUpdateContext& controlUpdateContext, GUIControl& control);
 
 			private:
-				Vector<GUIControlDefinition> _controlDefinitions;
-				HashMap<StringU8, uint32> _controlDefinitionMap;
+				HashMap<StringU8, SharedPtr<GUIControlDefinition>> _controlDefinitionMap;
 
 			private:
 				uint64 _nextControlRawID;
-				HashMap<GUIControlID, GUIControl> _controlInstanceMap;
+				HashMap<GUIControlID, SharedPtr<GUIControl>> _controlInstanceMap;
 
 			private:
 			} _controlManager;
