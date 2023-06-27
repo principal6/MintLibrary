@@ -71,6 +71,12 @@ namespace mint
 		friend static SharedPtr<T> MakeShared();
 
 		template<typename T>
+		friend static SharedPtr<T> MakeShared(const T& rhs);
+
+		template<typename T, typename U>
+		friend static SharedPtr<T> MakeShared(const U& rhs);
+
+		template<typename T>
 		friend static SharedPtr<T> MakeShared(T&& rhs);
 
 	public:
@@ -333,6 +339,18 @@ namespace mint
 	static SharedPtr<T> MakeShared()
 	{
 		return SharedPtr<T>(MINT_NEW(T));
+	}
+
+	template<typename T>
+	static SharedPtr<T> MakeShared(const T& rhs)
+	{
+		return SharedPtr<T>(MINT_NEW(T, rhs));
+	}
+
+	template<typename T, typename U>
+	static SharedPtr<T> MakeShared(const U& rhs)
+	{
+		return SharedPtr<T>(dynamic_cast<T*>(MINT_NEW(U, rhs)));
 	}
 
 	template<typename T>

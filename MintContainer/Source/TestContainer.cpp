@@ -500,11 +500,11 @@ namespace mint
 			{
 				SharedPtr<StringA> sp0;
 				sp0 = MakeShared<StringA>();
-				sp0 = MakeShared<StringA>("abc");
-				sp0 = MakeShared<StringA>("abcasad sads dsa qew w eq d asd s z");
+				sp0 = MakeShared(StringA("abc"));
+				sp0 = MakeShared(StringA("abcasad sads dsa qew w eq d asd s z"));
 				{
 					SharedPtr<StringA> sp1 = sp0;
-					SharedPtr<StringA> sp2 = MakeShared<StringA>("New");
+					SharedPtr<StringA> sp2 = MakeShared(StringA("New"));
 					sp2 = sp1;
 
 					spv0 = sp1;
