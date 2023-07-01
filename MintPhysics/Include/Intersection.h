@@ -168,7 +168,7 @@ namespace mint
 
 		bool Intersect2D_Circle_Point(const Float2& circleCenter, const float circleRadius, const Float2& point);
 		bool Intersect2D_AABB_Point(const Rect& aabb, const Float2& point);
-		bool Intersect2D_GJK(const Shape2D& shapeA, const Shape2D& shapeB);
+		bool Intersect2D_GJK(const Shape2D& shapeA, const Shape2D& shapeB, uint32* const outLoopCount = nullptr);
 
 		void Intersect2D_GJK_StepByStep(const uint32 maxStep, ShapeRendererContext& shapeRendererContext, const Float2& offset, const Shape2D& shapeA, const Shape2D& shapeB);
 	}

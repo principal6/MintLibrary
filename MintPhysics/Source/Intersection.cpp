@@ -370,6 +370,14 @@ namespace mint
 			return (result.LengthSqaure() == 0.0f ? result : Float2::Normalize(result));
 		}
 
+		MINT_INLINE bool Intersect2D_GJK_Retrun(const bool result, const uint32 loopCount, uint32* const outLoopCount)
+		{
+			if (outLoopCount != nullptr)
+			{
+				*outLoopCount = loopCount;
+			}
+			return result;
+		}
 		// returns true whenever it's sure that there's an intersection
 		bool GJK2D_processSimplex(GJK2DSimplex& inoutSimplex, Float2& outDirection)
 		{
@@ -442,14 +450,15 @@ namespace mint
 			return false;
 		}
 
-		bool Intersect2D_GJK(const Shape2D& shapeA, const Shape2D& shapeB)
+		bool Intersect2D_GJK(const Shape2D& shapeA, const Shape2D& shapeB, uint32* const outLoopCount)
 		{
+			uint32 loopCount = 0;
 			Float2 direction = Float2(1, 0);
 			Float2 minkowskiDifferenceVertex = GJK2D_getMinkowskiDifferenceVertex(shapeA, shapeB, direction);
 			if (minkowskiDifferenceVertex == Float2::kZero)
 			{
 				// EDGE_CASE: The origin is included in the Minkowski Sum, thus the two shapes intersect.
-				return true;
+				return Intersect2D_GJK_Retrun(true, loopCount, outLoopCount);
 			}
 
 			GJK2DSimplex simplex{ minkowskiDifferenceVertex };
@@ -459,6 +468,8 @@ namespace mint
 
 			while (true)
 			{
+				++loopCount;
+
 				minkowskiDifferenceVertex = GJK2D_getMinkowskiDifferenceVertex(shapeA, shapeB, direction);
 				
 				const float signedDistance = minkowskiDifferenceVertex.Dot(direction);
@@ -466,18 +477,18 @@ namespace mint
 				{
 					// MinkowskiDifferenceVertex did not pass the origin
 					// Thus, an intersection is not possible.
-					return false;
+					return Intersect2D_GJK_Retrun(false, loopCount, outLoopCount);
 				}
 				else if (signedDistance == 0.0f)
 				{
 					// EDGE_CASE: The origin is included in the Minkowski Sum, thus the two shapes intersect.
-					return true;
+					return Intersect2D_GJK_Retrun(true, loopCount, outLoopCount);
 				}
 
 				simplex.AppendPoint(minkowskiDifferenceVertex);
 				if (GJK2D_processSimplex(simplex, direction))
 				{
-					return true;
+					return Intersect2D_GJK_Retrun(true, loopCount, outLoopCount);
 				}
 			}
 		}
