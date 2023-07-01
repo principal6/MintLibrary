@@ -166,16 +166,27 @@ bool Run3DTestWindow(mint::Platform::IWindow& window, mint::Rendering::GraphicDe
 
 	GUISystem guiSystem{ graphicDevice };
 	{
-		GUIControlDesc controlDesc{ u8"RoundButton0" };
-		ShapeGenerator::GenerateCircle(16.0f, 16, ByteColor(255, 0, 0), controlDesc._normalShape);
-		ShapeGenerator::GenerateCircle(17.0f, 16, ByteColor(255, 64, 32), controlDesc._hoveredShape);
-		ShapeGenerator::GenerateCircle(17.0f, 16, ByteColor(255, 128, 64), controlDesc._pressedShape);
-		guiSystem.DefineControl(controlDesc);
+		GUIControlTemplate controlTemplate;
+		Vector<SharedPtr<GUIControlComponent>>& components = controlTemplate.AccessComponents();
+		{
+			GUIControlShapeComponent shapeComponent;
+			ShapeGenerator::GenerateCircle(16.0f, 16, ByteColor(255, 0, 0), shapeComponent._shapes[0]);
+			ShapeGenerator::GenerateCircle(17.0f, 16, ByteColor(255, 64, 32), shapeComponent._shapes[1]);
+			ShapeGenerator::GenerateCircle(17.0f, 16, ByteColor(255, 128, 64), shapeComponent._shapes[2]);
+			controlTemplate.SetCollisionShape(Physics::ConvexShape2D::MakeFromRenderingShape(Float2::kZero, shapeComponent._shapes[0]));
+			components.PushBack(MakeShared<GUIControlComponent>(shapeComponent));
+		}
+		{
+			GUIControlTextComponent textComponent;
+			textComponent._text = L"RoundButton0";
+			components.PushBack(MakeShared<GUIControlComponent>(textComponent));
+		}
+		controlTemplate;
+		guiSystem.DefineControl(u8"RoundButton0", std::move(controlTemplate));
 	}
 	const GUIControlID buttonControlID = guiSystem.AddControl(u8"RoundButton0");
 	GUIControl& buttonControl = guiSystem.AccessControl(buttonControlID);
 	buttonControl.SetPosition(Float2(100, 100));
-	buttonControl.SetText(L"RoundButton0");
 
 	Plotter plotter{ graphicDevice.GetShapeRendererContext() };
 	while (window.IsRunning() == true)

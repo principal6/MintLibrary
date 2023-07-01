@@ -10,22 +10,6 @@ namespace mint
 {
 	namespace Rendering
 	{
-#pragma region GUIControl
-		struct GUISystem::GUIControlDefinition
-		{
-			GUIControlDefinition() = default;
-			GUIControlDefinition(const GUIControlDesc& controlDesc, const Physics::ConvexShape2D& controlCollisionShape)
-				: _controlDesc{ MakeShared(GUIControlDesc(controlDesc)) }
-				, _collisionShape{ MakeShared(Physics::ConvexShape2D(controlCollisionShape)) }
-			{
-				__noop;
-			}
-			SharedPtr<GUIControlDesc> _controlDesc;
-			SharedPtr<Physics::ConvexShape2D> _collisionShape;
-		};
-#pragma endregion
-
-
 #pragma region GUISystem::GUIControlManager
 		GUISystem::GUIControlManager::GUIControlManager()
 			: _nextControlRawID{ 0 }
@@ -33,23 +17,22 @@ namespace mint
 			__noop;
 		}
 
-		void GUISystem::GUIControlManager::DefineControl(const GUIControlDesc& controlDesc)
+		void GUISystem::GUIControlManager::DefineControl(const StringU8& name, GUIControlTemplate&& controlTemplate)
 		{
-			const KeyValuePair controlDefinitionFindResult = _controlDefinitionMap.Find(controlDesc._name);
-			if (controlDefinitionFindResult.IsValid() == true)
+			const KeyValuePair controlTemplateFindResult = _controlTemplateMap.Find(name);
+			if (controlTemplateFindResult.IsValid() == true)
 			{
-				MINT_ASSERT(false, "Control with name(%s) is already defined!!!", controlDesc._name);
+				MINT_ASSERT(false, "Control with name(%s) is already defined!!!", name.CString());
 				return;
 			}
 
-			SharedPtr<GUIControlDefinition> controlDefinition = MakeShared(GUIControlDefinition(controlDesc, Physics::ConvexShape2D::MakeFromRenderingShape(Float2::kZero, controlDesc._normalShape)));
-			_controlDefinitionMap.Insert(controlDesc._name, controlDefinition);
+			_controlTemplateMap.Insert(name, MakeShared(std::move(controlTemplate)));
 		}
 
 		GUIControlID GUISystem::GUIControlManager::AddControl(const StringU8& controlName)
 		{
-			const KeyValuePair controlDefinitionFindResult = _controlDefinitionMap.Find(controlName);
-			if (controlDefinitionFindResult.IsValid() == false)
+			const KeyValuePair controlTemplateFindResult = _controlTemplateMap.Find(controlName);
+			if (controlTemplateFindResult.IsValid() == false)
 			{
 				MINT_ASSERT(false, "Control with name(%s) is not defined!!!", controlName.CString());
 				return GUIControlID();
@@ -59,10 +42,10 @@ namespace mint
 			SharedPtr<GUIControl> control = MakeShared<GUIControl>();
 			_controlInstanceMap.Insert(controlID, control);
 
-			const SharedPtr<GUIControlDefinition>& controlDefinition = *controlDefinitionFindResult._value;
+			const SharedPtr<GUIControlTemplate>& controlTemplate = *controlTemplateFindResult._value;
 			control->_controlID = controlID;
-			control->_controlDesc = controlDefinition->_controlDesc;
-			control->_collisionShape = controlDefinition->_collisionShape;
+			control->_collisionShape = controlTemplate->_collisionShape;
+			control->_components = controlTemplate->_components;
 			return control->_controlID;
 		}
 
@@ -82,6 +65,9 @@ namespace mint
 		{
 			using namespace Platform;
 
+			_hoveredControlID.Invalidate();
+			_pressedControlID.Invalidate();
+
 			InputContext& inputContext = InputContext::GetInstance();
 			const Float2& mousePosition = inputContext.GetMousePosition();
 			const MouseButtonState leftMouseButtonState = inputContext.GetMouseButtonState(MouseButton::Left);
@@ -93,7 +79,7 @@ namespace mint
 
 		void GUISystem::GUIControlManager::UpdateControl(const GUIControlUpdateContext& controlUpdateContext, GUIControl& control)
 		{
-			SharedPtrViewer<Physics::ConvexShape2D>& controlCollisionShape = control._collisionShape;
+			SharedPtrViewer<Physics::ConvexShape2D> controlCollisionShape = control._collisionShape;
 			controlCollisionShape->_center = control._position;
 
 			using namespace Platform;
@@ -104,20 +90,21 @@ namespace mint
 			const bool intersects = Physics::Intersect2D_GJK(*controlCollisionShape, Physics::PointShape2D(mousePosition));
 			if (intersects)
 			{
-				control._controlState = GUIControlState::Hovered;
+				_hoveredControlID = control._controlID;
 
 				if (leftMouseButtonState == MouseButtonState::Down || leftMouseButtonState == MouseButtonState::DoubleClicked)
 				{
 					const bool intersects1 = Physics::Intersect2D_GJK(*controlCollisionShape, Physics::PointShape2D(controlUpdateContext._mouseLeftButtonPressedPosition));
 					if (intersects1)
 					{
-						control._controlState = GUIControlState::Pressed;
+						_pressedControlID = control._controlID;
+
+						if (_hoveredControlID == _pressedControlID)
+						{
+							_hoveredControlID.Invalidate();
+						}
 					}
 				}
-			}
-			else
-			{
-				control._controlState = GUIControlState::Normal;
 			}
 		}
 
@@ -148,9 +135,9 @@ namespace mint
 			__noop;
 		}
 
-		void GUISystem::DefineControl(const GUIControlDesc& controlDesc)
+		void GUISystem::DefineControl(const StringU8& name, GUIControlTemplate&& controlTemplate)
 		{
-			_controlManager.DefineControl(controlDesc);
+			_controlManager.DefineControl(name, std::move(controlTemplate));
 		}
 
 		GUIControlID GUISystem::AddControl(const StringU8& controlName)
@@ -190,38 +177,23 @@ namespace mint
 		{
 			MINT_ASSERT(_isUpdated == true, "You must call Update() every frame!");
 
-			ShapeRendererContext& shapeRendererContext = _graphicDevice.GetShapeRendererContext();
+			const GUIControlID& hoveredControlID = _controlManager.GetHoveredControlID();
+			const GUIControlID& pressedControlID = _controlManager.GetPressedControlID();
+
 			HashMap<GUIControlID, SharedPtr<GUIControl>>& controlInstanceMap = _controlManager.AccessControlInstanceMap();
 			for (const SharedPtr<GUIControl>& control : controlInstanceMap)
 			{
-				const Float4 controlPosition{ control->_position };
-				shapeRendererContext.SetPosition(controlPosition);
-
-				const SharedPtrViewer<GUIControlDesc>& controlDesc = control->_controlDesc;
-				switch (control->_controlState)
+				GUIControlInteractionState controlInteractionState = GUIControlInteractionState::None;
+				if (control->_controlID == pressedControlID)
 				{
-				case GUIControlState::Normal:
-					shapeRendererContext.AddShape(controlDesc->_normalShape);
-					break;
-				case GUIControlState::Hovered:
-					shapeRendererContext.AddShape(controlDesc->_hoveredShape);
-					break;
-				case GUIControlState::Pressed:
-					shapeRendererContext.AddShape(controlDesc->_pressedShape);
-					break;
-				default:
-					MINT_NEVER;
-					break;
+					controlInteractionState = GUIControlInteractionState::Pressed;
+				}
+				else if (control->_controlID == hoveredControlID)
+				{
+					controlInteractionState = GUIControlInteractionState::Hovered;
 				}
 
-				if (control->_text.IsEmpty() == false)
-				{
-					// TODO
-					FontRenderingOption fontRenderingOption;
-					fontRenderingOption._directionHorz = TextRenderDirectionHorz::Centered;
-					fontRenderingOption._directionVert = TextRenderDirectionVert::Centered;
-					shapeRendererContext.DrawDynamicText(control->_text.CString(), controlPosition, fontRenderingOption);
-				}
+				control->Render(_graphicDevice, controlInteractionState);
 			}
 
 			_isUpdated = false;
