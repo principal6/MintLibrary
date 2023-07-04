@@ -7,7 +7,7 @@
 
 #include <MintCommon/Include/CommonDefinitions.h>
 
-#include <MintContainer/Include/IID.h>
+#include <MintContainer/Include/ID.h>
 
 #include <MintMath/Include/Float4x4.h>
 #include <MintMath/Include/Quaternion.h>
@@ -29,15 +29,11 @@ namespace mint
 		};
 
 
-		class ObjectComponentID final : public IID
+		class ObjectComponentID final : public ID32
 		{
 			friend IObjectComponent;
-
-		private:
-			virtual void AssignRawID(const uint32 rawID) noexcept override final;
-
-		public:
-			uint32 GetRawID() const noexcept;
+			ObjectComponentID() = default;
+			ObjectComponentID(uint32 raw) : ID32(raw) { __noop; }
 		};
 
 

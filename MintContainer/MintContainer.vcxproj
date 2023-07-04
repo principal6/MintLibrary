@@ -183,7 +183,7 @@
     <ClInclude Include="Include\Hash.h" />
     <ClInclude Include="Include\HashMap.h" />
     <ClInclude Include="Include\HashMap.hpp" />
-    <ClInclude Include="Include\IID.h" />
+    <ClInclude Include="Include\ID.h" />
     <ClInclude Include="Include\Index.h" />
     <ClInclude Include="Include\MemoryRaw.h" />
     <ClInclude Include="Include\MemoryRaw.hpp" />
@@ -216,7 +216,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Include\Hash.hpp" />
-    <None Include="Include\IID.inl" />
     <None Include="Include\Array.inl" />
     <None Include="Include\StringUtil.inl" />
   </ItemGroup>
