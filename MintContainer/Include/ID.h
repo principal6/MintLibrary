@@ -13,10 +13,9 @@ namespace mint
 	template<typename T, T InvalidValue>
 	class ID abstract
 	{
-		T _raw;
 	public:
-		ID() : ID(InvalidValue) { __noop; }
-		ID(T raw) : _raw{ raw } { __noop; }
+		using RawType = T;
+		ID() : _raw{ InvalidValue } { __noop; }
 		ID(const ID& rhs) = default;
 		ID(ID&& rhs) = default;
 		virtual ~ID() = default;
@@ -32,6 +31,10 @@ namespace mint
 		bool IsValid() const noexcept { return _raw != InvalidValue; }
 		T Value() const noexcept { return _raw; }
 		void Invalidate() noexcept { _raw = InvalidValue; }
+	protected:
+		void Assign(T raw) { _raw = raw; }
+	private:
+		T _raw;
 	};
 
 	using ID8 = ID<uint8, kUint8Max>;

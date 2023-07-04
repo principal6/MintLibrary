@@ -6,6 +6,7 @@
 
 
 #include <MintRenderingBase/Include/RenderingBaseCommon.h>
+#include <MintContainer/Include/ID.h>
 #include <MintContainer/Include/String.h>
 #include <MintContainer/Include/OwnPtr.h>
 #include <MintContainer/Include/SharedPtr.h>
@@ -25,18 +26,11 @@ namespace mint
 		class GraphicDevice;
 		class GUISystem;
 
-		class GUIControlID
+		class GUIControlID : public ID64
 		{
 			friend GUISystem;
 		public:
-			GUIControlID() : GUIControlID(kUint64Max) { __noop; }
-			MINT_INLINE bool operator==(const GUIControlID& rhs) const { return _raw == rhs._raw; }
-			MINT_INLINE void Invalidate() { _raw = kUint64Max; }
-			MINT_INLINE bool IsValid() const { return _raw != kUint64Max; }
-			MINT_INLINE uint64 ComputeHash() const { return mint::ComputeHash(_raw); }
-		private:
-			GUIControlID(const uint64 raw) :_raw{ raw } { __noop; }
-			uint64 _raw;
+			MINT_INLINE uint64 ComputeHash() const { return mint::ComputeHash(Value()); }
 		};
 
 		enum class GUIControlInteractionState

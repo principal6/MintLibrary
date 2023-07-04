@@ -38,7 +38,8 @@ namespace mint
 				return GUIControlID();
 			}
 
-			const GUIControlID controlID = GUIControlID(_nextControlRawID);
+			GUIControlID controlID;
+			controlID.Assign(_nextControlRawID);
 			SharedPtr<GUIControl> control = MakeShared<GUIControl>();
 			_controlInstanceMap.Insert(controlID, control);
 
@@ -54,7 +55,7 @@ namespace mint
 			const KeyValuePair controlInstanceFindResult = _controlInstanceMap.Find(controlID);
 			if (controlInstanceFindResult.IsValid() == false)
 			{
-				MINT_ASSERT(false, "Control with ID(%s) is not added.", controlID._raw);
+				MINT_ASSERT(false, "Control with ID(%s) is not added.", controlID.Value());
 				return;
 			}
 

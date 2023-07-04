@@ -10,7 +10,7 @@ namespace mint
 			: _ownerObject{ nullptr }
 			, _type{ type }
 		{
-			_id = ObjectComponentID(IObjectComponent::_nextRawID);
+			_id.Assign(IObjectComponent::_nextRawID);
 
 			++IObjectComponent::_nextRawID;
 		}

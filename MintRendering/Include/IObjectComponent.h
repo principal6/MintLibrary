@@ -32,8 +32,6 @@ namespace mint
 		class ObjectComponentID final : public ID32
 		{
 			friend IObjectComponent;
-			ObjectComponentID() = default;
-			ObjectComponentID(uint32 raw) : ID32(raw) { __noop; }
 		};
 
 
