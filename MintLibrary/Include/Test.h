@@ -10,7 +10,7 @@ namespace mint
 	namespace TestLibrary
 	{
 		bool Test();
-		bool Test_algorithm();
+		bool Test_Algorithm();
 	}
 }
 
