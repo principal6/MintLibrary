@@ -16,6 +16,7 @@ namespace mint
 		bool Test_Array();
 		bool Test_BitArray();
 		bool Test_BitVector();
+		bool Test_Index();
 		bool Test_StackHolder();
 		bool Test_Vector();
 		bool Test_HashMap();

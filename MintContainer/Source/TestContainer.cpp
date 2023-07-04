@@ -126,8 +126,9 @@ namespace mint
 		{
 			MINT_ASSURE(Test_Array());
 			MINT_ASSURE(Test_BitArray());
-			MINT_ASSURE(Test_StackHolder());
 			MINT_ASSURE(Test_BitVector());
+			MINT_ASSURE(Test_Index());
+			MINT_ASSURE(Test_StackHolder());
 			MINT_ASSURE(Test_Vector());
 			MINT_ASSURE(Test_HashMap());
 			MINT_ASSURE(Test_SharedPtr());
@@ -342,6 +343,43 @@ namespace mint
 				const bool IsEmpty = logArray.empty();
 			}
 #endif
+			return true;
+		}
+
+		bool Test_Index()
+		{
+			static_assert(sizeof(Index8) == sizeof(uint8));
+			static_assert(sizeof(Index16) == sizeof(uint16));
+			static_assert(sizeof(Index32) == sizeof(uint32));
+			static_assert(sizeof(Index64) == sizeof(uint64));
+
+			static_assert(alignof(Index8) == alignof(uint8));
+			static_assert(alignof(Index16) == alignof(uint16));
+			static_assert(alignof(Index32) == alignof(uint32));
+			static_assert(alignof(Index64) == alignof(uint64));
+
+			Index32 index0;
+			MINT_ASSURE(index0.IsValid() == false);
+			index0 = 0;
+			MINT_ASSURE(index0.IsValid());
+
+			Index32 index1 = index0;
+			MINT_ASSURE(index1.Value() == index0.Value());
+			MINT_ASSURE(index1.IsValid());
+
+			index0.Invalidate();
+			MINT_ASSURE(index0.IsValid() == false);
+
+			Index32 index2 = 1;
+			MINT_ASSURE(index2 != index0);
+			MINT_ASSURE(index2 != index1);
+			
+			const uint32 u32_0 = uint32(index0);
+			const uint32 u32_1 = uint32(index1);
+			const uint32 u32_2 = uint32(index2);
+			MINT_ASSURE(u32_0 == index0.Value());
+			MINT_ASSURE(u32_1 == index1.Value());
+			MINT_ASSURE(u32_2 == index2.Value());
 			return true;
 		}
 
@@ -584,8 +622,8 @@ namespace mint
 				for (uint32 i = 0; i < kCount; ++i)
 				{
 					sArray[i] = "abcdefg";
+				}
 			}
-		}
 
 			auto logArray = Profiler::ScopedCPUProfiler::GetEntireLogData();
 			const bool IsEmpty = logArray.empty();
@@ -682,7 +720,7 @@ namespace mint
 			}
 
 			return true;
-	}
+		}
 
 		bool Test_StringUtil()
 		{
@@ -998,5 +1036,5 @@ namespace mint
 #endif
 			return true;
 		}
-}
+	}
 }

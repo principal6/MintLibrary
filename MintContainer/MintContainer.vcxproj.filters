@@ -117,6 +117,9 @@
     <ClInclude Include="Include\SharedPtr.h">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Index.h">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Include\IID.inl">

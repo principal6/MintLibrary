@@ -1,6 +1,4 @@
 ﻿# TODO
-## Index 클래스 만들기?
-
 ## GUI 렌더링!!
 
 ## wchar_t => UTF8 로 변환!! UTF8 FontData, DrawDynamicText 등
