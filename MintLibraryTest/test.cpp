@@ -165,6 +165,7 @@ bool Run3DTestWindow(mint::Platform::IWindow& window, mint::Rendering::GraphicDe
 	}
 
 	GUISystem guiSystem{ graphicDevice };
+	GUIControlTemplateID roundButton0TemplateID;
 	{
 		GUIControlTemplate controlTemplate;
 		Vector<SharedPtr<GUIControlComponent>>& components = controlTemplate.AccessComponents();
@@ -181,10 +182,9 @@ bool Run3DTestWindow(mint::Platform::IWindow& window, mint::Rendering::GraphicDe
 			textComponent._text = L"RoundButton0";
 			components.PushBack(MakeShared<GUIControlComponent>(textComponent));
 		}
-		controlTemplate;
-		guiSystem.DefineControl(u8"RoundButton0", std::move(controlTemplate));
+		roundButton0TemplateID = guiSystem.RegisterTemplate(u8"RoundButton0", std::move(controlTemplate));
 	}
-	const GUIControlID buttonControlID = guiSystem.AddControl(u8"RoundButton0");
+	const GUIControlID buttonControlID = guiSystem.AddControl(roundButton0TemplateID);
 	GUIControl& buttonControl = guiSystem.AccessControl(buttonControlID);
 	buttonControl.SetPosition(Float2(100, 100));
 

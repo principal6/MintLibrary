@@ -5,7 +5,7 @@
 #define _MINT_RENDERING_BASE_GUI_SYSTEM_H_
 
 
-#include <MintContainer/Include/HashMap.h>
+#include <MintContainer/Include/Vector.h>
 #include <MintContainer/Include/StringReference.h>
 #include <MintContainer/Include/OwnPtr.h>
 #include <MintContainer/Include/SharedPtr.h>
@@ -33,10 +33,11 @@ namespace mint
 			~GUISystem();
 
 		public:
-			void DefineControl(const StringU8& name, GUIControlTemplate&& controlTemplate);
+			GUIControlTemplateID RegisterTemplate(const StringU8& name, GUIControlTemplate&& controlTemplate);
+			GUIControlTemplate& AccessTemplate(const GUIControlTemplateID& controlTemplateID);
 
 		public:
-			GUIControlID AddControl(const StringU8& controlName);
+			GUIControlID AddControl(const GUIControlTemplateID& controlTemplateID);
 			void RemoveControl(const GUIControlID& controlID);
 			GUIControl& AccessControl(const GUIControlID& controlID);
 
@@ -60,8 +61,9 @@ namespace mint
 				GUIControlManager();
 
 			public:
-				void DefineControl(const StringU8& name, GUIControlTemplate&& controlTemplate);
-				GUIControlID AddControl(const StringU8& controlName);
+				GUIControlTemplateID RegisterTemplate(const StringU8& controlTemplateName, GUIControlTemplate&& controlTemplate);
+				GUIControlTemplate& AccessTemplate(const GUIControlTemplateID& controlTemplateID);
+				GUIControlID AddControl(const GUIControlTemplateID& controlTemplateID);
 				void RemoveControl(const GUIControlID& controlID);
 
 			public:
@@ -69,7 +71,7 @@ namespace mint
 
 			public:
 				GUIControl& AccessControl(const GUIControlID& controlID);
-				HashMap<GUIControlID, SharedPtr<GUIControl>>& AccessControlInstanceMap();
+				Vector<SharedPtr<GUIControl>>& AccessControlInstances();
 				const GUIControlID& GetHoveredControlID() const { return _hoveredControlID; }
 				const GUIControlID& GetPressedControlID() const { return _pressedControlID; }
 
@@ -77,11 +79,11 @@ namespace mint
 				void UpdateControl(const GUIControlUpdateContext& controlUpdateContext, GUIControl& control);
 
 			private:
-				HashMap<StringU8, SharedPtr<GUIControlTemplate>> _controlTemplateMap;
+				Vector<SharedPtr<GUIControlTemplate>> _controlTemplates;
 
 			private:
 				uint64 _nextControlRawID;
-				HashMap<GUIControlID, SharedPtr<GUIControl>> _controlInstanceMap;
+				Vector<SharedPtr<GUIControl>> _controlInstances;
 			
 			private:
 				GUIControlID _hoveredControlID;

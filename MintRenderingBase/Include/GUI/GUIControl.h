@@ -29,8 +29,11 @@ namespace mint
 		class GUIControlID : public ID64
 		{
 			friend GUISystem;
-		public:
-			MINT_INLINE uint64 ComputeHash() const { return mint::ComputeHash(Value()); }
+		};
+
+		class GUIControlTemplateID : public ID16
+		{
+			friend GUISystem;
 		};
 
 		enum class GUIControlInteractionState
@@ -74,6 +77,12 @@ namespace mint
 		{
 			friend GUISystem;
 		public:
+			struct IDEvaluator 
+			{
+				const GUIControlID& operator()(const SharedPtr<GUIControl>& rhs) const noexcept { return rhs->_controlID; } 
+				const GUIControlID& operator()(const GUIControl& rhs) const noexcept { return rhs._controlID; } 
+			};
+		public:
 			GUIControl() = default;
 			virtual ~GUIControl() = default;
 			void SetPosition(const Float2& position) { _position = position; }
@@ -90,10 +99,25 @@ namespace mint
 
 		class GUIControlTemplate : public GUIControl
 		{
+			friend GUISystem;
+		public:
+			struct IDEvaluator
+			{
+				const GUIControlTemplateID& operator()(const GUIControlTemplate& rhs) const noexcept { return rhs._controlTemplateID; }
+				const GUIControlTemplateID& operator()(const SharedPtr<GUIControlTemplate>& rhs) const noexcept { return rhs->_controlTemplateID; }
+			};
+			struct NameEvaluator
+			{
+				StringReferenceU8 operator()(const GUIControlTemplate& rhs) const noexcept { return rhs._controlTemplateName; }
+				StringReferenceU8 operator()(const SharedPtr<GUIControlTemplate>& rhs) const noexcept { return rhs->_controlTemplateName; }
+			};
 		public:
 			GUIControlTemplate() : GUIControl() { __noop; }
 			Vector<SharedPtr<GUIControlComponent>>& AccessComponents();
 			void SetCollisionShape(Physics::ConvexShape2D&& collisionShape);
+		private:
+			StringU8 _controlTemplateName;
+			GUIControlTemplateID _controlTemplateID;
 		};
 	}
 }

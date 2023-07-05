@@ -26,6 +26,7 @@ namespace mint
 
 	public:
 		bool operator==(const StringReference<T>& rhs) const;
+		bool operator>(const StringReference<T>& rhs) const;
 		const T& operator[](const uint32 index) const { return At(index); }
 
 	public:

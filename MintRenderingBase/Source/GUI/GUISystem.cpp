@@ -4,6 +4,7 @@
 #include <MintRenderingBase/Include/GraphicDevice.h>
 #include <MintPlatform/Include/InputContext.h>
 #include <MintPhysics/Include/Intersection.hpp>
+#include <MintLibrary/Include/Algorithm.hpp>
 
 
 namespace mint
@@ -17,34 +18,45 @@ namespace mint
 			__noop;
 		}
 
-		void GUISystem::GUIControlManager::DefineControl(const StringU8& name, GUIControlTemplate&& controlTemplate)
+		GUIControlTemplateID GUISystem::GUIControlManager::RegisterTemplate(const StringU8& controlTemplateName, GUIControlTemplate&& controlTemplate)
 		{
-			const KeyValuePair controlTemplateFindResult = _controlTemplateMap.Find(name);
-			if (controlTemplateFindResult.IsValid() == true)
+			const int32 index = BinarySearch(_controlTemplates, controlTemplateName, GUIControlTemplate::NameEvaluator());
+			if (index >= 0)
 			{
-				MINT_ASSERT(false, "Control with name(%s) is already defined!!!", name.CString());
-				return;
+				MINT_ASSERT(false, "ControlTemplate named (%s) is already registered!!!", controlTemplateName.CString());
+				return GUIControlTemplateID();
 			}
 
-			_controlTemplateMap.Insert(name, MakeShared(std::move(controlTemplate)));
+			const GUIControlTemplateID::RawType nextRawID = (_controlTemplates.IsEmpty() ? 0 : _controlTemplates.Back()->_controlTemplateID.Value() + 1);
+			GUIControlTemplateID controlTemplateID;
+			controlTemplateID.Assign(nextRawID);;
+			controlTemplate._controlTemplateID = controlTemplateID;
+			controlTemplate._controlTemplateName = controlTemplateName;
+			_controlTemplates.PushBack(MakeShared(std::move(controlTemplate)));
+			return controlTemplateID;
 		}
 
-		GUIControlID GUISystem::GUIControlManager::AddControl(const StringU8& controlName)
+		GUIControlTemplate& GUISystem::GUIControlManager::AccessTemplate(const GUIControlTemplateID& controlTemplateID)
 		{
-			const KeyValuePair controlTemplateFindResult = _controlTemplateMap.Find(controlName);
-			if (controlTemplateFindResult.IsValid() == false)
+			const int32 index = BinarySearch(_controlTemplates, controlTemplateID, GUIControlTemplate::IDEvaluator());
+			if (index < 0)
 			{
-				MINT_ASSERT(false, "Control with name(%s) is not defined!!!", controlName.CString());
-				return GUIControlID();
+				static GUIControlTemplate invalid;
+				return invalid;
 			}
+			return *_controlTemplates[index];
+		}
 
-			GUIControlID controlID;
-			controlID.Assign(_nextControlRawID);
+		GUIControlID GUISystem::GUIControlManager::AddControl(const GUIControlTemplateID& controlTemplateID)
+		{
+			const int32 index = BinarySearch(_controlTemplates, controlTemplateID, GUIControlTemplate::IDEvaluator());
+			MINT_ASSERT(index >= 0, "This assertion must never fail!");
+
 			SharedPtr<GUIControl> control = MakeShared<GUIControl>();
-			_controlInstanceMap.Insert(controlID, control);
+			control->_controlID.Assign(_nextControlRawID);
+			_controlInstances.PushBack(control);
 
-			const SharedPtr<GUIControlTemplate>& controlTemplate = *controlTemplateFindResult._value;
-			control->_controlID = controlID;
+			const SharedPtr<GUIControlTemplate>& controlTemplate = _controlTemplates[index];
 			control->_collisionShape = controlTemplate->_collisionShape;
 			control->_components = controlTemplate->_components;
 			return control->_controlID;
@@ -52,14 +64,14 @@ namespace mint
 
 		void GUISystem::GUIControlManager::RemoveControl(const GUIControlID& controlID)
 		{
-			const KeyValuePair controlInstanceFindResult = _controlInstanceMap.Find(controlID);
-			if (controlInstanceFindResult.IsValid() == false)
+			const int32 controlInstanceFindResult = BinarySearch(_controlInstances, controlID, GUIControl::IDEvaluator());
+			if (controlInstanceFindResult < 0)
 			{
 				MINT_ASSERT(false, "Control with ID(%s) is not added.", controlID.Value());
 				return;
 			}
 
-			_controlInstanceMap.Erase(controlID);
+			_controlInstances.Erase(controlInstanceFindResult);
 		}
 
 		void GUISystem::GUIControlManager::UpdateControls(const GUIControlUpdateContext& controlUpdateContext)
@@ -72,7 +84,7 @@ namespace mint
 			InputContext& inputContext = InputContext::GetInstance();
 			const Float2& mousePosition = inputContext.GetMousePosition();
 			const MouseButtonState leftMouseButtonState = inputContext.GetMouseButtonState(MouseButton::Left);
-			for (SharedPtr<GUIControl>& control : _controlInstanceMap)
+			for (SharedPtr<GUIControl>& control : _controlInstances)
 			{
 				UpdateControl(controlUpdateContext, *control);
 			}
@@ -112,13 +124,13 @@ namespace mint
 		GUIControl& GUISystem::GUIControlManager::AccessControl(const GUIControlID& controlID)
 		{
 			static GUIControl invalid;
-			KeyValuePair findResult = _controlInstanceMap.Find(controlID);
-			return (findResult.IsValid() ? *(*findResult._value) : invalid);
+			const int32 index = BinarySearch(_controlInstances, controlID, GUIControl::IDEvaluator());
+			return (index < 0 ? invalid : *_controlInstances[index]);
 		}
 
-		HashMap<GUIControlID, SharedPtr<GUIControl>>& GUISystem::GUIControlManager::AccessControlInstanceMap()
+		Vector<SharedPtr<GUIControl>>& GUISystem::GUIControlManager::AccessControlInstances()
 		{
-			return _controlInstanceMap;
+			return _controlInstances;
 		}
 #pragma endregion
 
@@ -136,14 +148,19 @@ namespace mint
 			__noop;
 		}
 
-		void GUISystem::DefineControl(const StringU8& name, GUIControlTemplate&& controlTemplate)
+		GUIControlTemplateID GUISystem::RegisterTemplate(const StringU8& name, GUIControlTemplate&& controlTemplate)
 		{
-			_controlManager.DefineControl(name, std::move(controlTemplate));
+			return _controlManager.RegisterTemplate(name, std::move(controlTemplate));
 		}
 
-		GUIControlID GUISystem::AddControl(const StringU8& controlName)
+		GUIControlTemplate& GUISystem::AccessTemplate(const GUIControlTemplateID& controlTemplateID)
 		{
-			return _controlManager.AddControl(controlName);
+			return _controlManager.AccessTemplate(controlTemplateID);
+		}
+
+		GUIControlID GUISystem::AddControl(const GUIControlTemplateID& controlTemplateID)
+		{
+			return _controlManager.AddControl(controlTemplateID);
 		}
 
 		void GUISystem::RemoveControl(const GUIControlID& controlID)
@@ -181,8 +198,8 @@ namespace mint
 			const GUIControlID& hoveredControlID = _controlManager.GetHoveredControlID();
 			const GUIControlID& pressedControlID = _controlManager.GetPressedControlID();
 
-			HashMap<GUIControlID, SharedPtr<GUIControl>>& controlInstanceMap = _controlManager.AccessControlInstanceMap();
-			for (const SharedPtr<GUIControl>& control : controlInstanceMap)
+			Vector<SharedPtr<GUIControl>>& controlInstances = _controlManager.AccessControlInstances();
+			for (const SharedPtr<GUIControl>& control : controlInstances)
 			{
 				GUIControlInteractionState controlInteractionState = GUIControlInteractionState::None;
 				if (control->_controlID == pressedControlID)

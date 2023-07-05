@@ -9,9 +9,21 @@
 namespace mint
 {
 	template<typename T>
-	bool StringReference<T>::operator==(const StringReference<T>& rhs) const
+	MINT_INLINE bool StringReference<T>::operator==(const StringReference<T>& rhs) const
 	{
 		return StringUtil::Equals(CString(), rhs.CString());
+	}
+
+	template<typename T>
+	MINT_INLINE bool StringReference<T>::operator>(const StringReference<T>& rhs) const
+	{
+		return ::strcmp(reinterpret_cast<const char*>(CString()), reinterpret_cast<const char*>(rhs.CString())) > 0;
+	}
+
+	template<>
+	MINT_INLINE bool StringReference<wchar_t>::operator>(const StringReference<wchar_t>& rhs) const
+	{
+		return ::wcscmp(CString(), rhs.CString()) > 0;
 	}
 
 	template<typename T>
@@ -135,7 +147,7 @@ namespace mint
 	{
 		return Find(token, 0) != kStringNPos;
 	}
-	
+
 	template<typename T>
 	bool StringReference<T>::EndsWith(const StringReference<T>& token) const
 	{
