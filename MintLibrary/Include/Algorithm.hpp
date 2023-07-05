@@ -64,7 +64,7 @@ namespace mint
 			return kInvalidIndexInt32;
 		}
 		const int32 resultIndex = BinarySearchInternal(vec, value, evaluator, 0, static_cast<int32>(vec.Size() - 1));
-		if (vec[resultIndex] == value)
+		if (evaluator(vec[resultIndex]) == value)
 		{
 			return resultIndex;
 		}
