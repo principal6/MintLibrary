@@ -367,7 +367,7 @@ namespace mint
 		{
 			const Float2 normalizedAB = Float2::Normalize(ab);
 			const Float2 result = ac - normalizedAB * normalizedAB.Dot(ac);
-			return (result.LengthSqaure() == 0.0f ? result : Float2::Normalize(result));
+			return (result.LengthSqaure() <= Math::kFloatEpsilon ? Float2::kZero : Float2::Normalize(result));
 		}
 
 		MINT_INLINE bool Intersect2D_GJK_Retrun(const bool result, const uint32 loopCount, uint32* const outLoopCount)

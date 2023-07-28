@@ -32,6 +32,12 @@ namespace mint
 				Physics::CircleShape2D b = Physics::CircleShape2D(Float2(64, 64), 16);
 				MINT_ASSURE(Physics::Intersect2D_GJK(a, b) == true);
 			}
+			
+			{
+				Physics::BoxShape2D a = Physics::BoxShape2D(Float2(0, 0), Float2(16, 16), 0.0f);
+				Physics::CircleShape2D b = Physics::CircleShape2D(Float2(0, 0), 1);
+				MINT_ASSURE(Physics::Intersect2D_GJK(a, b) == true);
+			}
 
 			return true;
 		}
