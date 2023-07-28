@@ -195,8 +195,8 @@ namespace mint
 		}
 
 	private:
-		ReferenceCounter* _referenceCounter;
-		T* _rawPtr;
+		ReferenceCounter* _referenceCounter = nullptr;
+		T* _rawPtr = nullptr;
 	};
 
 	template<typename T>
