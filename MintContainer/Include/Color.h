@@ -70,13 +70,14 @@ namespace mint
 
 	public:
 		constexpr Color() : Color(255, 255, 255) { __noop; }
+		constexpr Color(const ByteColor& byteColor) : _raw{ byteColor.RAsFloat(), byteColor.GAsFloat(), byteColor.BAsFloat(), byteColor.AAsFloat() } { __noop; }
 		constexpr Color(const float r, const float g, const float b, const float a) : _raw{ Math::Saturate(r), Math::Saturate(g), Math::Saturate(b), Math::Saturate(a) } { __noop; }
 		constexpr Color(const int32 r, const int32 g, const int32 b, const int32 a) : Color(ConvertByteToNormalizedFloat(r), ConvertByteToNormalizedFloat(g), ConvertByteToNormalizedFloat(b), ConvertByteToNormalizedFloat(a)) { __noop; }
 		constexpr Color(const float r, const float g, const float b) : Color(r, g, b, 1.0f) { __noop; }
 		constexpr Color(const int32 r, const int32 g, const int32 b) : Color(r, g, b, 255) { __noop; }
 		constexpr Color(const int32 c) : Color(c, c, c, 255) { __noop; }
-		constexpr Color(const Float3& rgb) : Color(rgb._x, rgb._y, rgb._z, 1.0f) { __noop; }
-		constexpr explicit Color(const Float4& float4) : Color(float4._x, float4._y, float4._z, float4._w) { __noop; }
+		constexpr explicit Color(const Float3& rgb) : Color(rgb._x, rgb._y, rgb._z, 1.0f) { __noop; }
+		constexpr explicit Color(const Float4& rgba) : Color(rgba._x, rgba._y, rgba._z, rgba._w) { __noop; }
 
 	public:
 		operator Float4& () noexcept { return _raw; }

@@ -10,14 +10,15 @@
 #include <MintCommon/Include/CommonDefinitions.h>
 
 #include <MintContainer/Include/String.h>
-
-#include <MintPlatform/Include/PlatformCommon.h>
-
-#include <MintMath/Include/Int2.h>
-#include <MintMath/Include/Float3.h>
+#include <MintContainer/Include/Color.h>
 #include <MintContainer/Include/OwnPtr.h>
 #include <MintContainer/Include/Vector.h>
 #include <MintContainer/Include/HashMap.h>
+
+#include <MintMath/Include/Int2.h>
+#include <MintMath/Include/Float3.h>
+
+#include <MintPlatform/Include/PlatformCommon.h>
 
 
 #if defined(MINT_PLATFORM_WINDOWS)
@@ -64,7 +65,7 @@ namespace mint
 		Int2 _position{ kInt32Min, kInt32Min };
 		const wchar_t* _title{ L"MintLibrary" };
 		WindowStyle _style{ WindowStyle::Default };
-		Float3 _backgroundColor{ 1.0f, 1.0f, 1.0f };
+		Color _backgroundColor{ 1.0f, 1.0f, 1.0f };
 	};
 
 	enum class WindowCreationError
@@ -143,7 +144,7 @@ namespace mint
 		void SetPosition(const Int2& newPosition);
 		const Int2& GetPosition() const noexcept { return _windowCreationDesc._position; }
 
-		const Float3& GetBackgroundColor() const noexcept { return _windowCreationDesc._backgroundColor; }
+		const Color& GetBackgroundColor() const noexcept { return _windowCreationDesc._backgroundColor; }
 
 		void SetCursorType(const CursorType cursorType) noexcept;
 		CursorType GetCursorType() const noexcept { return _currentCursorType; }

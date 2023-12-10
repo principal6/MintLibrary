@@ -28,11 +28,10 @@ int main()
 	using namespace Rendering;
 
 	WindowCreationDesc windowCreationDesc;
-	windowCreationDesc._style = WindowStyle::Default;
 	windowCreationDesc._position.Set(200, 100);
 	windowCreationDesc._size.Set(1024, 768);
 	windowCreationDesc._title = L"HI";
-	windowCreationDesc._backgroundColor.Set(0.875f, 0.875f, 0.875f);
+	windowCreationDesc._backgroundColor = ByteColor(224, 224, 224);
 
 	Window window;
 	if (window.Create(windowCreationDesc) == false)
