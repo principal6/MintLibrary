@@ -340,10 +340,9 @@ namespace mint
 
 		void GraphicDevice::CreateDxDevice()
 		{
-			const Window& windowsWindow = static_cast<const Window&>(_window);
-			const Int2& windowSize = windowsWindow.GetSize();
+			const Int2& windowSize = _window.GetSize();
 
-			if (CreateSwapChain(windowSize, windowsWindow.GetHandle()) == false)
+			if (CreateSwapChain(windowSize, _window.GetHandle()) == false)
 			{
 				return;
 			}
