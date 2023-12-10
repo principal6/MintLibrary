@@ -332,9 +332,6 @@
       <Project>{0152168d-27a5-4c7d-be25-1310b5c023c9}</Project>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Natvis Include="MintRenderingBase.natvis" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

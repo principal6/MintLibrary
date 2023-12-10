@@ -170,7 +170,4 @@
       <Filter>Source\GUI</Filter>
     </ClCompile>
   </ItemGroup>
-  <ItemGroup>
-    <Natvis Include="MintRenderingBase.natvis" />
-  </ItemGroup>
 </Project>

@@ -180,6 +180,7 @@
     <ClInclude Include="Include\BitVector.hpp" />
     <ClInclude Include="Include\AllHeaders.h" />
     <ClInclude Include="Include\AllHpps.h" />
+    <ClInclude Include="Include\Color.h" />
     <ClInclude Include="Include\Hash.h" />
     <ClInclude Include="Include\HashMap.h" />
     <ClInclude Include="Include\HashMap.hpp" />
@@ -220,6 +221,7 @@
     <None Include="Include\StringUtil.inl" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Color.cpp" />
     <ClCompile Include="Source\TestContainer.cpp" />
   </ItemGroup>
   <ItemGroup>

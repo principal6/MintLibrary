@@ -1,6 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?> 
-<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
-    <Type Name="mint::Rendering::ByteColor">
-        <DisplayString>{{ RGBA = {(int)_c[0]}, {(int)_c[1]}, {(int)_c[2]}, {(int)_c[3]} }}</DisplayString>
-    </Type>
-</AutoVisualizer>

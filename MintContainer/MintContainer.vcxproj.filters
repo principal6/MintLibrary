@@ -120,6 +120,9 @@
     <ClInclude Include="Include\Index.h">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Color.h">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Include\Array.inl">
@@ -134,6 +137,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\TestContainer.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Color.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>

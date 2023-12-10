@@ -557,7 +557,7 @@ namespace mint
 
 			const float kAxisLength = 128.0f;
 			const Float2 origin = offset + shapeB._center - shapeA._center;
-			shapeRendererContext.SetColor(Rendering::Color(0.0f, 0.0f, 0.0f));
+			shapeRendererContext.SetColor(Color(0.0f, 0.0f, 0.0f));
 			shapeRendererContext.DrawLine(origin - Float2(kAxisLength, 0.0f), origin + Float2(kAxisLength, 0.0f), 1.0f);
 			shapeRendererContext.DrawLine(origin - Float2(0.0f, kAxisLength), origin + Float2(0.0f, kAxisLength), 1.0f);
 
@@ -570,7 +570,7 @@ namespace mint
 
 			if (simplex.GetValidPointCount() == 1)
 			{
-				shapeRendererContext.SetColor(Rendering::Color(1.0f, 0.25f, 0.25f));
+				shapeRendererContext.SetColor(Color(1.0f, 0.25f, 0.25f));
 				shapeRendererContext.SetPosition(Float4(origin + simplex.GetPointA()));
 				shapeRendererContext.DrawCircle(2.0f);
 			}
@@ -579,13 +579,13 @@ namespace mint
 				const Float2 b = origin + simplex.GetPointB();
 				const Float2 a = origin + simplex.GetPointA();
 
-				shapeRendererContext.SetColor(Rendering::Color(0.75f, 0.0f, 0.0f));
+				shapeRendererContext.SetColor(Color(0.75f, 0.0f, 0.0f));
 				shapeRendererContext.SetPosition(Float4(b));
 				shapeRendererContext.DrawCircle(2.0f);
 
 				shapeRendererContext.DrawLine(a, b, 1.0f);
 
-				shapeRendererContext.SetColor(Rendering::Color(1.0f, 0.25f, 0.25f));
+				shapeRendererContext.SetColor(Color(1.0f, 0.25f, 0.25f));
 				shapeRendererContext.SetPosition(Float4(a));
 				shapeRendererContext.DrawCircle(2.0f);
 			}
@@ -595,7 +595,7 @@ namespace mint
 				const Float2 b = origin + simplex.GetPointB();
 				const Float2 a = origin + simplex.GetPointA();
 
-				shapeRendererContext.SetColor(Rendering::Color(0.75f, 0.0f, 0.0f));
+				shapeRendererContext.SetColor(Color(0.75f, 0.0f, 0.0f));
 				shapeRendererContext.SetPosition(Float4(c));
 				shapeRendererContext.DrawCircle(2.0f);
 
@@ -606,7 +606,7 @@ namespace mint
 				shapeRendererContext.DrawLine(a, c, 1.0f);
 				shapeRendererContext.DrawLine(b, c, 1.0f);
 
-				shapeRendererContext.SetColor(Rendering::Color(1.0f, 0.25f, 0.25f));
+				shapeRendererContext.SetColor(Color(1.0f, 0.25f, 0.25f));
 				shapeRendererContext.SetPosition(Float4(a));
 				shapeRendererContext.DrawCircle(2.0f);
 			}

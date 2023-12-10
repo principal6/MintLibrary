@@ -28,12 +28,12 @@ namespace mint
 
 		void InstantRenderer::TestDraw(const Float3& worldOffset) noexcept
 		{
-			DrawBox(Transform(worldOffset), Float3(0.5f, 0.5f, 0.5f), Rendering::Color::kGreen);
-			DrawCone(Transform(worldOffset + Float3(2, 0, 0)), 0.5f, 1.0f, 4, Rendering::Color::kGreen);
-			DrawCylinder(Transform(worldOffset + Float3(3, 0, 0)), 0.5f, 1.0f, 1, Rendering::Color::kGreen);
-			DrawGeoSphere(worldOffset + Float3(4, 0, 0), 0.5f, 0, Rendering::Color::kGreen);
-			DrawSphere(worldOffset + Float3(5, 0, 0), 0.5f, 4, 4, Rendering::Color::kGreen);
-			DrawCapsule(Transform(worldOffset + Float3(1, 0, 0)), 0.25f, 1.0f, 3, Rendering::Color::kGreen);
+			DrawBox(Transform(worldOffset), Float3(0.5f, 0.5f, 0.5f), Color::kGreen);
+			DrawCone(Transform(worldOffset + Float3(2, 0, 0)), 0.5f, 1.0f, 4, Color::kGreen);
+			DrawCylinder(Transform(worldOffset + Float3(3, 0, 0)), 0.5f, 1.0f, 1, Color::kGreen);
+			DrawGeoSphere(worldOffset + Float3(4, 0, 0), 0.5f, 0, Color::kGreen);
+			DrawSphere(worldOffset + Float3(5, 0, 0), 0.5f, 4, 4, Color::kGreen);
+			DrawCapsule(Transform(worldOffset + Float3(1, 0, 0)), 0.25f, 1.0f, 3, Color::kGreen);
 		}
 
 		void InstantRenderer::DrawLine(const Float3& a, const Float3& b, const Color& color) noexcept

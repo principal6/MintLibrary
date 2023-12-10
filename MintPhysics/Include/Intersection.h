@@ -13,20 +13,19 @@
 namespace mint
 {
 	class Rect;
+	class ByteColor;
 
 
 	namespace Rendering
 	{
 		struct Shape;
 		class ShapeRendererContext;
-		class ByteColor;
 	}
 
 
 	namespace Physics
 	{
 		using mint::Rendering::ShapeRendererContext;
-		using mint::Rendering::ByteColor;
 
 
 		enum class ShapeType
