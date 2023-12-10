@@ -5,8 +5,7 @@
 #define _MINT_PLATFORM_ALL_HEADERS_H_
 
 
-#include <MintPlatform/Include/IWindow.h>
-#include <MintPlatform/Include/WindowsWindow.h>
+#include <MintPlatform/Include/Window.h>
 
 #include <MintPlatform/Include/IFile.h>
 #include <MintPlatform/Include/BinaryFile.h>

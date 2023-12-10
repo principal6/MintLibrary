@@ -24,16 +24,10 @@
     <ClInclude Include="Include\IFile.h">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="Include\IWindow.h">
-      <Filter>Include</Filter>
-    </ClInclude>
     <ClInclude Include="Include\AllHeaders.h">
       <Filter>Include</Filter>
     </ClInclude>
     <ClInclude Include="Include\TextFile.h">
-      <Filter>Include</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\WindowsWindow.h">
       <Filter>Include</Filter>
     </ClInclude>
     <ClInclude Include="Include\PlatformCommon.h">
@@ -48,18 +42,15 @@
     <ClInclude Include="Include\Test.h">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Window.h">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\BinaryFile.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\TextFile.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\WindowsWindow.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\IWindow.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\_UnityBuild.cpp">
@@ -69,6 +60,9 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\Test.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Window.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>

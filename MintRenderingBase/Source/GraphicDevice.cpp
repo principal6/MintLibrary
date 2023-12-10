@@ -6,8 +6,7 @@
 
 #include <MintLibrary/Include/Algorithm.hpp>
 
-#include <MintPlatform/Include/IWindow.h>
-#include <MintPlatform/Include/WindowsWindow.h>
+#include <MintPlatform/Include/Window.h>
 
 #include <MintContainer/Include/StackString.hpp>
 #include <MintContainer/Include/HashMap.hpp>
@@ -282,12 +281,12 @@ namespace mint
 
 		GraphicDevice& GraphicDevice::GetInvalidInstance()
 		{
-			static WindowsWindow invalidWindow;
+			static Window invalidWindow;
 			static GraphicDevice invalidInstance(invalidWindow);
 			return invalidInstance;
 		}
 
-		GraphicDevice::GraphicDevice(IWindow& window)
+		GraphicDevice::GraphicDevice(Window& window)
 			: _window{ window }
 			, _clearColor{ 0.875f, 0.875f, 0.875f, 1.0f }
 			, _currentRasterizerFor3D{ nullptr }
@@ -341,7 +340,7 @@ namespace mint
 
 		void GraphicDevice::CreateDxDevice()
 		{
-			const WindowsWindow& windowsWindow = static_cast<const WindowsWindow&>(_window);
+			const Window& windowsWindow = static_cast<const Window&>(_window);
 			const Int2& windowSize = windowsWindow.GetSize();
 
 			if (CreateSwapChain(windowSize, windowsWindow.GetHandle()) == false)
@@ -754,12 +753,12 @@ namespace mint
 			return Float2(GetWindowSize());
 		}
 
-		IWindow& GraphicDevice::AccessWindow() noexcept
+		Window& GraphicDevice::AccessWindow() noexcept
 		{
 			return _window;
 		}
 
-		const IWindow& GraphicDevice::GetWindow() const noexcept
+		const Window& GraphicDevice::GetWindow() const noexcept
 		{
 			return _window;
 		}

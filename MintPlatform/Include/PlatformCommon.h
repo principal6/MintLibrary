@@ -5,18 +5,13 @@
 #define _MINT_PLATFORM_COMMON_H_
 
 
+#if defined(_WIN64)
+#define MINT_PLATFORM_WINDOWS
+#endif // defined(_WIN64)
+
+
 namespace mint
 {
-	enum class PlatformType
-	{
-		INVALID,
-
-		Windows,
-		// MacOs
-		// Linux
-		// ...
-	};
-
 	enum class MouseButton : int32
 	{
 		Left,

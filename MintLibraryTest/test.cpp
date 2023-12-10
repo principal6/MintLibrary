@@ -16,8 +16,8 @@
 #pragma optimize("", off)
 
 
-bool Run2DTestWindow(mint::IWindow& window, mint::Rendering::GraphicDevice& graphicDevice);
-bool Run3DTestWindow(mint::IWindow& window, mint::Rendering::GraphicDevice& graphicDevice);
+bool Run2DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graphicDevice);
+bool Run3DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graphicDevice);
 
 
 int main()
@@ -34,7 +34,7 @@ int main()
 	windowCreationDesc._title = L"HI";
 	windowCreationDesc._backgroundColor.Set(0.875f, 0.875f, 0.875f);
 
-	WindowsWindow window;
+	Window window;
 	if (window.Create(windowCreationDesc) == false)
 	{
 		WindowCreationError windowCreationError = window.GetWindowCreationError();
@@ -61,7 +61,7 @@ int main()
 }
 
 
-bool Run2DTestWindow(mint::IWindow& window, mint::Rendering::GraphicDevice& graphicDevice)
+bool Run2DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graphicDevice)
 {
 	using namespace mint;
 	using namespace Rendering;
@@ -124,7 +124,7 @@ bool Run2DTestWindow(mint::IWindow& window, mint::Rendering::GraphicDevice& grap
 	return true;
 }
 
-bool Run3DTestWindow(mint::IWindow& window, mint::Rendering::GraphicDevice& graphicDevice)
+bool Run3DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graphicDevice)
 {
 	using namespace mint;
 	using namespace Rendering;

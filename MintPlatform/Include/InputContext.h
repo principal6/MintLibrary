@@ -16,7 +16,7 @@
 
 namespace mint
 {
-	class IWindow;
+	class Window;
 
 
 	enum class InputEventType
@@ -73,7 +73,7 @@ namespace mint
 			InputEventMouseData _mouseData;
 			InputEventKeyboardData _keyboardData;
 		};
-		IWindow* _window;
+		Window* _window;
 	};
 
 	enum class MouseButtonState

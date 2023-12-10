@@ -1,4 +1,4 @@
-﻿#include <MintPlatform/Include/WindowsWindow.h>
+﻿#include <MintPlatform/Include/Window.h>
 
 #include <MintContainer/Include/Vector.hpp>
 #include <MintContainer/Include/String.hpp>
@@ -9,13 +9,17 @@
 
 #include <MintPlatform/Include/InputContext.h>
 
-#include <immdev.h>
-#include <windowsx.h>
-#include <hidusage.h>
 #include <mutex>
 
 
+#if defined(MINT_PLATFORM_WINDOWS)
+#include <immdev.h>
+#include <windowsx.h>
+#include <hidusage.h>
+
 #pragma comment(lib, "imm32")
+#endif // defined(MINT_PLATFORM_WINDOWS)
+
 
 
 namespace mint
@@ -24,21 +28,27 @@ namespace mint
 #define MINT_WINDOW_RETURN_FAIL(error) _windowCreationError = error; return false
 
 
-#pragma region Windows Window Pool
-	static WindowsWindowPool windowsWindowPool;
-	void WindowsWindowPool::InsertWindow(const HWND hWnd, WindowsWindow* const windowsWindow)
+#pragma region WindowPool
+	WindowPool& WindowPool::GetInstance()
+	{
+		static WindowPool instance;
+		return instance;
+	}
+
+#if defined(MINT_PLATFORM_WINDOWS)
+	void WindowPool::InsertWindow(const HWND hWnd, Window* const window)
 	{
 		static std::mutex mutex;
 		std::lock_guard<std::mutex> lock{ mutex };
 
 		if (_hWndMap.Find(hWnd).IsValid() == false)
 		{
-			_windowArray.PushBack(windowsWindow);
+			_windowArray.PushBack(window);
 			_hWndMap.Insert(hWnd, static_cast<uint8>(_windowArray.Size() - 1));
 		}
 	}
 
-	LRESULT WindowsWindowPool::RedirectMessage(const HWND hWnd, const UINT Msg, const WPARAM wParam, const LPARAM lParam)
+	LRESULT WindowPool::RedirectMessage(const HWND hWnd, const UINT Msg, const WPARAM wParam, const LPARAM lParam)
 	{
 		if (_hWndMap.Find(hWnd).IsValid() == true)
 		{
@@ -47,40 +57,49 @@ namespace mint
 		}
 		return ::DefWindowProcW(hWnd, Msg, wParam, lParam);
 	}
+#endif // defined(MINT_PLATFORM_WINDOWS)
 #pragma endregion
 
 
-#pragma region Windows Window
+#pragma region Window
+#if defined(MINT_PLATFORM_WINDOWS)
 	LRESULT WINAPI WndProc(_In_ HWND hWnd, _In_ UINT Msg, _In_ WPARAM wParam, _In_ LPARAM lParam)
 	{
-		return windowsWindowPool.RedirectMessage(hWnd, Msg, wParam, lParam);
+		return WindowPool::GetInstance().RedirectMessage(hWnd, Msg, wParam, lParam);
 	}
+#endif // defined(MINT_PLATFORM_WINDOWS)
 
-
-	WindowsWindow::WPARAMKeyCodePair::WPARAMKeyCodePair(const WPARAM wParam, const KeyCode keyCode)
+#if defined(MINT_PLATFORM_WINDOWS)
+	Window::WPARAMKeyCodePair::WPARAMKeyCodePair(const WPARAM wParam, const KeyCode keyCode)
 		: _wParam{ wParam }
 		, _keyCode{ keyCode }
 	{
 		__noop;
 	}
+#endif // defined(MINT_PLATFORM_WINDOWS)
 
-
-	WindowsWindow::WindowsWindow()
-		: IWindow(PlatformType::Windows)
+	Window::Window()
+		: _isRunning{ false }
+		, _windowCreationError{ WindowCreationError::None }
+		, _isWindowResized{ false }
+		, _currentCursorType{ CursorType::Arrow }
+#if defined(MINT_PLATFORM_WINDOWS)
 		, _windowStyle{}
 		, _hWnd{}
 		, _hInstance{}
 		, _msg{ MINT_NEW(MSG) }
 		, _cursorArray{}
 		, _byteArrayForRawInput{}
+#endif // defined(MINT_PLATFORM_WINDOWS)
 	{
 		__noop;
 	}
 
-	bool WindowsWindow::Create(const WindowCreationDesc& windowCreationDesc) noexcept
+	bool Window::Create(const WindowCreationDesc& windowCreationDesc) noexcept
 	{
 		_windowCreationDesc = windowCreationDesc;
 
+#if defined(MINT_PLATFORM_WINDOWS)
 		_hInstance = ::GetModuleHandleW(nullptr);
 		if (_hInstance == nullptr)
 		{
@@ -106,7 +125,7 @@ namespace mint
 		windowClass.hIconSm = windowClass.hIcon = ::LoadIconW(nullptr, IDI_SHIELD);
 		windowClass.hInstance = _hInstance;
 		windowClass.lpfnWndProc = WndProc;
-		windowClass.lpszClassName = L"WindowsWindow";
+		windowClass.lpszClassName = L"Window";
 		windowClass.lpszMenuName = nullptr;
 		windowClass.style = CS_VREDRAW | CS_HREDRAW | CS_DBLCLKS;
 		::RegisterClassExW(&windowClass);
@@ -146,7 +165,7 @@ namespace mint
 
 		_isRunning = true;
 
-		windowsWindowPool.InsertWindow(_hWnd, this);
+		WindowPool::GetInstance().InsertWindow(_hWnd, this);
 
 		// Cursors
 		_cursorArray[static_cast<uint32>(CursorType::Arrow)] = LoadCursorW(nullptr, IDC_ARROW);
@@ -170,18 +189,22 @@ namespace mint
 		{
 			MINT_WINDOW_RETURN_FAIL(WindowCreationError::FailedToRegisterRawInputDevices);
 		}
+#endif // defined(MINT_PLATFORM_WINDOWS)
 
 		MINT_WINDOW_RETURN_OK;
 	}
 
-	void WindowsWindow::Destroy() noexcept
+	void Window::Destroy() noexcept
 	{
-		__super::Destroy();
+		_isRunning = false;
 
+#if defined(MINT_PLATFORM_WINDOWS)
 		::DestroyWindow(_hWnd);
+#endif // defined(MINT_PLATFORM_WINDOWS)
 	}
 
-	void WindowsWindow::BuildWPARAMKeyCodePairArray() noexcept
+#if defined(MINT_PLATFORM_WINDOWS)
+	void Window::BuildWPARAMKeyCodePairArray() noexcept
 	{
 		_WPARAMKeyCodePairArray.Clear();
 
@@ -236,7 +259,7 @@ namespace mint
 		_WPARAMKeyCodePairArray.PushBack(WPARAMKeyCodePair('9', KeyCode::Num9));
 	}
 
-	KeyCode WindowsWindow::ConvertWPARAMToKeyCode(const WPARAM wParam) const noexcept
+	KeyCode Window::ConvertWPARAMToKeyCode(const WPARAM wParam) const noexcept
 	{
 		const uint32 count = static_cast<uint32>(_WPARAMKeyCodePairArray.Size());
 		for (uint32 iter = 0; iter < count; ++iter)
@@ -249,7 +272,7 @@ namespace mint
 		return KeyCode::NONE;
 	}
 
-	WPARAM WindowsWindow::ConvertKeyCodeToWPARAM(const KeyCode keyCode) const noexcept
+	WPARAM Window::ConvertKeyCodeToWPARAM(const KeyCode keyCode) const noexcept
 	{
 		const uint32 count = static_cast<uint32>(_WPARAMKeyCodePairArray.Size());
 		for (uint32 iter = 0; iter < count; ++iter)
@@ -261,12 +284,14 @@ namespace mint
 		}
 		return 0;
 	}
+#endif // defined(MINT_PLATFORM_WINDOWS)
 
-	bool WindowsWindow::IsRunning() noexcept
+	bool Window::IsRunning() noexcept
 	{
 		InputContext& inputContext = InputContext::GetInstance();
 		inputContext.FlushInputEvents();
 
+#if defined(MINT_PLATFORM_WINDOWS)
 		if (::PeekMessageW(_msg.Get(), nullptr, 0, 0, PM_REMOVE) == TRUE)
 		{
 			if (_msg->message == WM_QUIT)
@@ -277,14 +302,15 @@ namespace mint
 			::TranslateMessage(_msg.Get());
 			::DispatchMessageW(_msg.Get());
 		}
+#endif // defined(MINT_PLATFORM_WINDOWS)
 		inputContext.ProcessEvents();
 
-		return __super::IsRunning();
+		return _isRunning;
 	}
 
-	void WindowsWindow::SetSize(const Int2& newSize, const bool onlyUpdateData) noexcept
+	void Window::SetSize(const Int2& newSize, const bool onlyUpdateData) noexcept
 	{
-		__super::SetSize(newSize, onlyUpdateData);
+		_isWindowResized = true;
 
 		SetSizeData(newSize);
 
@@ -293,13 +319,16 @@ namespace mint
 			return;
 		}
 
+#if defined(MINT_PLATFORM_WINDOWS)
 		::SetWindowPos(_hWnd, nullptr, _windowCreationDesc._position._x, _windowCreationDesc._position._y, _entireWindowSize._x, _entireWindowSize._y, 0);
+#endif // defined(MINT_PLATFORM_WINDOWS)
 	}
 
-	void WindowsWindow::SetSizeData(const Int2& newSize)
+	void Window::SetSizeData(const Int2& newSize)
 	{
 		_windowCreationDesc._size = newSize;
 
+#if defined(MINT_PLATFORM_WINDOWS)
 		RECT windowRect;
 		windowRect.left = _windowCreationDesc._position._x;
 		windowRect.top = _windowCreationDesc._position._y;
@@ -308,24 +337,30 @@ namespace mint
 		::AdjustWindowRect(&windowRect, _windowStyle, FALSE);
 
 		_entireWindowSize = Int2(windowRect.right - windowRect.left, windowRect.bottom - windowRect.top);
+#endif // defined(MINT_PLATFORM_WINDOWS)
 	}
 
-	void WindowsWindow::SetPosition(const Int2& newPosition)
+	void Window::SetPosition(const Int2& newPosition)
 	{
 		_windowCreationDesc._position = newPosition;
 
+#if defined(MINT_PLATFORM_WINDOWS)
 		::SetWindowPos(_hWnd, nullptr, _windowCreationDesc._position._x, _windowCreationDesc._position._y, _entireWindowSize._x, _entireWindowSize._y, 0);
+#endif // defined(MINT_PLATFORM_WINDOWS)
 	}
 
-	HWND WindowsWindow::GetHandle() const noexcept
+#if defined(MINT_PLATFORM_WINDOWS)
+	HWND Window::GetHandle() const noexcept
 	{
 		return _hWnd;
 	}
+#endif // defined(MINT_PLATFORM_WINDOWS)
 
-	void WindowsWindow::SetCursorType(const CursorType cursorType) noexcept
+	void Window::SetCursorType(const CursorType cursorType) noexcept
 	{
-		__super::SetCursorType(cursorType);
+		_currentCursorType = cursorType;
 
+#if defined(MINT_PLATFORM_WINDOWS)
 		POINT rawCursorPosition;
 		::GetCursorPos(&rawCursorPosition);
 		const Float2 cursorPosition = Float2(static_cast<float>(rawCursorPosition.x), static_cast<float>(rawCursorPosition.y));
@@ -342,20 +377,22 @@ namespace mint
 		{
 			::SetCursor(_cursorArray[static_cast<uint32>(_currentCursorType)]);
 		}
+#endif // defined(MINT_PLATFORM_WINDOWS)
 	}
 
-	uint32 WindowsWindow::GetCaretBlinkIntervalMs() const noexcept
+	uint32 Window::GetCaretBlinkIntervalMs() const noexcept
 	{
 		return ::GetCaretBlinkTime();
 	}
 
-	void WindowsWindow::TextToClipboard(const wchar_t* const text, const uint32 textLength) const noexcept
+	void Window::TextToClipboard(const wchar_t* const text, const uint32 textLength) const noexcept
 	{
 		if (StringUtil::IsNullOrEmpty(text) == true)
 		{
 			return;
 		}
 
+#if defined(MINT_PLATFORM_WINDOWS)
 		::OpenClipboard(_hWnd);
 
 		const uint32 bufferSize = (textLength + 1) * sizeof(wchar_t);
@@ -374,10 +411,12 @@ namespace mint
 		::SetClipboardData(CF_UNICODETEXT, hGlobalText);
 
 		::CloseClipboard();
+#endif // defined(MINT_PLATFORM_WINDOWS)
 	}
 
-	void WindowsWindow::TextFromClipboard(StringW& outText) const noexcept
+	void Window::TextFromClipboard(StringW& outText) const noexcept
 	{
+#if defined(MINT_PLATFORM_WINDOWS)
 		::OpenClipboard(_hWnd);
 
 		const HANDLE hClipboardData = ::GetClipboardData(CF_UNICODETEXT);
@@ -393,10 +432,12 @@ namespace mint
 		}
 
 		::CloseClipboard();
+#endif // defined(MINT_PLATFORM_WINDOWS)
 	}
 
-	void WindowsWindow::ShowMessageBox(const std::wstring& title, const std::wstring& message, const MessageBoxType messageBoxType) const noexcept
+	void Window::ShowMessageBox(const std::wstring& title, const std::wstring& message, const MessageBoxType messageBoxType) const noexcept
 	{
+#if defined(MINT_PLATFORM_WINDOWS)
 		UINT type = MB_OK;
 		switch (messageBoxType)
 		{
@@ -412,9 +453,11 @@ namespace mint
 			break;
 		}
 		::MessageBoxW(_hWnd, message.c_str(), title.c_str(), type);
+#endif // defined(MINT_PLATFORM_WINDOWS)
 	}
 
-	LRESULT WindowsWindow::ProcessDefaultMessage(const UINT Msg, const WPARAM wParam, const LPARAM lParam)
+#if defined(MINT_PLATFORM_WINDOWS)
+	LRESULT Window::ProcessDefaultMessage(const UINT Msg, const WPARAM wParam, const LPARAM lParam)
 	{
 		InputContext& inputContext = InputContext::GetInstance();
 		InputEvent inputEvent;
@@ -615,5 +658,6 @@ namespace mint
 		}
 		return ::DefWindowProcW(_hWnd, Msg, wParam, lParam);
 	}
+#endif // defined(MINT_PLATFORM_WINDOWS)
 #pragma endregion
 }

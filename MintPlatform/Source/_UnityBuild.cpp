@@ -1,6 +1,5 @@
 ﻿#include <MintPlatform/Source/BinaryFile.cpp>
-#include <MintPlatform/Source/IWindow.cpp>
+#include <MintPlatform/Source/Window.cpp>
 #include <MintPlatform/Source/TextFile.cpp>
-#include <MintPlatform/Source/WindowsWindow.cpp>
 #include <MintPlatform/Source/InputContext.cpp>
 #include <MintPlatform/Source/Test.cpp>
