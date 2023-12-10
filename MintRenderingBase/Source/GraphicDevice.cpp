@@ -282,12 +282,12 @@ namespace mint
 
 		GraphicDevice& GraphicDevice::GetInvalidInstance()
 		{
-			static Platform::WindowsWindow invalidWindow;
+			static WindowsWindow invalidWindow;
 			static GraphicDevice invalidInstance(invalidWindow);
 			return invalidInstance;
 		}
 
-		GraphicDevice::GraphicDevice(Platform::IWindow& window)
+		GraphicDevice::GraphicDevice(IWindow& window)
 			: _window{ window }
 			, _clearColor{ 0.875f, 0.875f, 0.875f, 1.0f }
 			, _currentRasterizerFor3D{ nullptr }
@@ -341,7 +341,7 @@ namespace mint
 
 		void GraphicDevice::CreateDxDevice()
 		{
-			const Platform::WindowsWindow& windowsWindow = static_cast<const Platform::WindowsWindow&>(_window);
+			const WindowsWindow& windowsWindow = static_cast<const WindowsWindow&>(_window);
 			const Int2& windowSize = windowsWindow.GetSize();
 
 			if (CreateSwapChain(windowSize, windowsWindow.GetHandle()) == false)
@@ -754,12 +754,12 @@ namespace mint
 			return Float2(GetWindowSize());
 		}
 
-		Platform::IWindow& GraphicDevice::AccessWindow() noexcept
+		IWindow& GraphicDevice::AccessWindow() noexcept
 		{
 			return _window;
 		}
 
-		const Platform::IWindow& GraphicDevice::GetWindow() const noexcept
+		const IWindow& GraphicDevice::GetWindow() const noexcept
 		{
 			return _window;
 		}

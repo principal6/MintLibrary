@@ -76,8 +76,6 @@ namespace mint
 
 		void GUISystem::GUIControlManager::UpdateControls(const GUIControlUpdateContext& controlUpdateContext)
 		{
-			using namespace Platform;
-
 			_hoveredControlID.Invalidate();
 			_pressedControlID.Invalidate();
 
@@ -94,8 +92,6 @@ namespace mint
 		{
 			SharedPtrViewer<Physics::ConvexShape2D> controlCollisionShape = control._collisionShape;
 			controlCollisionShape->_center = control._position;
-
-			using namespace Platform;
 
 			InputContext& inputContext = InputContext::GetInstance();
 			const MouseButtonState leftMouseButtonState = inputContext.GetMouseButtonState(MouseButton::Left);
@@ -177,7 +173,6 @@ namespace mint
 		{
 			MINT_ASSERT(_isUpdated == false, "Don't call Update() multiple times in a frame!");
 
-			using namespace Platform;
 			InputContext& inputContext = InputContext::GetInstance();
 			const Float2& mousePosition = inputContext.GetMousePosition();
 			const MouseButtonState leftMouseButtonState = inputContext.GetMouseButtonState(MouseButton::Left);

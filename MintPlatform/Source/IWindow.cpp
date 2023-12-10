@@ -3,22 +3,19 @@
 
 namespace mint
 {
-	namespace Platform
+	IWindow::IWindow()
+		: IWindow(PlatformType::INVALID)
 	{
-		IWindow::IWindow()
-			: IWindow(Platform::PlatformType::INVALID)
-		{
-			__noop;
-		}
+		__noop;
+	}
 
-		IWindow::IWindow(const Platform::PlatformType platformType)
-			: _isRunning{ false }
-			, _platformType{ platformType }
-			, _windowCreationError{ WindowCreationError::None }
-			, _isWindowResized{ false }
-			, _currentCursorType{ CursorType::Arrow }
-		{
-			__noop;
-		}
+	IWindow::IWindow(const PlatformType platformType)
+		: _isRunning{ false }
+		, _platformType{ platformType }
+		, _windowCreationError{ WindowCreationError::None }
+		, _isWindowResized{ false }
+		, _currentCursorType{ CursorType::Arrow }
+	{
+		__noop;
 	}
 }

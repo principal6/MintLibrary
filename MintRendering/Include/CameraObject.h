@@ -10,10 +10,7 @@
 
 namespace mint
 {
-	namespace Platform
-	{
-		class InputContext;
-	}
+	class InputContext;
 
 
 	namespace Rendering
@@ -90,7 +87,7 @@ namespace mint
 			void SetPerspectiveScreenRatio(const float screenRatio);
 
 		public:
-			void Steer(const Platform::InputContext& inputContext, const bool isMoveLocked);
+			void Steer(const InputContext& inputContext, const bool isMoveLocked);
 			void Move(const MoveDirection moveDirection);
 			void RotatePitch(const float angle);
 			void RotateYaw(const float angle);

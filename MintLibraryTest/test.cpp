@@ -16,8 +16,8 @@
 #pragma optimize("", off)
 
 
-bool Run2DTestWindow(mint::Platform::IWindow& window, mint::Rendering::GraphicDevice& graphicDevice);
-bool Run3DTestWindow(mint::Platform::IWindow& window, mint::Rendering::GraphicDevice& graphicDevice);
+bool Run2DTestWindow(mint::IWindow& window, mint::Rendering::GraphicDevice& graphicDevice);
+bool Run3DTestWindow(mint::IWindow& window, mint::Rendering::GraphicDevice& graphicDevice);
 
 
 int main()
@@ -25,7 +25,6 @@ int main()
 	mint::Library::Initialize();
 
 	using namespace mint;
-	using namespace Platform;
 	using namespace Rendering;
 
 	WindowCreationDesc windowCreationDesc;
@@ -62,10 +61,9 @@ int main()
 }
 
 
-bool Run2DTestWindow(mint::Platform::IWindow& window, mint::Rendering::GraphicDevice& graphicDevice)
+bool Run2DTestWindow(mint::IWindow& window, mint::Rendering::GraphicDevice& graphicDevice)
 {
 	using namespace mint;
-	using namespace Platform;
 	using namespace Rendering;
 
 	const Float2 windowSize = graphicDevice.GetWindowSizeFloat2();
@@ -77,24 +75,24 @@ bool Run2DTestWindow(mint::Platform::IWindow& window, mint::Rendering::GraphicDe
 	DxResourcePool& resourcePool = graphicDevice.GetResourcePool();
 	const GraphicObjectID textureID = resourcePool.AddTexture2D(DxTextureFormat::R8G8B8A8_UNORM, byteColorImage.GetBytes(), byteColorImage.GetWidth(), byteColorImage.GetHeight());
 	resourcePool.GetResource(textureID).BindToShader(GraphicShaderType::PixelShader, 0);
-	const Platform::InputContext& inputContext = Platform::InputContext::GetInstance();
+	const InputContext& inputContext = InputContext::GetInstance();
 	while (window.IsRunning() == true)
 	{
 		if (inputContext.IsKeyPressed())
 		{
-			if (inputContext.IsKeyDown(Platform::KeyCode::Enter) == true)
+			if (inputContext.IsKeyDown(KeyCode::Enter) == true)
 			{
 				graphicDevice.GetShaderPool().RecompileAllShaders();
 			}
-			else if (inputContext.IsKeyDown(Platform::KeyCode::Num1) == true)
+			else if (inputContext.IsKeyDown(KeyCode::Num1) == true)
 			{
 				graphicDevice.UseSolidCullBackRasterizer();
 			}
-			else if (inputContext.IsKeyDown(Platform::KeyCode::Num2) == true)
+			else if (inputContext.IsKeyDown(KeyCode::Num2) == true)
 			{
 				graphicDevice.UseWireFrameCullBackRasterizer();
 			}
-			else if (inputContext.IsKeyDown(Platform::KeyCode::Num3) == true)
+			else if (inputContext.IsKeyDown(KeyCode::Num3) == true)
 			{
 				graphicDevice.UseWireFrameNoCullingRasterizer();
 			}
@@ -126,16 +124,15 @@ bool Run2DTestWindow(mint::Platform::IWindow& window, mint::Rendering::GraphicDe
 	return true;
 }
 
-bool Run3DTestWindow(mint::Platform::IWindow& window, mint::Rendering::GraphicDevice& graphicDevice)
+bool Run3DTestWindow(mint::IWindow& window, mint::Rendering::GraphicDevice& graphicDevice)
 {
 	using namespace mint;
-	using namespace Platform;
 	using namespace Rendering;
 
 	MeshRenderer meshRenderer{ graphicDevice };
 	InstantRenderer instantRenderer{ graphicDevice };
 	ObjectPool objectPool;
-	const Platform::InputContext& inputContext = Platform::InputContext::GetInstance();
+	const InputContext& inputContext = InputContext::GetInstance();
 
 	Object* const testObject = objectPool.CreateObject();
 	CameraObject* const testCameraObject = objectPool.CreateCameraObject();
@@ -197,40 +194,40 @@ bool Run3DTestWindow(mint::Platform::IWindow& window, mint::Rendering::GraphicDe
 
 		if (inputContext.IsKeyPressed())
 		{
-			if (inputContext.IsKeyDown(Platform::KeyCode::Enter) == true)
+			if (inputContext.IsKeyDown(KeyCode::Enter) == true)
 			{
 				graphicDevice.GetShaderPool().RecompileAllShaders();
 			}
-			else if (inputContext.IsKeyDown(Platform::KeyCode::Num1) == true)
+			else if (inputContext.IsKeyDown(KeyCode::Num1) == true)
 			{
 				graphicDevice.UseSolidCullBackRasterizer();
 			}
-			else if (inputContext.IsKeyDown(Platform::KeyCode::Num2) == true)
+			else if (inputContext.IsKeyDown(KeyCode::Num2) == true)
 			{
 				graphicDevice.UseWireFrameCullBackRasterizer();
 			}
-			else if (inputContext.IsKeyDown(Platform::KeyCode::Num3) == true)
+			else if (inputContext.IsKeyDown(KeyCode::Num3) == true)
 			{
 				graphicDevice.UseWireFrameNoCullingRasterizer();
 			}
-			else if (inputContext.IsKeyDown(Platform::KeyCode::Num4) == true)
+			else if (inputContext.IsKeyDown(KeyCode::Num4) == true)
 			{
 				MeshComponent* const meshComponent = static_cast<MeshComponent*>(testObject->GetComponent(ObjectComponentType::MeshComponent));
 				meshComponent->ShouldDrawNormals(!meshComponent->ShouldDrawNormals());
 			}
-			else if (inputContext.IsKeyDown(Platform::KeyCode::Num5) == true)
+			else if (inputContext.IsKeyDown(KeyCode::Num5) == true)
 			{
 				MeshComponent* const meshComponent = static_cast<MeshComponent*>(testObject->GetComponent(ObjectComponentType::MeshComponent));
 				meshComponent->ShouldDrawEdges(!meshComponent->ShouldDrawEdges());
 			}
-			else if (inputContext.IsKeyDown(Platform::KeyCode::Shift) == true)
+			else if (inputContext.IsKeyDown(KeyCode::Shift) == true)
 			{
 				testCameraObject->SetBoostMode(true);
 			}
 		}
 		else if (inputContext.IsKeyReleased())
 		{
-			if (inputContext.IsKeyUp(Platform::KeyCode::Shift) == true)
+			if (inputContext.IsKeyUp(KeyCode::Shift) == true)
 			{
 				testCameraObject->SetBoostMode(false);
 			}

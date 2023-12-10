@@ -27,10 +27,7 @@
 
 namespace mint
 {
-	namespace Platform
-	{
-		class IWindow;
-	}
+	class IWindow;
 
 	namespace Rendering
 	{
@@ -128,7 +125,7 @@ namespace mint
 			static GraphicDevice& GetInvalidInstance();
 
 		public:
-			GraphicDevice(Platform::IWindow& window);
+			GraphicDevice(IWindow& window);
 			~GraphicDevice() = default;
 
 		public:
@@ -187,11 +184,11 @@ namespace mint
 			ID3D11DeviceContext* GetDxDeviceContext() noexcept;
 			const Int2& GetWindowSize() const noexcept;
 			Float2 GetWindowSizeFloat2() const noexcept;
-			Platform::IWindow& AccessWindow() noexcept;
-			const Platform::IWindow& GetWindow() const noexcept;
+			IWindow& AccessWindow() noexcept;
+			const IWindow& GetWindow() const noexcept;
 
 		private:
-			Platform::IWindow& _window;
+			IWindow& _window;
 			Int2 _lastWindowSize;
 
 		private:

@@ -54,36 +54,36 @@ namespace mint
 			_projectionMatrix = Float4x4::ProjectionMatrixPerspectiveYUP(_isRightHanded, _fov, _nearZ, _farZ, _screenRatio);
 		}
 
-		void CameraObject::Steer(const Platform::InputContext& inputContext, const bool isMoveLocked)
+		void CameraObject::Steer(const InputContext& inputContext, const bool isMoveLocked)
 		{
 			if (isMoveLocked == false)
 			{
-				if (inputContext.IsKeyDown(Platform::KeyCode::Q) == true)
+				if (inputContext.IsKeyDown(KeyCode::Q) == true)
 				{
 					Move(Rendering::CameraObject::MoveDirection::Upward);
 				}
 
-				if (inputContext.IsKeyDown(Platform::KeyCode::E) == true)
+				if (inputContext.IsKeyDown(KeyCode::E) == true)
 				{
 					Move(Rendering::CameraObject::MoveDirection::Downward);
 				}
 
-				if (inputContext.IsKeyDown(Platform::KeyCode::W) == true)
+				if (inputContext.IsKeyDown(KeyCode::W) == true)
 				{
 					Move(Rendering::CameraObject::MoveDirection::Forward);
 				}
 
-				if (inputContext.IsKeyDown(Platform::KeyCode::S) == true)
+				if (inputContext.IsKeyDown(KeyCode::S) == true)
 				{
 					Move(Rendering::CameraObject::MoveDirection::Backward);
 				}
 
-				if (inputContext.IsKeyDown(Platform::KeyCode::A) == true)
+				if (inputContext.IsKeyDown(KeyCode::A) == true)
 				{
 					Move(Rendering::CameraObject::MoveDirection::Leftward);
 				}
 
-				if (inputContext.IsKeyDown(Platform::KeyCode::D) == true)
+				if (inputContext.IsKeyDown(KeyCode::D) == true)
 				{
 					Move(Rendering::CameraObject::MoveDirection::Rightward);
 				}
@@ -91,7 +91,7 @@ namespace mint
 
 			if (inputContext.IsMousePointerMoved() == true)
 			{
-				if (inputContext.IsMouseButtonDown(Platform::MouseButton::Right) == true)
+				if (inputContext.IsMouseButtonDown(MouseButton::Right) == true)
 				{
 					RotateByMouseDelta(inputContext.GetMouseDeltaPosition());
 				}
