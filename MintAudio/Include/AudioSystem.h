@@ -16,7 +16,7 @@ struct IXAudio2SourceVoice;
 typedef unsigned long DWORD;
 namespace mint
 {
-	class BinaryFileReader;
+	class BinaryPointerReader;
 	class AudioSystem;
 }
 
@@ -37,7 +37,7 @@ namespace mint
 		StringA _fileName;
 		Vector<byte> _audioDataBuffer;
 		
-		uint8 _bitsPerSample;
+		uint32 _bitsPerSample;
 		uint32 _samplesPerSec;
 		uint32 _channelCount;
 
@@ -52,11 +52,12 @@ namespace mint
 		AudioSystem();
 		~AudioSystem();
 
-		bool LoadAudio(const StringA& fileName, AudioItem& audioItem);
+		bool LoadAudioMP3(const StringA& fileName, AudioItem& audioItem);
+		bool LoadAudioWAV(const StringA& fileName, AudioItem& audioItem);
 
 	private:
-		bool FindChunk(BinaryFileReader& fileReader, DWORD fourCC, DWORD& outChunkSize, DWORD& outChunkDataPosition);
-		void ReadChunkData(BinaryFileReader& fileReader, void* outBuffer, DWORD bufferSize, DWORD bufferOffset);
+		bool FindChunk(BinaryPointerReader& binaryPointerReader, DWORD fourCC, DWORD& outChunkSize, DWORD& outChunkDataPosition);
+		void ReadChunkData(BinaryPointerReader& binaryPointerReader, void* outBuffer, DWORD bufferSize, DWORD bufferOffset);
 
 	private:
 		IXAudio2* _xAudio2;

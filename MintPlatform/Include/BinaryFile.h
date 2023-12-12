@@ -27,6 +27,9 @@ namespace mint
 		void Reset(const byte* const bytes, const uint32 byteCount) { _bytes = bytes; _byteCount = byteCount; _at = 0; }
 
 		void GoTo(const uint32 at) const;
+		
+		template <typename T>
+		bool CanRead() const;
 
 		bool CanRead(const uint32 count) const;
 		

@@ -14,6 +14,12 @@ namespace mint
 		_at = mint::Min(at, _byteCount);
 	}
 
+	template <typename T>
+	MINT_INLINE bool BinaryPointerReader::CanRead() const
+	{
+		return (static_cast<uint64>(_at) + sizeof(T) <= _byteCount);
+	}
+	
 	MINT_INLINE bool BinaryPointerReader::CanRead(const uint32 count) const
 	{
 		return (static_cast<uint64>(_at) + count <= _byteCount);

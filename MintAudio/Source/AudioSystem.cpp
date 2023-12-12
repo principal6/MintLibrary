@@ -6,6 +6,12 @@
 
 #include <xaudio2.h>
 
+#pragma warning( disable : 6262 26451 4267 6386 6011 4244 6385 )
+#define MINIMP3_IMPLEMENTATION
+#include <Externals/minimp3/minimp3.h>
+#include <Externals/minimp3/minimp3_ex.h>
+#pragma warning( default : 6262 26451 4267 6386 6011 4244 6385 )
+
 
 namespace mint
 {
@@ -15,6 +21,7 @@ namespace mint
 #define fourccWAVE	'EVAW'
 
 
+#pragma region AudioItem
 	AudioItem::AudioItem()
 		: _bitsPerSample{ 0 }
 		, _samplesPerSec{ 0 }
@@ -48,8 +55,10 @@ namespace mint
 
 		_sourceVoice->Stop();
 	}
+#pragma endregion
 
 
+#pragma region AudioSystem
 	AudioSystem::AudioSystem()
 		: _xAudio2{ nullptr }
 		, _masteringVoice{ nullptr }
@@ -86,37 +95,37 @@ namespace mint
 		::CoUninitialize();
 	}
 
-	bool AudioSystem::LoadAudio(const StringA& fileName, AudioItem& audioItem)
+	bool AudioSystem::LoadAudioMP3(const StringA& fileName, AudioItem& audioItem)
 	{
-		audioItem._fileName.Clear();
-
-		BinaryFileReader fileReader;
-		if (fileReader.Open(fileName.CString()) == false)
+		mp3dec_t mp3d{};
+		mp3dec_file_info_t info{};
+		const int result = mp3dec_load(&mp3d, fileName.CString(), &info, NULL, NULL);
+		if (result)
 		{
+			/* error */
 			return false;
 		}
 
-		DWORD chunkSize = 0;
-		DWORD chunkPosition = 0;
-		DWORD fileType = 0;
-		FindChunk(fileReader, fourccRIFF, chunkSize, chunkPosition);
-		ReadChunkData(fileReader, &fileType, sizeof(DWORD), chunkPosition);
-		if (fileType != fourccWAVE)
-			return false;
+		const uint32 bytesPerSample = static_cast<uint32>(sizeof(mp3d_sample_t));
+		audioItem._byteLength = static_cast<uint32>(info.samples * bytesPerSample);
+		audioItem._audioDataBuffer.Resize(audioItem._byteLength);
+		{
+			::memcpy(&audioItem._audioDataBuffer[0], info.buffer, audioItem._byteLength);
+			::free(info.buffer);
+			info.buffer = nullptr;
+		}
 
-		FindChunk(fileReader, fourccFMT, chunkSize, chunkPosition);
 		WAVEFORMATEXTENSIBLE waveFormatExt{};
-		ReadChunkData(fileReader, &waveFormatExt, chunkSize, chunkPosition);
-
-		FindChunk(fileReader, fourccDATA, chunkSize, chunkPosition);
-		audioItem._audioDataBuffer.Resize(chunkSize);
-		ReadChunkData(fileReader, &audioItem._audioDataBuffer[0], chunkSize, chunkPosition);
+		waveFormatExt.Format.wFormatTag = WAVE_FORMAT_PCM; // PCM (Pulse-Code modulation)
+		waveFormatExt.Format.nChannels = info.channels;
+		waveFormatExt.Format.nSamplesPerSec = info.hz; // Hertz
+		waveFormatExt.Format.wBitsPerSample = bytesPerSample * 8;
+		waveFormatExt.Format.nBlockAlign = waveFormatExt.Format.nChannels * bytesPerSample;
+		waveFormatExt.Format.nAvgBytesPerSec = waveFormatExt.Format.nSamplesPerSec * bytesPerSample * waveFormatExt.Format.nChannels;
 
 		audioItem._bitsPerSample = waveFormatExt.Format.wBitsPerSample;
 		audioItem._samplesPerSec = waveFormatExt.Format.nSamplesPerSec;
 		audioItem._channelCount = waveFormatExt.Format.nChannels;
-		audioItem._byteLength = chunkSize;
-		const uint32 bytesPerSample = audioItem._bitsPerSample / 8;
 		const uint32 bytesPerSec = audioItem._samplesPerSec * bytesPerSample;
 		audioItem._lengthSec = static_cast<float>(audioItem._byteLength) / (bytesPerSec * audioItem._channelCount);
 
@@ -126,18 +135,75 @@ namespace mint
 		buffer.Flags = XAUDIO2_END_OF_STREAM; // tell the source voice not to expect any data after this buffer
 
 		if (FAILED(_xAudio2->CreateSourceVoice(&audioItem._sourceVoice, (WAVEFORMATEX*)&waveFormatExt)))
+		{
 			return false;
+		}
 
 		if (FAILED(audioItem._sourceVoice->SubmitSourceBuffer(&buffer)))
+		{
 			return false;
+		}
 
 		audioItem._fileName = fileName;
 		return true;
 	}
 
-	bool AudioSystem::FindChunk(BinaryFileReader& fileReader, DWORD fourCC, DWORD& outChunkSize, DWORD& outChunkDataPosition)
+	bool AudioSystem::LoadAudioWAV(const StringA& fileName, AudioItem& audioItem)
 	{
-		fileReader.GoTo(0);
+		audioItem._fileName.Clear();
+
+		BinaryFileReader binaryFileReader;
+		if (binaryFileReader.Open(fileName.CString()) == false)
+		{
+			return false;
+		}
+
+		BinaryPointerReader binaryPointerReader{ binaryFileReader.GetBytes().Data(), binaryFileReader.GetBytes().Size() };
+		DWORD chunkSize = 0;
+		DWORD chunkPosition = 0;
+		DWORD fileType = 0;
+		FindChunk(binaryPointerReader, fourccRIFF, chunkSize, chunkPosition);
+		ReadChunkData(binaryPointerReader, &fileType, sizeof(DWORD), chunkPosition);
+		if (fileType != fourccWAVE)
+			return false;
+
+		FindChunk(binaryPointerReader, fourccFMT, chunkSize, chunkPosition);
+		WAVEFORMATEXTENSIBLE waveFormatExt{};
+		ReadChunkData(binaryPointerReader, &waveFormatExt, chunkSize, chunkPosition);
+
+		FindChunk(binaryPointerReader, fourccDATA, chunkSize, chunkPosition);
+		audioItem._byteLength = chunkSize;
+		audioItem._audioDataBuffer.Resize(audioItem._byteLength);
+		ReadChunkData(binaryPointerReader, &audioItem._audioDataBuffer[0], chunkSize, chunkPosition);
+
+		audioItem._bitsPerSample = waveFormatExt.Format.wBitsPerSample;
+		audioItem._samplesPerSec = waveFormatExt.Format.nSamplesPerSec;
+		audioItem._channelCount = waveFormatExt.Format.nChannels;
+		const uint32 bytesPerSample = audioItem._bitsPerSample / 8;
+		const uint32 bytesPerSec = audioItem._samplesPerSec * bytesPerSample;
+		audioItem._lengthSec = static_cast<float>(audioItem._byteLength) / (bytesPerSec * audioItem._channelCount);
+
+		XAUDIO2_BUFFER buffer{};
+		buffer.AudioBytes = audioItem._byteLength;
+		buffer.pAudioData = &audioItem._audioDataBuffer[0];
+		buffer.Flags = XAUDIO2_END_OF_STREAM; // tell the source voice not to expect any data after this buffer
+		if (FAILED(_xAudio2->CreateSourceVoice(&audioItem._sourceVoice, (WAVEFORMATEX*)&waveFormatExt)))
+		{
+			return false;
+		}
+
+		if (FAILED(audioItem._sourceVoice->SubmitSourceBuffer(&buffer)))
+		{
+			return false;
+		}
+
+		audioItem._fileName = fileName;
+		return true;
+	}
+
+	bool AudioSystem::FindChunk(BinaryPointerReader& binaryPointerReader, DWORD fourCC, DWORD& outChunkSize, DWORD& outChunkDataPosition)
+	{
+		binaryPointerReader.GoTo(0);
 
 		DWORD chunkType = 0;
 		DWORD chunkDataSize = 0;
@@ -147,19 +213,19 @@ namespace mint
 		DWORD offset = 0;
 		while (true)
 		{
-			if (fileReader.CanRead<DWORD>() == false)
+			if (binaryPointerReader.CanRead<DWORD>() == false)
 			{
 				return false;
 			}
 
-			chunkType = *fileReader.Read<DWORD>();
+			chunkType = *binaryPointerReader.Read<DWORD>();
 
-			if (fileReader.CanRead<DWORD>() == false)
+			if (binaryPointerReader.CanRead<DWORD>() == false)
 			{
 				return false;
 			}
 
-			chunkDataSize = *fileReader.Read<DWORD>();
+			chunkDataSize = *binaryPointerReader.Read<DWORD>();
 
 			switch (chunkType)
 			{
@@ -167,15 +233,15 @@ namespace mint
 				RIFFDataSize = chunkDataSize;
 				chunkDataSize = 4;
 
-				if (fileReader.CanRead<DWORD>() == false)
+				if (binaryPointerReader.CanRead<DWORD>() == false)
 				{
 					return false;
 				}
 
-				fileType = *fileReader.Read<DWORD>();
+				fileType = *binaryPointerReader.Read<DWORD>();
 				break;
 			default:
-				fileReader.Skip(chunkDataSize);
+				binaryPointerReader.Skip(chunkDataSize);
 				break;
 			}
 
@@ -198,10 +264,11 @@ namespace mint
 		return true;
 	}
 
-	void AudioSystem::ReadChunkData(BinaryFileReader& fileReader, void* outBuffer, DWORD bufferSize, DWORD bufferOffset)
+	void AudioSystem::ReadChunkData(BinaryPointerReader& binaryPointerReader, void* outBuffer, DWORD bufferSize, DWORD bufferOffset)
 	{
-		fileReader.GoTo(bufferOffset);
+		binaryPointerReader.GoTo(bufferOffset);
 
-		::memcpy(outBuffer, fileReader.Read<byte>(bufferSize), bufferSize);
+		::memcpy(outBuffer, binaryPointerReader.Read<byte>(bufferSize), bufferSize);
 	}
+#pragma endregion
 }
