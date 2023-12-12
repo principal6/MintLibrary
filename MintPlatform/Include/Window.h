@@ -139,7 +139,7 @@ namespace mint
 	public:
 		void SetSize(const Int2& newSize, const bool onlyUpdateData) noexcept;
 		const Int2& GetSize() const noexcept { return _windowCreationDesc._size; }
-		MINT_INLINE bool IsResized() const noexcept { bool result = _isWindowResized; _isWindowResized = false; return result; }
+		MINT_INLINE bool IsResized() const noexcept { return _isWindowResized; }
 
 		void SetPosition(const Int2& newPosition);
 		const Int2& GetPosition() const noexcept { return _windowCreationDesc._position; }
@@ -181,7 +181,7 @@ namespace mint
 		Int2 _entireWindowSize;
 
 	private:
-		mutable bool _isWindowResized;
+		bool _isWindowResized;
 
 	private:
 		CursorType _currentCursorType;

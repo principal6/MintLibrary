@@ -288,6 +288,8 @@ namespace mint
 
 	bool Window::IsRunning() noexcept
 	{
+		_isWindowResized = false;
+
 		InputContext& inputContext = InputContext::GetInstance();
 		inputContext.FlushInputEvents();
 
