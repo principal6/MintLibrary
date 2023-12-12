@@ -73,14 +73,15 @@ bool Run2DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 
 	const Float2 windowSize = graphicDevice.GetWindowSizeFloat2();
 	const Float4x4 projectionMatrix = Float4x4::ProjectionMatrix2DFromTopLeft(windowSize._x, windowSize._y);
-	ImageRenderer imageRenderer{ graphicDevice, 0, ByteColor(0, 0, 0, 0) };
+	ImageRenderer imageRenderer{ graphicDevice, 1, ByteColor(0, 0, 0, 0) };
 	ByteColorImage byteColorImage;
 	ImageLoader imageLoader;
 	imageLoader.LoadImage_("Assets/Test_image.png", byteColorImage);
 	DxResourcePool& resourcePool = graphicDevice.GetResourcePool();
 	const GraphicObjectID textureID = resourcePool.AddTexture2D(DxTextureFormat::R8G8B8A8_UNORM, byteColorImage.GetBytes(), byteColorImage.GetWidth(), byteColorImage.GetHeight());
-	resourcePool.GetResource(textureID).BindToShader(GraphicShaderType::PixelShader, 0);
+	resourcePool.GetResource(textureID).BindToShader(GraphicShaderType::PixelShader, 1);
 	const InputContext& inputContext = InputContext::GetInstance();
+	ShapeRendererContext& shapeRendererContext = graphicDevice.GetShapeRendererContext();
 	while (window.IsRunning() == true)
 	{
 		if (inputContext.IsKeyPressed())
@@ -116,6 +117,10 @@ bool Run2DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 			graphicDevice.BeginRendering();
 
 			graphicDevice.SetViewProjectionMatrix(Float4x4::kIdentity, projectionMatrix);
+
+			shapeRendererContext.SetPosition(Float4(100, 100, 0, 0));
+			shapeRendererContext.SetColor(Color::kBlue);
+			shapeRendererContext.DrawCircle(32.0f);
 
 			imageRenderer.DrawImage(Float2(50, 50), Float2(80, 20), Float2(0, 0), Float2(1, 1));
 			imageRenderer.Render();
