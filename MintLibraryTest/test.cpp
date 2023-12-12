@@ -78,6 +78,7 @@ bool Run2DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 	DxResourcePool& resourcePool = graphicDevice.GetResourcePool();
 	const GraphicObjectID textureID = resourcePool.AddTexture2D(DxTextureFormat::R8G8B8A8_UNORM, byteColorImage.GetBytes(), byteColorImage.GetWidth(), byteColorImage.GetHeight());
 	resourcePool.GetResource(textureID).BindToShader(GraphicShaderType::PixelShader, 1);
+
 	const InputContext& inputContext = InputContext::GetInstance();
 	ShapeRendererContext& shapeRendererContext = graphicDevice.GetShapeRendererContext();
 	while (window.IsRunning() == true)
