@@ -71,8 +71,6 @@ bool Run2DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 	using namespace mint;
 	using namespace Rendering;
 
-	const Float2 windowSize = graphicDevice.GetWindowSizeFloat2();
-	const Float4x4 projectionMatrix = Float4x4::ProjectionMatrix2DFromTopLeft(windowSize._x, windowSize._y);
 	ImageRenderer imageRenderer{ graphicDevice, 1, ByteColor(0, 0, 0, 0) };
 	ByteColorImage byteColorImage;
 	ImageLoader imageLoader;
@@ -115,8 +113,6 @@ bool Run2DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 		// Rendering
 		{
 			graphicDevice.BeginRendering();
-
-			graphicDevice.SetViewProjectionMatrix(Float4x4::kIdentity, projectionMatrix);
 
 			shapeRendererContext.SetPosition(Float4(100, 100, 0, 0));
 			shapeRendererContext.SetColor(Color::kBlue);

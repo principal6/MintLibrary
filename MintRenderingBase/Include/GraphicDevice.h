@@ -176,7 +176,7 @@ namespace mint
 			GraphicObjectID GetCommonSBMaterialID() const noexcept;
 
 		public:
-			void Initialize2DProjectionMatrix(const Float2& windowSize) noexcept;
+			void Initialize2DProjectionMatrix() noexcept;
 			void SetViewProjectionMatrix(const Float4x4& viewMatrix, const Float4x4& ProjectionMatrix) noexcept;
 
 		public:
