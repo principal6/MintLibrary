@@ -41,6 +41,9 @@
     <ClCompile Include="Source\_UnityBuild.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\MintAudio\MintAudio.vcxproj">
+      <Project>{53a46c4e-836f-4c83-af5a-bf2036bb8cfd}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\MintGame\MintGame.vcxproj">
       <Project>{4d507120-3ff8-4f58-bcd9-db6f72cd014d}</Project>
     </ProjectReference>
@@ -142,7 +145,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>MintCommon.lib;MintMath.lib;MintContainer.lib;MintReflection.lib;MintPlatform.lib;MintLanguage.lib;MintRenderingBase.lib;MintRendering.lib;MintGame.lib</AdditionalDependencies>
+      <AdditionalDependencies>MintCommon.lib;MintMath.lib;MintContainer.lib;MintReflection.lib;MintPlatform.lib;MintLanguage.lib;MintRenderingBase.lib;MintRendering.lib;MintPhysics.lib;MintAudio.lib;MintGame.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)_output\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
@@ -165,7 +168,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>MintCommon.lib;MintMath.lib;MintContainer.lib;MintReflection.lib;MintPlatform.lib;MintLanguage.lib;MintRenderingBase.lib;MintRendering.lib;MintGame.lib</AdditionalDependencies>
+      <AdditionalDependencies>MintCommon.lib;MintMath.lib;MintContainer.lib;MintReflection.lib;MintPlatform.lib;MintLanguage.lib;MintRenderingBase.lib;MintRendering.lib;MintPhysics.lib;MintAudio.lib;MintGame.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)_output\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
@@ -188,7 +191,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>MintCommon.lib;MintMath.lib;MintContainer.lib;MintReflection.lib;MintPlatform.lib;MintLanguage.lib;MintRenderingBase.lib;MintRendering.lib;MintGame.lib</AdditionalDependencies>
+      <AdditionalDependencies>MintCommon.lib;MintMath.lib;MintContainer.lib;MintReflection.lib;MintPlatform.lib;MintLanguage.lib;MintRenderingBase.lib;MintRendering.lib;MintPhysics.lib;MintAudio.lib;MintGame.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)_output\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
@@ -211,7 +214,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>MintCommon.lib;MintMath.lib;MintContainer.lib;MintReflection.lib;MintPlatform.lib;MintLanguage.lib;MintRenderingBase.lib;MintRendering.lib;MintGame.lib</AdditionalDependencies>
+      <AdditionalDependencies>MintCommon.lib;MintMath.lib;MintContainer.lib;MintReflection.lib;MintPlatform.lib;MintLanguage.lib;MintRenderingBase.lib;MintRendering.lib;MintPhysics.lib;MintAudio.lib;MintGame.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)_output\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>

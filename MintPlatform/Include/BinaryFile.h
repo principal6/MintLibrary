@@ -62,6 +62,9 @@ namespace mint
 	public:
 		void GoTo(const uint32 at);
 
+		template <typename T>
+		bool CanRead() const noexcept;
+
 		bool CanRead(const uint32 count) const noexcept;
 
 		template <typename T>

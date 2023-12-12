@@ -54,8 +54,13 @@ int main()
 	TestLibrary::Test();
 #endif
 
-	//Run2DTestWindow(window, graphicDevice);
-	Run3DTestWindow(window, graphicDevice);
+	AudioSystem audioSystem;
+	AudioItem audioItem0;
+	audioSystem.LoadAudio("Assets/Christmas_Jazz-SoundStreet.wav", audioItem0);
+	audioItem0.Play();
+
+	Run2DTestWindow(window, graphicDevice);
+	//Run3DTestWindow(window, graphicDevice);
 	return 0;
 }
 

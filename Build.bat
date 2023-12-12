@@ -25,6 +25,7 @@ set MODED_LIBS=%MODED_LIBS:"=%
 
 :### PREPARE DIRECTORIES
 IF NOT EXIST _intermediate mkdir _intermediate
+IF NOT EXIST _intermediate\MintAudio mkdir _intermediate\MintAudio
 IF NOT EXIST _intermediate\MintCommon mkdir _intermediate\MintCommon
 IF NOT EXIST _intermediate\MintContainer mkdir _intermediate\MintContainer
 IF NOT EXIST _intermediate\MintGame mkdir _intermediate\MintGame
@@ -48,6 +49,7 @@ cl MintReflection\Source\_UnityBuild.cpp /c /Fo_intermediate\MintReflection\ /Fd
 cl MintLanguage\Source\_UnityBuild.cpp /c /Fo_intermediate\MintLanguage\ /Fd_output\MintLanguage.pdb
 cl MintRenderingBase\Source\_UnityBuild.cpp /c /Fo_intermediate\MintRenderingBase\ /Fd_output\MintRenderingBase.pdb
 cl MintRendering\Source\_UnityBuild.cpp /c /Fo_intermediate\MintRendering\ /Fd_output\MintRendering.pdb
+cl MintAudio\Source\_UnityBuild.cpp /c /Fo_intermediate\MintAudio\ /Fd_output\MintAudio.pdb
 cl MintPhysics\Source\_UnityBuild.cpp /c /Fo_intermediate\MintPhysics\ /Fd_output\MintPhysics.pdb
 cl MintGame\Source\_UnityBuild.cpp /c /Fo_intermediate\MintGame\ /Fd_output\MintGame.pdb
 
@@ -61,13 +63,14 @@ lib _intermediate\MintReflection\_UnityBuild.obj /OUT:_output\MintReflection.lib
 lib _intermediate\MintLanguage\_UnityBuild.obj /OUT:_output\MintLanguage.lib
 lib _intermediate\MintRenderingBase\_UnityBuild.obj /OUT:_output\MintRenderingBase.lib /LIBPATH:Externals\freetype_2_10_4\lib\ %MODED_LIBS%
 lib _intermediate\MintRendering\_UnityBuild.obj /OUT:_output\MintRendering.lib
+lib _intermediate\MintAudio\_UnityBuild.obj /OUT:_output\MintAudio.lib
 lib _intermediate\MintPhysics\_UnityBuild.obj /OUT:_output\MintPhysics.lib
 lib _intermediate\MintGame\_UnityBuild.obj /OUT:_output\MintGame.lib
 
 
 :### COMPILE AND LINK <MintLibrary>
 cl MintLibrary\Source\_UnityBuild.cpp -c /Fo_intermediate\MintLibrary\ /Fd_output
-lib _intermediate\MintLibrary\_UnityBuild.obj /OUT:_output\MintLibrary.lib _output\MintCommon.lib _output\MintContainer.lib _output\MintMath.lib _output\MintPlatform.lib _output\MintReflection.lib _output\MintLanguage.lib _output\MintRenderingBase.lib _output\MintRendering.lib _output\MintPhysics.lib _output\MintGame.lib
+lib _intermediate\MintLibrary\_UnityBuild.obj /OUT:_output\MintLibrary.lib _output\MintCommon.lib _output\MintContainer.lib _output\MintMath.lib _output\MintPlatform.lib _output\MintReflection.lib _output\MintLanguage.lib _output\MintRenderingBase.lib _output\MintRendering.lib _output\MintAudio.lib _output\MintPhysics.lib _output\MintGame.lib
 
 
 :### COMPILE THE FINAL EXECUTABLE!

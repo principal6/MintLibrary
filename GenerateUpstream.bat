@@ -3,6 +3,7 @@ echo Generate /Upstream directory, containing files for importing MintLibrary
 
 : Project Directories
 robocopy ./ Upstream/MintLibrary stdafx.h
+robocopy MintAudio Upstream/MintLibrary/MintAudio /S
 robocopy MintCommon Upstream/MintLibrary/MintCommon /S
 robocopy MintContainer Upstream/MintLibrary/MintContainer /S
 robocopy MintGame Upstream/MintLibrary/MintGame /S

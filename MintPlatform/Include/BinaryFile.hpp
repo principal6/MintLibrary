@@ -93,6 +93,12 @@ namespace mint
 		return _binaryPointerReader.Skip(count);
 	}
 
+	template <typename T>
+	MINT_INLINE bool BinaryFileReader::CanRead() const noexcept
+	{
+		return _binaryPointerReader.CanRead(sizeof(T));
+	}
+
 	MINT_INLINE bool BinaryFileReader::CanRead(const uint32 count) const noexcept
 	{
 		return _binaryPointerReader.CanRead(count);

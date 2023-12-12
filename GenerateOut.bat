@@ -6,6 +6,7 @@ robocopy Assets Out/MintLibrary/Include/Assets /S
 
 : Include Directory
 robocopy ./ Out/MintLibrary/Include stdafx.h
+robocopy MintAudio/Include Out/MintLibrary/Include/MintAudio/Include /S
 robocopy MintCommon/Include Out/MintLibrary/Include/MintCommon/Include /S
 robocopy MintContainer/Include Out/MintLibrary/Include/MintContainer/Include /S
 robocopy MintGame/Include Out/MintLibrary/Include/MintGame/Include /S
@@ -19,6 +20,7 @@ robocopy MintRendering/Include Out/MintLibrary/Include/MintRendering/Include /S
 robocopy MintRenderingBase/Include Out/MintLibrary/Include/MintRenderingBase/Include /S
 
 : Lib Directory (DEBUG)
+robocopy _output/Debug Out/MintLibrary/Lib/Debug MintAudio.lib
 robocopy _output/Debug Out/MintLibrary/Lib/Debug MintCommon.lib
 robocopy _output/Debug Out/MintLibrary/Lib/Debug MintContainer.lib
 robocopy _output/Debug Out/MintLibrary/Lib/Debug MintGame.lib
@@ -32,6 +34,7 @@ robocopy _output/Debug Out/MintLibrary/Lib/Debug MintRendering.lib
 robocopy _output/Debug Out/MintLibrary/Lib/Debug MintRenderingBase.lib
 
 : Lib Directory (RELEASE)
+robocopy _output/Release Out/MintLibrary/Lib/Release MintAudio.lib
 robocopy _output/Release Out/MintLibrary/Lib/Release MintCommon.lib
 robocopy _output/Release Out/MintLibrary/Lib/Release MintContainer.lib
 robocopy _output/Release Out/MintLibrary/Lib/Release MintGame.lib
