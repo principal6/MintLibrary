@@ -23,13 +23,13 @@ namespace mint
 
 namespace mint
 {
-	class AudioItem
+	class AudioObject
 	{
 		friend AudioSystem;
 
 	public:
-		AudioItem();
-		~AudioItem();
+		AudioObject();
+		~AudioObject();
 		bool Play();
 		void Stop();
 
@@ -52,8 +52,8 @@ namespace mint
 		AudioSystem();
 		~AudioSystem();
 
-		bool LoadAudioMP3(const StringA& fileName, AudioItem& audioItem);
-		bool LoadAudioWAV(const StringA& fileName, AudioItem& audioItem);
+		bool LoadAudioMP3(const StringA& fileName, AudioObject& audioObject);
+		bool LoadAudioWAV(const StringA& fileName, AudioObject& audioObject);
 
 	private:
 		bool FindChunk(BinaryPointerReader& binaryPointerReader, DWORD fourCC, DWORD& outChunkSize, DWORD& outChunkDataPosition);

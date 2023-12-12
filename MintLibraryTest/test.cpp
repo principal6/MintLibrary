@@ -55,10 +55,10 @@ int main()
 #endif
 
 	AudioSystem audioSystem;
-	AudioItem audioItem0;
-	//audioSystem.LoadAudioWAV("Assets/Christmas_Jazz-SoundStreet.wav", audioItem0);
-	audioSystem.LoadAudioMP3("Assets/Christmas_Jazz-SoundStreet.mp3", audioItem0);
-	audioItem0.Play();
+	AudioObject audioObject0;
+	//audioSystem.LoadAudioWAV("Assets/Christmas_Jazz-SoundStreet.wav", audioObject0);
+	audioSystem.LoadAudioMP3("Assets/Christmas_Jazz-SoundStreet.mp3", audioObject0);
+	audioObject0.Play();
 
 	Run2DTestWindow(window, graphicDevice);
 	//Run3DTestWindow(window, graphicDevice);
@@ -143,7 +143,7 @@ bool Run3DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 
 	Object* const testObject = objectPool.CreateObject();
 	CameraObject* const testCameraObject = objectPool.CreateCameraObject();
-	Float2 windowSize = graphicDevice.GetWindowSizeFloat2();
+	Float2 windowSize{ graphicDevice.GetWindowSize() };
 	testCameraObject->SetPerspectiveZRange(0.01f, 1000.0f);
 	testCameraObject->SetPerspectiveScreenRatio(windowSize._x / windowSize._y);
 	{
@@ -254,7 +254,7 @@ bool Run3DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 
 		if (window.IsResized())
 		{
-			objectPool.UpdateScreenSize(graphicDevice.GetWindowSizeFloat2());
+			objectPool.UpdateScreenSize(Float2(graphicDevice.GetWindowSize()));
 		}
 
 		testCameraObject->Steer(inputContext, false);

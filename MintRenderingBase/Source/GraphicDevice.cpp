@@ -451,7 +451,11 @@ namespace mint
 		bool GraphicDevice::InitializeBackBuffer()
 		{
 			ComPtr<ID3D11Texture2D> backBuffer;
-			_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(backBuffer.ReleaseAndGetAddressOf()));
+			if (FAILED(_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(backBuffer.ReleaseAndGetAddressOf()))))
+			{
+				MINT_LOG_ERROR("BackBuffer 를 얻어오는 데 실패했습니다!");
+				return false;
+			}
 
 			if (FAILED(_device->CreateRenderTargetView(backBuffer.Get(), nullptr, _backBufferRtv.ReleaseAndGetAddressOf())))
 			{
@@ -726,7 +730,7 @@ namespace mint
 
 		void GraphicDevice::Initialize2DProjectionMatrix() noexcept
 		{
-			const Float2& windowSize = GetWindowSizeFloat2();
+			const Float2 windowSize{ GetWindowSize() };
 			_cbViewData._cb2DProjectionMatrix = Float4x4::ProjectionMatrix2DFromTopLeft(windowSize._x, windowSize._y);
 			_cbViewData._cbViewProjectionMatrix = _cbViewData._cb2DProjectionMatrix * _cbViewData._cbViewMatrix;
 
@@ -747,11 +751,6 @@ namespace mint
 		const Int2& GraphicDevice::GetWindowSize() const noexcept
 		{
 			return _window.GetSize();
-		}
-
-		Float2 GraphicDevice::GetWindowSizeFloat2() const noexcept
-		{
-			return Float2(GetWindowSize());
 		}
 
 		Window& GraphicDevice::AccessWindow() noexcept

@@ -21,8 +21,8 @@ namespace mint
 #define fourccWAVE	'EVAW'
 
 
-#pragma region AudioItem
-	AudioItem::AudioItem()
+#pragma region AudioObject
+	AudioObject::AudioObject()
 		: _bitsPerSample{ 0 }
 		, _samplesPerSec{ 0 }
 		, _channelCount{ 0 }
@@ -32,7 +32,7 @@ namespace mint
 	{
 		__noop;
 	}
-	AudioItem::~AudioItem()
+	AudioObject::~AudioObject()
 	{
 		if (_sourceVoice != nullptr)
 		{
@@ -40,7 +40,7 @@ namespace mint
 			_sourceVoice->DestroyVoice();
 		}
 	}
-	bool AudioItem::Play()
+	bool AudioObject::Play()
 	{
 		if (_sourceVoice == nullptr)
 			return false;
@@ -48,7 +48,7 @@ namespace mint
 		_sourceVoice->Start();
 		return true;
 	}
-	void AudioItem::Stop()
+	void AudioObject::Stop()
 	{
 		if (_sourceVoice == nullptr)
 			return;
@@ -95,7 +95,7 @@ namespace mint
 		::CoUninitialize();
 	}
 
-	bool AudioSystem::LoadAudioMP3(const StringA& fileName, AudioItem& audioItem)
+	bool AudioSystem::LoadAudioMP3(const StringA& fileName, AudioObject& audioObject)
 	{
 		mp3dec_t mp3d{};
 		mp3dec_file_info_t info{};
@@ -107,10 +107,10 @@ namespace mint
 		}
 
 		const uint32 bytesPerSample = static_cast<uint32>(sizeof(mp3d_sample_t));
-		audioItem._byteLength = static_cast<uint32>(info.samples * bytesPerSample);
-		audioItem._audioDataBuffer.Resize(audioItem._byteLength);
+		audioObject._byteLength = static_cast<uint32>(info.samples * bytesPerSample);
+		audioObject._audioDataBuffer.Resize(audioObject._byteLength);
 		{
-			::memcpy(&audioItem._audioDataBuffer[0], info.buffer, audioItem._byteLength);
+			::memcpy(&audioObject._audioDataBuffer[0], info.buffer, audioObject._byteLength);
 			::free(info.buffer);
 			info.buffer = nullptr;
 		}
@@ -123,34 +123,34 @@ namespace mint
 		waveFormatExt.Format.nBlockAlign = waveFormatExt.Format.nChannels * bytesPerSample;
 		waveFormatExt.Format.nAvgBytesPerSec = waveFormatExt.Format.nSamplesPerSec * bytesPerSample * waveFormatExt.Format.nChannels;
 
-		audioItem._bitsPerSample = waveFormatExt.Format.wBitsPerSample;
-		audioItem._samplesPerSec = waveFormatExt.Format.nSamplesPerSec;
-		audioItem._channelCount = waveFormatExt.Format.nChannels;
-		const uint32 bytesPerSec = audioItem._samplesPerSec * bytesPerSample;
-		audioItem._lengthSec = static_cast<float>(audioItem._byteLength) / (bytesPerSec * audioItem._channelCount);
+		audioObject._bitsPerSample = waveFormatExt.Format.wBitsPerSample;
+		audioObject._samplesPerSec = waveFormatExt.Format.nSamplesPerSec;
+		audioObject._channelCount = waveFormatExt.Format.nChannels;
+		const uint32 bytesPerSec = audioObject._samplesPerSec * bytesPerSample;
+		audioObject._lengthSec = static_cast<float>(audioObject._byteLength) / (bytesPerSec * audioObject._channelCount);
 
 		XAUDIO2_BUFFER buffer{};
-		buffer.AudioBytes = audioItem._byteLength;
-		buffer.pAudioData = &audioItem._audioDataBuffer[0];
+		buffer.AudioBytes = audioObject._byteLength;
+		buffer.pAudioData = &audioObject._audioDataBuffer[0];
 		buffer.Flags = XAUDIO2_END_OF_STREAM; // tell the source voice not to expect any data after this buffer
 
-		if (FAILED(_xAudio2->CreateSourceVoice(&audioItem._sourceVoice, (WAVEFORMATEX*)&waveFormatExt)))
+		if (FAILED(_xAudio2->CreateSourceVoice(&audioObject._sourceVoice, (WAVEFORMATEX*)&waveFormatExt)))
 		{
 			return false;
 		}
 
-		if (FAILED(audioItem._sourceVoice->SubmitSourceBuffer(&buffer)))
+		if (FAILED(audioObject._sourceVoice->SubmitSourceBuffer(&buffer)))
 		{
 			return false;
 		}
 
-		audioItem._fileName = fileName;
+		audioObject._fileName = fileName;
 		return true;
 	}
 
-	bool AudioSystem::LoadAudioWAV(const StringA& fileName, AudioItem& audioItem)
+	bool AudioSystem::LoadAudioWAV(const StringA& fileName, AudioObject& audioObject)
 	{
-		audioItem._fileName.Clear();
+		audioObject._fileName.Clear();
 
 		BinaryFileReader binaryFileReader;
 		if (binaryFileReader.Open(fileName.CString()) == false)
@@ -172,32 +172,32 @@ namespace mint
 		ReadChunkData(binaryPointerReader, &waveFormatExt, chunkSize, chunkPosition);
 
 		FindChunk(binaryPointerReader, fourccDATA, chunkSize, chunkPosition);
-		audioItem._byteLength = chunkSize;
-		audioItem._audioDataBuffer.Resize(audioItem._byteLength);
-		ReadChunkData(binaryPointerReader, &audioItem._audioDataBuffer[0], chunkSize, chunkPosition);
+		audioObject._byteLength = chunkSize;
+		audioObject._audioDataBuffer.Resize(audioObject._byteLength);
+		ReadChunkData(binaryPointerReader, &audioObject._audioDataBuffer[0], chunkSize, chunkPosition);
 
-		audioItem._bitsPerSample = waveFormatExt.Format.wBitsPerSample;
-		audioItem._samplesPerSec = waveFormatExt.Format.nSamplesPerSec;
-		audioItem._channelCount = waveFormatExt.Format.nChannels;
-		const uint32 bytesPerSample = audioItem._bitsPerSample / 8;
-		const uint32 bytesPerSec = audioItem._samplesPerSec * bytesPerSample;
-		audioItem._lengthSec = static_cast<float>(audioItem._byteLength) / (bytesPerSec * audioItem._channelCount);
+		audioObject._bitsPerSample = waveFormatExt.Format.wBitsPerSample;
+		audioObject._samplesPerSec = waveFormatExt.Format.nSamplesPerSec;
+		audioObject._channelCount = waveFormatExt.Format.nChannels;
+		const uint32 bytesPerSample = audioObject._bitsPerSample / 8;
+		const uint32 bytesPerSec = audioObject._samplesPerSec * bytesPerSample;
+		audioObject._lengthSec = static_cast<float>(audioObject._byteLength) / (bytesPerSec * audioObject._channelCount);
 
 		XAUDIO2_BUFFER buffer{};
-		buffer.AudioBytes = audioItem._byteLength;
-		buffer.pAudioData = &audioItem._audioDataBuffer[0];
+		buffer.AudioBytes = audioObject._byteLength;
+		buffer.pAudioData = &audioObject._audioDataBuffer[0];
 		buffer.Flags = XAUDIO2_END_OF_STREAM; // tell the source voice not to expect any data after this buffer
-		if (FAILED(_xAudio2->CreateSourceVoice(&audioItem._sourceVoice, (WAVEFORMATEX*)&waveFormatExt)))
+		if (FAILED(_xAudio2->CreateSourceVoice(&audioObject._sourceVoice, (WAVEFORMATEX*)&waveFormatExt)))
 		{
 			return false;
 		}
 
-		if (FAILED(audioItem._sourceVoice->SubmitSourceBuffer(&buffer)))
+		if (FAILED(audioObject._sourceVoice->SubmitSourceBuffer(&buffer)))
 		{
 			return false;
 		}
 
-		audioItem._fileName = fileName;
+		audioObject._fileName = fileName;
 		return true;
 	}
 

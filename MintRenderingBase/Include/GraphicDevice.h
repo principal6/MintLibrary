@@ -183,7 +183,6 @@ namespace mint
 			ID3D11Device* GetDxDevice() noexcept;
 			ID3D11DeviceContext* GetDxDeviceContext() noexcept;
 			const Int2& GetWindowSize() const noexcept;
-			Float2 GetWindowSizeFloat2() const noexcept;
 			Window& AccessWindow() noexcept;
 			const Window& GetWindow() const noexcept;
 
