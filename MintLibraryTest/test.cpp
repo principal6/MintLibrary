@@ -71,6 +71,7 @@ bool Run2DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 	using namespace mint;
 	using namespace Rendering;
 	using namespace Physics;
+	using namespace Game;
 
 	ImageRenderer imageRenderer{ graphicDevice, 1, ByteColor(0, 0, 0, 0) };
 	ByteColorImage byteColorImage;
@@ -80,11 +81,31 @@ bool Run2DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 	const GraphicObjectID textureID = resourcePool.AddTexture2D(DxTextureFormat::R8G8B8A8_UNORM, byteColorImage.GetBytes(), byteColorImage.GetWidth(), byteColorImage.GetHeight());
 	resourcePool.GetResource(textureID).BindToShader(GraphicShaderType::PixelShader, 1);
 
-	Shape circleShape;
-	ShapeGenerator::GenerateCircle(32.0f, 16, ByteColor(0, 0, 255), circleShape);
-	ConvexCollisionShape2D circleCollisionShape = ConvexCollisionShape2D::MakeFromRenderingShape(Float2::kZero, circleShape);
+	
+	//ConvexCollisionShape2D circleCollisionShape = ConvexCollisionShape2D::MakeFromRenderingShape(Float2::kZero, circleShape);
 	const InputContext& inputContext = InputContext::GetInstance();
 	ShapeRendererContext& shapeRendererContext = graphicDevice.GetShapeRendererContext();
+
+	ObjectRenderer objectRenderer{ graphicDevice };
+	ObjectPool objectPool;
+	Object* const object0 = objectPool.CreateObject();
+	{
+		Mesh2DComponent* mesh2DComponent = objectPool.CreateMesh2DComponent();
+		Shape shape;
+		ShapeGenerator::GenerateCircle(32.0f, 16, ByteColor(0, 0, 255), shape);
+		mesh2DComponent->SetShape(shape);
+		mesh2DComponent->_position = Float2(100, 100);
+		object0->AttachComponent(mesh2DComponent);
+	}
+	Object* const object1 = objectPool.CreateObject();
+	{
+		Mesh2DComponent* mesh2DComponent = objectPool.CreateMesh2DComponent();
+		Shape shape;
+		ShapeGenerator::GenerateRectangle(Float2(100, 50), ByteColor(0, 128, 255), shape);
+		mesh2DComponent->SetShape(shape);
+		mesh2DComponent->_position = Float2(200, 100);
+		object1->AttachComponent(mesh2DComponent);
+	}
 	while (window.IsRunning() == true)
 	{
 		if (inputContext.IsKeyPressed())
@@ -119,10 +140,10 @@ bool Run2DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 		{
 			graphicDevice.BeginRendering();
 
-			//shapeRendererContext.SetPosition(Float4(100, 100, 0, 0));
-			//shapeRendererContext.AddShape(circleShape);
-			circleCollisionShape._center = Float2(100, 100);
-			circleCollisionShape.DebugDrawShape(shapeRendererContext, ByteColor(127, 0, 0, 127));
+			//circleCollisionShape._center = Float2(100, 100);
+			//circleCollisionShape.DebugDrawShape(shapeRendererContext, ByteColor(127, 0, 0, 127));
+
+			objectRenderer.Render(objectPool);
 
 			imageRenderer.DrawImage(Float2(50, 50), Float2(80, 20), Float2(0, 0), Float2(1, 1));
 			imageRenderer.Render();
@@ -143,11 +164,11 @@ bool Run3DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 	using namespace GUI;
 	using namespace Game;
 
-	MeshRenderer meshRenderer{ graphicDevice };
+	ObjectRenderer objectRenderer{ graphicDevice };
 	InstantRenderer instantRenderer{ graphicDevice };
-	ObjectPool objectPool;
 	const InputContext& inputContext = InputContext::GetInstance();
 
+	ObjectPool objectPool;
 	Object* const testObject = objectPool.CreateObject();
 	CameraObject* const testCameraObject = objectPool.CreateCameraObject();
 	Float2 windowSize{ graphicDevice.GetWindowSize() };
@@ -275,7 +296,7 @@ bool Run3DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 
 			graphicDevice.SetViewProjectionMatrix(testCameraObject->GetViewMatrix(), testCameraObject->GetProjectionMatrix());
 
-			meshRenderer.Render(objectPool);
+			objectRenderer.Render(objectPool);
 
 			instantRenderer.Render();
 

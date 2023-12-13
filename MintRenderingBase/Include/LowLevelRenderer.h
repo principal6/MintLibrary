@@ -22,8 +22,14 @@ namespace mint
 	{
 		class GraphicDevice;
 		struct MeshData;
+		struct Shape;
+	}
+}
 
-
+namespace mint
+{
+	namespace Rendering
+	{
 		enum class RenderingPrimitive
 		{
 			INVALID,
@@ -32,7 +38,6 @@ namespace mint
 		};
 
 		static constexpr uint32 kVertexOffSetZero = 0;
-
 
 		template <typename T>
 		class LowLevelRenderer
@@ -99,6 +104,7 @@ namespace mint
 			uint32 GetIndexCount() const noexcept;
 
 		public:
+			void PushShape(const Shape& shape) noexcept;
 			void PushMesh(const MeshData& meshData) noexcept;
 
 		public:

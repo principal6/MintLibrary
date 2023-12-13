@@ -9,6 +9,7 @@ namespace mint
 {
 	namespace Game
 	{
+#pragma region MeshComponent
 		MeshComponent::MeshComponent()
 			: TransformComponent(ObjectComponentType::MeshComponent)
 			, _shouldDrawNormals{ false }
@@ -70,5 +71,27 @@ namespace mint
 		{
 			return _shouldDrawEdges;
 		}
+#pragma endregion
+
+
+#pragma region Mesh2DComponent
+		Mesh2DComponent::Mesh2DComponent()
+		{
+		}
+
+		Mesh2DComponent::~Mesh2DComponent()
+		{
+		}
+
+		void Mesh2DComponent::SetShape(const Rendering::Shape& shape)
+		{
+			_shape = shape;
+		}
+
+		const Rendering::Shape& Mesh2DComponent::GetShape() const noexcept
+		{
+			return _shape;
+		}
+#pragma endregion
 	}
 }

@@ -7,6 +7,7 @@
 
 #include <MintRenderingBase/Include/GraphicDevice.h>
 #include <MintRenderingBase/Include/MeshData.h>
+#include <MintRenderingBase/Include/ShapeGenerator.h>
 
 #include <MintLibrary/Include/Algorithm.hpp>
 
@@ -51,23 +52,44 @@ namespace mint
 		}
 
 		template<typename T>
+		MINT_INLINE void LowLevelRenderer<T>::PushShape(const Shape& shape) noexcept
+		{
+			const uint32 vertexCount = shape._vertices.Size();
+			const uint32 indexCount = shape._indices.Size();
+			for (uint32 i = 0; i < vertexCount; ++i)
+			{
+				_vertices.PushBack(shape._vertices[i]);
+			}
+
+			// 여러 Shape 가 Push 될 경우, 추가되는 Shape 의 vertex index 가
+			// 바로 이전 Shape 의 마지막 vertex index 이후부터 시작되도록 보장한다.
+			IndexElementType indexBase = GetIndexBaseXXX();
+			for (uint32 i = 0; i < indexCount; ++i)
+			{
+				_indices.PushBack(indexBase + shape._indices[i]);
+			}
+			SetIndexBaseXXX(indexBase + vertexCount);
+		}
+
+		template<typename T>
 		MINT_INLINE void LowLevelRenderer<T>::PushMesh(const MeshData& meshData) noexcept
 		{
 			const uint32 vertexCount = meshData.GetVertexCount();
 			const uint32 indexCount = meshData.GetIndexCount();
+
 			const VS_INPUT* const meshVertices = meshData.GetVertices();
 			const IndexElementType* const meshIndices = meshData.GetIndices();
-			for (uint32 vertexIter = 0; vertexIter < vertexCount; ++vertexIter)
+			for (uint32 i = 0; i < vertexCount; ++i)
 			{
-				_vertices.PushBack(meshVertices[vertexIter]);
+				_vertices.PushBack(meshVertices[i]);
 			}
 
-			// 여러 메시가 push 될 경우, 추가되는 메시의 vertex index 가
-			// 바로 이전 메시의 마지막 vertex index 이후부터 시작되도록 보장한다.
+			// 여러 Mesh 가 Push 될 경우, 추가되는 Mesh 의 vertex index 가
+			// 바로 이전 Mesh 의 마지막 vertex index 이후부터 시작되도록 보장한다.
 			IndexElementType indexBase = GetIndexBaseXXX();
-			for (uint32 indexIter = 0; indexIter < indexCount; ++indexIter)
+			for (uint32 i = 0; i < indexCount; ++i)
 			{
-				_indices.PushBack(indexBase + meshIndices[indexIter]);
+				_indices.PushBack(indexBase + meshIndices[i]);
 			}
 			SetIndexBaseXXX(indexBase + vertexCount);
 		}

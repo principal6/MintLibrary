@@ -31,11 +31,11 @@ namespace mint
 {
 	namespace Game
 	{
-		class MeshRenderer final
+		class ObjectRenderer final
 		{
 		public:
-			MeshRenderer(Rendering::GraphicDevice& graphicDevice);
-			~MeshRenderer();
+			ObjectRenderer(Rendering::GraphicDevice& graphicDevice);
+			~ObjectRenderer();
 
 		public:
 			void Render(const ObjectPool& objectPool) noexcept;

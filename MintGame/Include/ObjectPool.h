@@ -17,6 +17,7 @@ namespace mint
 		class GraphicDevice;
 		class TransformComponent;
 		class MeshComponent;
+		class Mesh2DComponent;
 		class CameraObject;
 		class DeltaTimer;
 	}
@@ -45,6 +46,7 @@ namespace mint
 		public:
 			TransformComponent* CreateTransformComponent();
 			MeshComponent* CreateMeshComponent();
+			Mesh2DComponent* CreateMesh2DComponent();
 
 		public:
 			void DestroyObjectComponents(Object& object);
@@ -59,6 +61,7 @@ namespace mint
 
 		public:
 			const Vector<MeshComponent*>& GetMeshComponents() const noexcept;
+			const Vector<Mesh2DComponent*>& GetMesh2DComponents() const noexcept;
 
 		public:
 			uint32 GetObjectCount() const noexcept;
@@ -72,6 +75,7 @@ namespace mint
 
 		private:
 			Vector<MeshComponent*> _meshComponentArray;
+			Vector<Mesh2DComponent*> _mesh2DComponentArray;
 		};
 	}
 }

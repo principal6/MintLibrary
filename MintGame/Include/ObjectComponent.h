@@ -30,7 +30,9 @@ namespace mint
 		{
 			Invalid,
 			TransformComponent,
+			Transform2DComponent,
 			MeshComponent,
+			Mesh2DComponent,
 		};
 
 

@@ -71,6 +71,13 @@ namespace mint
 			_meshComponentArray.PushBack(std::move(result));
 			return _meshComponentArray.Back();
 		}
+		
+		MINT_INLINE Mesh2DComponent* ObjectPool::CreateMesh2DComponent()
+		{
+			Mesh2DComponent* result = MINT_NEW(Mesh2DComponent);
+			_mesh2DComponentArray.PushBack(std::move(result));
+			return _mesh2DComponentArray.Back();
+		}
 
 		MINT_INLINE void ObjectPool::DestroyObjectComponents(Object& object)
 		{
@@ -161,6 +168,11 @@ namespace mint
 		MINT_INLINE const Vector<MeshComponent*>& ObjectPool::GetMeshComponents() const noexcept
 		{
 			return _meshComponentArray;
+		}
+		
+		MINT_INLINE const Vector<Mesh2DComponent*>& ObjectPool::GetMesh2DComponents() const noexcept
+		{
+			return _mesh2DComponentArray;
 		}
 
 		MINT_INLINE uint32 ObjectPool::GetObjectCount() const noexcept

@@ -10,7 +10,7 @@
 #include <MintGame/Include/ObjectPool.h>
 #include <MintGame/Include/CameraObject.h>
 #include <MintGame/Include/MeshComponent.h>
-#include <MintGame/Include/MeshRenderer.h>
+#include <MintGame/Include/ObjectRenderer.h>
 #include <MintGame/Include/Animation/AnimationCore.h>
 
 

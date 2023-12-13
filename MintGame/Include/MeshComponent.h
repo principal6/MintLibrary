@@ -9,6 +9,7 @@
 
 #include <MintRenderingBase/Include/RenderingBaseCommon.h>
 #include <MintRenderingBase/Include/MeshData.h>
+#include <MintRenderingBase/Include/ShapeGenerator.h>
 
 #include <MintRendering/Include/MeshGenerator.h>
 
@@ -42,6 +43,20 @@ namespace mint
 			Rendering::MeshData _meshData;
 			bool _shouldDrawNormals;
 			bool _shouldDrawEdges;
+		};
+
+		class Mesh2DComponent final : public Transform2DComponent
+		{
+		public:
+			Mesh2DComponent();
+			virtual ~Mesh2DComponent();
+
+		public:
+			void SetShape(const Rendering::Shape& shape);
+			const Rendering::Shape& GetShape() const noexcept;
+
+		private:
+			Rendering::Shape _shape;
 		};
 	}
 }

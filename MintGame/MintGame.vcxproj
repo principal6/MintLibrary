@@ -175,7 +175,7 @@
     <ClInclude Include="Include\CameraObject.h" />
     <ClInclude Include="Include\DeltaTimer.h" />
     <ClInclude Include="Include\MeshComponent.h" />
-    <ClInclude Include="Include\MeshRenderer.h" />
+    <ClInclude Include="Include\ObjectRenderer.h" />
     <ClInclude Include="Include\Object.h" />
     <ClInclude Include="Include\ObjectComponent.h" />
     <ClInclude Include="Include\ObjectPool.h" />
@@ -207,7 +207,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="Source\MeshRenderer.cpp">
+    <ClCompile Include="Source\ObjectRenderer.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -230,6 +230,9 @@
   <ItemGroup>
     <ProjectReference Include="..\MintContainer\MintContainer.vcxproj">
       <Project>{0152168d-27a5-4c7d-be25-1310b5c023c9}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\MintPhysics\MintPhysics.vcxproj">
+      <Project>{b4c9e234-d622-434d-a085-acf5b2262e68}</Project>
     </ProjectReference>
     <ProjectReference Include="..\MintRendering\MintRendering.vcxproj">
       <Project>{14d785c7-0bd3-4fb4-b5f2-f6899ad37f8a}</Project>

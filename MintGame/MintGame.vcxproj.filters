@@ -45,7 +45,7 @@
     <ClInclude Include="Include\CameraObject.h">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="Include\MeshRenderer.h">
+    <ClInclude Include="Include\ObjectRenderer.h">
       <Filter>Include</Filter>
     </ClInclude>
     <ClInclude Include="Include\DeltaTimer.h">
@@ -71,7 +71,7 @@
     <ClCompile Include="Source\ObjectComponent.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Source\MeshRenderer.cpp">
+    <ClCompile Include="Source\ObjectRenderer.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\DeltaTimer.cpp">
