@@ -22,7 +22,7 @@ namespace mint
 {
 	namespace Rendering
 	{
-#define MINT_CHECK_STATE(a, b) if (a == b) { return; } a = b;
+#define MINT_COMPARE_SET_OR_RETURN(a, b) if (a == b) { return; } a = b;
 #define MINT_CHECK_TWO_STATES(a, aa, b, bb) if ((a == aa) && (b == bb)) { return; } a = aa; b = bb;
 
 
@@ -75,14 +75,14 @@ namespace mint
 
 		void GraphicDevice::StateManager::SetIAInputLayout(ID3D11InputLayout* const iaInputLayout) noexcept
 		{
-			MINT_CHECK_STATE(_iaInputLayout, iaInputLayout);
+			MINT_COMPARE_SET_OR_RETURN(_iaInputLayout, iaInputLayout);
 
 			_graphicDevice._deviceContext->IASetInputLayout(_iaInputLayout);
 		}
 
 		void GraphicDevice::StateManager::SetIARenderingPrimitive(const RenderingPrimitive iaRenderingPrimitive) noexcept
 		{
-			MINT_CHECK_STATE(_iaRenderingPrimitive, iaRenderingPrimitive);
+			MINT_COMPARE_SET_OR_RETURN(_iaRenderingPrimitive, iaRenderingPrimitive);
 
 			switch (iaRenderingPrimitive)
 			{
@@ -112,170 +112,178 @@ namespace mint
 
 		void GraphicDevice::StateManager::SetRSRasterizerState(ID3D11RasterizerState* const rsRasterizerState) noexcept
 		{
-			MINT_CHECK_STATE(_rsRasterizerState, rsRasterizerState);
+			MINT_COMPARE_SET_OR_RETURN(_rsRasterizerState, rsRasterizerState);
 
 			_graphicDevice._deviceContext->RSSetState(_rsRasterizerState);
 		}
 
 		void GraphicDevice::StateManager::SetRSViewport(const D3D11_VIEWPORT rsViewport) noexcept
 		{
-			MINT_CHECK_STATE(_rsViewport, rsViewport);
+			MINT_COMPARE_SET_OR_RETURN(_rsViewport, rsViewport);
 
 			_graphicDevice._deviceContext->RSSetViewports(1, &rsViewport);
 		}
 
 		void GraphicDevice::StateManager::SetRSScissorRectangle(const D3D11_RECT rsScissorRectangle) noexcept
 		{
-			MINT_CHECK_STATE(_rsScissorRectangle, rsScissorRectangle);
+			MINT_COMPARE_SET_OR_RETURN(_rsScissorRectangle, rsScissorRectangle);
 
 			_graphicDevice._deviceContext->RSSetScissorRects(1, &rsScissorRectangle);
 		}
 
 		void GraphicDevice::StateManager::SetVSShader(ID3D11VertexShader* const shader) noexcept
 		{
-			MINT_CHECK_STATE(_vsShader, shader);
+			MINT_COMPARE_SET_OR_RETURN(_vsShader, shader);
 
 			_graphicDevice._deviceContext->VSSetShader(shader, nullptr, 0);
 		}
 
 		void GraphicDevice::StateManager::SetGSShader(ID3D11GeometryShader* const shader) noexcept
 		{
-			MINT_CHECK_STATE(_gsShader, shader);
+			MINT_COMPARE_SET_OR_RETURN(_gsShader, shader);
 
 			_graphicDevice._deviceContext->GSSetShader(shader, nullptr, 0);
 		}
 
 		void GraphicDevice::StateManager::SetPSShader(ID3D11PixelShader* const shader) noexcept
 		{
-			MINT_CHECK_STATE(_psShader, shader);
+			MINT_COMPARE_SET_OR_RETURN(_psShader, shader);
 
 			_graphicDevice._deviceContext->PSSetShader(shader, nullptr, 0);
 		}
 
-		void GraphicDevice::StateManager::SetVSResources(const DxResource& resource, uint32 bindingSlot) noexcept
+		void GraphicDevice::StateManager::SetShaderResources(GraphicShaderType graphicShaderType, const DxResource* resource, uint32 bindingSlot) noexcept
 		{
+			Vector<GraphicObjectID>* shaderResourceIDs = nullptr;
+			if (graphicShaderType == GraphicShaderType::VertexShader)
+			{
+				shaderResourceIDs = &_vsShaderResourceIDs;
+			}
+			else if (graphicShaderType == GraphicShaderType::GeometryShader)
+			{
+				shaderResourceIDs = &_gsShaderResourceIDs;
+			}
+			else if (graphicShaderType == GraphicShaderType::PixelShader)
+			{
+				shaderResourceIDs = &_psShaderResourceIDs;
+			}
+
+			if (resource == nullptr)
+			{
+				MINT_ASSERT(bindingSlot < shaderResourceIDs->Size(), "반드시 호출자에서 보장해 주세요.");
+
+				(*shaderResourceIDs)[bindingSlot] = GraphicObjectID();
+
+				ID3D11ShaderResourceView* const nullSRVs[1]{ nullptr };
+				if (graphicShaderType == GraphicShaderType::VertexShader)
+				{
+					_graphicDevice._deviceContext->VSSetShaderResources(bindingSlot, 1, nullSRVs);
+				}
+				else if (graphicShaderType == GraphicShaderType::GeometryShader)
+				{
+					_graphicDevice._deviceContext->GSSetShaderResources(bindingSlot, 1, nullSRVs);
+				}
+				else if (graphicShaderType == GraphicShaderType::PixelShader)
+				{
+					_graphicDevice._deviceContext->PSSetShaderResources(bindingSlot, 1, nullSRVs);
+				}
+				return;
+			}
+
 			if (bindingSlot == kUint32Max)
 			{
-				bindingSlot = resource.GetRegisterIndex();
+				bindingSlot = resource->GetRegisterIndex();
 			}
 
-			Vector<GraphicObjectID>& shaderResources = _vsShaderResources;
-			if (shaderResources.Size() <= bindingSlot)
+			if (shaderResourceIDs->Size() <= bindingSlot)
 			{
-				shaderResources.Resize(bindingSlot + 1);
+				shaderResourceIDs->Resize(bindingSlot + 1);
 			}
-			if (resource.NeedsToBind() == true)
+			if (resource->NeedsToBind() == true)
 			{
-				shaderResources[bindingSlot] = GraphicObjectID();
+				(*shaderResourceIDs)[bindingSlot] = GraphicObjectID();
 			}
-			MINT_CHECK_STATE(shaderResources[bindingSlot], resource.GetID());
+			MINT_COMPARE_SET_OR_RETURN((*shaderResourceIDs)[bindingSlot], resource->GetID());
 
-			_graphicDevice._deviceContext->VSSetShaderResources(bindingSlot, 1, resource.GetResourceView());
+			if (graphicShaderType == GraphicShaderType::VertexShader)
+			{
+				_graphicDevice._deviceContext->VSSetShaderResources(bindingSlot, 1, resource->GetResourceView());
+			}
+			else if (graphicShaderType == GraphicShaderType::GeometryShader)
+			{
+				_graphicDevice._deviceContext->GSSetShaderResources(bindingSlot, 1, resource->GetResourceView());
+			}
+			else if (graphicShaderType == GraphicShaderType::PixelShader)
+			{
+				_graphicDevice._deviceContext->PSSetShaderResources(bindingSlot, 1, resource->GetResourceView());
+			}
 		}
 
-		void GraphicDevice::StateManager::SetGSResources(const DxResource& resource, uint32 bindingSlot) noexcept
+		void GraphicDevice::StateManager::SetConstantBuffers(GraphicShaderType graphicShaderType, const DxResource* constantBuffer, uint32 bindingSlot)
 		{
+			Vector<GraphicObjectID>* constantBufferIDs = nullptr;
+			if (graphicShaderType == GraphicShaderType::VertexShader)
+			{
+				constantBufferIDs = &_vsConstantBufferIDs;
+			}
+			else if (graphicShaderType == GraphicShaderType::GeometryShader)
+			{
+				constantBufferIDs = &_gsConstantBufferIDs;
+			}
+			else if (graphicShaderType == GraphicShaderType::PixelShader)
+			{
+				constantBufferIDs = &_psConstantBufferIDs;
+			}
+
+			if (constantBuffer == nullptr)
+			{
+				MINT_ASSERT(bindingSlot < constantBufferIDs->Size(), "반드시 호출자에서 보장해 주세요.");
+
+				(*constantBufferIDs)[bindingSlot] = GraphicObjectID();
+
+				ID3D11Buffer* const nullBuffers[1]{ nullptr };
+				if (graphicShaderType == GraphicShaderType::VertexShader)
+				{
+					_graphicDevice._deviceContext->VSSetConstantBuffers(bindingSlot, 1, nullBuffers);
+				}
+				else if (graphicShaderType == GraphicShaderType::GeometryShader)
+				{
+					_graphicDevice._deviceContext->GSSetConstantBuffers(bindingSlot, 1, nullBuffers);
+				}
+				else if (graphicShaderType == GraphicShaderType::PixelShader)
+				{
+					_graphicDevice._deviceContext->PSSetConstantBuffers(bindingSlot, 1, nullBuffers);
+				}
+				return;
+			}
+
 			if (bindingSlot == kUint32Max)
 			{
-				bindingSlot = resource.GetRegisterIndex();
+				bindingSlot = constantBuffer->GetRegisterIndex();
 			}
 
-			Vector<GraphicObjectID>& shaderResources = _gsShaderResources;
-			if (shaderResources.Size() <= bindingSlot)
+			if (constantBufferIDs->Size() <= bindingSlot)
 			{
-				shaderResources.Resize(bindingSlot + 1);
+				constantBufferIDs->Resize(bindingSlot + 1);
 			}
-			if (resource.NeedsToBind() == true)
+			if (constantBuffer->NeedsToBind() == true)
 			{
-				shaderResources[bindingSlot] = GraphicObjectID();
+				(*constantBufferIDs)[bindingSlot] = GraphicObjectID();
 			}
-			MINT_CHECK_STATE(shaderResources[bindingSlot], resource.GetID());
+			MINT_COMPARE_SET_OR_RETURN((*constantBufferIDs)[bindingSlot], constantBuffer->GetID());
 
-			_graphicDevice._deviceContext->GSSetShaderResources(bindingSlot, 1, resource.GetResourceView());
-		}
-
-		void GraphicDevice::StateManager::SetPSResources(const DxResource& resource, uint32 bindingSlot) noexcept
-		{
-			if (bindingSlot == kUint32Max)
+			if (graphicShaderType == GraphicShaderType::VertexShader)
 			{
-				bindingSlot = resource.GetRegisterIndex();
+				_graphicDevice._deviceContext->VSSetConstantBuffers(bindingSlot, 1, constantBuffer->GetBuffer());
 			}
-
-			Vector<GraphicObjectID>& shaderResources = _psShaderResources;
-			if (shaderResources.Size() <= bindingSlot)
+			else if (graphicShaderType == GraphicShaderType::GeometryShader)
 			{
-				shaderResources.Resize(bindingSlot + 1);
+				_graphicDevice._deviceContext->GSSetConstantBuffers(bindingSlot, 1, constantBuffer->GetBuffer());
 			}
-			if (resource.NeedsToBind() == true)
+			else if (graphicShaderType == GraphicShaderType::PixelShader)
 			{
-				shaderResources[bindingSlot] = GraphicObjectID();
+				_graphicDevice._deviceContext->PSSetConstantBuffers(bindingSlot, 1, constantBuffer->GetBuffer());
 			}
-			MINT_CHECK_STATE(shaderResources[bindingSlot], resource.GetID());
-
-			_graphicDevice._deviceContext->PSSetShaderResources(bindingSlot, 1, resource.GetResourceView());
-		}
-
-		void GraphicDevice::StateManager::SetVSConstantBuffers(const DxResource& constantBuffer, uint32 bindingSlot)
-		{
-			if (bindingSlot == kUint32Max)
-			{
-				bindingSlot = constantBuffer.GetRegisterIndex();
-			}
-
-			Vector<GraphicObjectID>& constantBuffers = _vsConstantBuffers;
-			if (constantBuffers.Size() <= bindingSlot)
-			{
-				constantBuffers.Resize(bindingSlot + 1);
-			}
-			if (constantBuffer.NeedsToBind() == true)
-			{
-				constantBuffers[bindingSlot] = GraphicObjectID();
-			}
-			MINT_CHECK_STATE(constantBuffers[bindingSlot], constantBuffer.GetID());
-
-			_graphicDevice._deviceContext->VSSetConstantBuffers(bindingSlot, 1, constantBuffer.GetBuffer());
-		}
-
-		void GraphicDevice::StateManager::SetGSConstantBuffers(const DxResource& constantBuffer, uint32 bindingSlot)
-		{
-			if (bindingSlot == kUint32Max)
-			{
-				bindingSlot = constantBuffer.GetRegisterIndex();
-			}
-
-			Vector<GraphicObjectID>& constantBuffers = _gsConstantBuffers;
-			if (constantBuffers.Size() <= bindingSlot)
-			{
-				constantBuffers.Resize(bindingSlot + 1);
-			}
-			if (constantBuffer.NeedsToBind() == true)
-			{
-				constantBuffers[bindingSlot] = GraphicObjectID();
-			}
-			MINT_CHECK_STATE(constantBuffers[bindingSlot], constantBuffer.GetID());
-
-			_graphicDevice._deviceContext->GSSetConstantBuffers(bindingSlot, 1, constantBuffer.GetBuffer());
-		}
-
-		void GraphicDevice::StateManager::SetPSConstantBuffers(const DxResource& constantBuffer, uint32 bindingSlot)
-		{
-			if (bindingSlot == kUint32Max)
-			{
-				bindingSlot = constantBuffer.GetRegisterIndex();
-			}
-
-			Vector<GraphicObjectID>& constantBuffers = _psConstantBuffers;
-			if (constantBuffers.Size() <= bindingSlot)
-			{
-				constantBuffers.Resize(bindingSlot + 1);
-			}
-			if (constantBuffer.NeedsToBind() == true)
-			{
-				constantBuffers[bindingSlot] = GraphicObjectID();
-			}
-			MINT_CHECK_STATE(constantBuffers[bindingSlot], constantBuffer.GetID());
-
-			_graphicDevice._deviceContext->PSSetConstantBuffers(bindingSlot, 1, constantBuffer.GetBuffer());
 		}
 
 

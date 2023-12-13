@@ -81,14 +81,8 @@ namespace mint
 				void SetPSShader(ID3D11PixelShader* const shader) noexcept;
 
 			public: // Resources
-				void SetVSResources(const DxResource& resource, uint32 bindingSlot) noexcept;
-				void SetGSResources(const DxResource& resource, uint32 bindingSlot) noexcept;
-				void SetPSResources(const DxResource& resource, uint32 bindingSlot) noexcept;
-
-			public: // Constant Buffers
-				void SetVSConstantBuffers(const DxResource& constantBuffer, uint32 bindingSlot);
-				void SetGSConstantBuffers(const DxResource& constantBuffer, uint32 bindingSlot);
-				void SetPSConstantBuffers(const DxResource& constantBuffer, uint32 bindingSlot);
+				void SetShaderResources(GraphicShaderType graphicShaderType, const DxResource* resource, uint32 bindingSlot) noexcept;
+				void SetConstantBuffers(GraphicShaderType graphicShaderType, const DxResource* constantBuffer, uint32 bindingSlot);
 
 			private:
 				GraphicDevice& _graphicDevice;
@@ -108,14 +102,14 @@ namespace mint
 				ID3D11PixelShader* _psShader;
 
 			private: // Resources
-				Vector<GraphicObjectID> _vsShaderResources;
-				Vector<GraphicObjectID> _gsShaderResources;
-				Vector<GraphicObjectID> _psShaderResources;
+				Vector<GraphicObjectID> _vsShaderResourceIDs;
+				Vector<GraphicObjectID> _gsShaderResourceIDs;
+				Vector<GraphicObjectID> _psShaderResourceIDs;
 
 			private: // Constant Buffers
-				Vector<GraphicObjectID> _vsConstantBuffers;
-				Vector<GraphicObjectID> _gsConstantBuffers;
-				Vector<GraphicObjectID> _psConstantBuffers;
+				Vector<GraphicObjectID> _vsConstantBufferIDs;
+				Vector<GraphicObjectID> _gsConstantBufferIDs;
+				Vector<GraphicObjectID> _psConstantBufferIDs;
 			};
 
 			friend SafeResourceMapper;

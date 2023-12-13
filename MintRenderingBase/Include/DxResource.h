@@ -96,6 +96,7 @@ namespace mint
 			bool NeedsToBind() const noexcept;
 			void BindAsInput() const noexcept;
 			void BindToShader(const GraphicShaderType shaderType, const uint32 bindingSlot) const noexcept;
+			void UnbindFromShader() const noexcept;
 
 		private:
 			ComPtr<ID3D11Resource> _resource;
@@ -117,6 +118,7 @@ namespace mint
 
 		private:
 			mutable bool _needToBind;
+			mutable uint32 _boundSlots[static_cast<uint32>(GraphicShaderType::COUNT)];
 
 		private:
 			static DxResource s_invalidInstance;

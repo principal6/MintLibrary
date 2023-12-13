@@ -55,8 +55,13 @@ namespace mint
 			, _textureHeight{ 0 }
 			, _registerIndex{ 0 }
 			, _needToBind{ true }
+			, _boundSlots{}
 		{
-			__noop;
+			for (GraphicShaderType shaderType = GraphicShaderType(0); shaderType != GraphicShaderType::COUNT; shaderType = (GraphicShaderType)((uint32)shaderType + 1))
+			{
+				const uint32 i = (uint32)shaderType;
+				_boundSlots[i] = kUint32Max;
+			}
 		}
 
 		bool DxResource::CreateBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount)
@@ -335,48 +340,44 @@ namespace mint
 		{
 			if (_resourceType == DxResourceType::ConstantBuffer)
 			{
-				if (shaderType == GraphicShaderType::VertexShader)
-				{
-					_graphicDevice.GetStateManager().SetVSConstantBuffers(*this, bindingSlot);
-				}
-				else if (shaderType == GraphicShaderType::GeometryShader)
-				{
-					_graphicDevice.GetStateManager().SetGSConstantBuffers(*this, bindingSlot);
-				}
-				else if (shaderType == GraphicShaderType::PixelShader)
-				{
-					_graphicDevice.GetStateManager().SetPSConstantBuffers(*this, bindingSlot);
-				}
-				else
-				{
-					MINT_LOG_ERROR("미지원 ShaderType 입니다!");
-				}
+				_graphicDevice.GetStateManager().SetConstantBuffers(shaderType, this, bindingSlot);
 			}
 			else if (_resourceType == DxResourceType::StructuredBuffer || DxResourceType::Texture2D <= _resourceType)
 			{
-				if (shaderType == GraphicShaderType::VertexShader)
-				{
-					_graphicDevice.GetStateManager().SetVSResources(*this, bindingSlot);
-				}
-				else if (shaderType == GraphicShaderType::GeometryShader)
-				{
-					_graphicDevice.GetStateManager().SetGSResources(*this, bindingSlot);
-				}
-				else if (shaderType == GraphicShaderType::PixelShader)
-				{
-					_graphicDevice.GetStateManager().SetPSResources(*this, bindingSlot);
-				}
-				else
-				{
-					MINT_LOG_ERROR("미지원 ShaderType 입니다!");
-				}
+				_graphicDevice.GetStateManager().SetShaderResources(shaderType, this, bindingSlot);
 			}
 			else
 			{
 				MINT_LOG_ERROR("bindAsInpt 을 호출해야 합니다!");
 			}
 
+			_boundSlots[static_cast<uint32>(shaderType)] = bindingSlot;
 			_needToBind = false;
+		}
+
+		void DxResource::UnbindFromShader() const noexcept
+		{
+			for (GraphicShaderType shaderType = GraphicShaderType(0); shaderType != GraphicShaderType::COUNT; shaderType = (GraphicShaderType)((uint32)shaderType + 1))
+			{
+				const uint32 i = (uint32)shaderType;
+				if (_boundSlots[i] == kUint32Max)
+				{
+					continue;
+				}
+
+				if (_resourceType == DxResourceType::ConstantBuffer)
+				{
+					_graphicDevice.GetStateManager().SetConstantBuffers(shaderType, nullptr, _boundSlots[i]);
+				}
+				else if (_resourceType == DxResourceType::StructuredBuffer || DxResourceType::Texture2D <= _resourceType)
+				{
+					_graphicDevice.GetStateManager().SetShaderResources(shaderType, nullptr, _boundSlots[i]);
+				}
+
+				_boundSlots[i] = kUint32Max;
+			}
+		
+			_needToBind = true;
 		}
 
 
@@ -466,7 +467,7 @@ namespace mint
 			if (resource.CreateTexture(format, textureContent, width, height) == true)
 			{
 				resource.AssignIDXXX();
-				
+
 				const GraphicObjectID graphicObjectID = resource.GetID();
 				_resourceArray.PushBack(std::move(resource));
 				QuickSort(_resourceArray, GraphicObject::AscendingComparator());

@@ -79,6 +79,13 @@ namespace mint
 						_lowLevelRenderer.Render(RenderingPrimitive::TriangleList);
 					}
 				}
+
+				shaderPool.UnbindShader(GraphicShaderType::VertexShader);
+				shaderPool.UnbindShader(GraphicShaderType::GeometryShader);
+				shaderPool.UnbindShader(GraphicShaderType::PixelShader);
+
+				cbTransform.UnbindFromShader();
+				sbMaterial.UnbindFromShader();
 			}
 
 			const Vector<Mesh2DComponent*>& mesh2DComponents = objectPool.GetMesh2DComponents();
