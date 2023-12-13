@@ -56,13 +56,8 @@ namespace mint
 		MINT_INLINE Object* ObjectPool::CreateObjectInternalXXX(Object* const object)
 		{
 			_objectArray.PushBack(object);
-			object->AttachComponent(CreateTransformComponent()); // 모든 Object는 TransformComponent 를 필수로 가집니다.
+			object->AttachComponent(MINT_NEW(TransformComponent)); // 모든 Object는 TransformComponent 를 필수로 가집니다.
 			return object;
-		}
-
-		MINT_INLINE TransformComponent* ObjectPool::CreateTransformComponent()
-		{
-			return MINT_NEW(TransformComponent);
 		}
 
 		MINT_INLINE MeshComponent* ObjectPool::CreateMeshComponent()

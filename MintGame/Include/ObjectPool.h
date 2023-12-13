@@ -44,7 +44,6 @@ namespace mint
 			Object* CreateObjectInternalXXX(Object* const object);
 
 		public:
-			TransformComponent* CreateTransformComponent();
 			MeshComponent* CreateMeshComponent();
 			Mesh2DComponent* CreateMesh2DComponent();
 
