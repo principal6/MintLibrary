@@ -73,7 +73,6 @@ bool Run2DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 	using namespace Physics;
 	using namespace Game;
 
-	ImageRenderer imageRenderer{ graphicDevice, 1, ByteColor(0, 0, 0, 0) };
 	ByteColorImage byteColorImage;
 	ImageLoader imageLoader;
 	imageLoader.LoadImage_("Assets/Test_image.png", byteColorImage);
@@ -82,9 +81,7 @@ bool Run2DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 	
 	//ConvexCollisionShape2D circleCollisionShape = ConvexCollisionShape2D::MakeFromRenderingShape(Float2::kZero, circleShape);
 	const InputContext& inputContext = InputContext::GetInstance();
-	ShapeRendererContext& shapeRendererContext = graphicDevice.GetShapeRendererContext();
 
-	ObjectRenderer objectRenderer{ graphicDevice };
 	ObjectPool objectPool;
 	Object* const object0 = objectPool.CreateObject();
 	{
@@ -104,6 +101,9 @@ bool Run2DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 		mesh2DComponent->_position = Float2(200, 100);
 		object1->AttachComponent(mesh2DComponent);
 	}
+
+	ObjectRenderer objectRenderer{ graphicDevice };
+	ImageRenderer imageRenderer{ graphicDevice, 1, ByteColor(0, 0, 0, 0) };
 	while (window.IsRunning() == true)
 	{
 		if (inputContext.IsKeyPressed())
