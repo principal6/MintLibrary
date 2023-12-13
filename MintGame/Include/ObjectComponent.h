@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 
-#ifndef _MINT_RENDERING_OBJECT_COMPONENT_H_
-#define _MINT_RENDERING_OBJECT_COMPONENT_H_
+#ifndef _MINT_GAME_OBJECT_COMPONENT_H_
+#define _MINT_GAME_OBJECT_COMPONENT_H_
 
 
 #include <MintCommon/Include/CommonDefinitions.h>
@@ -15,12 +15,17 @@
 
 namespace mint
 {
-	namespace Rendering
+	namespace Game
 	{
 		class Object;
-		class IObjectComponent;
+		class ObjectComponent;
+	}
+}
 
-
+namespace mint
+{
+	namespace Game
+	{
 		enum class ObjectComponentType
 		{
 			Invalid,
@@ -31,11 +36,11 @@ namespace mint
 
 		class ObjectComponentID final : public ID32
 		{
-			friend IObjectComponent;
+			friend ObjectComponent;
 		};
 
 
-		class IObjectComponent abstract
+		class ObjectComponent abstract
 		{
 			friend Object;
 
@@ -43,8 +48,8 @@ namespace mint
 			static std::atomic<uint32> _nextRawID;
 
 		public:
-			IObjectComponent(const ObjectComponentType type);
-			virtual ~IObjectComponent() { __noop; }
+			ObjectComponent(const ObjectComponentType type);
+			virtual ~ObjectComponent() { __noop; }
 
 		public:
 			MINT_INLINE ObjectComponentType GetType() const noexcept { return _type; }
@@ -61,4 +66,4 @@ namespace mint
 }
 
 
-#endif // !_MINT_RENDERING_OBJECT_COMPONENT_H_
+#endif // !_MINT_GAME_OBJECT_COMPONENT_H_

@@ -1,19 +1,18 @@
-#include <MintRenderingBase/Include/GUI/GUIControl.h>
+#include <MintGUI/Include/GUIControl.h>
 #include <MintContainer/Include/String.hpp>
 #include <MintRenderingBase/Include/GraphicDevice.h>
 #include <MintPhysics/Include/Intersection.hpp>
 
 
-#pragma optimize("", off)
-
-
 namespace mint
 {
-	namespace Rendering
+	namespace GUI
 	{
 #pragma region GUIControlComponent
-		void GUIControlTextComponent::Render(GraphicDevice& graphicDevice, const Float2& controlPosition, const GUIControlInteractionState& controlInteractionState) const
+		void GUIControlTextComponent::Render(Rendering::GraphicDevice& graphicDevice, const Float2& controlPosition, const GUIControlInteractionState& controlInteractionState) const
 		{
+			using namespace Rendering;
+
 			if (_text.IsEmpty())
 			{
 				return;
@@ -26,8 +25,10 @@ namespace mint
 			shapeRendererContext.DrawDynamicText(_text.CString(), controlPosition + _offset, fontRenderingOption);
 		}
 
-		void GUIControlShapeComponent::Render(GraphicDevice& graphicDevice, const Float2& controlPosition, const GUIControlInteractionState& controlInteractionState) const
+		void GUIControlShapeComponent::Render(Rendering::GraphicDevice& graphicDevice, const Float2& controlPosition, const GUIControlInteractionState& controlInteractionState) const
 		{
+			using namespace Rendering;
+
 			ShapeRendererContext& shapeRendererContext = graphicDevice.GetShapeRendererContext();
 			const Float4 controlPosition4{ controlPosition };
 			shapeRendererContext.SetPosition(controlPosition4);
@@ -50,7 +51,7 @@ namespace mint
 #pragma endregion
 
 #pragma region GUIControl
-		void GUIControl::Render(GraphicDevice& graphicDevice, const GUIControlInteractionState& controlInteractionState) const
+		void GUIControl::Render(Rendering::GraphicDevice& graphicDevice, const GUIControlInteractionState& controlInteractionState) const
 		{
 			for (const SharedPtr<GUIControlComponent>& component : _components)
 			{

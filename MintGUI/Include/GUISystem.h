@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 
-#ifndef _MINT_RENDERING_BASE_GUI_SYSTEM_H_
-#define _MINT_RENDERING_BASE_GUI_SYSTEM_H_
+#ifndef _MINT_GUI_GUI_SYSTEM_H_
+#define _MINT_GUI_GUI_SYSTEM_H_
 
 
 #include <MintContainer/Include/Vector.h>
@@ -11,25 +11,22 @@
 #include <MintContainer/Include/SharedPtr.h>
 #include <MintRenderingBase/Include/RenderingBaseCommon.h>
 #include <MintRenderingBase/Include/ShapeGenerator.h>
-#include <MintRenderingBase/Include/GUI/GUIControl.h>
+#include <MintGUI/Include/GUIControl.h>
 
 
 namespace mint
 {
-	namespace Physics
-	{
-		class ConvexCollisionShape2D;
-	}
-
-
 	namespace Rendering
 	{
 		class GraphicDevice;
+	}
 
+	namespace GUI
+	{
 		class GUISystem
 		{
 		public:
-			GUISystem(GraphicDevice& graphicDevice);
+			GUISystem(Rendering::GraphicDevice& graphicDevice);
 			~GUISystem();
 
 		public:
@@ -46,7 +43,7 @@ namespace mint
 			void Render();
 
 		private:
-			GraphicDevice& _graphicDevice;
+			Rendering::GraphicDevice& _graphicDevice;
 
 		private:
 			bool _isUpdated;
@@ -96,4 +93,4 @@ namespace mint
 }
 
 
-#endif // !_MINT_RENDERING_BASE_GUI_SYSTEM_H_
+#endif // !_MINT_GUI_GUI_SYSTEM_H_

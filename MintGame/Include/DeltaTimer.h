@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 
-#ifndef _MINT_RENDERING_DELTA_TIMER_H_
-#define _MINT_RENDERING_DELTA_TIMER_H_
+#ifndef _MINT_GAME_DELTA_TIMER_H_
+#define _MINT_GAME_DELTA_TIMER_H_
 
 
 #include <mutex>
@@ -12,7 +12,7 @@
 
 namespace mint
 {
-	namespace Rendering
+	namespace Game
 	{
 		class DeltaTimer final
 		{
@@ -36,4 +36,4 @@ namespace mint
 }
 
 
-#endif // !_MINT_RENDERING_DELTA_TIMER_H_
+#endif // !_MINT_GAME_DELTA_TIMER_H_

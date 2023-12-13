@@ -3,7 +3,7 @@
 
 namespace mint
 {
-	namespace Rendering
+	namespace Game
 	{
 		MINT_INLINE ObjectType Object::GetType() const noexcept
 		{

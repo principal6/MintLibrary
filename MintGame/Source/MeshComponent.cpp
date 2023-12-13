@@ -1,4 +1,4 @@
-﻿#include <MintRendering/Include/MeshComponent.h>
+﻿#include <MintGame/Include/MeshComponent.h>
 
 #include <MintContainer/Include/Vector.hpp>
 
@@ -7,18 +7,18 @@
 
 namespace mint
 {
-	namespace Rendering
+	namespace Game
 	{
 		MeshComponent::MeshComponent()
 			: TransformComponent(ObjectComponentType::MeshComponent)
 			, _shouldDrawNormals{ false }
 			, _shouldDrawEdges{ false }
 		{
-			MeshGenerator::GeoSphereParam geosphereParam;
+			Rendering::MeshGenerator::GeoSphereParam geosphereParam;
 			geosphereParam._radius = 1.0f;
 			geosphereParam._subdivisionIteration = 3;
 			geosphereParam._smooth = true;
-			MeshGenerator::GenerateGeoSphere(geosphereParam, _meshData);
+			Rendering::MeshGenerator::GenerateGeoSphere(geosphereParam, _meshData);
 		}
 
 		MeshComponent::~MeshComponent()
@@ -26,7 +26,7 @@ namespace mint
 			__noop;
 		}
 
-		const MeshData& MeshComponent::GetMeshData() const noexcept
+		const Rendering::MeshData& MeshComponent::GetMeshData() const noexcept
 		{
 			return _meshData;
 		}
@@ -36,9 +36,9 @@ namespace mint
 			return _meshData.GetVertexCount();
 		}
 
-		const VS_INPUT* MeshComponent::GetVertices() const noexcept
+		const Rendering::VS_INPUT* MeshComponent::GetVertices() const noexcept
 		{
-			return (_meshData._vertexArray.IsEmpty()) ? &MeshData::kNullVertex : &_meshData._vertexArray[0];
+			return (_meshData._vertexArray.IsEmpty()) ? &Rendering::MeshData::kNullVertex : &_meshData._vertexArray[0];
 		}
 
 		uint32 MeshComponent::GetIndexCount() const noexcept
@@ -46,9 +46,9 @@ namespace mint
 			return _meshData.GetIndexCount();
 		}
 
-		const IndexElementType* MeshComponent::GetIndices() const noexcept
+		const Rendering::IndexElementType* MeshComponent::GetIndices() const noexcept
 		{
-			return (_meshData._faceArray.IsEmpty() == true) ? &MeshData::kNullIndex : &_meshData._faceArray[0]._vertexIndexArray[0];
+			return (_meshData._faceArray.IsEmpty() == true) ? &Rendering::MeshData::kNullIndex : &_meshData._faceArray[0]._vertexIndexArray[0];
 		}
 
 		void MeshComponent::ShouldDrawNormals(const bool shouldDrawNormals) noexcept

@@ -1,15 +1,15 @@
-﻿#include <MintRendering/Include/Object.h>
+﻿#include <MintGame/Include/Object.h>
 
 #include <MintContainer/Include/Vector.hpp>
 
-#include <MintRendering/Include/IObjectComponent.h>
-#include <MintRendering/Include/ObjectPool.hpp>
-#include <MintRendering/Include/TransformComponent.h>
+#include <MintGame/Include/ObjectComponent.h>
+#include <MintGame/Include/ObjectPool.hpp>
+#include <MintGame/Include/TransformComponent.h>
 
 
 namespace mint
 {
-	namespace Rendering
+	namespace Game
 	{
 		Object::Object(const ObjectPool* const objectPool)
 			: Object(objectPool, ObjectType::Object)
@@ -29,7 +29,7 @@ namespace mint
 			__noop;
 		}
 
-		void Object::AttachComponent(IObjectComponent* const objectComponent)
+		void Object::AttachComponent(ObjectComponent* const objectComponent)
 		{
 			if (objectComponent != nullptr)
 			{
@@ -45,7 +45,7 @@ namespace mint
 			}
 		}
 
-		void Object::DetachComponent(IObjectComponent* const objectComponent)
+		void Object::DetachComponent(ObjectComponent* const objectComponent)
 		{
 			if (objectComponent == nullptr)
 			{
@@ -79,7 +79,7 @@ namespace mint
 			return static_cast<uint32>(_componentArray.Size());
 		}
 
-		IObjectComponent* Object::GetComponent(const ObjectComponentType type) const noexcept
+		ObjectComponent* Object::GetComponent(const ObjectComponentType type) const noexcept
 		{
 			const uint32 componentCount = GetComponentCount();
 			for (uint32 componentIndex = 0; componentIndex < componentCount; ++componentIndex)

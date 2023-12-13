@@ -1,11 +1,5 @@
-﻿#include <MintRendering/Source/CameraObject.cpp>
-#include <MintRendering/Source/DeltaTimer.cpp>
-#include <MintRendering/Source/InstantRenderer.cpp>
-#include <MintRendering/Source/IObjectComponent.cpp>
-#include <MintRendering/Source/MeshComponent.cpp>
+﻿#include <MintRendering/Source/InstantRenderer.cpp>
 #include <MintRendering/Source/MeshGenerator.cpp>
-#include <MintRendering/Source/MeshRenderer.cpp>
-#include <MintRendering/Source/Object.cpp>
 #include <MintRendering/Source/Plotter.cpp>
 #include <MintRendering/Source/MathExpRenderer.cpp>
 #include <MintRendering/Source/SplineGenerator.cpp>

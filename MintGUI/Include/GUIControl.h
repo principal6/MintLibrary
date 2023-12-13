@@ -1,8 +1,8 @@
 #pragma once
 
 
-#ifndef _MINT_RENDERING_BASE_GUI_CONTROL_H_
-#define _MINT_RENDERING_BASE_GUI_CONTROL_H_
+#ifndef _MINT_GUI_GUI_CONTROL_H_
+#define _MINT_GUI_GUI_CONTROL_H_
 
 
 #include <MintRenderingBase/Include/RenderingBaseCommon.h>
@@ -15,17 +15,26 @@
 
 namespace mint
 {
+	namespace Rendering
+	{
+		class GraphicDevice;
+	}
+
 	namespace Physics
 	{
 		class ConvexCollisionShape2D;
 	}
 
-
-	namespace Rendering
+	namespace GUI
 	{
-		class GraphicDevice;
 		class GUISystem;
+	}
+}
 
+namespace mint
+{
+	namespace GUI
+	{
 		class GUIControlID : public ID64
 		{
 			friend GUISystem;
@@ -48,7 +57,7 @@ namespace mint
 		public:
 			GUIControlComponent() = default;
 			virtual ~GUIControlComponent() = default;
-			virtual void Render(GraphicDevice& graphicDevice, const Float2& controlPosition, const GUIControlInteractionState& controlInteractionState) const { __noop; }
+			virtual void Render(Rendering::GraphicDevice& graphicDevice, const Float2& controlPosition, const GUIControlInteractionState& controlInteractionState) const { __noop; }
 			//protected:
 				//GUIControlID _controlID;
 		};
@@ -57,7 +66,7 @@ namespace mint
 		{
 		public:
 			GUIControlTextComponent() : GUIControlComponent() { __noop; }
-			virtual void Render(GraphicDevice& graphicDevice, const Float2& controlPosition, const GUIControlInteractionState& controlInteractionState) const override;
+			virtual void Render(Rendering::GraphicDevice& graphicDevice, const Float2& controlPosition, const GUIControlInteractionState& controlInteractionState) const override;
 		public:
 			Float2 _offset;
 			StringW _text;
@@ -67,10 +76,10 @@ namespace mint
 		{
 		public:
 			GUIControlShapeComponent() : GUIControlComponent() { __noop; }
-			virtual void Render(GraphicDevice& graphicDevice, const Float2& controlPosition, const GUIControlInteractionState& controlInteractionState) const override;
+			virtual void Render(Rendering::GraphicDevice& graphicDevice, const Float2& controlPosition, const GUIControlInteractionState& controlInteractionState) const override;
 		public:
 			Float2 _offset;
-			Shape _shapes[3];
+			Rendering::Shape _shapes[3];
 		};
 
 		class GUIControl
@@ -86,7 +95,7 @@ namespace mint
 			GUIControl() = default;
 			virtual ~GUIControl() = default;
 			void SetPosition(const Float2& position) { _position = position; }
-			void Render(GraphicDevice& graphicDevice, const GUIControlInteractionState& controlInteractionState) const;
+			void Render(Rendering::GraphicDevice& graphicDevice, const GUIControlInteractionState& controlInteractionState) const;
 			uint32 GetComponentCount() const { return _components.Size(); }
 			SharedPtr<GUIControlComponent> GetComponent(const uint32 index) const { return _components.At(index); }
 		protected:
@@ -123,4 +132,4 @@ namespace mint
 }
 
 
-#endif // !_MINT_RENDERING_BASE_GUI_CONTROL_H_
+#endif // !_MINT_GUI_GUI_CONTROL_H_

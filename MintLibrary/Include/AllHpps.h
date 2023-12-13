@@ -17,9 +17,9 @@
 
 #include <MintRenderingBase/Include/AllHpps.h>
 
-#include <MintRendering/Include/AllHpps.h>
-
 #include <MintPhysics/Include/AllHpps.h>
+
+#include <MintGame/Include/AllHpps.h>
 
 
 #endif // !_MINT_LIBRARY_ALL_HPPS_H_

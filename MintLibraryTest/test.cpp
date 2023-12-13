@@ -140,6 +140,8 @@ bool Run3DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 {
 	using namespace mint;
 	using namespace Rendering;
+	using namespace GUI;
+	using namespace Game;
 
 	MeshRenderer meshRenderer{ graphicDevice };
 	InstantRenderer instantRenderer{ graphicDevice };

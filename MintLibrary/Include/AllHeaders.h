@@ -42,6 +42,8 @@ namespace mint
 
 #include <MintPhysics/Include/AllHeaders.h>
 
+#include <MintGUI/Include/AllHeaders.h>
+
 #include <MintAudio/Include/AllHeaders.h>
 
 #include <MintGame/Include/AllHeaders.h>

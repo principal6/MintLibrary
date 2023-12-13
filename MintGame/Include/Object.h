@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 
-#ifndef _MINT_RENDERING_OBJECT_H_
-#define _MINT_RENDERING_OBJECT_H_
+#ifndef _MINT_GAME_OBJECT_H_
+#define _MINT_GAME_OBJECT_H_
 
 
 #include <MintCommon/Include/CommonDefinitions.h>
@@ -11,28 +11,32 @@
 
 #include <MintMath/Include/Float4x4.h>
 
-#include <MintRendering/Include/IObjectComponent.h>
+#include <MintGame/Include/ObjectComponent.h>
 
 
 namespace mint
 {
 	struct Transform;
 
-
-	namespace Rendering
+	namespace Game
 	{
-		class IObjectComponent;
+		class ObjectComponent;
 		class TransformComponent;
 		class ObjectPool;
 		enum class ObjectComponentType;
+	}
+}
 
+namespace mint
+{
+	namespace Game
+	{
 		enum class ObjectType
 		{
 			INVALID,
 			Object,
 			CameraObject
 		};
-
 
 		class Object
 		{
@@ -46,14 +50,14 @@ namespace mint
 			virtual ~Object();
 
 		public:
-			void AttachComponent(IObjectComponent* const objectComponent);
-			void DetachComponent(IObjectComponent* const objectComponent);
+			void AttachComponent(ObjectComponent* const objectComponent);
+			void DetachComponent(ObjectComponent* const objectComponent);
 
 		public:
 			ObjectType GetType() const noexcept;
 			bool IsTypeOf(const ObjectType objectType) const noexcept;
 			uint32 GetComponentCount() const noexcept;
-			IObjectComponent* GetComponent(const ObjectComponentType type) const noexcept;
+			ObjectComponent* GetComponent(const ObjectComponentType type) const noexcept;
 
 		public:
 			void SetObjectTransform(const Transform& transform) noexcept;
@@ -70,14 +74,14 @@ namespace mint
 			const ObjectType _objectType;
 
 		protected:
-			Vector<IObjectComponent*> _componentArray;
+			Vector<ObjectComponent*> _componentArray;
 		};
 
 	}
 }
 
 
-#include <MintRendering/Include/Object.inl>
+#include <MintGame/Include/Object.inl>
 
 
-#endif // !_MINT_RENDERING_OBJECT_H_
+#endif // !_MINT_GAME_OBJECT_H_

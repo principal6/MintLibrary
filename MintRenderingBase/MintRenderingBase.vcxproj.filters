@@ -19,12 +19,6 @@
     <Filter Include="Source\CppHlsl">
       <UniqueIdentifier>{defe00fb-a822-402c-9509-712cdebd06c3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Include\GUI">
-      <UniqueIdentifier>{27714469-9d28-4332-b02a-4f0250862bf2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\GUI">
-      <UniqueIdentifier>{af5acee1-b68e-4410-9700-9e8b925137ad}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\DxResource.h">
@@ -96,12 +90,6 @@
     <ClInclude Include="Include\ShapeGenerator.h">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="Include\GUI\GUISystem.h">
-      <Filter>Include\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\GUI\GUIControl.h">
-      <Filter>Include\GUI</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Include\GraphicDevice.inl">
@@ -162,12 +150,6 @@
     </ClCompile>
     <ClCompile Include="Source\ShapeGenerator.cpp">
       <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\GUI\GUISystem.cpp">
-      <Filter>Source\GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\GUI\GUIControl.cpp">
-      <Filter>Source\GUI</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

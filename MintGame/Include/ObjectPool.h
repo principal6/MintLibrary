@@ -1,26 +1,31 @@
 ﻿#pragma once
 
 
-#ifndef _MINT_RENDERING_OBJECT_POOL_H_
-#define _MINT_RENDERING_OBJECT_POOL_H_
+#ifndef _MINT_GAME_OBJECT_POOL_H_
+#define _MINT_GAME_OBJECT_POOL_H_
 
 
-#include <MintRendering/Include/Object.h>
+#include <MintGame/Include/Object.h>
 
 #include <MintContainer/Include/Vector.h>
 
 
 namespace mint
 {
-	namespace Rendering
+	namespace Game
 	{
 		class GraphicDevice;
 		class TransformComponent;
 		class MeshComponent;
 		class CameraObject;
 		class DeltaTimer;
+	}
+}
 
-
+namespace mint
+{
+	namespace Game
+	{
 		class ObjectPool final
 		{
 		public:
@@ -72,4 +77,4 @@ namespace mint
 }
 
 
-#endif // !_MINT_RENDERING_OBJECT_POOL_H_
+#endif // !_MINT_GAME_OBJECT_POOL_H_

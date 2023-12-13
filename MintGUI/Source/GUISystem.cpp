@@ -1,4 +1,4 @@
-﻿#include <MintRenderingBase/Include/GUI/GUISystem.h>
+﻿#include <MintGUI/Include/GUISystem.h>
 #include <MintContainer/Include/HashMap.hpp>
 #include <MintContainer/Include/StringReference.hpp>
 #include <MintRenderingBase/Include/GraphicDevice.h>
@@ -9,7 +9,7 @@
 
 namespace mint
 {
-	namespace Rendering
+	namespace GUI
 	{
 #pragma region GUISystem::GUIControlManager
 		GUISystem::GUIControlManager::GUIControlManager()
@@ -132,7 +132,7 @@ namespace mint
 
 
 #pragma region GUISystem
-		GUISystem::GUISystem(GraphicDevice& graphicDevice)
+		GUISystem::GUISystem(Rendering::GraphicDevice& graphicDevice)
 			: _graphicDevice{ graphicDevice }
 			, _isUpdated{ false }
 		{

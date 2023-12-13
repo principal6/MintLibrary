@@ -1,21 +1,21 @@
 ﻿#pragma once
 
 
-#include <MintRendering/Include/ObjectPool.h>
+#include <MintGame/Include/ObjectPool.h>
 
 #include <MintContainer/Include/Vector.hpp>
 
 #include <MintRenderingBase/Include/GraphicDevice.h>
 #include <MintRenderingBase/Include/LowLevelRenderer.hpp>
 
-#include <MintRendering/Include/MeshComponent.h>
-#include <MintRendering/Include/CameraObject.h>
-#include <MintRendering/Include/DeltaTimer.h>
+#include <MintGame/Include/DeltaTimer.h>
+#include <MintGame/Include/MeshComponent.h>
+#include <MintGame/Include/CameraObject.h>
 
 
 namespace mint
 {
-	namespace Rendering
+	namespace Game
 	{
 		inline ObjectPool::ObjectPool()
 			: _deltaTimer{ &DeltaTimer::GetInstance() }
@@ -77,7 +77,7 @@ namespace mint
 			const uint32 componentCount = static_cast<uint32>(object._componentArray.Size());
 			for (uint32 componentIndex = 0; componentIndex < componentCount; ++componentIndex)
 			{
-				IObjectComponent*& component = object._componentArray[componentIndex];
+				ObjectComponent*& component = object._componentArray[componentIndex];
 				if (component != nullptr)
 				{
 					const ObjectComponentType componentType = component->GetType();

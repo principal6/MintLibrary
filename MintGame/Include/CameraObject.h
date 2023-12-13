@@ -1,23 +1,27 @@
 ﻿#pragma once
 
 
-#ifndef _MINT_RENDERING_CAMERA_OBJECT_H_
-#define _MINT_RENDERING_CAMERA_OBJECT_H_
+#ifndef _MINT_GAME_CAMERA_OBJECT_H_
+#define _MINT_GAME_CAMERA_OBJECT_H_
 
 
-#include <MintRendering/Include/Object.h>
+#include <MintGAME/Include/Object.h>
 
 
 namespace mint
 {
 	class InputContext;
 
-
-	namespace Rendering
+	namespace Game
 	{
 		class ObjectPool;
+	}
+}
 
-
+namespace mint
+{
+	namespace Game
+	{
 		class CameraObject final : public Object
 		{
 			friend ObjectPool;
@@ -129,4 +133,4 @@ namespace mint
 }
 
 
-#endif // !_MINT_RENDERING_CAMERA_OBJECT_H_
+#endif // !_MINT_GAME_CAMERA_OBJECT_H_

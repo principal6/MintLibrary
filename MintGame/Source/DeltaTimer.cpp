@@ -1,11 +1,11 @@
-﻿#include <MintRendering/Include/DeltaTimer.h>
+﻿#include <MintGame/Include/DeltaTimer.h>
 
 #include <MintCommon/Include/ScopedCPUProfiler.h>
 
 
 namespace mint
 {
-	namespace Rendering
+	namespace Game
 	{
 		DeltaTimer::DeltaTimer()
 			: _deltaTimeS{ 0.0f }

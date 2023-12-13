@@ -10,6 +10,7 @@
 #include <MintRenderingBase/Include/GraphicObject.h>
 
 #include <MintContainer/Include/Vector.h>
+#include <MintContainer/Include/String.h>
 
 
 namespace mint

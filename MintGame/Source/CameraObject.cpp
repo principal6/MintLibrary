@@ -1,12 +1,12 @@
-﻿#include <MintRendering/Include/CameraObject.h>
-#include <MintRendering/Include/ObjectPool.hpp>
+﻿#include <MintGame/Include/CameraObject.h>
+#include <MintGame/Include/ObjectPool.hpp>
 
 #include <MintPlatform/Include/InputContext.h>
 
 
 namespace mint
 {
-	namespace Rendering
+	namespace Game
 	{
 		CameraObject::CameraObject(const ObjectPool* const objectPool)
 			: Object(objectPool, ObjectType::CameraObject)
@@ -60,32 +60,32 @@ namespace mint
 			{
 				if (inputContext.IsKeyDown(KeyCode::Q) == true)
 				{
-					Move(Rendering::CameraObject::MoveDirection::Upward);
+					Move(CameraObject::MoveDirection::Upward);
 				}
 
 				if (inputContext.IsKeyDown(KeyCode::E) == true)
 				{
-					Move(Rendering::CameraObject::MoveDirection::Downward);
+					Move(CameraObject::MoveDirection::Downward);
 				}
 
 				if (inputContext.IsKeyDown(KeyCode::W) == true)
 				{
-					Move(Rendering::CameraObject::MoveDirection::Forward);
+					Move(CameraObject::MoveDirection::Forward);
 				}
 
 				if (inputContext.IsKeyDown(KeyCode::S) == true)
 				{
-					Move(Rendering::CameraObject::MoveDirection::Backward);
+					Move(CameraObject::MoveDirection::Backward);
 				}
 
 				if (inputContext.IsKeyDown(KeyCode::A) == true)
 				{
-					Move(Rendering::CameraObject::MoveDirection::Leftward);
+					Move(CameraObject::MoveDirection::Leftward);
 				}
 
 				if (inputContext.IsKeyDown(KeyCode::D) == true)
 				{
-					Move(Rendering::CameraObject::MoveDirection::Rightward);
+					Move(CameraObject::MoveDirection::Rightward);
 				}
 			}
 

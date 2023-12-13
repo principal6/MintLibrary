@@ -1,20 +1,20 @@
-﻿#include <MintRendering/Include/MeshRenderer.h>
+﻿#include <MintGame/Include/MeshRenderer.h>
 
 #include <MintContainer/Include/Vector.hpp>
 
 #include <MintRenderingBase/Include/GraphicDevice.h>
 #include <MintRenderingBase/Include/LowLevelRenderer.hpp>
 
-#include <MintRendering/Include/Object.h>
-#include <MintRendering/Include/ObjectPool.hpp>
-#include <MintRendering/Include/MeshComponent.h>
+#include <MintGame/Include/Object.h>
+#include <MintGame/Include/ObjectPool.hpp>
+#include <MintGame/Include/MeshComponent.h>
 
 
 namespace mint
 {
-	namespace Rendering
+	namespace Game
 	{
-		MeshRenderer::MeshRenderer(GraphicDevice& graphicDevice)
+		MeshRenderer::MeshRenderer(Rendering::GraphicDevice& graphicDevice)
 			: _graphicDevice{ graphicDevice }
 			, _lowLevelRenderer{ graphicDevice }
 		{
@@ -28,6 +28,8 @@ namespace mint
 
 		void MeshRenderer::Render(const ObjectPool& objectPool) noexcept
 		{
+			using namespace Rendering;
+
 			const Vector<MeshComponent*>& meshComponents = objectPool.GetMeshComponents();
 
 			DxShaderPool& shaderPool = _graphicDevice.GetShaderPool();
@@ -83,6 +85,7 @@ namespace mint
 
 		void MeshRenderer::Initialize() noexcept
 		{
+			using namespace Rendering;
 			using namespace Language;
 
 			DxShaderPool& shaderPool = _graphicDevice.GetShaderPool();

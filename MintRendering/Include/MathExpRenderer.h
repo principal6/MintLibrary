@@ -18,11 +18,16 @@ namespace mint
 	namespace Rendering
 	{
 		class GraphicDevice;
-		struct LatexParser;
 		class MathExpressionRenderer;
 		class LatexLexer;
+		struct LatexParser;
+	}
+}
 
-
+namespace mint
+{
+	namespace Rendering
+	{
 		class MathExpression
 		{
 			friend LatexParser;
