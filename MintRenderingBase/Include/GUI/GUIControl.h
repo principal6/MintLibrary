@@ -17,7 +17,7 @@ namespace mint
 {
 	namespace Physics
 	{
-		class ConvexShape2D;
+		class ConvexCollisionShape2D;
 	}
 
 
@@ -91,7 +91,7 @@ namespace mint
 			SharedPtr<GUIControlComponent> GetComponent(const uint32 index) const { return _components.At(index); }
 		protected:
 			GUIControlID _controlID;
-			SharedPtr<Physics::ConvexShape2D> _collisionShape;
+			SharedPtr<Physics::ConvexCollisionShape2D> _collisionShape;
 			Vector<SharedPtr<GUIControlComponent>> _components;
 		protected:
 			Float2 _position;
@@ -114,7 +114,7 @@ namespace mint
 		public:
 			GUIControlTemplate() : GUIControl() { __noop; }
 			Vector<SharedPtr<GUIControlComponent>>& AccessComponents();
-			void SetCollisionShape(Physics::ConvexShape2D&& collisionShape);
+			void SetCollisionShape(Physics::ConvexCollisionShape2D&& collisionShape);
 		private:
 			StringU8 _controlTemplateName;
 			GUIControlTemplateID _controlTemplateID;

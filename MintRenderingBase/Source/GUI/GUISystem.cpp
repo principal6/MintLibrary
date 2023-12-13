@@ -90,20 +90,20 @@ namespace mint
 
 		void GUISystem::GUIControlManager::UpdateControl(const GUIControlUpdateContext& controlUpdateContext, GUIControl& control)
 		{
-			SharedPtrViewer<Physics::ConvexShape2D> controlCollisionShape = control._collisionShape;
+			SharedPtrViewer<Physics::ConvexCollisionShape2D> controlCollisionShape = control._collisionShape;
 			controlCollisionShape->_center = control._position;
 
 			InputContext& inputContext = InputContext::GetInstance();
 			const MouseButtonState leftMouseButtonState = inputContext.GetMouseButtonState(MouseButton::Left);
 			const Float2& mousePosition = inputContext.GetMousePosition();
-			const bool intersects = Physics::Intersect2D_GJK(*controlCollisionShape, Physics::PointShape2D(mousePosition));
+			const bool intersects = Physics::Intersect2D_GJK(*controlCollisionShape, Physics::PointCollisionShape2D(mousePosition));
 			if (intersects)
 			{
 				_hoveredControlID = control._controlID;
 
 				if (leftMouseButtonState == MouseButtonState::Down || leftMouseButtonState == MouseButtonState::DoubleClicked)
 				{
-					const bool intersects1 = Physics::Intersect2D_GJK(*controlCollisionShape, Physics::PointShape2D(controlUpdateContext._mouseLeftButtonPressedPosition));
+					const bool intersects1 = Physics::Intersect2D_GJK(*controlCollisionShape, Physics::PointCollisionShape2D(controlUpdateContext._mouseLeftButtonPressedPosition));
 					if (intersects1)
 					{
 						_pressedControlID = control._controlID;

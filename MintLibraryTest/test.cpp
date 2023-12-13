@@ -82,7 +82,7 @@ bool Run2DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 
 	Shape circleShape;
 	ShapeGenerator::GenerateCircle(32.0f, 16, ByteColor(0, 0, 255), circleShape);
-	ConvexShape2D circleCollisionShape = ConvexShape2D::MakeFromRenderingShape(Float2::kZero, circleShape);
+	ConvexCollisionShape2D circleCollisionShape = ConvexCollisionShape2D::MakeFromRenderingShape(Float2::kZero, circleShape);
 	const InputContext& inputContext = InputContext::GetInstance();
 	ShapeRendererContext& shapeRendererContext = graphicDevice.GetShapeRendererContext();
 	while (window.IsRunning() == true)
@@ -183,7 +183,7 @@ bool Run3DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 			ShapeGenerator::GenerateCircle(16.0f, 16, ByteColor(255, 0, 0), shapeComponent._shapes[0]);
 			ShapeGenerator::GenerateCircle(17.0f, 16, ByteColor(255, 64, 32), shapeComponent._shapes[1]);
 			ShapeGenerator::GenerateCircle(17.0f, 16, ByteColor(255, 128, 64), shapeComponent._shapes[2]);
-			controlTemplate.SetCollisionShape(Physics::ConvexShape2D::MakeFromRenderingShape(Float2::kZero, shapeComponent._shapes[0]));
+			controlTemplate.SetCollisionShape(Physics::ConvexCollisionShape2D::MakeFromRenderingShape(Float2::kZero, shapeComponent._shapes[0]));
 			components.PushBack(MakeShared<GUIControlComponent>(shapeComponent));
 		}
 		{

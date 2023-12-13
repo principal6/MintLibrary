@@ -28,7 +28,7 @@ namespace mint
 		using mint::Rendering::ShapeRendererContext;
 
 
-		enum class ShapeType
+		enum class CollisionShapeType
 		{
 			Point,
 			Circle,
@@ -37,70 +37,70 @@ namespace mint
 			Convex,
 		};
 
-		class Shape2D
+		class CollisionShape2D
 		{
 		public:
-			Shape2D() = default;
-			Shape2D(const Float2& center) : _center{ center } { __noop; }
-			virtual ~Shape2D() = default;
+			CollisionShape2D() = default;
+			CollisionShape2D(const Float2& center) : _center{ center } { __noop; }
+			virtual ~CollisionShape2D() = default;
 
 		public:
 			virtual void DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Float2& offset = Float2::kZero) const { __noop; }
 			virtual Float2 ComputeSupportPoint(const Float2& direction) const abstract;
-			virtual ShapeType GetShapeType() const abstract;
+			virtual CollisionShapeType GetCollisionShapeType() const abstract;
 
 		public:
 			Float2 _center;
 		};
 
-		class PointShape2D : public Shape2D
+		class PointCollisionShape2D : public CollisionShape2D
 		{
 		public:
-			PointShape2D(const Float2& center);
+			PointCollisionShape2D(const Float2& center);
 
 		public:
 			virtual void DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Float2& offset = Float2::kZero) const override final;
 			virtual Float2 ComputeSupportPoint(const Float2& direction) const override final;
-			virtual ShapeType GetShapeType() const override final { return ShapeType::Point; }
+			virtual CollisionShapeType GetCollisionShapeType() const override final { return CollisionShapeType::Point; }
 		};
 		
-		class CircleShape2D : public Shape2D
+		class CircleCollisionShape2D : public CollisionShape2D
 		{
 		public:
-			CircleShape2D(const Float2& center, const float radius);
+			CircleCollisionShape2D(const Float2& center, const float radius);
 
 		public:
 			virtual void DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Float2& offset = Float2::kZero) const  override final;
 			virtual Float2 ComputeSupportPoint(const Float2& direction) const override final;
-			virtual ShapeType GetShapeType() const override final { return ShapeType::Circle; }
+			virtual CollisionShapeType GetCollisionShapeType() const override final { return CollisionShapeType::Circle; }
 
 		public:
 			float _radius;
 		};
 
-		class AABBShape2D : public Shape2D
+		class AABBCollisionShape2D : public CollisionShape2D
 		{
 		public:
-			AABBShape2D(const Float2& center, const Float2& halfSize);
+			AABBCollisionShape2D(const Float2& center, const Float2& halfSize);
 
 		public:
 			virtual void DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Float2& offset = Float2::kZero) const override final;
 			virtual Float2 ComputeSupportPoint(const Float2& direction) const override final;
-			virtual ShapeType GetShapeType() const override final { return ShapeType::AABB; }
+			virtual CollisionShapeType GetCollisionShapeType() const override final { return CollisionShapeType::AABB; }
 
 		public:
 			Float2 _halfSize;
 		};
 		
-		class BoxShape2D : public Shape2D
+		class BoxCollisionShape2D : public CollisionShape2D
 		{
 		public:
-			BoxShape2D(const Float2& center, const Float2& halfSize, const float angle);
+			BoxCollisionShape2D(const Float2& center, const Float2& halfSize, const float angle);
 
 		public:
 			virtual void DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Float2& offset = Float2::kZero) const override final;
 			virtual Float2 ComputeSupportPoint(const Float2& direction) const override final;
-			virtual ShapeType GetShapeType() const override final { return ShapeType::Box; }
+			virtual CollisionShapeType GetCollisionShapeType() const override final { return CollisionShapeType::Box; }
 
 		public:
 			Float2 _halfSize;
@@ -108,29 +108,29 @@ namespace mint
 		};
 
 		// CCW winding
-		class ConvexShape2D : public Shape2D
+		class ConvexCollisionShape2D : public CollisionShape2D
 		{
 		private:
-			static ConvexShape2D MakeFromBoxShape2D(const BoxShape2D& shape);
-			static ConvexShape2D MakeFromCircleShape2D(const CircleShape2D& shape);
+			static ConvexCollisionShape2D MakeFromBoxShape2D(const BoxCollisionShape2D& shape);
+			static ConvexCollisionShape2D MakeFromCircleShape2D(const CircleCollisionShape2D& shape);
 		
 		public:
-			static ConvexShape2D MakeFromPoints(const Float2& center, const Vector<Float2>& points);
-			static ConvexShape2D MakeFromShape2D(const Shape2D& shape);
-			static ConvexShape2D MakeFromRenderingShape(const Float2& center, const Rendering::Shape& renderingShape);
-			static ConvexShape2D MakeMinkowskiDifferenceShape(const Shape2D& a, const Shape2D& b);
-			static ConvexShape2D MakeMinkowskiDifferenceShape(const ConvexShape2D& a, const ConvexShape2D& b);
+			static ConvexCollisionShape2D MakeFromPoints(const Float2& center, const Vector<Float2>& points);
+			static ConvexCollisionShape2D MakeFromShape2D(const CollisionShape2D& shape);
+			static ConvexCollisionShape2D MakeFromRenderingShape(const Float2& center, const Rendering::Shape& renderingShape);
+			static ConvexCollisionShape2D MakeMinkowskiDifferenceShape(const CollisionShape2D& a, const CollisionShape2D& b);
+			static ConvexCollisionShape2D MakeMinkowskiDifferenceShape(const ConvexCollisionShape2D& a, const ConvexCollisionShape2D& b);
 
 		public:
-			ConvexShape2D(const Float2& center, const Vector<Float2>& vertices);
+			ConvexCollisionShape2D(const Float2& center, const Vector<Float2>& vertices);
 
 		public:
 			virtual void DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Float2& offset = Float2::kZero) const override final;
 			virtual Float2 ComputeSupportPoint(const Float2& direction) const override final;
-			virtual ShapeType GetShapeType() const override final { return ShapeType::Convex; }
+			virtual CollisionShapeType GetCollisionShapeType() const override final { return CollisionShapeType::Convex; }
 
 		private:
-			ConvexShape2D();
+			ConvexCollisionShape2D();
 
 		private:
 			static uint32 GrahamScan_FindStartPoint(const Vector<Float2>& points);
@@ -167,9 +167,9 @@ namespace mint
 
 		bool Intersect2D_Circle_Point(const Float2& circleCenter, const float circleRadius, const Float2& point);
 		bool Intersect2D_AABB_Point(const Rect& aabb, const Float2& point);
-		bool Intersect2D_GJK(const Shape2D& shapeA, const Shape2D& shapeB, uint32* const outLoopCount = nullptr);
+		bool Intersect2D_GJK(const CollisionShape2D& shapeA, const CollisionShape2D& shapeB, uint32* const outLoopCount = nullptr);
 
-		void Intersect2D_GJK_StepByStep(const uint32 maxStep, ShapeRendererContext& shapeRendererContext, const Float2& offset, const Shape2D& shapeA, const Shape2D& shapeB);
+		void Intersect2D_GJK_StepByStep(const uint32 maxStep, ShapeRendererContext& shapeRendererContext, const Float2& offset, const CollisionShape2D& shapeA, const CollisionShape2D& shapeB);
 	}
 }
 

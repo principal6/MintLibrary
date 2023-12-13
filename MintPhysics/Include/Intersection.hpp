@@ -10,35 +10,35 @@ namespace mint
 {
 	namespace Physics
 	{
-#pragma region Shape2D - PointShape2D
-		inline PointShape2D::PointShape2D(const Float2& center)
-			: Shape2D(center)
+#pragma region CollisionShape2D - PointCollisionShape2D
+		inline PointCollisionShape2D::PointCollisionShape2D(const Float2& center)
+			: CollisionShape2D(center)
 		{
 			__noop;
 		}
 #pragma endregion
 
-#pragma region Shape2D - CircleShape2D
-		inline CircleShape2D::CircleShape2D(const Float2& center, const float radius)
-			: Shape2D(center)
+#pragma region CollisionShape2D - CircleCollisionShape2D
+		inline CircleCollisionShape2D::CircleCollisionShape2D(const Float2& center, const float radius)
+			: CollisionShape2D(center)
 			, _radius{ radius }
 		{
 			MINT_ASSERT(radius > 0.0f, "radius(%f) 가 0 이하입니다. 의도한 게 맞나요?", radius);
 		}
 #pragma endregion
 
-#pragma region Shape2D - AABBShape2D
-		inline AABBShape2D::AABBShape2D(const Float2& center, const Float2& halfSize)
-			: Shape2D(center)
+#pragma region CollisionShape2D - AABBCollisionShape2D
+		inline AABBCollisionShape2D::AABBCollisionShape2D(const Float2& center, const Float2& halfSize)
+			: CollisionShape2D(center)
 			, _halfSize{ halfSize }
 		{
 			__noop;
 		}
 #pragma endregion
 		
-#pragma region Shape2D - BoxShape2D
-		inline BoxShape2D::BoxShape2D(const Float2& center, const Float2& halfSize, const float angle)
-			: Shape2D(center)
+#pragma region CollisionShape2D - BoxCollisionShape2D
+		inline BoxCollisionShape2D::BoxCollisionShape2D(const Float2& center, const Float2& halfSize, const float angle)
+			: CollisionShape2D(center)
 			, _halfSize{ halfSize }
 			, _angle{ angle }
 		{
@@ -46,15 +46,15 @@ namespace mint
 		}
 #pragma endregion
 
-#pragma region Shape2D - ConvexShape2D
-		inline ConvexShape2D::ConvexShape2D(const Float2& center, const Vector<Float2>& vertices)
-			: Shape2D(center)
+#pragma region CollisionShape2D - ConvexCollisionShape2D
+		inline ConvexCollisionShape2D::ConvexCollisionShape2D(const Float2& center, const Vector<Float2>& vertices)
+			: CollisionShape2D(center)
 			, _vertices{ vertices }
 		{
 			__noop;
 		}
-		inline ConvexShape2D::ConvexShape2D()
-			: Shape2D(Float2::kZero)
+		inline ConvexCollisionShape2D::ConvexCollisionShape2D()
+			: CollisionShape2D(Float2::kZero)
 		{
 			__noop;
 		}

@@ -43,7 +43,7 @@ namespace mint
 			return _components;
 		}
 
-		void GUIControlTemplate::SetCollisionShape(Physics::ConvexShape2D&& collisionShape)
+		void GUIControlTemplate::SetCollisionShape(Physics::ConvexCollisionShape2D&& collisionShape)
 		{
 			_collisionShape = MakeShared(std::move(collisionShape));
 		}
