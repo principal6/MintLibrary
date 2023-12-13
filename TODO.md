@@ -1,4 +1,8 @@
 ﻿# TODO
+## GrahamScan => Math 로 옮기기
+
+## DxResource => GraphicResource 로 변경, DxShader => Shader 로 변경
+
 ## GUI 렌더링!!
 
 ## wchar_t => UTF8 로 변환!! UTF8 FontData, DrawDynamicText 등

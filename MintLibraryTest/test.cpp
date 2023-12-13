@@ -88,8 +88,8 @@ bool Run2DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 		Mesh2DComponent* mesh2DComponent = objectPool.CreateMesh2DComponent();
 		Shape shape;
 		ShapeGenerator::GenerateCircle(32.0f, 16, ByteColor(0, 0, 255), shape);
-		mesh2DComponent->SetShape(shape);
-		mesh2DComponent->_position = Float2(100, 100);
+		mesh2DComponent->SetShape(std::move(shape));
+		object0->GetObjectTransform()._translation = Float3(100, 100, 0);
 		object0->AttachComponent(mesh2DComponent);
 	}
 	Object* const object1 = objectPool.CreateObject();
@@ -97,8 +97,8 @@ bool Run2DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 		Mesh2DComponent* mesh2DComponent = objectPool.CreateMesh2DComponent();
 		Shape shape;
 		ShapeGenerator::GenerateRectangle(Float2(100, 50), ByteColor(0, 128, 255), shape);
-		mesh2DComponent->SetShape(shape);
-		mesh2DComponent->_position = Float2(200, 100);
+		mesh2DComponent->SetShape(std::move(shape));
+		object1->GetObjectTransform()._translation = Float3(200, 100, 0);
 		object1->AttachComponent(mesh2DComponent);
 	}
 

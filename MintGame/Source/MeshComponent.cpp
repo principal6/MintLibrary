@@ -11,7 +11,7 @@ namespace mint
 	{
 #pragma region MeshComponent
 		MeshComponent::MeshComponent()
-			: TransformComponent(ObjectComponentType::MeshComponent)
+			: ObjectComponent(ObjectComponentType::MeshComponent)
 			, _shouldDrawNormals{ false }
 			, _shouldDrawEdges{ false }
 		{
@@ -76,11 +76,14 @@ namespace mint
 
 #pragma region Mesh2DComponent
 		Mesh2DComponent::Mesh2DComponent()
+			: ObjectComponent(ObjectComponentType::Mesh2DComponent)
 		{
+			__noop;
 		}
 
 		Mesh2DComponent::~Mesh2DComponent()
 		{
+			__noop;
 		}
 
 		void Mesh2DComponent::SetShape(const Rendering::Shape& shape)

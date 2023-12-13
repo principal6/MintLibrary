@@ -30,7 +30,6 @@ namespace mint
 		{
 			Invalid,
 			TransformComponent,
-			Transform2DComponent,
 			MeshComponent,
 			Mesh2DComponent,
 		};
@@ -57,7 +56,7 @@ namespace mint
 			MINT_INLINE ObjectComponentType GetType() const noexcept { return _type; }
 			MINT_INLINE bool IsTypeOf(const ObjectComponentType type) const noexcept { return _type == type; }
 			MINT_INLINE const ObjectComponentID& GetID() const noexcept { return _id; }
-			MINT_INLINE Object* getOwnerObject() const noexcept { return _ownerObject; }
+			MINT_INLINE Object* GetOwnerObject() const noexcept { return _ownerObject; }
 
 		protected:
 			Object* _ownerObject;

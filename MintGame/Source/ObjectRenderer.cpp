@@ -51,7 +51,7 @@ namespace mint
 				{
 					const MeshComponent* const meshComponent = meshComponents[i];
 
-					_cbTransformData._cbWorldMatrix = meshComponent->getOwnerObject()->GetObjectTransformMatrix() * meshComponent->_transform.ToMatrix();
+					_cbTransformData._cbWorldMatrix = meshComponent->GetOwnerObject()->GetObjectTransformMatrix();
 					cbTransform.UpdateBuffer(&_cbTransformData, 1);
 
 					_lowLevelRenderer.Flush();
@@ -97,8 +97,8 @@ namespace mint
 				for (uint32 i = 0; i < mesh2DComponentCount; ++i)
 				{
 					const Mesh2DComponent* const mesh2DComponent = mesh2DComponents[i];
-
-					shapeRendererContext.SetPosition(Float4(mesh2DComponent->_position));
+					Object* const object = mesh2DComponent->GetOwnerObject();
+					shapeRendererContext.SetPosition(Float4(object->GetObjectTransform()._translation));
 					shapeRendererContext.AddShape(mesh2DComponent->GetShape());
 				}
 				shapeRendererContext.Render();

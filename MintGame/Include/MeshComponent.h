@@ -20,7 +20,7 @@ namespace mint
 {
 	namespace Game
 	{
-		class MeshComponent final : public TransformComponent
+		class MeshComponent final : public ObjectComponent
 		{
 		public:
 			MeshComponent();
@@ -45,7 +45,7 @@ namespace mint
 			bool _shouldDrawEdges;
 		};
 
-		class Mesh2DComponent final : public Transform2DComponent
+		class Mesh2DComponent final : public ObjectComponent
 		{
 		public:
 			Mesh2DComponent();
