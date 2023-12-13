@@ -40,7 +40,7 @@ int main()
 		return false;
 	}
 
-	GraphicDevice graphicDevice{ window };
+	GraphicDevice graphicDevice{ window, true };
 	graphicDevice.Initialize();
 
 #if defined MINT_DEBUG
@@ -70,6 +70,7 @@ bool Run2DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 {
 	using namespace mint;
 	using namespace Rendering;
+	using namespace Physics;
 
 	ImageRenderer imageRenderer{ graphicDevice, 1, ByteColor(0, 0, 0, 0) };
 	ByteColorImage byteColorImage;
@@ -79,6 +80,9 @@ bool Run2DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 	const GraphicObjectID textureID = resourcePool.AddTexture2D(DxTextureFormat::R8G8B8A8_UNORM, byteColorImage.GetBytes(), byteColorImage.GetWidth(), byteColorImage.GetHeight());
 	resourcePool.GetResource(textureID).BindToShader(GraphicShaderType::PixelShader, 1);
 
+	Shape circleShape;
+	ShapeGenerator::GenerateCircle(32.0f, 16, ByteColor(0, 0, 255), circleShape);
+	ConvexShape2D circleCollisionShape = ConvexShape2D::MakeFromRenderingShape(Float2::kZero, circleShape);
 	const InputContext& inputContext = InputContext::GetInstance();
 	ShapeRendererContext& shapeRendererContext = graphicDevice.GetShapeRendererContext();
 	while (window.IsRunning() == true)
@@ -115,9 +119,10 @@ bool Run2DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 		{
 			graphicDevice.BeginRendering();
 
-			shapeRendererContext.SetPosition(Float4(100, 100, 0, 0));
-			shapeRendererContext.SetColor(Color::kBlue);
-			shapeRendererContext.DrawCircle(32.0f);
+			//shapeRendererContext.SetPosition(Float4(100, 100, 0, 0));
+			//shapeRendererContext.AddShape(circleShape);
+			circleCollisionShape._center = Float2(100, 100);
+			circleCollisionShape.DebugDrawShape(shapeRendererContext, ByteColor(127, 0, 0, 127));
 
 			imageRenderer.DrawImage(Float2(50, 50), Float2(80, 20), Float2(0, 0), Float2(1, 1));
 			imageRenderer.Render();

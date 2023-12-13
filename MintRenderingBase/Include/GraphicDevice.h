@@ -125,7 +125,7 @@ namespace mint
 			static GraphicDevice& GetInvalidInstance();
 
 		public:
-			GraphicDevice(Window& window);
+			GraphicDevice(Window& window, bool usesMSAA);
 			~GraphicDevice() = default;
 
 		public:
@@ -188,6 +188,7 @@ namespace mint
 
 		private:
 			Window& _window;
+			bool _usesMSAA;
 			Int2 _lastWindowSize;
 
 		private:

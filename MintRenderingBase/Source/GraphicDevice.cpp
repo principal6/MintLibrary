@@ -282,12 +282,13 @@ namespace mint
 		GraphicDevice& GraphicDevice::GetInvalidInstance()
 		{
 			static Window invalidWindow;
-			static GraphicDevice invalidInstance(invalidWindow);
+			static GraphicDevice invalidInstance{ invalidWindow, false };
 			return invalidInstance;
 		}
 
-		GraphicDevice::GraphicDevice(Window& window)
+		GraphicDevice::GraphicDevice(Window& window, bool usesMSAA)
 			: _window{ window }
+			, _usesMSAA{ usesMSAA }
 			, _clearColor{ 0.875f, 0.875f, 0.875f, 1.0f }
 			, _currentRasterizerFor3D{ nullptr }
 			, _fullScreenViewport{}
@@ -437,7 +438,7 @@ namespace mint
 			swapChainDescriptor.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 			swapChainDescriptor.Flags = 0;
 			swapChainDescriptor.OutputWindow = windowHandle;
-			swapChainDescriptor.SampleDesc.Count = 1;
+			swapChainDescriptor.SampleDesc.Count = (_usesMSAA ? 4 : 1);
 			swapChainDescriptor.SampleDesc.Quality = 0;
 			swapChainDescriptor.SwapEffect = DXGI_SWAP_EFFECT::DXGI_SWAP_EFFECT_DISCARD;
 			swapChainDescriptor.Windowed = TRUE;
@@ -476,7 +477,7 @@ namespace mint
 			depthStencilBufferDescriptor.MipLevels = 1;
 			depthStencilBufferDescriptor.ArraySize = 1;
 			depthStencilBufferDescriptor.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-			depthStencilBufferDescriptor.SampleDesc.Count = 1;
+			depthStencilBufferDescriptor.SampleDesc.Count = (_usesMSAA ? 4 : 1);
 			depthStencilBufferDescriptor.SampleDesc.Quality = 0;
 			depthStencilBufferDescriptor.Usage = D3D11_USAGE_DEFAULT;
 			depthStencilBufferDescriptor.BindFlags = D3D11_BIND_DEPTH_STENCIL;
