@@ -1,5 +1,6 @@
 ﻿#include <MintRenderingBase/Include/ShapeGenerator.h>
 #include <MintMath/Include/Float2x2.h>
+#include <MintMath/Include/Geometry.h>
 #include <Assets/Include/CppHlsl/CppHlslStreamData.h>
 
 
@@ -267,6 +268,32 @@ namespace mint
 			GenerateQuarterCircle(radius, roundSideCount, byteColor, outShape, shapeTransform * ShapeTransform(Math::kPiOverTwo, Float2(-(halfSize._x - radius), -(halfSize._y - radius))));
 			GenerateQuarterCircle(radius, roundSideCount, byteColor, outShape, shapeTransform * ShapeTransform(Math::kPi, Float2(-(halfSize._x - radius), (halfSize._y - radius))));
 			GenerateQuarterCircle(radius, roundSideCount, byteColor, outShape, shapeTransform * ShapeTransform(-Math::kPiOverTwo, Float2((halfSize._x - radius), (halfSize._y - radius))));
+		}
+
+		void ShapeGenerator::GenerateConvexShape(const Vector<Float2>& points, const ByteColor& byteColor, Shape& outShape, const ShapeTransform& shapeTransform)
+		{
+			Vector<Float2> rawVertices = points;
+			GrahamScan_Convexify(rawVertices);
+
+			const uint32 rawVertexCount = rawVertices.Size();
+			const Color color{ byteColor };
+			outShape._vertices.Reserve(rawVertexCount);
+			for (uint32 i = 0; i < rawVertexCount; ++i)
+			{
+				VS_INPUT_SHAPE vertex;
+				vertex._position = Float4(rawVertices[i]);
+				vertex._color = color;
+				vertex._texCoord;
+				outShape._vertices.PushBack(vertex);
+			}
+			const uint32 triangleCount = rawVertexCount - 2;
+			outShape._indices.Reserve(triangleCount * 3);
+			for (size_t i = 0; i < triangleCount; i++)
+			{
+				outShape._indices.PushBack(0);
+				outShape._indices.PushBack(rawVertexCount - i - 2);
+				outShape._indices.PushBack(rawVertexCount - i - 1);
+			}
 		}
 
 		void ShapeGenerator::GenerateLine(const Float2& positionA, const Float2& positionB, float thickness, uint8 roundSideCount, const ByteColor& byteColor, Shape& outShape, const ShapeTransform& shapeTransform)

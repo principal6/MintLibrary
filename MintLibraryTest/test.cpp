@@ -97,7 +97,11 @@ bool Run2DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 	{
 		Mesh2DComponent* mesh2DComponent = objectPool.CreateMesh2DComponent();
 		Shape shape;
-		ShapeGenerator::GenerateRectangle(Float2(100, 50), ByteColor(0, 128, 255), shape);
+		Vector<Float2> points;
+		points.PushBack(Float2(-100, 0));
+		points.PushBack(Float2(100, 0));
+		points.PushBack(Float2(80, -40));
+		ShapeGenerator::GenerateConvexShape(points, ByteColor(0, 128, 255), shape);
 		mesh2DComponent->SetShape(std::move(shape));
 		object1->AttachComponent(mesh2DComponent);
 	}
