@@ -37,6 +37,7 @@ namespace mint
 
 	public:
 		Float3x3 operator*(const Float3x3& rhs) const noexcept;
+		Float3 operator*(const Float3& vec) const noexcept;
 		Float3x3 operator*(const float scalar) const noexcept;
 		Float3x3 operator/(const float scalar) const noexcept;
 

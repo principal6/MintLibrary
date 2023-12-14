@@ -32,12 +32,14 @@ namespace mint
 	public:
 		Float2x2& operator=(const Float2x2& rhs) = default;
 		Float2x2& operator=(Float2x2&& rhs) noexcept = default;
+
 	public:
 		Float2x2 operator*(const float scalar) const noexcept;
 		Float2x2 operator/(const float scalar) const noexcept;
 
 	public:
 		Float2x2 operator*(const Float2x2& rhs) const noexcept;
+		Float2 operator*(const Float2& vec) const noexcept;
 
 	public:
 		void Set(const uint32 row, const uint32 col, const float newValue) noexcept;

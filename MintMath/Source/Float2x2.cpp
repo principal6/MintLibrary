@@ -61,6 +61,13 @@ namespace mint
 		return result;
 	}
 
+	Float2 Float2x2::operator*(const Float2& vec) const noexcept
+	{
+		Float2 result;
+		Math::Mul(_m, vec._c, result._c);
+		return result;
+	}
+
 	void Float2x2::Set(const uint32 row, const uint32 col, const float newValue) noexcept
 	{
 		_m[Min(row - 1, Float2x2::kMaxIndex)][Min(col - 1, Float2x2::kMaxIndex)] = newValue;

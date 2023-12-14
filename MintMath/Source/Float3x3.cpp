@@ -76,6 +76,13 @@ namespace mint
 		return result;
 	}
 
+	Float3 Float3x3::operator*(const Float3& vec) const noexcept
+	{
+		Float3 result;
+		Math::Mul(_m, vec._c, result._c);
+		return result;
+	}
+
 	Float3x3 Float3x3::operator*(const float scalar) const noexcept
 	{
 		Float3x3 result = *this;
