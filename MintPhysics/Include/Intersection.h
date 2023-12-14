@@ -133,11 +133,6 @@ namespace mint
 			ConvexCollisionShape2D();
 
 		private:
-			static uint32 GrahamScan_FindStartPoint(const Vector<Float2>& points);
-			static void GrahamScan_SortPoints(Vector<Float2>& inoutPoints);
-			static void GrahamScan_Convexify(Vector<Float2>& inoutPoints);
-
-		private:
 			Vector<Float2> _vertices;
 		};
 

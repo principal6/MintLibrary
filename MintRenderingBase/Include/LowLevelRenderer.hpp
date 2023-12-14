@@ -4,12 +4,11 @@
 #include <MintRenderingBase/Include/LowLevelRenderer.h>
 
 #include <MintContainer/Include/Vector.hpp>
+#include <MintContainer/Include/Algorithm.hpp>
 
 #include <MintRenderingBase/Include/GraphicDevice.h>
 #include <MintRenderingBase/Include/MeshData.h>
 #include <MintRenderingBase/Include/ShapeGenerator.h>
-
-#include <MintLibrary/Include/Algorithm.hpp>
 
 
 namespace mint

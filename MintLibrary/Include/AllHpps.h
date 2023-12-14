@@ -5,8 +5,6 @@
 #define _MINT_LIBRARY_ALL_HPPS_H_
 
 
-#include <MintLibrary/Include/Algorithm.hpp>
-
 #include <MintContainer/Include/AllHpps.h>
 
 #include <MintMath/Include/AllHpps.h>

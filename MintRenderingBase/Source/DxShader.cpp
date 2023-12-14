@@ -2,11 +2,10 @@
 
 #include <d3dcompiler.h>
 
-#include <MintLibrary/Include/Algorithm.hpp>
-
 #include <MintContainer/Include/StackString.hpp>
 #include <MintContainer/Include/StringUtil.hpp>
 #include <MintContainer/Include/Vector.hpp>
+#include <MintContainer/Include/Algorithm.hpp>
 
 #include <MintPlatform/Include/TextFile.h>
 #include <MintPlatform/Include/FileUtil.hpp>

@@ -90,7 +90,7 @@ namespace mint
 				_referenceCounter->IncreaseStrongReferenceCount();
 			}
 		}
-		SharedPtr(SharedPtr&& rhs)
+		SharedPtr(SharedPtr&& rhs) noexcept
 			: _referenceCounter{ rhs._referenceCounter }
 			, _rawPtr{ rhs._rawPtr }
 		{
@@ -114,7 +114,7 @@ namespace mint
 				}
 			}
 		}
-		SharedPtr& operator=(const SharedPtr& rhs) noexcept
+		SharedPtr& operator=(const SharedPtr& rhs)
 		{
 			if (this == &rhs)
 			{

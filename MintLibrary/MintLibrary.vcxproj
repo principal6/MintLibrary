@@ -19,8 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Include\Algorithm.h" />
-    <ClInclude Include="Include\Algorithm.hpp" />
     <ClInclude Include="Include\AllHpps.h" />
     <ClInclude Include="Include\AllHeaders.h" />
     <ClInclude Include="Include\Test.h" />

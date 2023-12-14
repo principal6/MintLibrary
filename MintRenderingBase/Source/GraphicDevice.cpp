@@ -4,12 +4,11 @@
 #include <functional>
 #include <typeinfo>
 
-#include <MintLibrary/Include/Algorithm.hpp>
-
 #include <MintPlatform/Include/Window.h>
 
 #include <MintContainer/Include/StackString.hpp>
 #include <MintContainer/Include/HashMap.hpp>
+#include <MintContainer/Include/Algorithm.hpp>
 
 #include <MintRenderingBase/Include/LowLevelRenderer.hpp>
 

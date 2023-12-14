@@ -123,6 +123,12 @@
     <ClInclude Include="Include\Color.h">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Algorithm.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Algorithm.hpp">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Include\Array.inl">

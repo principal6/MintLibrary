@@ -1,10 +1,10 @@
 ﻿#include <MintGUI/Include/GUISystem.h>
 #include <MintContainer/Include/HashMap.hpp>
 #include <MintContainer/Include/StringReference.hpp>
+#include <MintContainer/Include/Algorithm.hpp>
 #include <MintRenderingBase/Include/GraphicDevice.h>
 #include <MintPlatform/Include/InputContext.h>
 #include <MintPhysics/Include/Intersection.hpp>
-#include <MintLibrary/Include/Algorithm.hpp>
 
 
 namespace mint

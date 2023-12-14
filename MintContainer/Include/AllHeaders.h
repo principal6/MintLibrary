@@ -23,6 +23,7 @@
 #include <MintContainer/Include/String.h>
 #include <MintContainer/Include/StringView.h>
 #include <MintContainer/Include/Color.h>
+#include <MintContainer/Include/Algorithm.h>
 
 
 #endif // !_MINT_CONTAINER_ALL_HEADERS_H_

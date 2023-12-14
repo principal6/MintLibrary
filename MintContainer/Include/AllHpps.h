@@ -18,6 +18,7 @@
 #include <MintContainer/Include/Queue.hpp>
 #include <MintContainer/Include/String.hpp>
 #include <MintContainer/Include/StringView.hpp>
+#include <MintContainer/Include/Algorithm.hpp>
 
 
 #endif // !_MINT_CONTAINER_ALL_HPPS_H_

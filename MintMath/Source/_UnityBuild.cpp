@@ -7,4 +7,5 @@
 #include <MintMath/Source/Int2.cpp>
 #include <MintMath/Source/MathCommon.cpp>
 #include <MintMath/Source/AffineVec.cpp>
+#include <MintMath/Source/Geometry.cpp>
 #include <MintMath/Source/Test.cpp>

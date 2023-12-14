@@ -24,8 +24,6 @@ namespace mint
 }
 
 
-#include <MintLibrary/Include/Algorithm.h>
-
 #include <MintMath/Include/AllHeaders.h>
 
 #include <MintContainer/Include/AllHeaders.h>

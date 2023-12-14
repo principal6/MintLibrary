@@ -23,6 +23,7 @@
 #include <MintMath/Include/AffineMat.h>
 
 #include <MintMath/Include/Easing.h>
+#include <MintMath/Include/Geometry.h>
 
 
 #endif // !_MINT_MATH_ALL_HEADERS_H_
