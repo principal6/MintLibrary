@@ -8,7 +8,6 @@
 
 #include <MintRenderingBase/Include/GraphicDevice.h>
 #include <MintRenderingBase/Include/MeshData.h>
-#include <MintRenderingBase/Include/ShapeGenerator.h>
 
 
 namespace mint

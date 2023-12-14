@@ -12,9 +12,6 @@ namespace mint
 {
 	namespace Rendering
 	{
-		struct VS_INPUT_SHAPE;
-
-
 		struct ShapeTransform
 		{
 			ShapeTransform() : ShapeTransform(0.0f, Float2::kZero) { __noop; }
@@ -26,12 +23,6 @@ namespace mint
 
 			float _rotation;
 			Float2 _translation;
-		};
-
-		struct Shape
-		{
-			Vector<VS_INPUT_SHAPE> _vertices;
-			Vector<IndexElementType> _indices;
 		};
 
 		class ScopedShapeTransformer

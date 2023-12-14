@@ -22,6 +22,16 @@ namespace mint
 {
 	namespace Rendering
 	{
+		struct VS_INPUT_SHAPE;
+
+		using IndexElementType = uint16;
+	}
+}
+
+namespace mint
+{
+	namespace Rendering
+	{
 		enum class TextRenderDirectionHorz
 		{
 			Leftward,
@@ -38,7 +48,11 @@ namespace mint
 
 		static constexpr int32 kDefaultFontSize = 16;
 
-		using IndexElementType = uint16;
+		struct Shape
+		{
+			Vector<VS_INPUT_SHAPE> _vertices;
+			Vector<IndexElementType> _indices;
+		};
 
 		// Triangle face
 		struct Face

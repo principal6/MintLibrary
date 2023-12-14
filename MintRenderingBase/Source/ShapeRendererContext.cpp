@@ -7,7 +7,6 @@
 
 #include <MintRenderingBase/Include/GraphicDevice.h>
 #include <MintRenderingBase/Include/LowLevelRenderer.hpp>
-#include <MintRenderingBase/Include/ShapeGenerator.h>
 
 #include <MintMath/Include/Float2x2.h>
 #include <MintMath/Include/Float3x3.h>

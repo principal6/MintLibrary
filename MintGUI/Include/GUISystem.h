@@ -10,7 +10,6 @@
 #include <MintContainer/Include/OwnPtr.h>
 #include <MintContainer/Include/SharedPtr.h>
 #include <MintRenderingBase/Include/RenderingBaseCommon.h>
-#include <MintRenderingBase/Include/ShapeGenerator.h>
 #include <MintGUI/Include/GUIControl.h>
 
 

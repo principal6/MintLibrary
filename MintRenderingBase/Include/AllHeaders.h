@@ -6,7 +6,6 @@
 
 
 #include <MintRenderingBase/Include/RenderingBaseCommon.h>
-
 #include <MintRenderingBase/Include/GraphicResource.h>
 #include <MintRenderingBase/Include/Shader.h>
 #include <MintRenderingBase/Include/DxShaderHeaderMemory.h>

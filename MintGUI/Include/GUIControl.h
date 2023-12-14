@@ -10,7 +10,6 @@
 #include <MintContainer/Include/String.h>
 #include <MintContainer/Include/OwnPtr.h>
 #include <MintContainer/Include/SharedPtr.h>
-#include <MintRenderingBase/Include/ShapeGenerator.h>
 
 
 namespace mint

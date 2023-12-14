@@ -9,7 +9,6 @@
 
 #include <MintRenderingBase/Include/RenderingBaseCommon.h>
 #include <MintRenderingBase/Include/MeshData.h>
-#include <MintRenderingBase/Include/ShapeGenerator.h>
 
 #include <MintRendering/Include/MeshGenerator.h>
 
