@@ -288,7 +288,7 @@ namespace mint
 			}
 			const uint32 triangleCount = rawVertexCount - 2;
 			outShape._indices.Reserve(triangleCount * 3);
-			for (size_t i = 0; i < triangleCount; i++)
+			for (uint32 i = 0; i < triangleCount; i++)
 			{
 				outShape._indices.PushBack(0);
 				outShape._indices.PushBack(rawVertexCount - i - 2);
