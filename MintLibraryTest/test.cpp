@@ -76,8 +76,8 @@ bool Run2DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 	ByteColorImage byteColorImage;
 	ImageLoader imageLoader;
 	imageLoader.LoadImage_("Assets/Test_image.png", byteColorImage);
-	DxResourcePool& resourcePool = graphicDevice.GetResourcePool();
-	const GraphicObjectID textureID = resourcePool.AddTexture2D(DxTextureFormat::R8G8B8A8_UNORM, byteColorImage.GetBytes(), byteColorImage.GetWidth(), byteColorImage.GetHeight());
+	GraphicResourcePool& resourcePool = graphicDevice.GetResourcePool();
+	const GraphicObjectID textureID = resourcePool.AddTexture2D(TextureFormat::R8G8B8A8_UNORM, byteColorImage.GetBytes(), byteColorImage.GetWidth(), byteColorImage.GetHeight());
 	
 	//ConvexCollisionShape2D circleCollisionShape = ConvexCollisionShape2D::MakeFromRenderingShape(Float2::kZero, circleShape);
 	const InputContext& inputContext = InputContext::GetInstance();

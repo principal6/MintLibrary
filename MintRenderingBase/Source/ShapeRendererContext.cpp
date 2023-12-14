@@ -89,7 +89,7 @@ namespace mint
 		{
 			_clipRect = _graphicDevice.GetFullScreenClipRect();
 
-			DxShaderPool& shaderPool = _graphicDevice.GetShaderPool();
+			ShaderPool& shaderPool = _graphicDevice.GetShaderPool();
 
 			{
 				if (_vertexShaderID.IsValid())
@@ -230,7 +230,7 @@ namespace mint
 				_graphicDevice.GetResourcePool().BindToShader(_fontData._fontTextureID, GraphicShaderType::PixelShader, 0);
 			}
 
-			DxShaderPool& shaderPool = _graphicDevice.GetShaderPool();
+			ShaderPool& shaderPool = _graphicDevice.GetShaderPool();
 			shaderPool.BindInputLayoutIfNot(_inputLayoutID);
 			shaderPool.BindShaderIfNot(GraphicShaderType::VertexShader, _vertexShaderID);
 
@@ -241,8 +241,8 @@ namespace mint
 
 			shaderPool.BindShaderIfNot(GraphicShaderType::PixelShader, _pixelShaderID);
 
-			DxResourcePool& resourcePool = _graphicDevice.GetResourcePool();
-			DxResource& sbTransformBuffer = resourcePool.GetResource(_graphicDevice.GetCommonSBTransformID());
+			GraphicResourcePool& resourcePool = _graphicDevice.GetResourcePool();
+			GraphicResource& sbTransformBuffer = resourcePool.GetResource(_graphicDevice.GetCommonSBTransformID());
 			sbTransformBuffer.BindToShader(GraphicShaderType::VertexShader, sbTransformBuffer.GetRegisterIndex());
 
 			_lowLevelRenderer->ExecuteRenderCommands();

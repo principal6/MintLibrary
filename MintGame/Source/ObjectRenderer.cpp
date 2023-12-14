@@ -30,19 +30,19 @@ namespace mint
 		{
 			using namespace Rendering;
 
-			DxShaderPool& shaderPool = _graphicDevice.GetShaderPool();
-			DxResourcePool& resourcePool = _graphicDevice.GetResourcePool();
+			ShaderPool& shaderPool = _graphicDevice.GetShaderPool();
+			GraphicResourcePool& resourcePool = _graphicDevice.GetResourcePool();
 			const Vector<MeshComponent*>& meshComponents = objectPool.GetMeshComponents();
 			if (meshComponents.IsEmpty() == false)
 			{
 				shaderPool.BindInputLayoutIfNot(_inputLayoutDefaultID);
 				shaderPool.BindShaderIfNot(GraphicShaderType::VertexShader, _vsDefaultID);
 
-				DxResource& cbTransform = resourcePool.GetResource(_graphicDevice.GetCommonCBTransformID());
+				GraphicResource& cbTransform = resourcePool.GetResource(_graphicDevice.GetCommonCBTransformID());
 				cbTransform.BindToShader(GraphicShaderType::VertexShader, cbTransform.GetRegisterIndex());
 				cbTransform.BindToShader(GraphicShaderType::GeometryShader, cbTransform.GetRegisterIndex());
 
-				DxResource& sbMaterial = resourcePool.GetResource(_graphicDevice.GetCommonSBMaterialID());
+				GraphicResource& sbMaterial = resourcePool.GetResource(_graphicDevice.GetCommonSBMaterialID());
 				sbMaterial.BindToShader(GraphicShaderType::PixelShader, sbMaterial.GetRegisterIndex());
 
 				SB_Material sbMaterialData;
@@ -110,7 +110,7 @@ namespace mint
 			using namespace Rendering;
 			using namespace Language;
 
-			DxShaderPool& shaderPool = _graphicDevice.GetShaderPool();
+			ShaderPool& shaderPool = _graphicDevice.GetShaderPool();
 			_vsDefaultID = shaderPool.AddShader(Path::MakeIncludeAssetPath("Hlsl/"), "VsDefault.hlsl", "main", GraphicShaderType::VertexShader, Path::MakeIncludeAssetPath("HlslBinary/"));
 
 			const CppHlsl::Interpreter& interpreter = _graphicDevice.GetCppHlslSteamData();

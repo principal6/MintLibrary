@@ -237,8 +237,8 @@ namespace mint
 			}
 #endif
 
-			DxResourcePool& resourcePool = graphicDevice.GetResourcePool();
-			_fontData._fontTextureID = resourcePool.AddTexture2D(DxTextureFormat::R8_UNORM, &_fontImageData._imageData[0], _fontImageData._width, _fontImageData._height);
+			GraphicResourcePool& resourcePool = graphicDevice.GetResourcePool();
+			_fontData._fontTextureID = resourcePool.AddTexture2D(TextureFormat::R8_UNORM, &_fontImageData._imageData[0], _fontImageData._width, _fontImageData._height);
 			return true;
 		}
 

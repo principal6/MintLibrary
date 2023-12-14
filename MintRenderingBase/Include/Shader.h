@@ -32,7 +32,7 @@ namespace mint
 	{
 		class DxShaderHeaderMemory;
 		class GraphicDevice;
-		class DxShaderPool;
+		class ShaderPool;
 
 
 		using Microsoft::WRL::ComPtr;
@@ -44,7 +44,7 @@ namespace mint
 			Vector<D3D11_INPUT_ELEMENT_DESC> _inputElementDescriptorArray;
 		};
 
-		enum class DxShaderVersion
+		enum class ShaderVersion
 		{
 			v_4_0,
 			v_5_0,
@@ -53,7 +53,7 @@ namespace mint
 
 		class GraphicInputLayout final : public GraphicObject
 		{
-			friend DxShaderPool;
+			friend ShaderPool;
 
 		public:
 			static const GraphicInputLayout kNullInstance;
@@ -76,19 +76,19 @@ namespace mint
 			ComPtr<ID3D11InputLayout> _inputLayout;
 		};
 
-		class DxShader final : public GraphicObject
+		class Shader final : public GraphicObject
 		{
-			friend DxShaderPool;
+			friend ShaderPool;
 
 		private:
-			DxShader(GraphicDevice& graphicDevice, const GraphicShaderType shaderType);
+			Shader(GraphicDevice& graphicDevice, const GraphicShaderType shaderType);
 
 		public:
-			DxShader(DxShader&& rhs) noexcept = default;
-			virtual ~DxShader() = default;
+			Shader(Shader&& rhs) noexcept = default;
+			virtual ~Shader() = default;
 
 		public:
-			DxShader& operator=(DxShader&& rhs) noexcept = default;
+			Shader& operator=(Shader&& rhs) noexcept = default;
 
 		public:
 			void Bind() const noexcept;
@@ -103,11 +103,11 @@ namespace mint
 			StringA _entryPoint;
 
 		public:
-			static const DxShader kNullInstance;
+			static const Shader kNullInstance;
 		};
 
 
-		struct DxShaderCompileParam
+		struct ShaderCompileParam
 		{
 			const char* _inputFileName = nullptr;
 			const char* _outputFileName = nullptr;
@@ -115,19 +115,18 @@ namespace mint
 			const char* _shaderTextContent = nullptr;
 		};
 
-		class DxShaderPool final : public GraphicObject
+		class ShaderPool final : public GraphicObject
 		{
 			template <typename CustomDataType>
 			using TypeMetaData = Language::TypeMetaData<CustomDataType>;
 			using TypeCustomData = Language::CppHlsl::TypeCustomData;
 
-
 			static constexpr const char* const kCompiledShaderFileExtension = ".hlslbin";
 
 		public:
-			DxShaderPool(GraphicDevice& graphicDevice, DxShaderHeaderMemory* const shaderHeaderMemory, const DxShaderVersion shaderVersion);
-			DxShaderPool(const DxShaderPool& rhs) = delete;
-			virtual ~DxShaderPool() = default;
+			ShaderPool(GraphicDevice& graphicDevice, DxShaderHeaderMemory* const shaderHeaderMemory, const ShaderVersion shaderVersion);
+			ShaderPool(const ShaderPool& rhs) = delete;
+			virtual ~ShaderPool() = default;
 
 		public:
 			GraphicObjectID AddShaderFromMemory(const char* const shaderIdentifier, const char* const textContent, const char* const entryPoint, const GraphicShaderType shaderType);
@@ -137,18 +136,18 @@ namespace mint
 			void RemoveInputLayout(const GraphicObjectID& shaderID);
 
 		private:
-			GraphicObjectID AddShaderInternal(const GraphicShaderType shaderType, DxShader& shader);
-			GraphicObjectID AddInputLayoutInternal(const DxShader& vertexShader, const TypeMetaData<TypeCustomData>& inputElementTypeMetaData);
+			GraphicObjectID AddShaderInternal(const GraphicShaderType shaderType, Shader& shader);
+			GraphicObjectID AddInputLayoutInternal(const Shader& vertexShader, const TypeMetaData<TypeCustomData>& inputElementTypeMetaData);
 
 		private:
-			bool CreateShaderInternal(const GraphicShaderType shaderType, DxShader& shader);
-			bool CreateInputLayoutInternal(const DxShader& vertexShader, const TypeMetaData<TypeCustomData>& inputElementTypeMetaData, GraphicInputLayout& outInputLayout);
+			bool CreateShaderInternal(const GraphicShaderType shaderType, Shader& shader);
+			bool CreateInputLayoutInternal(const Shader& vertexShader, const TypeMetaData<TypeCustomData>& inputElementTypeMetaData, GraphicInputLayout& outInputLayout);
 			void PushInputElement(DxInputElementSet& inputElementSet, const TypeMetaData<TypeCustomData>& outerDataTypeMetaData, const TypeMetaData<TypeCustomData>& memberTypeMetaData);
 
 		private:
-			bool CompileShaderFromFile(const char* const inputDirectory, const char* const inputShaderFileName, const char* const entryPoint, const char* const outputDirectory, const GraphicShaderType shaderType, const bool forceCompilation, DxShader& inoutShader);
-			bool CompileShaderFromFile(const char* const inputShaderFilePath, const char* const entryPoint, const char* const outputShaderFilePath, const GraphicShaderType shaderType, const bool forceCompilation, DxShader& inoutShader);
-			bool CompileShaderInternalXXX(const GraphicShaderType shaderType, const DxShaderCompileParam& compileParam, const char* const entryPoint, ID3D10Blob** outBlob);
+			bool CompileShaderFromFile(const char* const inputDirectory, const char* const inputShaderFileName, const char* const entryPoint, const char* const outputDirectory, const GraphicShaderType shaderType, const bool forceCompilation, Shader& inoutShader);
+			bool CompileShaderFromFile(const char* const inputShaderFilePath, const char* const entryPoint, const char* const outputShaderFilePath, const GraphicShaderType shaderType, const bool forceCompilation, Shader& inoutShader);
+			bool CompileShaderInternalXXX(const GraphicShaderType shaderType, const ShaderCompileParam& compileParam, const char* const entryPoint, ID3D10Blob** outBlob);
 
 		public:
 			void RecompileAllShaders();
@@ -166,8 +165,8 @@ namespace mint
 			int32 GetInputLayoutIndex(const GraphicObjectID& objectID) const;
 			uint32 GetShaderCount(const GraphicShaderType shaderType) const;
 			GraphicObjectID& AccessBoundShaderID(const GraphicShaderType shaderType);
-			const Vector<DxShader>& GetShaders(const GraphicShaderType shaderType) const;
-			Vector<DxShader>& AccessShaders(const GraphicShaderType shaderType);
+			const Vector<Shader>& GetShaders(const GraphicShaderType shaderType) const;
+			Vector<Shader>& AccessShaders(const GraphicShaderType shaderType);
 
 		private:
 			ComPtr<ID3DBlob> _errorMessageBlob;
@@ -176,11 +175,11 @@ namespace mint
 			DxShaderHeaderMemory* _shaderHeaderMemory;
 
 		private:
-			DxShaderVersion _shaderVersion;
+			ShaderVersion _shaderVersion;
 
 		private:
 			Vector<GraphicInputLayout> _inputLayouts;
-			Vector<DxShader> _shadersPerType[static_cast<uint32>(GraphicShaderType::COUNT)];
+			Vector<Shader> _shadersPerType[static_cast<uint32>(GraphicShaderType::COUNT)];
 
 		private:
 			GraphicObjectID	_boundInputLayoutID;

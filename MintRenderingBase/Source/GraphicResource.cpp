@@ -1,4 +1,4 @@
-﻿#include <MintRenderingBase/Include/DxResource.h>
+﻿#include <MintRenderingBase/Include/GraphicResource.h>
 
 #include <MintContainer/Include/Vector.hpp>
 #include <MintContainer/Include/Algorithm.hpp>
@@ -10,14 +10,14 @@ namespace mint
 {
 	namespace Rendering
 	{
-		DxResource DxResource::s_invalidInstance(GraphicDevice::GetInvalidInstance());
-		DXGI_FORMAT DxResource::GetDXGIFormat(const DxTextureFormat format)
+		GraphicResource GraphicResource::s_invalidInstance(GraphicDevice::GetInvalidInstance());
+		DXGI_FORMAT GraphicResource::GetDXGIFormat(const TextureFormat format)
 		{
 			switch (format)
 			{
-			case DxTextureFormat::R8_UNORM:
+			case TextureFormat::R8_UNORM:
 				return DXGI_FORMAT::DXGI_FORMAT_R8_UNORM;
-			case DxTextureFormat::R8G8B8A8_UNORM:
+			case TextureFormat::R8G8B8A8_UNORM:
 				return DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM;
 			default:
 				break;
@@ -26,13 +26,13 @@ namespace mint
 			return DXGI_FORMAT();
 		}
 
-		uint32 DxResource::GetColorCount(const DxTextureFormat format)
+		uint32 GraphicResource::GetColorCount(const TextureFormat format)
 		{
 			switch (format)
 			{
-			case DxTextureFormat::R8_UNORM:
+			case TextureFormat::R8_UNORM:
 				return 1;
-			case DxTextureFormat::R8G8B8A8_UNORM:
+			case TextureFormat::R8G8B8A8_UNORM:
 				return 4;
 			default:
 				break;
@@ -42,14 +42,14 @@ namespace mint
 		}
 
 
-		DxResource::DxResource(GraphicDevice& graphicDevice)
+		GraphicResource::GraphicResource(GraphicDevice& graphicDevice)
 			: GraphicObject(graphicDevice, GraphicObjectType::Resource)
-			, _resourceType{ DxResourceType::INVALID }
+			, _resourceType{ GraphicResourceType::INVALID }
 			, _resourceCapacity{ 0 }
 			, _elementStride{ 0 }
 			, _elementMaxCount{ 0 }
 			, _elementOffset{ 0 }
-			, _textureFormat{ DxTextureFormat::INVALID }
+			, _textureFormat{ TextureFormat::INVALID }
 			, _textureWidth{ 0 }
 			, _textureHeight{ 0 }
 			, _registerIndex{ 0 }
@@ -63,13 +63,13 @@ namespace mint
 			}
 		}
 
-		bool DxResource::CreateBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount)
+		bool GraphicResource::CreateBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount)
 		{
 			switch (_resourceType)
 			{
-			case DxResourceType::INVALID:
+			case GraphicResourceType::INVALID:
 				break;
-			case DxResourceType::ConstantBuffer:
+			case GraphicResourceType::ConstantBuffer:
 			{
 				ComPtr<ID3D11Resource> newResource;
 
@@ -95,15 +95,15 @@ namespace mint
 				}
 				break;
 			}
-			case DxResourceType::VertexBuffer:
-			case DxResourceType::IndexBuffer:
+			case GraphicResourceType::VertexBuffer:
+			case GraphicResourceType::IndexBuffer:
 			{
 				ComPtr<ID3D11Resource> newResource;
 
 				D3D11_BUFFER_DESC bufferDescriptor{};
 				bufferDescriptor.Usage = D3D11_USAGE::D3D11_USAGE_DYNAMIC;
 				bufferDescriptor.ByteWidth = elementStride * elementCount;
-				bufferDescriptor.BindFlags = (_resourceType == DxResourceType::VertexBuffer) ? D3D11_BIND_FLAG::D3D11_BIND_VERTEX_BUFFER : D3D11_BIND_FLAG::D3D11_BIND_INDEX_BUFFER;
+				bufferDescriptor.BindFlags = (_resourceType == GraphicResourceType::VertexBuffer) ? D3D11_BIND_FLAG::D3D11_BIND_VERTEX_BUFFER : D3D11_BIND_FLAG::D3D11_BIND_INDEX_BUFFER;
 				bufferDescriptor.CPUAccessFlags = D3D11_CPU_ACCESS_FLAG::D3D11_CPU_ACCESS_WRITE;
 				bufferDescriptor.MiscFlags = 0;
 				bufferDescriptor.StructureByteStride = 0;
@@ -122,7 +122,7 @@ namespace mint
 				}
 				break;
 			}
-			case DxResourceType::StructuredBuffer:
+			case GraphicResourceType::StructuredBuffer:
 			{
 				ComPtr<ID3D11Resource> newResource;
 
@@ -162,11 +162,11 @@ namespace mint
 			return false;
 		}
 
-		bool DxResource::CreateTexture(const DxTextureFormat format, const void* const resourceContent, const uint32 width, const uint32 height)
+		bool GraphicResource::CreateTexture(const TextureFormat format, const void* const resourceContent, const uint32 width, const uint32 height)
 		{
 			switch (_resourceType)
 			{
-			case DxResourceType::Texture2D:
+			case GraphicResourceType::Texture2D:
 			{
 				ComPtr<ID3D11Resource> newResource;
 
@@ -214,36 +214,36 @@ namespace mint
 			return false;
 		}
 
-		bool DxResource::IsValid() const noexcept
+		bool GraphicResource::IsValid() const noexcept
 		{
 			return (_resource.Get() != nullptr);
 		}
 
-		void DxResource::UpdateBuffer(const void* const resourceContent, const uint32 elementCount)
+		void GraphicResource::UpdateBuffer(const void* const resourceContent, const uint32 elementCount)
 		{
 			UpdateBuffer(resourceContent, _elementStride, elementCount);
 		}
 
-		void DxResource::UpdateBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount)
+		void GraphicResource::UpdateBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount)
 		{
-			MINT_ASSERT(_resourceType < DxResourceType::Texture2D, "");
+			MINT_ASSERT(_resourceType < GraphicResourceType::Texture2D, "");
 
 			UpdateContentInternal(resourceContent, elementStride, elementCount, 0);
 		}
 
-		void DxResource::UpdateTexture(const void* const resourceContent)
+		void GraphicResource::UpdateTexture(const void* const resourceContent)
 		{
 			UpdateTexture(resourceContent, _textureWidth, _textureHeight);
 		}
 
-		void DxResource::UpdateTexture(const void* const resourceContent, const uint32 width, const uint32 height)
+		void GraphicResource::UpdateTexture(const void* const resourceContent, const uint32 width, const uint32 height)
 		{
-			MINT_ASSERT(DxResourceType::Texture2D <= _resourceType, "");
+			MINT_ASSERT(GraphicResourceType::Texture2D <= _resourceType, "");
 
 			UpdateContentInternal(resourceContent, _elementStride, width * height, width);
 		}
 
-		void DxResource::UpdateContentInternal(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount, const uint32 width)
+		void GraphicResource::UpdateContentInternal(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount, const uint32 width)
 		{
 			if (resourceContent == nullptr)
 			{
@@ -258,7 +258,7 @@ namespace mint
 				// elementCount => 데이터가 늘어난 경우
 				// 버퍼 재생성
 
-				if (_resourceType < DxResourceType::Texture2D)
+				if (_resourceType < GraphicResourceType::Texture2D)
 				{
 					CreateBuffer(resourceContent, elementStride, elementCount);
 				}
@@ -277,7 +277,7 @@ namespace mint
 			}
 			else
 			{
-				if (_resourceType >= DxResourceType::Texture2D)
+				if (_resourceType >= GraphicResourceType::Texture2D)
 				{
 					_graphicDevice.GetDxDeviceContext()->UpdateSubresource(_resource.Get(), 0, nullptr, resourceContent, _elementStride * width, 0);
 				}
@@ -292,38 +292,38 @@ namespace mint
 			}
 		}
 
-		void DxResource::SetOffset(const uint32 elementOffset)
+		void GraphicResource::SetOffset(const uint32 elementOffset)
 		{
 			_elementOffset = elementOffset;
 		}
 
-		uint32 DxResource::GetRegisterIndex() const noexcept
+		uint32 GraphicResource::GetRegisterIndex() const noexcept
 		{
 			return _registerIndex;
 		}
 
-		ID3D11Buffer* const* DxResource::GetBuffer() const noexcept
+		ID3D11Buffer* const* GraphicResource::GetBuffer() const noexcept
 		{
 			return reinterpret_cast<ID3D11Buffer* const*>(_resource.GetAddressOf());
 		}
 
-		ID3D11ShaderResourceView* const* DxResource::GetResourceView() const noexcept
+		ID3D11ShaderResourceView* const* GraphicResource::GetResourceView() const noexcept
 		{
 			return reinterpret_cast<ID3D11ShaderResourceView* const*>(_view.GetAddressOf());
 		}
 
-		bool DxResource::NeedsToBind() const noexcept
+		bool GraphicResource::NeedsToBind() const noexcept
 		{
 			return _needToBind;
 		}
 
-		void DxResource::BindAsInput() const noexcept
+		void GraphicResource::BindAsInput() const noexcept
 		{
-			if (_resourceType == DxResourceType::VertexBuffer)
+			if (_resourceType == GraphicResourceType::VertexBuffer)
 			{
 				_graphicDevice.GetStateManager().SetIAVertexBuffers(0, 1, reinterpret_cast<ID3D11Buffer* const*>(_resource.GetAddressOf()), &_elementStride, &_elementOffset);
 			}
-			else if (_resourceType == DxResourceType::IndexBuffer)
+			else if (_resourceType == GraphicResourceType::IndexBuffer)
 			{
 				_graphicDevice.GetStateManager().SetIAIndexBuffer(reinterpret_cast<ID3D11Buffer*>(_resource.Get()), kIndexBufferFormat, _elementOffset);
 			}
@@ -335,13 +335,13 @@ namespace mint
 			_needToBind = false;
 		}
 
-		void DxResource::BindToShader(const GraphicShaderType shaderType, const uint32 bindingSlot) const noexcept
+		void GraphicResource::BindToShader(const GraphicShaderType shaderType, const uint32 bindingSlot) const noexcept
 		{
-			if (_resourceType == DxResourceType::ConstantBuffer)
+			if (_resourceType == GraphicResourceType::ConstantBuffer)
 			{
 				_graphicDevice.GetStateManager().SetConstantBuffers(shaderType, this, bindingSlot);
 			}
-			else if (_resourceType == DxResourceType::StructuredBuffer || DxResourceType::Texture2D <= _resourceType)
+			else if (_resourceType == GraphicResourceType::StructuredBuffer || GraphicResourceType::Texture2D <= _resourceType)
 			{
 				_graphicDevice.GetStateManager().SetShaderResources(shaderType, this, bindingSlot);
 			}
@@ -354,7 +354,7 @@ namespace mint
 			_needToBind = false;
 		}
 
-		void DxResource::UnbindFromShader() const noexcept
+		void GraphicResource::UnbindFromShader() const noexcept
 		{
 			for (GraphicShaderType shaderType = GraphicShaderType(0); shaderType != GraphicShaderType::COUNT; shaderType = (GraphicShaderType)((uint32)shaderType + 1))
 			{
@@ -364,11 +364,11 @@ namespace mint
 					continue;
 				}
 
-				if (_resourceType == DxResourceType::ConstantBuffer)
+				if (_resourceType == GraphicResourceType::ConstantBuffer)
 				{
 					_graphicDevice.GetStateManager().SetConstantBuffers(shaderType, nullptr, _boundSlots[i]);
 				}
-				else if (_resourceType == DxResourceType::StructuredBuffer || DxResourceType::Texture2D <= _resourceType)
+				else if (_resourceType == GraphicResourceType::StructuredBuffer || GraphicResourceType::Texture2D <= _resourceType)
 				{
 					_graphicDevice.GetStateManager().SetShaderResources(shaderType, nullptr, _boundSlots[i]);
 				}
@@ -380,16 +380,16 @@ namespace mint
 		}
 
 
-		DxResourcePool::DxResourcePool(GraphicDevice& graphicDevice)
+		GraphicResourcePool::GraphicResourcePool(GraphicDevice& graphicDevice)
 			: GraphicObject(graphicDevice, GraphicObjectType::Pool)
 		{
 			__noop;
 		}
 
-		GraphicObjectID DxResourcePool::AddConstantBuffer(const void* const resourceContent, const uint32 bufferSize, const uint32 registerIndex)
+		GraphicObjectID GraphicResourcePool::AddConstantBuffer(const void* const resourceContent, const uint32 bufferSize, const uint32 registerIndex)
 		{
-			DxResource resource{ _graphicDevice };
-			resource._resourceType = DxResourceType::ConstantBuffer;
+			GraphicResource resource{ _graphicDevice };
+			resource._resourceType = GraphicResourceType::ConstantBuffer;
 			if (resource.CreateBuffer(resourceContent, bufferSize, 1) == true)
 			{
 				resource.AssignIDXXX();
@@ -404,10 +404,10 @@ namespace mint
 			return GraphicObjectID::kInvalidGraphicObjectID;
 		}
 
-		GraphicObjectID DxResourcePool::AddVertexBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount)
+		GraphicObjectID GraphicResourcePool::AddVertexBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount)
 		{
-			DxResource resource{ _graphicDevice };
-			resource._resourceType = DxResourceType::VertexBuffer;
+			GraphicResource resource{ _graphicDevice };
+			resource._resourceType = GraphicResourceType::VertexBuffer;
 			if (resource.CreateBuffer(resourceContent, elementStride, elementCount) == true)
 			{
 				resource.AssignIDXXX();
@@ -422,11 +422,11 @@ namespace mint
 			return GraphicObjectID::kInvalidGraphicObjectID;
 		}
 
-		GraphicObjectID DxResourcePool::AddIndexBuffer(const void* const resourceContent, const uint32 elementCount)
+		GraphicObjectID GraphicResourcePool::AddIndexBuffer(const void* const resourceContent, const uint32 elementCount)
 		{
-			DxResource resource{ _graphicDevice };
-			resource._resourceType = DxResourceType::IndexBuffer;
-			if (resource.CreateBuffer(resourceContent, DxResource::kIndexBufferElementStride, elementCount) == true)
+			GraphicResource resource{ _graphicDevice };
+			resource._resourceType = GraphicResourceType::IndexBuffer;
+			if (resource.CreateBuffer(resourceContent, GraphicResource::kIndexBufferElementStride, elementCount) == true)
 			{
 				resource.AssignIDXXX();
 
@@ -440,10 +440,10 @@ namespace mint
 			return GraphicObjectID::kInvalidGraphicObjectID;
 		}
 
-		GraphicObjectID DxResourcePool::AddStructuredBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount, const uint32 registerIndex)
+		GraphicObjectID GraphicResourcePool::AddStructuredBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount, const uint32 registerIndex)
 		{
-			DxResource resource{ _graphicDevice };
-			resource._resourceType = DxResourceType::StructuredBuffer;
+			GraphicResource resource{ _graphicDevice };
+			resource._resourceType = GraphicResourceType::StructuredBuffer;
 			if (resource.CreateBuffer(resourceContent, elementStride, elementCount) == true)
 			{
 				resource.AssignIDXXX();
@@ -459,10 +459,10 @@ namespace mint
 			return GraphicObjectID::kInvalidGraphicObjectID;
 		}
 
-		GraphicObjectID DxResourcePool::AddTexture2D(const DxTextureFormat format, const byte* const textureContent, const uint32 width, const uint32 height)
+		GraphicObjectID GraphicResourcePool::AddTexture2D(const TextureFormat format, const byte* const textureContent, const uint32 width, const uint32 height)
 		{
-			DxResource resource{ _graphicDevice };
-			resource._resourceType = DxResourceType::Texture2D;
+			GraphicResource resource{ _graphicDevice };
+			resource._resourceType = GraphicResourceType::Texture2D;
 			if (resource.CreateTexture(format, textureContent, width, height) == true)
 			{
 				resource.AssignIDXXX();
@@ -477,25 +477,25 @@ namespace mint
 			return GraphicObjectID::kInvalidGraphicObjectID;
 		}
 
-		void DxResourcePool::BindAsInput(const GraphicObjectID& objectID) noexcept
+		void GraphicResourcePool::BindAsInput(const GraphicObjectID& objectID) noexcept
 		{
-			DxResource& resource = GetResource(objectID);
+			GraphicResource& resource = GetResource(objectID);
 			if (resource.IsValid() == true)
 			{
 				resource.BindAsInput();
 			}
 		}
 
-		void DxResourcePool::BindToShader(const GraphicObjectID& objectID, const GraphicShaderType shaderType, const uint32 bindingSlot) noexcept
+		void GraphicResourcePool::BindToShader(const GraphicObjectID& objectID, const GraphicShaderType shaderType, const uint32 bindingSlot) noexcept
 		{
-			DxResource& resource = GetResource(objectID);
+			GraphicResource& resource = GetResource(objectID);
 			if (resource.IsValid() == true)
 			{
 				resource.BindToShader(shaderType, bindingSlot);
 			}
 		}
 
-		DxResource& DxResourcePool::GetResource(const GraphicObjectID& objectID)
+		GraphicResource& GraphicResourcePool::GetResource(const GraphicObjectID& objectID)
 		{
 			MINT_ASSERT(objectID.IsObjectType(GraphicObjectType::Resource) == true, "Invalid parameter - ObjectType !!");
 
@@ -503,7 +503,7 @@ namespace mint
 			if (IsValidIndex(index) == false)
 			{
 				MINT_ASSERT(false, "Resource 를 찾지 못했습니다!!!");
-				return DxResource::s_invalidInstance;
+				return GraphicResource::s_invalidInstance;
 			}
 			return _resourceArray[index];
 		}

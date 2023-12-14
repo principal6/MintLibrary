@@ -1,5 +1,5 @@
-﻿#include <MintRenderingBase/Source/DxResource.cpp>
-#include <MintRenderingBase/Source/DxShader.cpp>
+﻿#include <MintRenderingBase/Source/GraphicResource.cpp>
+#include <MintRenderingBase/Source/Shader.cpp>
 #include <MintRenderingBase/Source/DxShaderHeaderMemory.cpp>
 #include <MintRenderingBase/Source/ImageLoader.cpp>
 #include <MintRenderingBase/Source/FontLoader.cpp>

@@ -199,8 +199,8 @@
     <ClInclude Include="Include\CppHlsl\Lexer.h" />
     <ClInclude Include="Include\CppHlsl\Parser.h" />
     <ClInclude Include="Include\CppHlsl\CppHlslTypes.h" />
-    <ClInclude Include="Include\DxResource.h" />
-    <ClInclude Include="Include\DxShader.h" />
+    <ClInclude Include="Include\GraphicResource.h" />
+    <ClInclude Include="Include\Shader.h" />
     <ClInclude Include="Include\DxShaderHeaderMemory.h" />
     <ClInclude Include="Include\FontLoader.h" />
     <ClInclude Include="Include\GraphicDevice.h" />
@@ -239,13 +239,13 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="Source\DxResource.cpp">
+    <ClCompile Include="Source\GraphicResource.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="Source\DxShader.cpp">
+    <ClCompile Include="Source\Shader.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>

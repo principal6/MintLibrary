@@ -129,9 +129,9 @@ namespace mint
 
 			PrepareBuffers();
 
-			DxResourcePool& resourcePool = _graphicDevice.GetResourcePool();
-			DxResource& vertexBuffer = resourcePool.GetResource(_vertexBufferID);
-			DxResource& indexBuffer = resourcePool.GetResource(_indexBufferID);
+			GraphicResourcePool& resourcePool = _graphicDevice.GetResourcePool();
+			GraphicResource& vertexBuffer = resourcePool.GetResource(_vertexBufferID);
+			GraphicResource& indexBuffer = resourcePool.GetResource(_indexBufferID);
 			vertexBuffer.BindAsInput();
 			indexBuffer.BindAsInput();
 
@@ -232,9 +232,9 @@ namespace mint
 
 			PrepareBuffers();
 
-			DxResourcePool& resourcePool = _graphicDevice.GetResourcePool();
-			DxResource& vertexBuffer = resourcePool.GetResource(_vertexBufferID);
-			DxResource& indexBuffer = resourcePool.GetResource(_indexBufferID);
+			GraphicResourcePool& resourcePool = _graphicDevice.GetResourcePool();
+			GraphicResource& vertexBuffer = resourcePool.GetResource(_vertexBufferID);
+			GraphicResource& indexBuffer = resourcePool.GetResource(_indexBufferID);
 			vertexBuffer.BindAsInput();
 			indexBuffer.BindAsInput();
 
@@ -320,7 +320,7 @@ namespace mint
 		template <typename T>
 		inline void LowLevelRenderer<T>::PrepareBuffers() noexcept
 		{
-			DxResourcePool& resourcePool = _graphicDevice.GetResourcePool();
+			GraphicResourcePool& resourcePool = _graphicDevice.GetResourcePool();
 
 			const uint32 vertexCount = static_cast<uint32>(_vertices.Size());
 			if (_vertexBufferID.IsValid() == false && vertexCount > 0)
@@ -330,7 +330,7 @@ namespace mint
 
 			if (_vertexBufferID.IsValid())
 			{
-				DxResource& vertexBuffer = resourcePool.GetResource(_vertexBufferID);
+				GraphicResource& vertexBuffer = resourcePool.GetResource(_vertexBufferID);
 				vertexBuffer.UpdateBuffer(&_vertices[0], vertexCount);
 			}
 
@@ -342,7 +342,7 @@ namespace mint
 
 			if (_indexBufferID.IsValid())
 			{
-				DxResource& indexBuffer = resourcePool.GetResource(_indexBufferID);
+				GraphicResource& indexBuffer = resourcePool.GetResource(_indexBufferID);
 				indexBuffer.UpdateBuffer(&_indices[0], indexCount);
 			}
 		}

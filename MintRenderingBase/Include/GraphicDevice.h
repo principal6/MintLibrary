@@ -11,8 +11,8 @@
 #include <MintContainer/Include/StackString.h>
 
 #include <MintRenderingBase/Include/DxShaderHeaderMemory.h>
-#include <MintRenderingBase/Include/DxShader.h>
-#include <MintRenderingBase/Include/DxResource.h>
+#include <MintRenderingBase/Include/Shader.h>
+#include <MintRenderingBase/Include/GraphicResource.h>
 #include <MintRenderingBase/Include/LowLevelRenderer.h>
 #include <MintRenderingBase/Include/ShapeRendererContext.h>
 
@@ -81,8 +81,8 @@ namespace mint
 				void SetPSShader(ID3D11PixelShader* const shader) noexcept;
 
 			public: // Resources
-				void SetShaderResources(GraphicShaderType graphicShaderType, const DxResource* resource, uint32 bindingSlot) noexcept;
-				void SetConstantBuffers(GraphicShaderType graphicShaderType, const DxResource* constantBuffer, uint32 bindingSlot);
+				void SetShaderResources(GraphicShaderType graphicShaderType, const GraphicResource* resource, uint32 bindingSlot) noexcept;
+				void SetConstantBuffers(GraphicShaderType graphicShaderType, const GraphicResource* constantBuffer, uint32 bindingSlot);
 
 			private:
 				GraphicDevice& _graphicDevice;
@@ -135,7 +135,7 @@ namespace mint
 			bool InitializeBackBuffer();
 			bool InitializeDepthStencilBufferAndView(const Int2& windowSize);
 			bool InitializeDepthStencilStates();
-			void InitializeShaderHeaderMemory();
+			void InitializeDxShaderHeaderMemory();
 			void InitializeShaders();
 			void InitializeSamplerStates();
 			void InitializeBlendStates();
@@ -157,8 +157,8 @@ namespace mint
 			const Rect& GetFullScreenClipRect() const noexcept;
 
 		public:
-			DxShaderPool& GetShaderPool() noexcept;
-			DxResourcePool& GetResourcePool() noexcept;
+			ShaderPool& GetShaderPool() noexcept;
+			GraphicResourcePool& GetResourcePool() noexcept;
 			ShapeRendererContext& GetShapeRendererContext() noexcept;
 			const Language::CppHlsl::Interpreter& GetCppHlslSteamData() const noexcept;
 			const Language::CppHlsl::Interpreter& GetCppHlslConstantBuffers() const noexcept;
@@ -211,8 +211,8 @@ namespace mint
 
 		private:
 			DxShaderHeaderMemory _shaderHeaderMemory;
-			DxShaderPool _shaderPool;
-			DxResourcePool _resourcePool;
+			ShaderPool _shaderPool;
+			GraphicResourcePool _resourcePool;
 
 		private:
 			CB_View _cbViewData;

@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 
-#ifndef _MINT_RENDERING_BASE_DX_RESOURCE_H_
-#define _MINT_RENDERING_BASE_DX_RESOURCE_H_
+#ifndef _MINT_RENDERING_BASE_GRAPHIC_RESOURCE_H_
+#define _MINT_RENDERING_BASE_GRAPHIC_RESOURCE_H_
 
 
 #include <MintCommon/Include/CommonDefinitions.h>
@@ -16,13 +16,17 @@ namespace mint
 {
 	namespace Rendering
 	{
-		class DxResourcePool;
-
+		class GraphicResourcePool;
 
 		using Microsoft::WRL::ComPtr;
+	}
+}
 
-
-		enum class DxResourceType
+namespace mint
+{
+	namespace Rendering
+	{
+		enum class GraphicResourceType
 		{
 			INVALID,
 
@@ -36,7 +40,7 @@ namespace mint
 			Texture2D,
 		};
 
-		enum class DxTextureFormat : uint16
+		enum class TextureFormat : uint16
 		{
 			INVALID,
 
@@ -44,31 +48,30 @@ namespace mint
 			R8G8B8A8_UNORM,
 		};
 
-
-		class DxResource final : public GraphicObject
+		class GraphicResource final : public GraphicObject
 		{
-			friend DxResourcePool;
+			friend GraphicResourcePool;
 
 			static constexpr uint32 kIndexBufferElementStride = sizeof(IndexElementType);
 			static constexpr DXGI_FORMAT kIndexBufferFormat = DXGI_FORMAT::DXGI_FORMAT_R16_UINT;
 
 		private:
-			static DXGI_FORMAT GetDXGIFormat(const DxTextureFormat format);
-			static uint32 GetColorCount(const DxTextureFormat format);
+			static DXGI_FORMAT GetDXGIFormat(const TextureFormat format);
+			static uint32 GetColorCount(const TextureFormat format);
 
 		private:
-			DxResource(GraphicDevice& graphicDevice);
+			GraphicResource(GraphicDevice& graphicDevice);
 
 		public:
-			DxResource(DxResource&& rhs) noexcept = default;
-			virtual ~DxResource() = default;
+			GraphicResource(GraphicResource&& rhs) noexcept = default;
+			virtual ~GraphicResource() = default;
 
 		public:
-			DxResource& operator=(DxResource&& rhs) noexcept = default;
+			GraphicResource& operator=(GraphicResource&& rhs) noexcept = default;
 
 		private:
 			bool CreateBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount);
-			bool CreateTexture(const DxTextureFormat format, const void* const resourceContent, const uint32 width, const uint32 height);
+			bool CreateTexture(const TextureFormat format, const void* const resourceContent, const uint32 width, const uint32 height);
 
 		public:
 			bool IsValid() const noexcept;
@@ -103,14 +106,14 @@ namespace mint
 			ComPtr<ID3D11View> _view;
 
 		private:
-			DxResourceType _resourceType;
+			GraphicResourceType _resourceType;
 			uint32 _resourceCapacity;
 
 			uint32 _elementStride;
 			uint32 _elementMaxCount;
 			uint32 _elementOffset;
 
-			DxTextureFormat _textureFormat;
+			TextureFormat _textureFormat;
 			uint16 _textureWidth;
 			uint16 _textureHeight;
 
@@ -121,16 +124,16 @@ namespace mint
 			mutable uint32 _boundSlots[static_cast<uint32>(GraphicShaderType::COUNT)];
 
 		private:
-			static DxResource s_invalidInstance;
+			static GraphicResource s_invalidInstance;
 		};
 
 
-		class DxResourcePool final : public GraphicObject
+		class GraphicResourcePool final : public GraphicObject
 		{
 		public:
-			DxResourcePool(GraphicDevice& graphicDevice);
-			DxResourcePool(const DxResourcePool& rhs) = delete;
-			virtual ~DxResourcePool() = default;
+			GraphicResourcePool(GraphicDevice& graphicDevice);
+			GraphicResourcePool(const GraphicResourcePool& rhs) = delete;
+			virtual ~GraphicResourcePool() = default;
 
 		public:
 			GraphicObjectID AddConstantBuffer(const void* const resourceContent, const uint32 bufferSize, const uint32 registerIndex);
@@ -139,20 +142,20 @@ namespace mint
 			GraphicObjectID AddStructuredBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount, const uint32 registerIndex);
 
 		public:
-			GraphicObjectID AddTexture2D(const DxTextureFormat format, const byte* const textureContent, const uint32 width, const uint32 height);
+			GraphicObjectID AddTexture2D(const TextureFormat format, const byte* const textureContent, const uint32 width, const uint32 height);
 
 		public:
 			void BindAsInput(const GraphicObjectID& objectID) noexcept;
 			void BindToShader(const GraphicObjectID& objectID, const GraphicShaderType shaderType, const uint32 bindingSlot) noexcept;
 
 		public:
-			DxResource& GetResource(const GraphicObjectID& objectID);
+			GraphicResource& GetResource(const GraphicObjectID& objectID);
 
 		private:
-			Vector<DxResource> _resourceArray;
+			Vector<GraphicResource> _resourceArray;
 		};
 	}
 }
 
 
-#endif // !_MINT_RENDERING_BASE_DX_RESOURCE_H_
+#endif // !_MINT_RENDERING_BASE_GRAPHIC_RESOURCE_H_

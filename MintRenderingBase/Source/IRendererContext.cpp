@@ -52,8 +52,8 @@ namespace mint
 				return;
 			}
 
-			DxResourcePool& resourcePool = _graphicDevice.GetResourcePool();
-			DxResource& sbTransform = resourcePool.GetResource(_graphicDevice.GetCommonSBTransformID());
+			GraphicResourcePool& resourcePool = _graphicDevice.GetResourcePool();
+			GraphicResource& sbTransform = resourcePool.GetResource(_graphicDevice.GetCommonSBTransformID());
 			sbTransform.UpdateBuffer(&_sbTransformData[0], _sbTransformData.Size());
 		}
 	}

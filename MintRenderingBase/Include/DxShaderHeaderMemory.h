@@ -27,8 +27,8 @@ namespace mint
 			void pushHeader(const char* const name, const char* const content);
 
 		public:
-			HRESULT Open(D3D_INCLUDE_TYPE IncludeType, LPCSTR pFileName, LPCVOID pParentData, LPCVOID* ppData, UINT* pBytes) override final;
-			HRESULT Close(LPCVOID pData) override final;
+			STDMETHOD(Open)(D3D_INCLUDE_TYPE IncludeType, LPCSTR pFileName, LPCVOID pParentData, LPCVOID* ppData, UINT* pBytes) override final;
+			STDMETHOD(Close)(LPCVOID pData) override final;
 
 		private:
 			Vector<StringA> _fileNameArray;

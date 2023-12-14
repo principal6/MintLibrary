@@ -21,10 +21,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Include\DxResource.h">
+    <ClInclude Include="Include\GraphicResource.h">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="Include\DxShader.h">
+    <ClInclude Include="Include\Shader.h">
       <Filter>Include</Filter>
     </ClInclude>
     <ClInclude Include="Include\DxShaderHeaderMemory.h">
@@ -103,10 +103,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\DxResource.cpp">
+    <ClCompile Include="Source\GraphicResource.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Source\DxShader.cpp">
+    <ClCompile Include="Source\Shader.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\DxShaderHeaderMemory.cpp">

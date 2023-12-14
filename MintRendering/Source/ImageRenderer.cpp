@@ -19,7 +19,7 @@ namespace mint
 		{
 			_clipRect = _graphicDevice.GetFullScreenClipRect();
 
-			DxShaderPool& shaderPool = _graphicDevice.GetShaderPool();
+			ShaderPool& shaderPool = _graphicDevice.GetShaderPool();
 			{
 				if (_vertexShaderID.IsValid())
 				{

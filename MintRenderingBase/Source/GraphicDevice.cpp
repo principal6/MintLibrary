@@ -151,7 +151,7 @@ namespace mint
 			_graphicDevice._deviceContext->PSSetShader(shader, nullptr, 0);
 		}
 
-		void GraphicDevice::StateManager::SetShaderResources(GraphicShaderType graphicShaderType, const DxResource* resource, uint32 bindingSlot) noexcept
+		void GraphicDevice::StateManager::SetShaderResources(GraphicShaderType graphicShaderType, const GraphicResource* resource, uint32 bindingSlot) noexcept
 		{
 			Vector<GraphicObjectID>* shaderResourceIDs = nullptr;
 			if (graphicShaderType == GraphicShaderType::VertexShader)
@@ -218,7 +218,7 @@ namespace mint
 			}
 		}
 
-		void GraphicDevice::StateManager::SetConstantBuffers(GraphicShaderType graphicShaderType, const DxResource* constantBuffer, uint32 bindingSlot)
+		void GraphicDevice::StateManager::SetConstantBuffers(GraphicShaderType graphicShaderType, const GraphicResource* constantBuffer, uint32 bindingSlot)
 		{
 			Vector<GraphicObjectID>* constantBufferIDs = nullptr;
 			if (graphicShaderType == GraphicShaderType::VertexShader)
@@ -299,7 +299,7 @@ namespace mint
 			, _clearColor{ 0.875f, 0.875f, 0.875f, 1.0f }
 			, _currentRasterizerFor3D{ nullptr }
 			, _fullScreenViewport{}
-			, _shaderPool{ *this, &_shaderHeaderMemory, DxShaderVersion::v_5_0 }
+			, _shaderPool{ *this, &_shaderHeaderMemory, ShaderVersion::v_5_0 }
 			, _resourcePool{ *this }
 			, _stateManager{ *this }
 			, _shapeRendererContext{ *this }
@@ -370,7 +370,7 @@ namespace mint
 			InitializeDepthStencilStates();
 
 			InitializeFullScreenData(windowSize);
-			InitializeShaderHeaderMemory();
+			InitializeDxShaderHeaderMemory();
 			InitializeShaders();
 			InitializeSamplerStates();
 			InitializeBlendStates();
@@ -522,7 +522,7 @@ namespace mint
 			return true;
 		}
 
-		void GraphicDevice::InitializeShaderHeaderMemory()
+		void GraphicDevice::InitializeDxShaderHeaderMemory()
 		{
 			const Int2 windowSize = _window.GetSize();
 
@@ -545,7 +545,7 @@ namespace mint
 					const TypeMetaData<CppHlsl::TypeCustomData>& typeMetaData = _cppHlslConstantBuffers.GetTypeMetaData(typeid(_cbViewData));
 					_cbViewID = _resourcePool.AddConstantBuffer(&_cbViewData, sizeof(_cbViewData), typeMetaData._customData.GetRegisterIndex());
 
-					DxResource& cbView = _resourcePool.GetResource(_cbViewID);
+					GraphicResource& cbView = _resourcePool.GetResource(_cbViewID);
 					cbView.BindToShader(GraphicShaderType::VertexShader, cbView.GetRegisterIndex());
 					cbView.BindToShader(GraphicShaderType::GeometryShader, cbView.GetRegisterIndex());
 					cbView.BindToShader(GraphicShaderType::PixelShader, cbView.GetRegisterIndex());
@@ -745,7 +745,7 @@ namespace mint
 			_cbViewData._cb2DProjectionMatrix = Float4x4::ProjectionMatrix2DFromTopLeft(windowSize._x, windowSize._y);
 			_cbViewData._cbViewProjectionMatrix = _cbViewData._cb2DProjectionMatrix * _cbViewData._cbViewMatrix;
 
-			DxResource& cbView = _resourcePool.GetResource(_cbViewID);
+			GraphicResource& cbView = _resourcePool.GetResource(_cbViewID);
 			cbView.UpdateBuffer(&_cbViewData, 1);
 		}
 
@@ -755,7 +755,7 @@ namespace mint
 			_cbViewData._cb3DProjectionMatrix = ProjectionMatrix;
 			_cbViewData._cbViewProjectionMatrix = _cbViewData._cb3DProjectionMatrix * _cbViewData._cbViewMatrix;
 
-			DxResource& cbView = _resourcePool.GetResource(_cbViewID);
+			GraphicResource& cbView = _resourcePool.GetResource(_cbViewID);
 			cbView.UpdateBuffer(&_cbViewData, 1);
 		}
 

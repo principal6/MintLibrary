@@ -1,4 +1,4 @@
-﻿#include <MintRenderingBase/Include/DxShader.h>
+﻿#include <MintRenderingBase/Include/Shader.h>
 
 #include <d3dcompiler.h>
 
@@ -25,7 +25,7 @@ namespace mint
 	{
 #pragma region Static function definitions
 		template<uint32 BufferSize>
-		static void makeShaderVersion(StackStringA<BufferSize>& out, const GraphicShaderType shaderType, const DxShaderVersion shaderVersion)
+		static void makeShaderVersion(StackStringA<BufferSize>& out, const GraphicShaderType shaderType, const ShaderVersion shaderVersion)
 		{
 			out.Clear();
 
@@ -42,11 +42,11 @@ namespace mint
 				out.Append("ps_");
 			}
 
-			if (shaderVersion == DxShaderVersion::v_4_0)
+			if (shaderVersion == ShaderVersion::v_4_0)
 			{
 				out.Append("4_0");
 			}
-			else if (shaderVersion == DxShaderVersion::v_5_0)
+			else if (shaderVersion == ShaderVersion::v_5_0)
 			{
 				out.Append("5_0");
 			}
@@ -74,15 +74,15 @@ namespace mint
 #pragma endregion
 
 
-#pragma region DxShader
-		const DxShader DxShader::kNullInstance{ GraphicDevice::GetInvalidInstance(), GraphicShaderType::VertexShader };
-		DxShader::DxShader(GraphicDevice& graphicDevice, const GraphicShaderType shaderType)
+#pragma region Shader
+		const Shader Shader::kNullInstance{ GraphicDevice::GetInvalidInstance(), GraphicShaderType::VertexShader };
+		Shader::Shader(GraphicDevice& graphicDevice, const GraphicShaderType shaderType)
 			: GraphicObject(graphicDevice, GraphicObjectType::Shader), _shaderType{ shaderType }
 		{
 			__noop;
 		}
 
-		void DxShader::Bind() const noexcept
+		void Shader::Bind() const noexcept
 		{
 			if (_shaderType == GraphicShaderType::VertexShader)
 			{
@@ -98,7 +98,7 @@ namespace mint
 			}
 		}
 
-		void DxShader::Unbind() const noexcept
+		void Shader::Unbind() const noexcept
 		{
 			if (_shaderType == GraphicShaderType::VertexShader)
 			{
@@ -116,7 +116,7 @@ namespace mint
 #pragma endregion
 
 
-		DxShaderPool::DxShaderPool(GraphicDevice& graphicDevice, DxShaderHeaderMemory* const shaderHeaderMemory, const DxShaderVersion shaderVersion)
+		ShaderPool::ShaderPool(GraphicDevice& graphicDevice, DxShaderHeaderMemory* const shaderHeaderMemory, const ShaderVersion shaderVersion)
 			: GraphicObject(graphicDevice, GraphicObjectType::Pool)
 			, _shaderHeaderMemory{ shaderHeaderMemory }
 			, _shaderVersion{ shaderVersion }
@@ -124,10 +124,10 @@ namespace mint
 			__noop;
 		}
 
-		GraphicObjectID DxShaderPool::AddShaderFromMemory(const char* const shaderIdentifier, const char* const textContent, const char* const entryPoint, const GraphicShaderType shaderType)
+		GraphicObjectID ShaderPool::AddShaderFromMemory(const char* const shaderIdentifier, const char* const textContent, const char* const entryPoint, const GraphicShaderType shaderType)
 		{
-			DxShader shader(_graphicDevice, shaderType);
-			DxShaderCompileParam compileParam;
+			Shader shader(_graphicDevice, shaderType);
+			ShaderCompileParam compileParam;
 			compileParam._shaderIdentifier = shaderIdentifier;
 			compileParam._shaderTextContent = textContent;
 			if (CompileShaderInternalXXX(shaderType, compileParam, entryPoint, shader._shaderBlob.ReleaseAndGetAddressOf()) == false)
@@ -139,9 +139,9 @@ namespace mint
 			return AddShaderInternal(shaderType, shader);
 		}
 
-		GraphicObjectID DxShaderPool::AddShader(const char* const inputDirectory, const char* const inputShaderFileName, const char* const entryPoint, const GraphicShaderType shaderType, const char* const outputDirectory)
+		GraphicObjectID ShaderPool::AddShader(const char* const inputDirectory, const char* const inputShaderFileName, const char* const entryPoint, const GraphicShaderType shaderType, const char* const outputDirectory)
 		{
-			DxShader shader(_graphicDevice, shaderType);
+			Shader shader(_graphicDevice, shaderType);
 			if (CompileShaderFromFile(inputDirectory, inputShaderFileName, entryPoint, outputDirectory, shaderType, false, shader) == false)
 			{
 				return GraphicObjectID::kInvalidGraphicObjectID;
@@ -149,7 +149,7 @@ namespace mint
 			return AddShaderInternal(shaderType, shader);
 		}
 
-		GraphicObjectID DxShaderPool::AddInputLayout(const GraphicObjectID& vertexShaderID, const TypeMetaData<TypeCustomData>& inputElementTypeMetaData)
+		GraphicObjectID ShaderPool::AddInputLayout(const GraphicObjectID& vertexShaderID, const TypeMetaData<TypeCustomData>& inputElementTypeMetaData)
 		{
 			const int32 vertexShaderIndex = GetShaderIndex(GraphicShaderType::VertexShader, vertexShaderID);
 			if (IsValidIndex(vertexShaderIndex) == false)
@@ -157,11 +157,11 @@ namespace mint
 				return GraphicObjectID::kInvalidGraphicObjectID;
 			}
 
-			const DxShader& vertexShader = AccessShaders(GraphicShaderType::VertexShader)[vertexShaderIndex];
+			const Shader& vertexShader = AccessShaders(GraphicShaderType::VertexShader)[vertexShaderIndex];
 			return AddInputLayoutInternal(vertexShader, inputElementTypeMetaData);
 		}
 		
-		void DxShaderPool::RemoveShader(const GraphicObjectID& shaderID)
+		void ShaderPool::RemoveShader(const GraphicObjectID& shaderID)
 		{
 			if (shaderID.IsValid() == false)
 			{
@@ -183,7 +183,7 @@ namespace mint
 			}
 		}
 		
-		void DxShaderPool::RemoveInputLayout(const GraphicObjectID& shaderID)
+		void ShaderPool::RemoveInputLayout(const GraphicObjectID& shaderID)
 		{
 			if (shaderID.IsValid() == false)
 			{
@@ -202,7 +202,7 @@ namespace mint
 			}
 		}
 
-		GraphicObjectID DxShaderPool::AddShaderInternal(const GraphicShaderType shaderType, DxShader& shader)
+		GraphicObjectID ShaderPool::AddShaderInternal(const GraphicShaderType shaderType, Shader& shader)
 		{
 			if (CreateShaderInternal(shaderType, shader) == false)
 			{
@@ -216,7 +216,7 @@ namespace mint
 			return graphicObjectID;
 		}
 
-		GraphicObjectID DxShaderPool::AddInputLayoutInternal(const DxShader& vertexShader, const TypeMetaData<TypeCustomData>& inputElementTypeMetaData)
+		GraphicObjectID ShaderPool::AddInputLayoutInternal(const Shader& vertexShader, const TypeMetaData<TypeCustomData>& inputElementTypeMetaData)
 		{
 			GraphicInputLayout inputLayout(_graphicDevice);
 			if (CreateInputLayoutInternal(vertexShader, inputElementTypeMetaData, inputLayout) == false)
@@ -231,7 +231,7 @@ namespace mint
 			return graphicObjectID;
 		}
 
-		bool DxShaderPool::CreateShaderInternal(const GraphicShaderType shaderType, DxShader& shader)
+		bool ShaderPool::CreateShaderInternal(const GraphicShaderType shaderType, Shader& shader)
 		{
 			switch (shaderType)
 			{
@@ -267,7 +267,7 @@ namespace mint
 			return false;
 		}
 
-		bool DxShaderPool::CreateInputLayoutInternal(const DxShader& vertexShader, const TypeMetaData<TypeCustomData>& inputElementTypeMetaData, GraphicInputLayout& outInputLayout)
+		bool ShaderPool::CreateInputLayoutInternal(const Shader& vertexShader, const TypeMetaData<TypeCustomData>& inputElementTypeMetaData, GraphicInputLayout& outInputLayout)
 		{
 			outInputLayout._inputElementSet._semanticNameArray.Clear();
 			outInputLayout._inputElementSet._inputElementDescriptorArray.Clear();
@@ -302,7 +302,7 @@ namespace mint
 			return true;
 		}
 
-		void DxShaderPool::PushInputElement(DxInputElementSet& inputElementSet, const TypeMetaData<TypeCustomData>& outerDataTypeMetaData, const TypeMetaData<TypeCustomData>& memberTypeMetaData)
+		void ShaderPool::PushInputElement(DxInputElementSet& inputElementSet, const TypeMetaData<TypeCustomData>& outerDataTypeMetaData, const TypeMetaData<TypeCustomData>& memberTypeMetaData)
 		{
 			inputElementSet._semanticNameArray.PushBack(Language::CppHlsl::Parser::ConvertDeclarationNameToHlslSemanticName(memberTypeMetaData.GetDeclName()));
 
@@ -322,7 +322,7 @@ namespace mint
 			inputElementSet._inputElementDescriptorArray.PushBack(inputElementDescriptor);
 		}
 
-		bool DxShaderPool::CompileShaderFromFile(const char* const inputDirectory, const char* const inputShaderFileName, const char* const entryPoint, const char* const outputDirectory, const GraphicShaderType shaderType, const bool forceCompilation, DxShader& inoutShader)
+		bool ShaderPool::CompileShaderFromFile(const char* const inputDirectory, const char* const inputShaderFileName, const char* const entryPoint, const char* const outputDirectory, const GraphicShaderType shaderType, const bool forceCompilation, Shader& inoutShader)
 		{
 			StringA inputShaderFilePath{ inputDirectory };
 			inputShaderFilePath += inputShaderFileName;
@@ -352,7 +352,7 @@ namespace mint
 			return CompileShaderFromFile(inputShaderFilePath.CString(), entryPoint, outputShaderFilePath.CString(), shaderType, forceCompilation, inoutShader);
 		}
 
-		bool DxShaderPool::CompileShaderFromFile(const char* const inputShaderFilePath, const char* const entryPoint, const char* const outputShaderFilePath, const GraphicShaderType shaderType, const bool forceCompilation, DxShader& inoutShader)
+		bool ShaderPool::CompileShaderFromFile(const char* const inputShaderFilePath, const char* const entryPoint, const char* const outputShaderFilePath, const GraphicShaderType shaderType, const bool forceCompilation, Shader& inoutShader)
 		{
 			if (StringUtil::Contains(inputShaderFilePath, ".hlsl") == false)
 			{
@@ -361,7 +361,7 @@ namespace mint
 
 			if (FileUtil::Exists(outputShaderFilePath) == false || forceCompilation == true)
 			{
-				DxShaderCompileParam compileParam;
+				ShaderCompileParam compileParam;
 				compileParam._inputFileName = inputShaderFilePath;
 				compileParam._outputFileName = outputShaderFilePath;
 				if (CompileShaderInternalXXX(shaderType, compileParam, entryPoint, inoutShader._shaderBlob.ReleaseAndGetAddressOf()) == false)
@@ -385,7 +385,7 @@ namespace mint
 			return true;
 		}
 
-		bool DxShaderPool::CompileShaderInternalXXX(const GraphicShaderType shaderType, const DxShaderCompileParam& compileParam, const char* const entryPoint, ID3D10Blob** outBlob)
+		bool ShaderPool::CompileShaderInternalXXX(const GraphicShaderType shaderType, const ShaderCompileParam& compileParam, const char* const entryPoint, ID3D10Blob** outBlob)
 		{
 			StackStringA<20> version;
 			makeShaderVersion(version, shaderType, _shaderVersion);
@@ -432,7 +432,7 @@ namespace mint
 			return true;
 		}
 
-		void DxShaderPool::RecompileAllShaders()
+		void ShaderPool::RecompileAllShaders()
 		{
 			const uint32 shaderTypeCount = static_cast<uint32>(GraphicShaderType::COUNT);
 			for (uint32 shaderTypeIndex = 0; shaderTypeIndex < shaderTypeCount; ++shaderTypeIndex)
@@ -448,7 +448,7 @@ namespace mint
 				const uint32 shaderCount = GetShaderCount(shaderType);
 				for (uint32 shaderIndex = 0; shaderIndex < shaderCount; ++shaderIndex)
 				{
-					DxShader& shader = AccessShaders(shaderType)[shaderIndex];
+					Shader& shader = AccessShaders(shaderType)[shaderIndex];
 					CompileShaderFromFile(shader._hlslFileName.CString(), shader._entryPoint.CString(), shader._hlslBinaryFileName.CString(), shader._shaderType, true, shader);
 					CreateShaderInternal(shaderType, shader);
 				}
@@ -466,7 +466,7 @@ namespace mint
 			}
 		}
 
-		void DxShaderPool::ReportCompileError()
+		void ShaderPool::ReportCompileError()
 		{
 			StringA errorMessages(reinterpret_cast<char*>(_errorMessageBlob->GetBufferPointer()));
 
@@ -477,7 +477,7 @@ namespace mint
 			MINT_LOG_ERROR("Shader Compile Error\n\n%s", errorMessages.CString());
 		}
 
-		void DxShaderPool::BindShaderIfNot(const GraphicShaderType shaderType, const GraphicObjectID& objectID)
+		void ShaderPool::BindShaderIfNot(const GraphicShaderType shaderType, const GraphicObjectID& objectID)
 		{
 			GraphicObjectID& boundShaderID = AccessBoundShaderID(shaderType);
 			if (boundShaderID == objectID)
@@ -495,7 +495,7 @@ namespace mint
 			AccessShaders(shaderType)[shaderIndex].Bind();
 		}
 
-		void DxShaderPool::BindInputLayoutIfNot(const GraphicObjectID& objectID)
+		void ShaderPool::BindInputLayoutIfNot(const GraphicObjectID& objectID)
 		{
 			if (_boundInputLayoutID == objectID)
 			{
@@ -512,7 +512,7 @@ namespace mint
 			_boundInputLayoutID = objectID;
 		}
 
-		void DxShaderPool::UnbindShader(const GraphicShaderType shaderType)
+		void ShaderPool::UnbindShader(const GraphicShaderType shaderType)
 		{
 			if (shaderType == GraphicShaderType::COUNT)
 			{
@@ -536,42 +536,42 @@ namespace mint
 			AccessShaders(shaderType)[shaderIndex].Unbind();
 		}
 
-		int32 DxShaderPool::GetShaderIndex(const GraphicShaderType shaderType, const GraphicObjectID& objectID) const
+		int32 ShaderPool::GetShaderIndex(const GraphicShaderType shaderType, const GraphicObjectID& objectID) const
 		{
 			MINT_ASSERT(shaderType != GraphicShaderType::COUNT, "Invalid parameter - check ShaderType");
 			MINT_ASSERT(objectID.IsObjectType(GraphicObjectType::Shader) == true, "Invalid parameter - check ObjectType");
 			return BinarySearch(GetShaders(shaderType), objectID, GraphicObject::Evaluator());
 		}
 
-		int32 DxShaderPool::GetInputLayoutIndex(const GraphicObjectID& objectID) const
+		int32 ShaderPool::GetInputLayoutIndex(const GraphicObjectID& objectID) const
 		{
 			MINT_ASSERT(objectID.IsObjectType(GraphicObjectType::InputLayout) == true, "Invalid parameter - check ObjectType");
 			return BinarySearch(_inputLayouts, objectID, GraphicObject::Evaluator());
 		}
 
-		uint32 DxShaderPool::GetShaderCount(const GraphicShaderType shaderType) const
+		uint32 ShaderPool::GetShaderCount(const GraphicShaderType shaderType) const
 		{
 			MINT_ASSERT(shaderType != GraphicShaderType::COUNT, "Invalid parameter - check ShaderType");
 			return GetShaders(shaderType).Size();
 		}
 
-		GraphicObjectID& DxShaderPool::AccessBoundShaderID(const GraphicShaderType shaderType)
+		GraphicObjectID& ShaderPool::AccessBoundShaderID(const GraphicShaderType shaderType)
 		{
 			MINT_ASSERT(shaderType != GraphicShaderType::COUNT, "Invalid parameter - check ShaderType");
 			const uint32 shaderTypeIndex = static_cast<uint32>(shaderType);
 			return _boundShaderIDPerType[shaderTypeIndex];
 		}
 
-		const Vector<DxShader>& DxShaderPool::GetShaders(const GraphicShaderType shaderType) const
+		const Vector<Shader>& ShaderPool::GetShaders(const GraphicShaderType shaderType) const
 		{
 			MINT_ASSERT(shaderType != GraphicShaderType::COUNT, "Invalid parameter - check ShaderType");
 			const uint32 shaderTypeIndex = static_cast<uint32>(shaderType);
 			return _shadersPerType[shaderTypeIndex];
 		}
 
-		Vector<DxShader>& DxShaderPool::AccessShaders(const GraphicShaderType shaderType)
+		Vector<Shader>& ShaderPool::AccessShaders(const GraphicShaderType shaderType)
 		{
-			return const_cast<Vector<DxShader>&>(GetShaders(shaderType));
+			return const_cast<Vector<Shader>&>(GetShaders(shaderType));
 		}
 	}
 }
