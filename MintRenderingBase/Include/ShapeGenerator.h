@@ -46,8 +46,10 @@ namespace mint
 			static void GenerateRoundRectangle(const Float2& size, float roundness, uint8 roundSideCount, const ByteColor& byteColor, Shape& outShape, const ShapeTransform& shapeTransform = ShapeTransform());
 			static void GenerateConvexShape(const Vector<Float2>& points, const ByteColor& byteColor, Shape& outShape, const ShapeTransform& shapeTransform = ShapeTransform());
 			static void GenerateLine(const Float2& positionA, const Float2& positionB, float thickness, uint8 roundSideCount, const ByteColor& byteColor, Shape& outShape, const ShapeTransform& shapeTransform = ShapeTransform());
-			static void GenerateTestShapeSet(Shape& outShape, const ShapeTransform& shapeTransform = ShapeTransform());
 			static void FillColor(Shape& inoutShape, const ByteColor& byteColor);
+
+		public:
+			static void GenerateTestShapeSet(Shape& outShape, const ShapeTransform& shapeTransform = ShapeTransform());
 		};
 	}
 }

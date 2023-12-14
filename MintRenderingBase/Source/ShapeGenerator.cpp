@@ -275,24 +275,25 @@ namespace mint
 			Vector<Float2> rawVertices = points;
 			GrahamScan_Convexify(rawVertices);
 
+			const ScopedShapeTransformer scopedShapeTransformer{ outShape, shapeTransform };
+			const uint32 vertexBase = outShape._vertices.Size();
+			VS_INPUT_SHAPE v;
+			v._color = Color(byteColor);
+
 			const uint32 rawVertexCount = rawVertices.Size();
-			const Color color{ byteColor };
-			outShape._vertices.Reserve(rawVertexCount);
+			outShape._vertices.Reserve(outShape._vertices.Size() + rawVertexCount);
 			for (uint32 i = 0; i < rawVertexCount; ++i)
 			{
-				VS_INPUT_SHAPE vertex;
-				vertex._position = Float4(rawVertices[i]);
-				vertex._color = color;
-				vertex._texCoord;
-				outShape._vertices.PushBack(vertex);
+				v._position = Float4(rawVertices[i]);
+				outShape._vertices.PushBack(v);
 			}
 			const uint32 triangleCount = rawVertexCount - 2;
-			outShape._indices.Reserve(triangleCount * 3);
+			outShape._indices.Reserve(outShape._indices.Size() + triangleCount * 3);
 			for (uint32 i = 0; i < triangleCount; i++)
 			{
-				outShape._indices.PushBack(0);
-				outShape._indices.PushBack(rawVertexCount - i - 2);
-				outShape._indices.PushBack(rawVertexCount - i - 1);
+				outShape._indices.PushBack(vertexBase + 0);
+				outShape._indices.PushBack(vertexBase + rawVertexCount - i - 2);
+				outShape._indices.PushBack(vertexBase + rawVertexCount - i - 1);
 			}
 		}
 
@@ -321,24 +322,6 @@ namespace mint
 			GenerateRoundRectangle(Float2(length, thickness), 1.0f, roundSideCount, byteColor, outShape, shapeTransform * ShapeTransform(theta, center));
 		}
 
-		void ShapeGenerator::GenerateTestShapeSet(Shape& outShape, const ShapeTransform& shapeTransform)
-		{
-			ShapeGenerator::GenerateCircle(16.0f, 16, ByteColor(255, 0, 0, 127), outShape, shapeTransform * ShapeTransform(Float2(80, 60)));
-
-			ShapeGenerator::GenerateHalfCircle(16.0f, 16, ByteColor(255, 127, 0, 63), outShape, shapeTransform * ShapeTransform(Float2(160, 60)));
-
-			ShapeGenerator::GenerateRectangle(Float2(64.0f, 32.0f), ByteColor(255, 255, 0), outShape, shapeTransform * ShapeTransform(Float2(240, 60)));
-
-			ShapeGenerator::GenerateRoundRectangle(Float2(64.0f, 32.0f), 0.5f, 2, ByteColor(0, 255, 0), outShape, shapeTransform * ShapeTransform(Float2(320, 60)));
-
-			ShapeTransform shapeTransformCache = shapeTransform * ShapeTransform(0.25f, Float2(440.0f, 60.0f));
-			ShapeGenerator::GenerateRoundRectangle(Float2(64.0f, 32.0f), 0.5f, 2, ByteColor(0, 255, 0), outShape, shapeTransformCache);
-			shapeTransformCache *= ShapeTransform(0.0f, Float2(64.0f, 0.0f));
-			ShapeGenerator::GenerateRoundRectangle(Float2(64.0f, 32.0f), 0.5f, 2, ByteColor(0, 255, 0), outShape, shapeTransformCache);
-
-			ShapeGenerator::GenerateLine(Float2(320.0f, 64.0f), Float2(440.0f, 32.0f), 8.0f, 4, ByteColor(0, 127, 255), outShape, shapeTransform);
-		}
-
 		void ShapeGenerator::FillColor(Shape& inoutShape, const ByteColor& byteColor)
 		{
 			const float4 color = convertByteColorToFloat4(byteColor);
@@ -346,6 +329,34 @@ namespace mint
 			{
 				vertex._color = color;
 			}
+		}
+
+		void ShapeGenerator::GenerateTestShapeSet(Shape& outShape, const ShapeTransform& shapeTransform)
+		{
+			ShapeGenerator::GenerateCircle(16.0f, 16, ByteColor(255, 0, 0, 127), outShape, shapeTransform * ShapeTransform(Float2(80, 80)));
+
+			ShapeGenerator::GenerateHalfCircle(16.0f, 16, ByteColor(255, 127, 0, 63), outShape, shapeTransform * ShapeTransform(Float2(160, 80)));
+
+			ShapeGenerator::GenerateQuarterCircle(16.0f, 16, ByteColor(255, 196, 0, 63), outShape, shapeTransform * ShapeTransform(Float2(240, 80)));
+
+			ShapeGenerator::GenerateRectangle(Float2(64.0f, 32.0f), ByteColor(255, 255, 0), outShape, shapeTransform * ShapeTransform(Float2(320, 80)));
+
+			ShapeGenerator::GenerateRoundRectangle(Float2(64.0f, 32.0f), 0.5f, 2, ByteColor(0, 255, 0), outShape, shapeTransform * ShapeTransform(Float2(80, 160)));
+
+			ShapeTransform shapeTransformCache = shapeTransform * ShapeTransform(0.25f, Float2(160.0f, 160.0f));
+			ShapeGenerator::GenerateRoundRectangle(Float2(64.0f, 32.0f), 0.5f, 2, ByteColor(0, 255, 0), outShape, shapeTransformCache);
+			shapeTransformCache *= ShapeTransform(0.0f, Float2(80.0f, 0.0f));
+			ShapeGenerator::GenerateRoundRectangle(Float2(64.0f, 32.0f), 0.5f, 2, ByteColor(0, 255, 0), outShape, shapeTransformCache);
+
+			Vector<Float2> convexPoints;
+			convexPoints.PushBack(Float2(0, -25));
+			convexPoints.PushBack(Float2(40, 0));
+			convexPoints.PushBack(Float2(25, 40));
+			convexPoints.PushBack(Float2(-25, 40));
+			convexPoints.PushBack(Float2(-40, 0));
+			ShapeGenerator::GenerateConvexShape(convexPoints, ByteColor(0, 196, 255), outShape, shapeTransform * ShapeTransform(Float2(320, 160)));
+
+			ShapeGenerator::GenerateLine(Float2(80.0f, 160.0f), Float2(320.0f, 180.0f), 8.0f, 4, ByteColor(0, 127, 255), outShape, shapeTransform);
 		}
 	}
 }

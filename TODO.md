@@ -1,4 +1,6 @@
 ﻿# TODO
+## PhysicsComponent 추가, 간단한 중력 및 충돌 Simulation 추가.
+
 ## GUI 렌더링!!
 
 ## wchar_t => UTF8 로 변환!! UTF8 FontData, DrawDynamicText 등
