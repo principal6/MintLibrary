@@ -1,4 +1,6 @@
 ﻿# TODO
+## ShapeGenerator 일반화 (ShapeRenderingContext 와 중복 최소화)
+## 2D Vertex Winding 및 좌표계 조정
 ## PhysicsComponent 추가, 간단한 중력 및 충돌 Simulation 추가.
 
 ## GUI 렌더링!!
