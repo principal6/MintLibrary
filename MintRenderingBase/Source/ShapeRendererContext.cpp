@@ -281,12 +281,7 @@ namespace mint
 			_textColor = textColor;
 		}
 
-		void ShapeRendererContext::TestDraw(Float2&& screenOffset)
-		{
-			TestDraw(screenOffset);
-		}
-
-		void ShapeRendererContext::TestDraw(Float2& screenOffset)
+		void ShapeRendererContext::TestDraw(Float2 screenOffset)
 		{
 			const float kSize = 40.0f;
 			const float kHalfSize = kSize * 0.5f;

@@ -99,8 +99,7 @@ namespace mint
 			void SetTextColor(const Color& textColor) noexcept;
 
 		public:
-			virtual void TestDraw(Float2&& screenOffset);
-			virtual void TestDraw(Float2& screenOffset);
+			virtual void TestDraw(Float2 screenOffset);
 
 		public:
 			void AddShape(const Shape& shape);
