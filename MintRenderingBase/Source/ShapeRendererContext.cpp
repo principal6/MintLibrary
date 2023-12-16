@@ -1567,7 +1567,7 @@ namespace mint
 		void ShapeRendererContext::DrawQuadraticBezierInternal(const Float2& pointA, const Float2& pointB, const Float2& controlPoint, const Color& color, const bool validate)
 		{
 			static constexpr uint32 kDeltaVertexCount = 3;
-			const Float2(&pointArray)[2] = { pointA, pointB };
+			const Float2(&points)[2] = { pointA, pointB };
 			const uint32 vertexOffset = _lowLevelRenderer->GetVertexCount();
 			const uint32 indexOffset = _lowLevelRenderer->GetIndexCount();
 
@@ -1577,24 +1577,24 @@ namespace mint
 				// The control point must be on the left side of the AB segment!
 				const Float3 ac = Float3(controlPoint - pointA);
 				const Float3 ab = Float3(pointB - pointA);
-				const Float3& Cross = Float3::Cross(ab, ac);
-				flip = (Cross._z > 0.0f) ? 1 : 0; // y 좌표계가 (아래가 + 방향으로) 뒤집혀 있어서 z 값 비교도 뒤집혔다.
+				const Float3& ab_x_ac = Float3::Cross(ab, ac);
+				flip = (ab_x_ac._z > 0.0f) ? 1 : 0; // y 좌표계가 (아래가 + 방향으로) 뒤집혀 있어서 z 값 비교도 뒤집혔다.
 			}
 
 			VS_INPUT_SHAPE v;
 			auto& vertexArray = _lowLevelRenderer->Vertices();
 			v._color = color;
 			v._position = _position;
-			v._position._x = pointArray[0 ^ flip]._x;
-			v._position._y = pointArray[0 ^ flip]._y;
+			v._position._x = points[0 ^ flip]._x;
+			v._position._y = points[0 ^ flip]._y;
 			v._texCoord._x = 0.0f;
 			v._texCoord._y = 0.0f;
 			v._texCoord._w = abs(pointA._x - pointB._x);
 			v._info._x = PackInfoAsFloat(ShapeType::QuadraticBezierTriangle);
 			vertexArray.PushBack(v);
 
-			v._position._x = pointArray[1 ^ flip]._x;
-			v._position._y = pointArray[1 ^ flip]._y;
+			v._position._x = points[1 ^ flip]._x;
+			v._position._y = points[1 ^ flip]._y;
 			v._texCoord._x = 1.0f;
 			v._texCoord._y = 1.0f;
 			vertexArray.PushBack(v);
