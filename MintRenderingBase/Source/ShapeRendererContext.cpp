@@ -1374,7 +1374,7 @@ namespace mint
 			const uint32 indexOffset = _lowLevelRenderer->GetIndexCount();
 
 			VS_INPUT_SHAPE v;
-			auto& vertexArray = _lowLevelRenderer->Vertices();
+			auto& vertices = _lowLevelRenderer->Vertices();
 			{
 				v._color = color;
 				v._position = _position;
@@ -1383,40 +1383,40 @@ namespace mint
 				v._info._x = PackInfoAsFloat(shapeType);
 				v._texCoord._x = _uv0._x;
 				v._texCoord._y = _uv0._y;
-				vertexArray.PushBack(v);
+				vertices.PushBack(v);
 
 				v._position._x = offset._x + halfSize._x;
 				v._position._y = offset._y - halfSize._y;
 				v._texCoord._x = _uv1._x;
 				v._texCoord._y = _uv0._y;
-				vertexArray.PushBack(v);
+				vertices.PushBack(v);
 
 				v._position._x = offset._x - halfSize._x;
 				v._position._y = offset._y + halfSize._y;
 				v._texCoord._x = _uv0._x;
 				v._texCoord._y = _uv1._y;
-				vertexArray.PushBack(v);
+				vertices.PushBack(v);
 
 				v._position._x = offset._x + halfSize._x;
 				v._position._y = offset._y + halfSize._y;
 				v._texCoord._x = _uv1._x;
 				v._texCoord._y = _uv1._y;
-				vertexArray.PushBack(v);
+				vertices.PushBack(v);
 			}
 
 
-			auto& indexArray = _lowLevelRenderer->Indices();
-			const uint32 vertexBase = static_cast<uint32>(vertexArray.Size()) - kDeltaVertexCount;
+			auto& indices = _lowLevelRenderer->Indices();
+			const uint32 vertexBase = static_cast<uint32>(vertices.Size()) - kDeltaVertexCount;
 
 			// Body left upper
-			indexArray.PushBack(vertexBase + 0);
-			indexArray.PushBack(vertexBase + 3);
-			indexArray.PushBack(vertexBase + 1);
+			indices.PushBack(vertexBase + 0);
+			indices.PushBack(vertexBase + 3);
+			indices.PushBack(vertexBase + 1);
 
 			// Body right lower
-			indexArray.PushBack(vertexBase + 0);
-			indexArray.PushBack(vertexBase + 2);
-			indexArray.PushBack(vertexBase + 3);
+			indices.PushBack(vertexBase + 0);
+			indices.PushBack(vertexBase + 2);
+			indices.PushBack(vertexBase + 3);
 
 			const uint32 indexCount = _lowLevelRenderer->GetIndexCount() - indexOffset;
 			_lowLevelRenderer->PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, indexCount, _clipRect);
