@@ -223,7 +223,7 @@ bool Run3DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 	GUIControl& buttonControl = guiSystem.AccessControl(buttonControlID);
 	buttonControl.SetPosition(Float2(100, 100));
 
-	Plotter plotter{ graphicDevice.GetShapeRendererContext() };
+	Plotter plotter{ graphicDevice.GetScreenSpaceShapeRendererContext() };
 	while (window.IsRunning() == true)
 	{
 		objectPool.ComputeDeltaTime();
@@ -293,11 +293,11 @@ bool Run3DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 		// Rendering
 		{
 			graphicDevice.BeginRendering();
+			
+			graphicDevice.SetViewProjectionMatrix(testCameraObject->GetViewMatrix(), testCameraObject->GetProjectionMatrix());
 
 			const Float4x4 testSkeletonWorldMatrix = Float4x4::TranslationMatrix(1.0f, 0.0f, -4.0f);
 			testSkeleton.RenderSkeleton(instantRenderer, testSkeletonWorldMatrix);
-
-			graphicDevice.SetViewProjectionMatrix(testCameraObject->GetViewMatrix(), testCameraObject->GetProjectionMatrix());
 
 			objectRenderer.Render(objectPool);
 
@@ -305,10 +305,10 @@ bool Run3DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 
 			//TestRendering::Test_Plotter(plotter);
 
-			ShapeRendererContext& shapeRendererContext = graphicDevice.GetShapeRendererContext();
+			ShapeRendererContext& screenSpaceShapeRendererContext = graphicDevice.GetScreenSpaceShapeRendererContext();
 
 			// # ShapeRendererContext 테스트
-			//shapeRendererContext.TestDraw(Float2(30, 60));
+			screenSpaceShapeRendererContext.TestDraw(Float2(200, 100));
 			//Shape testShapeSet;
 			//ShapeGenerator::GenerateTestShapeSet(testShapeSet);
 			//shapeRendererContext.AddShape(testShapeSet);
@@ -317,8 +317,8 @@ bool Run3DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 
 			StackStringW<100> fpsString;
 			FormatString(fpsString, L"FPS: %d", Profiler::FPSCounter::GetFPS());
-			shapeRendererContext.SetTextColor(Color::kBlack);
-			shapeRendererContext.DrawDynamicText(fpsString.CString(), Float2(10, 10), FontRenderingOption());
+			screenSpaceShapeRendererContext.SetTextColor(Color::kBlack);
+			screenSpaceShapeRendererContext.DrawDynamicText(fpsString.CString(), Float2(10, 10), FontRenderingOption());
 
 			graphicDevice.EndRendering();
 		}

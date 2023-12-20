@@ -737,7 +737,7 @@ namespace mint
                 VS_OUTPUT_COLOR main(VS_INPUT_COLOR input)
                 {
                     VS_OUTPUT_COLOR result = (VS_OUTPUT_COLOR)0;
-                    result._position    = mul(float4(input._position.xyz, 1.0), _cb2DProjectionMatrix);
+                    result._position    = mul(float4(input._position.xyz, 1.0), _cbProjectionMatrix);
                     result._color       = input._color;
                     result._texCoord    = input._texCoord;
                     result._flag        = input._flag;

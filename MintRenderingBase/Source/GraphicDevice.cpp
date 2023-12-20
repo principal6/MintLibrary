@@ -302,7 +302,7 @@ namespace mint
 			, _shaderPool{ *this, &_shaderHeaderMemory, ShaderVersion::v_5_0 }
 			, _resourcePool{ *this }
 			, _stateManager{ *this }
-			, _shapeRendererContext{ *this }
+			, _screenSpaceShapeRendererContext{ *this }
 			, _needEndRenderingCall{ false }
 		{
 			__noop;
@@ -342,7 +342,7 @@ namespace mint
 			InitializeBackBuffer();
 			InitializeDepthStencilBufferAndView(_window.GetSize());
 			InitializeFullScreenData(_window.GetSize());
-			Initialize2DProjectionMatrix();
+			Set2DProjectionMatrix();
 
 			SetDefaultRenderTargetsAndDepthStencil();
 
@@ -426,7 +426,7 @@ namespace mint
 				return false;
 			}
 
-			_shapeRendererContext.InitializeFontData(fontLoader.GetFontData());
+			_screenSpaceShapeRendererContext.InitializeFontData(fontLoader.GetFontData());
 
 			return true;
 		}
@@ -557,7 +557,7 @@ namespace mint
 					_cbTransformID = _resourcePool.AddConstantBuffer(&cbTransformData, sizeof(cbTransformData), typeMetaData._customData.GetRegisterIndex());
 				}
 
-				Initialize2DProjectionMatrix();
+				Set2DProjectionMatrix();
 			}
 
 			// Structured buffers
@@ -582,7 +582,7 @@ namespace mint
 
 		void GraphicDevice::InitializeShaders()
 		{
-			_shapeRendererContext.InitializeShaders();
+			_screenSpaceShapeRendererContext.InitializeShaders();
 		}
 
 		void GraphicDevice::InitializeSamplerStates()
@@ -674,7 +674,7 @@ namespace mint
 			_deviceContext->ClearRenderTargetView(_backBufferRtv.Get(), _clearColor);
 			_deviceContext->ClearDepthStencilView(_depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-			_shapeRendererContext.Flush();
+			_screenSpaceShapeRendererContext.Flush();
 		}
 
 		void GraphicDevice::Draw(const uint32 vertexCount, const uint32 vertexOffset) noexcept
@@ -697,9 +697,8 @@ namespace mint
 
 #pragma region Renderer Contexts
 			UseFullScreenViewport();
-
-			_shapeRendererContext.Render();
-			_shapeRendererContext.Flush();
+			Set2DProjectionMatrix();
+			_screenSpaceShapeRendererContext.Render();
 #pragma endregion
 
 			_swapChain->Present(0, 0);
@@ -739,21 +738,21 @@ namespace mint
 			return _fullScreenClipRect;
 		}
 
-		void GraphicDevice::Initialize2DProjectionMatrix() noexcept
+		void GraphicDevice::Set2DProjectionMatrix() noexcept
 		{
 			const Float2 windowSize{ GetWindowSize() };
-			_cbViewData._cb2DProjectionMatrix = Float4x4::ProjectionMatrix2DFromTopLeft(windowSize._x, windowSize._y);
-			_cbViewData._cbViewProjectionMatrix = _cbViewData._cb2DProjectionMatrix * _cbViewData._cbViewMatrix;
+			_cbViewData._cbProjectionMatrix = Float4x4::ProjectionMatrix2DFromTopLeft(windowSize._x, windowSize._y);
+			_cbViewData._cbViewProjectionMatrix = _cbViewData._cbProjectionMatrix * _cbViewData._cbViewMatrix;
 
 			GraphicResource& cbView = _resourcePool.GetResource(_cbViewID);
 			cbView.UpdateBuffer(&_cbViewData, 1);
 		}
 
-		void GraphicDevice::SetViewProjectionMatrix(const Float4x4& viewMatrix, const Float4x4& ProjectionMatrix) noexcept
+		void GraphicDevice::SetViewProjectionMatrix(const Float4x4& viewMatrix, const Float4x4& projectionMatrix) noexcept
 		{
 			_cbViewData._cbViewMatrix = viewMatrix;
-			_cbViewData._cb3DProjectionMatrix = ProjectionMatrix;
-			_cbViewData._cbViewProjectionMatrix = _cbViewData._cb3DProjectionMatrix * _cbViewData._cbViewMatrix;
+			_cbViewData._cbProjectionMatrix = projectionMatrix;
+			_cbViewData._cbViewProjectionMatrix = _cbViewData._cbProjectionMatrix * _cbViewData._cbViewMatrix;
 
 			GraphicResource& cbView = _resourcePool.GetResource(_cbViewID);
 			cbView.UpdateBuffer(&_cbViewData, 1);

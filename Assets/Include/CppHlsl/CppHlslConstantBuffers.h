@@ -14,8 +14,7 @@ namespace mint
 	{
 		struct CB_View CPP_HLSL_REGISTER_INDEX(0)
 		{
-			float4x4 _cb2DProjectionMatrix;
-			float4x4 _cb3DProjectionMatrix;
+			float4x4 _cbProjectionMatrix;
 			float4x4 _cbViewMatrix;
 			float4x4 _cbViewProjectionMatrix;
 		};

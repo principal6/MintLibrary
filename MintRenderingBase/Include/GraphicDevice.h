@@ -159,7 +159,7 @@ namespace mint
 		public:
 			ShaderPool& GetShaderPool() noexcept;
 			GraphicResourcePool& GetResourcePool() noexcept;
-			ShapeRendererContext& GetShapeRendererContext() noexcept;
+			ShapeRendererContext& GetScreenSpaceShapeRendererContext() noexcept;
 			const Language::CppHlsl::Interpreter& GetCppHlslSteamData() const noexcept;
 			const Language::CppHlsl::Interpreter& GetCppHlslConstantBuffers() const noexcept;
 			StateManager& GetStateManager() noexcept;
@@ -170,8 +170,8 @@ namespace mint
 			GraphicObjectID GetCommonSBMaterialID() const noexcept;
 
 		public:
-			void Initialize2DProjectionMatrix() noexcept;
-			void SetViewProjectionMatrix(const Float4x4& viewMatrix, const Float4x4& ProjectionMatrix) noexcept;
+			void Set2DProjectionMatrix() noexcept;
+			void SetViewProjectionMatrix(const Float4x4& viewMatrix, const Float4x4& projectionMatrix) noexcept;
 
 		public:
 			ID3D11Device* GetDxDevice() noexcept;
@@ -238,7 +238,7 @@ namespace mint
 			Language::CppHlsl::Interpreter _cppHlslStructuredBuffers;
 
 		private:
-			ShapeRendererContext _shapeRendererContext;
+			ShapeRendererContext _screenSpaceShapeRendererContext;
 			bool _needEndRenderingCall;
 		};
 	}

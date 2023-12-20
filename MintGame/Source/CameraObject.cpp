@@ -169,8 +169,8 @@ namespace mint
 
 		Float4x4 CameraObject::GetViewMatrix() const noexcept
 		{
-			const Float4x4& RotationMatrix = GetRotationMatrix();
-			return RotationMatrix.Transpose() * Float4x4::TranslationMatrix(-GetObjectTransform()._translation);
+			const Float4x4& rotationMatrix = GetRotationMatrix();
+			return rotationMatrix.Transpose() * Float4x4::TranslationMatrix(-GetObjectTransform()._translation);
 		}
 
 		const Float4x4& CameraObject::GetProjectionMatrix() const noexcept

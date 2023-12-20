@@ -18,23 +18,23 @@ namespace mint
 				return;
 			}
 
-			ShapeRendererContext& shapeRendererContext = graphicDevice.GetShapeRendererContext();
+			ShapeRendererContext& screenSpaceShapeRendererContext = graphicDevice.GetScreenSpaceShapeRendererContext();
 			FontRenderingOption fontRenderingOption;
 			fontRenderingOption._directionHorz = TextRenderDirectionHorz::Centered;
 			fontRenderingOption._directionVert = TextRenderDirectionVert::Centered;
-			shapeRendererContext.DrawDynamicText(_text.CString(), controlPosition + _offset, fontRenderingOption);
+			screenSpaceShapeRendererContext.DrawDynamicText(_text.CString(), controlPosition + _offset, fontRenderingOption);
 		}
 
 		void GUIControlShapeComponent::Render(Rendering::GraphicDevice& graphicDevice, const Float2& controlPosition, const GUIControlInteractionState& controlInteractionState) const
 		{
 			using namespace Rendering;
 
-			ShapeRendererContext& shapeRendererContext = graphicDevice.GetShapeRendererContext();
+			ShapeRendererContext& screenSpaceShapeRendererContext = graphicDevice.GetScreenSpaceShapeRendererContext();
 			const Float4 controlPosition4{ controlPosition };
-			shapeRendererContext.SetPosition(controlPosition4);
+			screenSpaceShapeRendererContext.SetPosition(controlPosition4);
 
 			const uint32 shapeIndex = static_cast<uint32>(controlInteractionState);
-			shapeRendererContext.AddShape(_shapes[shapeIndex]);
+			screenSpaceShapeRendererContext.AddShape(_shapes[shapeIndex]);
 		}
 #pragma endregion
 
