@@ -166,8 +166,8 @@ namespace mint
 		const float b = -1.0f / ::tanf(halfFOVAngle);
 		const float a = b / screenWidthOverHeight;
 		const float c = (farDepth / (nearDepth - farDepth)) * (isRightHanded ? -1.0f : +1.0f);
-		const float d = (farDepth * nearDepth) / (nearDepth - farDepth);
-		const float e = (isRightHanded ? +1.0f : -1.0f);
+		const float d = (isRightHanded ? +1.0f : -1.0f);
+		const float e = (farDepth * nearDepth) / (nearDepth - farDepth);
 		return Float4x4
 		(
 			a, 0, 0, 0,
