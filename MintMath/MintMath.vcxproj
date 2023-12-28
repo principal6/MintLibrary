@@ -125,6 +125,9 @@
       <Project>{6ad298c4-cc66-44ca-8fdd-8f9390ddee5a}</Project>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="MintMath.natvis" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>

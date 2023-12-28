@@ -12,8 +12,8 @@ namespace mint
 			: Object(objectPool, ObjectType::CameraObject)
 			, _isRightHanded{ true }
 			, _fov{ Math::ToRadian(60.0f) }
-			, _nearZ{ 0.1f }
-			, _farZ{ 1000.0f }
+			, _nearZ{ -0.1f }
+			, _farZ{ -1000.0f }
 			, _screenRatio{ 1.0f }
 			, _pitch{ 0.0f }
 			, _yaw{ 0.0f }

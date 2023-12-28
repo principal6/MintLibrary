@@ -163,17 +163,17 @@ namespace mint
 	Float4x4 Float4x4::ProjectionMatrixPerspectiveYUP(const bool isRightHanded, const float FOVAngle, const float nearDepth, const float farDepth, const float screenWidthOverHeight) noexcept
 	{
 		const float halfFOVAngle = FOVAngle * 0.5f;
-		const float a = 1.0f / (tanf(halfFOVAngle) * screenWidthOverHeight);
-		const float b = 1.0f / (tanf(halfFOVAngle));
-		const float c = (farDepth / (nearDepth - farDepth)) * (isRightHanded ? +1.0f : -1.0f);
+		const float b = -1.0f / ::tanf(halfFOVAngle);
+		const float a = b / screenWidthOverHeight;
+		const float c = (farDepth / (nearDepth - farDepth)) * (isRightHanded ? -1.0f : +1.0f);
 		const float d = (farDepth * nearDepth) / (nearDepth - farDepth);
-		const float e = (isRightHanded ? -1.0f : +1.0f);
+		const float e = (isRightHanded ? +1.0f : -1.0f);
 		return Float4x4
 		(
 			a, 0, 0, 0,
 			0, b, 0, 0,
-			0, 0, c, d,
-			0, 0, e, 0
+			0, 0, c, e,
+			0, 0, d, 0
 		);
 	}
 
