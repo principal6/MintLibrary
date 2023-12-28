@@ -60,6 +60,13 @@ namespace mint
 			_sbMaterialDatas.PushBack(sbMaterialData);
 		}
 
+		void InstantRenderer::DrawTriangle(const Float3(&vertices)[3], const Float2(&uvs)[3], const Color& color) noexcept
+		{
+			MeshData meshData;
+			MeshGenerator::GenerateTriangle(vertices, uvs, meshData);
+			PushMeshWithMaterial(meshData, color);
+		}
+
 		void InstantRenderer::DrawBox(const Transform& worldTransform, const Float3& extents, const Color& color) noexcept
 		{
 			MeshGenerator::BoxParam boxParam;

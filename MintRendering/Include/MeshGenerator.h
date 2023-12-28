@@ -77,6 +77,7 @@ namespace mint
 			};
 
 		public:
+			static void GenerateTriangle(const Float3(&vertices)[3], const Float2(&uvs)[3], MeshData& meshData) noexcept;
 			static void GenerateBox(const BoxParam& boxParam, MeshData& meshData) noexcept;
 			static void GenerateCone(const ConeParam& coneParam, MeshData& meshData) noexcept;
 			static void GenerateCylinder(const CylinderParam& cylinderParam, MeshData& meshData) noexcept;
@@ -101,6 +102,7 @@ namespace mint
 
 		private:
 			static void PushPosition(const float(&xyz)[3], MeshData& meshData) noexcept;
+			static void PushPosition(const Float3& xyz, MeshData& meshData) noexcept;
 			static void PushPosition(const Float4& xyzw, MeshData& meshData) noexcept;
 			static void PushTri(const int32(&positionIndices)[3], MeshData& meshData, const Float2(&uvs)[3]) noexcept;
 			static void PushQuad(const int32(&positionIndices)[4], MeshData& meshData, const Float2(&uvs)[4]) noexcept;

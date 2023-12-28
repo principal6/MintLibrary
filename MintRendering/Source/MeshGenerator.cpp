@@ -226,6 +226,19 @@ namespace mint
 			normalArray.Clear();
 		}
 
+		void MeshGenerator::GenerateTriangle(const Float3(&vertices)[3], const Float2(&uvs)[3], MeshData& meshData) noexcept
+		{
+			meshData.Clear();
+
+			meshData._positionArray.Reserve(3);
+
+			PushPosition(vertices[0], meshData);
+			PushPosition(vertices[1], meshData);
+			PushPosition(vertices[2], meshData);
+
+			PushTri({ 0, 1,2 }, meshData, uvs);
+		}
+
 		void MeshGenerator::GenerateBox(const BoxParam& boxParam, MeshData& meshData) noexcept
 		{
 			meshData.Clear();
@@ -653,6 +666,11 @@ namespace mint
 		MINT_INLINE void MeshGenerator::PushPosition(const float(&xyz)[3], MeshData& meshData) noexcept
 		{
 			meshData._positionArray.PushBack(Float4(xyz[0], xyz[1], xyz[2], 1.0f));
+		}
+
+		MINT_INLINE void MeshGenerator::PushPosition(const Float3& xyz, MeshData& meshData) noexcept
+		{
+			meshData._positionArray.PushBack(Float4(xyz._x, xyz._y, xyz._z, 1.0f));
 		}
 
 		MINT_INLINE void MeshGenerator::PushPosition(const Float4& xyzw, MeshData& meshData) noexcept
