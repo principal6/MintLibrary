@@ -20,7 +20,6 @@ namespace mint
 			, _roll{ 0.0f }
 			, _moveSpeed{ MoveSpeed::x8_0 }
 			, _isBoostMode{ false }
-			, _rotationFactor{ 0.005f }
 		{
 			UpdatePerspectiveMatrix();
 		}
@@ -150,21 +149,23 @@ namespace mint
 
 		void CameraObject::RotatePitch(const float angle)
 		{
-			_pitch += angle * _rotationFactor;
+			_pitch += angle;
 			_pitch = Math::LimitAngleToPositiveNegativeTwoPiRotation(_pitch);
 		}
 
 		void CameraObject::RotateYaw(const float angle)
 		{
-			_yaw += angle * _rotationFactor;
+			_yaw += angle;
 			_yaw = Math::LimitAngleToPositiveNegativeTwoPiRotation(_yaw);
 		}
 
 		void CameraObject::RotateByMouseDelta(const Float2& mouseDelta)
 		{
+			static float factor = 0.005f;
+
 			const float handnessSign = GetHandednessSign();
-			RotatePitch(mouseDelta._y);
-			RotateYaw(mouseDelta._x * handnessSign);
+			RotatePitch(mouseDelta._y * factor);
+			RotateYaw(mouseDelta._x * factor * handnessSign);
 		}
 
 		Float4x4 CameraObject::GetViewMatrix() const noexcept

@@ -127,7 +127,6 @@ namespace mint
 			float _roll;
 			MoveSpeed _moveSpeed;
 			bool _isBoostMode;
-			float _rotationFactor;
 		};
 	}
 }
