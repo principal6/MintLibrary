@@ -60,8 +60,8 @@ int main()
 	audioSystem.LoadAudioMP3("Assets/Christmas_Jazz-SoundStreet.mp3", audioObject0);
 	audioObject0.Play();
 
-	//Run2DTestWindow(window, graphicDevice);
-	Run3DTestWindow(window, graphicDevice);
+	Run2DTestWindow(window, graphicDevice);
+	//Run3DTestWindow(window, graphicDevice);
 	return 0;
 }
 
@@ -79,37 +79,43 @@ bool Run2DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 	GraphicResourcePool& resourcePool = graphicDevice.GetResourcePool();
 	const GraphicObjectID textureID = resourcePool.AddTexture2D(TextureFormat::R8G8B8A8_UNORM, byteColorImage.GetBytes(), byteColorImage.GetWidth(), byteColorImage.GetHeight());
 	
-	//ConvexCollisionShape2D circleCollisionShape = ConvexCollisionShape2D::MakeFromRenderingShape(Float2::kZero, circleShape);
 	const InputContext& inputContext = InputContext::GetInstance();
 
 	ObjectPool objectPool;
 	Object* const object0 = objectPool.CreateObject();
-	object0->GetObjectTransform()._translation = Float3(100, 100, 0);
 	{
 		Mesh2DComponent* mesh2DComponent = objectPool.CreateMesh2DComponent();
 		Shape shape;
-		ShapeGenerator::GenerateCircle(32.0f, 16, ByteColor(0, 0, 255), shape);
+		ShapeGenerator::GenerateCircle(1.0f, 16, ByteColor(0, 0, 255), shape);
 		mesh2DComponent->SetShape(std::move(shape));
 		object0->AttachComponent(mesh2DComponent);
 	}
 	Object* const object1 = objectPool.CreateObject();
-	object1->GetObjectTransform()._translation = Float3(200, 100, 0);
 	{
 		Mesh2DComponent* mesh2DComponent = objectPool.CreateMesh2DComponent();
 		Shape shape;
 		Vector<Float2> points;
-		points.PushBack(Float2(-100, 0));
-		points.PushBack(Float2(100, 0));
-		points.PushBack(Float2(80, -40));
+		points.PushBack(Float2(1, 1));
+		points.PushBack(Float2(1, 0));
+		points.PushBack(Float2(2, 0));
 		ShapeGenerator::GenerateConvexShape(points, ByteColor(0, 128, 255), shape);
 		mesh2DComponent->SetShape(std::move(shape));
 		object1->AttachComponent(mesh2DComponent);
 	}
 
+	CameraObject* const testCameraObject = objectPool.CreateCameraObject();
+	testCameraObject->SetPerspectiveZRange(1.0f, 100.0f);
+	Float2 windowSize{ graphicDevice.GetWindowSize() };
+	testCameraObject->SetPerspectiveScreenRatio(windowSize._x / windowSize._y);
+	testCameraObject->GetObjectTransform()._translation._z = 5.0f;
+
 	ObjectRenderer objectRenderer{ graphicDevice };
+	InstantRenderer instantRenderer{ graphicDevice };
 	ImageRenderer imageRenderer{ graphicDevice, 1, ByteColor(0, 0, 0, 0) };
 	while (window.IsRunning() == true)
 	{
+		objectPool.ComputeDeltaTime();
+
 		if (inputContext.IsKeyPressed())
 		{
 			if (inputContext.IsKeyDown(KeyCode::Enter) == true)
@@ -129,28 +135,30 @@ bool Run2DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 				graphicDevice.UseWireFrameNoCullingRasterizer();
 			}
 		}
-		else if (inputContext.IsKeyReleased())
-		{
-			__noop;
-		}
-		else if (inputContext.IsMouseWheelScrolled())
-		{
-			const float mouseWheelScroll = inputContext.GetMouseWheelScroll();
-		}
+
+		testCameraObject->Steer(inputContext, false);
 
 		// Rendering
 		{
 			graphicDevice.BeginRendering();
 
-			//circleCollisionShape._center = Float2(100, 100);
-			//circleCollisionShape.DebugDrawShape(shapeRendererContext, ByteColor(127, 0, 0, 127));
+			graphicDevice.SetViewProjectionMatrix(testCameraObject->GetViewMatrix(), testCameraObject->GetProjectionMatrix());
 
 			objectRenderer.Render(objectPool);
 
-			resourcePool.GetResource(textureID).BindToShader(GraphicShaderType::PixelShader, 1);
-			imageRenderer.DrawImage(Float2(50, 50), Float2(80, 20), Float2(0, 0), Float2(1, 1));
-			imageRenderer.Render();
-			imageRenderer.Flush();
+			//instantRenderer.DrawTriangle({ Float3(0, 1, 0), Float3(-1, 0, 0), Float3(1, 0, 0) }, { Float2(0.5, 0), Float2(0, 1), Float2(1, 1) }, Color::kYellow);
+			//instantRenderer.Render();
+
+			//resourcePool.GetResource(textureID).BindToShader(GraphicShaderType::PixelShader, 1);
+			//imageRenderer.DrawImage(Float2(50, 50), Float2(80, 20), Float2(0, 0), Float2(1, 1));
+			//imageRenderer.Render();
+			//imageRenderer.Flush();
+
+			//ShapeRendererContext& shapeRendererContext = graphicDevice.GetShapeRendererContext();
+			//StackStringW<100> fpsString;
+			//FormatString(fpsString, L"FPS: %d", Profiler::FPSCounter::GetFPS());
+			//shapeRendererContext.SetTextColor(Color::kBlack);
+			//shapeRendererContext.DrawDynamicText(fpsString.CString(), Float2(10, 10), FontRenderingOption());
 
 			graphicDevice.EndRendering();
 		}
