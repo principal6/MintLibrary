@@ -36,6 +36,7 @@ namespace mint
 		public:
 			void DrawLine(const Float3& a, const Float3& b, const Color& color) noexcept;
 			void DrawTriangle(const Float3(&vertices)[3], const Float2(&uvs)[3], const Color& color) noexcept;
+			void DrawQuad(const Float3(&vertices)[4], const Float2(&uvs)[4], const Color& color) noexcept;
 			void DrawBox(const Transform& worldTransform, const Float3& extents, const Color& color) noexcept;
 			void DrawCone(const Transform& worldTransform, const float radius, const float height, const uint8 detail, const Color& color) noexcept;
 			void DrawCylinder(const Transform& worldTransform, const float radius, const float height, const uint8 subdivisionIteration, const Color& color) noexcept;

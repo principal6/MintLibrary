@@ -78,6 +78,7 @@ namespace mint
 
 		public:
 			static void GenerateTriangle(const Float3(&vertices)[3], const Float2(&uvs)[3], MeshData& meshData) noexcept;
+			static void GenerateQuad(const Float3(&vertices)[4], const Float2(&uvs)[4], MeshData& meshData) noexcept;
 			static void GenerateBox(const BoxParam& boxParam, MeshData& meshData) noexcept;
 			static void GenerateCone(const ConeParam& coneParam, MeshData& meshData) noexcept;
 			static void GenerateCylinder(const CylinderParam& cylinderParam, MeshData& meshData) noexcept;

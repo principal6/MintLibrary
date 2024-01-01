@@ -67,6 +67,13 @@ namespace mint
 			PushMeshWithMaterial(meshData, color);
 		}
 
+		void InstantRenderer::DrawQuad(const Float3(&vertices)[4], const Float2(&uvs)[4], const Color& color) noexcept
+		{
+			MeshData meshData;
+			MeshGenerator::GenerateQuad(vertices, uvs, meshData);
+			PushMeshWithMaterial(meshData, color);
+		}
+
 		void InstantRenderer::DrawBox(const Transform& worldTransform, const Float3& extents, const Color& color) noexcept
 		{
 			MeshGenerator::BoxParam boxParam;

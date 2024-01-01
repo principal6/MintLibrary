@@ -239,6 +239,20 @@ namespace mint
 			PushTri({ 0, 1, 2 }, meshData, uvs);
 		}
 
+		void MeshGenerator::GenerateQuad(const Float3(&vertices)[4], const Float2(&uvs)[4], MeshData& meshData) noexcept
+		{
+			meshData.Clear();
+
+			meshData._positionArray.Reserve(4);
+
+			PushPosition(vertices[0], meshData);
+			PushPosition(vertices[1], meshData);
+			PushPosition(vertices[2], meshData);
+			PushPosition(vertices[3], meshData);
+
+			PushQuad({ 0, 1, 2, 3 }, meshData, uvs);
+		}
+
 		void MeshGenerator::GenerateBox(const BoxParam& boxParam, MeshData& meshData) noexcept
 		{
 			meshData.Clear();
