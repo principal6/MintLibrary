@@ -14,7 +14,7 @@ namespace mint
 			// *this == parent, rhs == child
 			ShapeTransform result;
 			result._translation = _translation;
-			result._translation += Float2x2::RotationMatrix(-_rotation).Mul(rhs._translation);
+			result._translation += Float2x2::RotationMatrix(_rotation).Mul(rhs._translation);
 			result._rotation = _rotation + rhs._rotation;
 			return result;
 		}
@@ -22,7 +22,7 @@ namespace mint
 		ShapeTransform& ShapeTransform::operator*=(const ShapeTransform& rhs)
 		{
 			// *this == parent, rhs == child
-			_translation += Float2x2::RotationMatrix(-_rotation).Mul(rhs._translation);
+			_translation += Float2x2::RotationMatrix(_rotation).Mul(rhs._translation);
 			_rotation = _rotation + rhs._rotation;
 			return *this;
 		}
@@ -45,7 +45,7 @@ namespace mint
 				return;
 			}
 
-			const Float2x2 rotationMatrix = Float2x2::RotationMatrix(-_shapeTransform._rotation);
+			const Float2x2 rotationMatrix = Float2x2::RotationMatrix(_shapeTransform._rotation);
 			Float2 rotatedXY;
 			for (uint32 i = _shapeVertexOffset; i < shapeVertexCount; ++i)
 			{
@@ -71,7 +71,6 @@ namespace mint
 			MINT_ASSERT(radius > 0.0f, "radius must be greater than 0");
 			MINT_ASSERT(sideCount > 2, "sideCount must be greater than 2");
 
-			radius = Max(radius, 1.0f);
 			sideCount = Max(sideCount, static_cast<uint8>(3));
 
 			const uint32 vertexBase = outShape._vertices.Size();
@@ -87,7 +86,7 @@ namespace mint
 			{
 				const float theta = (static_cast<float>(i) / sideCount) * Math::kTwoPi;
 				v._position._x = shapeTransform._translation._x + ::cos(theta) * radius;
-				v._position._y = shapeTransform._translation._y + -::sin(theta) * radius;
+				v._position._y = shapeTransform._translation._y + ::sin(theta) * radius;
 				outShape._vertices.PushBack(v);
 			}
 
@@ -112,7 +111,6 @@ namespace mint
 			MINT_ASSERT(radius > 0.0f, "radius must be greater than 0");
 			MINT_ASSERT(sideCount > 2, "sideCount must be greater than 2");
 
-			radius = Max(radius, 1.0f);
 			sideCount = Max(sideCount, static_cast<uint8>(3));
 
 			const uint32 vertexBase = outShape._vertices.Size();
@@ -128,7 +126,7 @@ namespace mint
 			{
 				const float theta = (static_cast<float>(i) / sideCount) * Math::kPi;
 				v._position._x = shapeTransform._translation._x + ::cos(shapeTransform._rotation + theta) * radius;
-				v._position._y = shapeTransform._translation._y + -::sin(shapeTransform._rotation + theta) * radius;
+				v._position._y = shapeTransform._translation._y + ::sin(shapeTransform._rotation + theta) * radius;
 				outShape._vertices.PushBack(v);
 			}
 
@@ -148,7 +146,6 @@ namespace mint
 			MINT_ASSERT(radius > 0.0f, "radius must be greater than 0");
 			MINT_ASSERT(sideCount > 0, "sideCount must be greater than 0");
 
-			radius = Max(radius, 1.0f);
 			sideCount = Max(sideCount, static_cast<uint8>(1));
 
 			const uint32 vertexBase = outShape._vertices.Size();
@@ -164,7 +161,7 @@ namespace mint
 			{
 				const float theta = (static_cast<float>(i) / sideCount) * Math::kPiOverTwo;
 				v._position._x = shapeTransform._translation._x + ::cos(shapeTransform._rotation + theta) * radius;
-				v._position._y = shapeTransform._translation._y + -::sin(shapeTransform._rotation + theta) * radius;
+				v._position._y = shapeTransform._translation._y + ::sin(shapeTransform._rotation + theta) * radius;
 				outShape._vertices.PushBack(v);
 			}
 
@@ -191,16 +188,16 @@ namespace mint
 
 			const ScopedShapeTransformer scopedShapeTransformer{ outShape, shapeTransform };
 			const Float2 halfSize = size * 0.5f;
-			v._position._x = +halfSize._x;
-			v._position._y = -halfSize._y;
-			outShape._vertices.PushBack(v);
-
-			v._position._x = -halfSize._x;
-			v._position._y = -halfSize._y;
-			outShape._vertices.PushBack(v);
-
 			v._position._x = -halfSize._x;
 			v._position._y = +halfSize._y;
+			outShape._vertices.PushBack(v);
+
+			v._position._x = -halfSize._x;
+			v._position._y = -halfSize._y;
+			outShape._vertices.PushBack(v);
+
+			v._position._x = +halfSize._x;
+			v._position._y = -halfSize._y;
 			outShape._vertices.PushBack(v);
 
 			v._position._x = +halfSize._x;
@@ -211,9 +208,9 @@ namespace mint
 			outShape._indices.PushBack(vertexBase + 1);
 			outShape._indices.PushBack(vertexBase + 2);
 
+			outShape._indices.PushBack(vertexBase + 0);
 			outShape._indices.PushBack(vertexBase + 2);
 			outShape._indices.PushBack(vertexBase + 3);
-			outShape._indices.PushBack(vertexBase + 0);
 		}
 
 		void ShapeGenerator::GenerateRoundRectangle(const Float2& size, float roundness, uint8 roundSideCount, const ByteColor& byteColor, Shape& outShape, const ShapeTransform& shapeTransform)
@@ -257,17 +254,20 @@ namespace mint
 			// Middle
 			GenerateRectangle(Float2(size._x, middleRectangleHeight), byteColor, outShape, shapeTransform);
 
-			// Top
-			GenerateRectangle(Float2(topBottomRectangleWidth, radius), byteColor, outShape, shapeTransform * ShapeTransform(Float2(0.0f, -(size._y - radius) * 0.5f)));
+			if (topBottomRectangleWidth > 0.0f)
+			{
+				// Top
+				GenerateRectangle(Float2(topBottomRectangleWidth, radius), byteColor, outShape, shapeTransform * ShapeTransform(Float2(0.0f, (size._y - radius) * 0.5f)));
 
-			// Bottom
-			GenerateRectangle(Float2(topBottomRectangleWidth, radius), byteColor, outShape, shapeTransform * ShapeTransform(Float2(0.0f, (size._y - radius) * 0.5f)));
+				// Bottom
+				GenerateRectangle(Float2(topBottomRectangleWidth, radius), byteColor, outShape, shapeTransform * ShapeTransform(Float2(0.0f, -(size._y - radius) * 0.5f)));
+			}
 
 			// Corners
-			GenerateQuarterCircle(radius, roundSideCount, byteColor, outShape, shapeTransform * ShapeTransform(0.0f, Float2((halfSize._x - radius), -(halfSize._y - radius))));
-			GenerateQuarterCircle(radius, roundSideCount, byteColor, outShape, shapeTransform * ShapeTransform(Math::kPiOverTwo, Float2(-(halfSize._x - radius), -(halfSize._y - radius))));
-			GenerateQuarterCircle(radius, roundSideCount, byteColor, outShape, shapeTransform * ShapeTransform(Math::kPi, Float2(-(halfSize._x - radius), (halfSize._y - radius))));
-			GenerateQuarterCircle(radius, roundSideCount, byteColor, outShape, shapeTransform * ShapeTransform(-Math::kPiOverTwo, Float2((halfSize._x - radius), (halfSize._y - radius))));
+			GenerateQuarterCircle(radius, roundSideCount, byteColor, outShape, shapeTransform * ShapeTransform(Math::kPiOverTwo, Float2(-(halfSize._x - radius), (halfSize._y - radius))));
+			GenerateQuarterCircle(radius, roundSideCount, byteColor, outShape, shapeTransform * ShapeTransform(Math::kPi, Float2(-(halfSize._x - radius), -(halfSize._y - radius))));
+			GenerateQuarterCircle(radius, roundSideCount, byteColor, outShape, shapeTransform * ShapeTransform(-Math::kPiOverTwo, Float2((halfSize._x - radius), -(halfSize._y - radius))));
+			GenerateQuarterCircle(radius, roundSideCount, byteColor, outShape, shapeTransform * ShapeTransform(0.0f, Float2((halfSize._x - radius), (halfSize._y - radius))));
 		}
 
 		void ShapeGenerator::GenerateConvexShape(const Vector<Float2>& points, const ByteColor& byteColor, Shape& outShape, const ShapeTransform& shapeTransform)
@@ -318,7 +318,7 @@ namespace mint
 				return;
 			}
 
-			const float theta = ::atan2f(-aToB._y, aToB._x);
+			const float theta = ::atan2f(aToB._y, aToB._x);
 			GenerateRoundRectangle(Float2(length, thickness), 1.0f, roundSideCount, byteColor, outShape, shapeTransform * ShapeTransform(theta, center));
 		}
 
@@ -333,30 +333,32 @@ namespace mint
 
 		void ShapeGenerator::GenerateTestShapeSet(Shape& outShape, const ShapeTransform& shapeTransform)
 		{
-			ShapeGenerator::GenerateCircle(16.0f, 16, ByteColor(255, 0, 0, 127), outShape, shapeTransform * ShapeTransform(Float2(80, 80)));
+			ShapeGenerator::GenerateCircle(0.25f, 16, ByteColor(255, 0, 0, 127), outShape, shapeTransform * ShapeTransform(Float2(-2, 1)));
 
-			ShapeGenerator::GenerateHalfCircle(16.0f, 16, ByteColor(255, 127, 0, 63), outShape, shapeTransform * ShapeTransform(Float2(160, 80)));
+			ShapeGenerator::GenerateHalfCircle(0.25f, 16, ByteColor(255, 127, 0, 63), outShape, shapeTransform * ShapeTransform(Float2(-1, 1)));
 
-			ShapeGenerator::GenerateQuarterCircle(16.0f, 16, ByteColor(255, 196, 0, 63), outShape, shapeTransform * ShapeTransform(Float2(240, 80)));
+			ShapeGenerator::GenerateQuarterCircle(0.25f, 16, ByteColor(255, 196, 0, 63), outShape, shapeTransform * ShapeTransform(Float2(0, 1)));
 
-			ShapeGenerator::GenerateRectangle(Float2(64.0f, 32.0f), ByteColor(255, 255, 0), outShape, shapeTransform * ShapeTransform(Float2(320, 80)));
+			ShapeGenerator::GenerateRectangle(Float2(1.0f, 0.5f), ByteColor(255, 255, 0), outShape, shapeTransform * ShapeTransform(Float2(1, 1)));
 
-			ShapeGenerator::GenerateRoundRectangle(Float2(64.0f, 32.0f), 0.5f, 2, ByteColor(0, 255, 0), outShape, shapeTransform * ShapeTransform(Float2(80, 160)));
+			ShapeGenerator::GenerateRoundRectangle(Float2(0.75f, 0.5f), 0.5f, 2, ByteColor(0, 255, 0), outShape, shapeTransform * ShapeTransform(Float2(-2, 0)));
 
-			ShapeTransform shapeTransformCache = shapeTransform * ShapeTransform(0.25f, Float2(160.0f, 160.0f));
-			ShapeGenerator::GenerateRoundRectangle(Float2(64.0f, 32.0f), 0.5f, 2, ByteColor(0, 255, 0), outShape, shapeTransformCache);
-			shapeTransformCache *= ShapeTransform(0.0f, Float2(80.0f, 0.0f));
-			ShapeGenerator::GenerateRoundRectangle(Float2(64.0f, 32.0f), 0.5f, 2, ByteColor(0, 255, 0), outShape, shapeTransformCache);
+			ShapeGenerator::GenerateRoundRectangle(Float2(0.75f, 0.5f), 1.0f, 8, ByteColor(0, 255, 0), outShape, shapeTransform * ShapeTransform(Float2(-1, 0)));
+
+			ShapeTransform shapeTransformCache = shapeTransform * ShapeTransform(0.25f, Float2(0, 0));
+			ShapeGenerator::GenerateRoundRectangle(Float2(1.0f, 0.5f), 0.5f, 2, ByteColor(0, 255, 0), outShape, shapeTransformCache);
+			shapeTransformCache *= ShapeTransform(0.0f, Float2(1.0f, 0.0f));
+			ShapeGenerator::GenerateRoundRectangle(Float2(1.0f, 0.5f), 0.5f, 2, ByteColor(0, 255, 0), outShape, shapeTransformCache);
 
 			Vector<Float2> convexPoints;
-			convexPoints.PushBack(Float2(0, -25));
-			convexPoints.PushBack(Float2(40, 0));
-			convexPoints.PushBack(Float2(25, 40));
-			convexPoints.PushBack(Float2(-25, 40));
-			convexPoints.PushBack(Float2(-40, 0));
-			ShapeGenerator::GenerateConvexShape(convexPoints, ByteColor(0, 196, 255), outShape, shapeTransform * ShapeTransform(Float2(320, 160)));
+			convexPoints.PushBack(Float2(0.0f, -0.25f));
+			convexPoints.PushBack(Float2(0.4f, 0.0f));
+			convexPoints.PushBack(Float2(0.25f, 0.4f));
+			convexPoints.PushBack(Float2(-0.25f, 0.4f));
+			convexPoints.PushBack(Float2(-0.4f, 0.0f));
+			ShapeGenerator::GenerateConvexShape(convexPoints, ByteColor(0, 196, 255), outShape, shapeTransform * ShapeTransform(Float2(2, 0)));
 
-			ShapeGenerator::GenerateLine(Float2(80.0f, 160.0f), Float2(320.0f, 180.0f), 8.0f, 4, ByteColor(0, 127, 255), outShape, shapeTransform);
+			ShapeGenerator::GenerateLine(Float2(-2, -1), Float2(1.0f, -1.25f), 0.25f, 4, ByteColor(0, 127, 255), outShape, shapeTransform);
 		}
 	}
 }

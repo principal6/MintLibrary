@@ -45,7 +45,7 @@ namespace mint
 					transformedPosition = mul(transformedPosition, sbTransform[transformIndex]._transformMatrix);
 						
 					VS_OUTPUT_SHAPE result = (VS_OUTPUT_SHAPE)0;
-					result._position = mul(transformedPosition, _cbProjectionMatrix);
+					result._position = mul(transformedPosition, _cbViewProjectionMatrix);
 					result._color = input._color;
 					result._texCoord = input._texCoord;
 					result._info = input._info >> 30;

@@ -57,7 +57,7 @@ namespace mint
 			}
 
 			const Float2 v = inoutPoints[pointIndex] - startPoint;
-			const float theta = ::atan2f(-v._y, v._x);
+			const float theta = ::atan2f(v._y, v._x);
 			angleIndices.PushBack(AngleIndex(theta, pointIndex));
 		}
 		QuickSort(angleIndices, AngleIndexComparator());
@@ -94,7 +94,7 @@ namespace mint
 			const Float3 cb = Float3(b - c);
 			const Float3 ba = Float3(a - b);
 			const Float3 ba_x_cb = ba.Cross(cb);
-			const bool is_counter_clockwise = ba_x_cb._z > 0.0f;
+			const bool is_counter_clockwise = ba_x_cb._z < 0.0f;
 			if (is_counter_clockwise)
 			{
 				convexPointIndices.PushBack(index_a);
