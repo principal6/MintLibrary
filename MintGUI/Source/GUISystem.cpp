@@ -212,7 +212,7 @@ namespace mint
 			}
 
 			_graphicDevice.UseFullScreenViewport();
-			_graphicDevice.Set2DProjectionMatrix();
+			_graphicDevice.SetScreenSpace2DProjectionMatrix();
 			_shapeRendererContext->Render();
 			_shapeRendererContext->Flush();
 

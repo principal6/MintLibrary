@@ -342,7 +342,7 @@ namespace mint
 			InitializeBackBuffer();
 			InitializeDepthStencilBufferAndView(_window.GetSize());
 			InitializeFullScreenData(_window.GetSize());
-			Set2DProjectionMatrix();
+			SetScreenSpace2DProjectionMatrix();
 
 			SetDefaultRenderTargetsAndDepthStencil();
 
@@ -557,7 +557,7 @@ namespace mint
 					_cbTransformID = _resourcePool.AddConstantBuffer(&cbTransformData, sizeof(cbTransformData), typeMetaData._customData.GetRegisterIndex());
 				}
 
-				Set2DProjectionMatrix();
+				SetScreenSpace2DProjectionMatrix();
 			}
 
 			// Structured buffers
@@ -697,7 +697,7 @@ namespace mint
 
 #pragma region Renderer Contexts
 			UseFullScreenViewport();
-			Set2DProjectionMatrix();
+			SetScreenSpace2DProjectionMatrix();
 			_screenSpaceShapeRendererContext.Render();
 #pragma endregion
 
@@ -738,7 +738,7 @@ namespace mint
 			return _fullScreenClipRect;
 		}
 
-		void GraphicDevice::Set2DProjectionMatrix() noexcept
+		void GraphicDevice::SetScreenSpace2DProjectionMatrix() noexcept
 		{
 			const Float2 windowSize{ GetWindowSize() };
 			_cbViewData._cbProjectionMatrix = Float4x4::ProjectionMatrix2DFromTopLeft(windowSize._x, windowSize._y);
