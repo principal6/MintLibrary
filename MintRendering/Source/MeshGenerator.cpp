@@ -236,7 +236,7 @@ namespace mint
 			PushPosition(vertices[1], meshData);
 			PushPosition(vertices[2], meshData);
 
-			PushTri({ 0, 1,2 }, meshData, uvs);
+			PushTri({ 0, 1, 2 }, meshData, uvs);
 		}
 
 		void MeshGenerator::GenerateBox(const BoxParam& boxParam, MeshData& meshData) noexcept
