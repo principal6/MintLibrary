@@ -758,6 +758,11 @@ namespace mint
 			cbView.UpdateBuffer(&_cbViewData, 1);
 		}
 
+		const Float4x4& GraphicDevice::GetProjectionMatrix() const noexcept
+		{
+			return _cbViewData._cbProjectionMatrix;
+		}
+
 		const Float4x4& GraphicDevice::GetViewProjectionMatrix() const noexcept
 		{
 			return _cbViewData._cbViewProjectionMatrix;
