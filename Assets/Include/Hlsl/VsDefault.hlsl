@@ -11,11 +11,7 @@ VS_OUTPUT main(VS_INPUT input)
 
     float4x4 finalMatrix = mul(_cbWorldMatrix, _cbViewProjectionMatrix);
     output._screenPosition = mul(inputPosition, finalMatrix);
-    if (output._screenPosition.w != 0.0f)
-    {
-        output._screenPosition /= output._screenPosition.w;
-    }
-
+	
     float4 inputTangent = float4(input._tangentV.xyz, 0.0);
     float4 inputBitangent = float4(input._bitangentW.xyz, 0.0);
 
