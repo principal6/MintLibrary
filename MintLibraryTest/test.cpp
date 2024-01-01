@@ -185,20 +185,6 @@ bool Run3DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 	}
 	testCameraObject->RotatePitch(0.125f);
 
-	Game::Skeleton testSkeleton;
-	{
-		Game::SkeletonGenerator testSkeletonGenerator;
-		Float4x4 bindPoseLocalMatrix;
-		bindPoseLocalMatrix.SetTranslation(Float3::kZero);
-		testSkeletonGenerator.CreateJoint(-1, "Root", bindPoseLocalMatrix);
-		bindPoseLocalMatrix.SetTranslation(1.0f, 0.0f, 0.0f);
-		testSkeletonGenerator.CreateJoint(0, "Elbow", bindPoseLocalMatrix);
-		bindPoseLocalMatrix.SetTranslation(1.0f, 0.0f, 0.0f);
-		testSkeletonGenerator.CreateJoint(1, "Tip", bindPoseLocalMatrix);
-		testSkeletonGenerator.BuildBindPoseModelSpace();
-		testSkeleton.CreateFromGenerator(testSkeletonGenerator);
-	}
-
 	GUISystem guiSystem{ graphicDevice };
 	GUIControlTemplateID roundButton0TemplateID;
 	{
@@ -223,7 +209,6 @@ bool Run3DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 	GUIControl& buttonControl = guiSystem.AccessControl(buttonControlID);
 	buttonControl.SetPosition(Float2(100, 100));
 
-	Plotter plotter{ graphicDevice.GetScreenSpaceShapeRendererContext() };
 	while (window.IsRunning() == true)
 	{
 		objectPool.ComputeDeltaTime();
@@ -296,14 +281,9 @@ bool Run3DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 			
 			graphicDevice.SetViewProjectionMatrix(testCameraObject->GetViewMatrix(), testCameraObject->GetProjectionMatrix());
 
-			const Float4x4 testSkeletonWorldMatrix = Float4x4::TranslationMatrix(1.0f, 0.0f, -4.0f);
-			testSkeleton.RenderSkeleton(instantRenderer, testSkeletonWorldMatrix);
-
 			objectRenderer.Render(objectPool);
 
 			instantRenderer.Render();
-
-			//TestRendering::Test_Plotter(plotter);
 
 			ShapeRendererContext& screenSpaceShapeRendererContext = graphicDevice.GetScreenSpaceShapeRendererContext();
 
