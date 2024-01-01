@@ -137,8 +137,7 @@ namespace mint
 			: _graphicDevice{ graphicDevice }
 			, _isUpdated{ false }
 		{
-			_shapeRendererContext.Assign(MINT_NEW(Rendering::ShapeRendererContext, graphicDevice.GetScreenSpaceShapeRendererContext()));
-			_shapeRendererContext->InitializeShaders();
+			__noop;
 		}
 
 		GUISystem::~GUISystem()
@@ -208,13 +207,8 @@ namespace mint
 					controlInteractionState = GUIControlInteractionState::Hovered;
 				}
 
-				control->Render(*_shapeRendererContext, controlInteractionState);
+				control->Render(_graphicDevice.GetShapeRendererContext(), controlInteractionState);
 			}
-
-			_graphicDevice.UseFullScreenViewport();
-			_graphicDevice.SetScreenSpace2DProjectionMatrix();
-			_shapeRendererContext->Render();
-			_shapeRendererContext->Flush();
 
 			_isUpdated = false;
 		}

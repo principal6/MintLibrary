@@ -302,7 +302,7 @@ namespace mint
 			, _shaderPool{ *this, &_shaderHeaderMemory, ShaderVersion::v_5_0 }
 			, _resourcePool{ *this }
 			, _stateManager{ *this }
-			, _screenSpaceShapeRendererContext{ *this }
+			, _shapeRendererContext{ *this }
 			, _needEndRenderingCall{ false }
 		{
 			__noop;
@@ -426,7 +426,7 @@ namespace mint
 				return false;
 			}
 
-			_screenSpaceShapeRendererContext.InitializeFontData(fontLoader.GetFontData());
+			_shapeRendererContext.InitializeFontData(fontLoader.GetFontData());
 
 			return true;
 		}
@@ -582,7 +582,7 @@ namespace mint
 
 		void GraphicDevice::InitializeShaders()
 		{
-			_screenSpaceShapeRendererContext.InitializeShaders();
+			_shapeRendererContext.InitializeShaders();
 		}
 
 		void GraphicDevice::InitializeSamplerStates()
@@ -674,7 +674,7 @@ namespace mint
 			_deviceContext->ClearRenderTargetView(_backBufferRtv.Get(), _clearColor);
 			_deviceContext->ClearDepthStencilView(_depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-			_screenSpaceShapeRendererContext.Flush();
+			_shapeRendererContext.Flush();
 		}
 
 		void GraphicDevice::Draw(const uint32 vertexCount, const uint32 vertexOffset) noexcept
@@ -698,7 +698,7 @@ namespace mint
 #pragma region Renderer Contexts
 			UseFullScreenViewport();
 			SetScreenSpace2DProjectionMatrix();
-			_screenSpaceShapeRendererContext.Render();
+			_shapeRendererContext.Render();
 #pragma endregion
 
 			_swapChain->Present(0, 0);

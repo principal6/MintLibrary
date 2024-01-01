@@ -52,27 +52,27 @@ namespace mint
 			splineGenerator.GenerateBezierCurve(bezierControlPointSet2, bezierLinePointSet2);
 			splineGenerator.GenerateBezierCurve(bezierControlPointSet3, bezierLinePointSet3);
 
-			ShapeRendererContext& screenSpaceShapeRendererContext = graphicDevice.GetScreenSpaceShapeRendererContext();
-			screenSpaceShapeRendererContext.SetColor(Color::kRed);
-			screenSpaceShapeRendererContext.DrawLineStrip(bezierLinePointSet0, 1.0f);
-			screenSpaceShapeRendererContext.SetColor(Color::kGreen);
-			screenSpaceShapeRendererContext.DrawLineStrip(bezierLinePointSet1, 1.0f);
-			screenSpaceShapeRendererContext.SetColor(Color::kBlue);
-			screenSpaceShapeRendererContext.DrawLineStrip(bezierLinePointSet2, 1.0f);
-			screenSpaceShapeRendererContext.SetColor(Color::kCyan);
-			screenSpaceShapeRendererContext.DrawLineStrip(bezierLinePointSet3, 1.0f);
+			ShapeRendererContext& shapeRendererContext = graphicDevice.GetShapeRendererContext();
+			shapeRendererContext.SetColor(Color::kRed);
+			shapeRendererContext.DrawLineStrip(bezierLinePointSet0, 1.0f);
+			shapeRendererContext.SetColor(Color::kGreen);
+			shapeRendererContext.DrawLineStrip(bezierLinePointSet1, 1.0f);
+			shapeRendererContext.SetColor(Color::kBlue);
+			shapeRendererContext.DrawLineStrip(bezierLinePointSet2, 1.0f);
+			shapeRendererContext.SetColor(Color::kCyan);
+			shapeRendererContext.DrawLineStrip(bezierLinePointSet3, 1.0f);
 
-			screenSpaceShapeRendererContext.SetColor(Color::kBlack);
+			shapeRendererContext.SetColor(Color::kBlack);
 			for (uint32 sourceControlPointIndex = 0; sourceControlPointIndex < sourceControlPointCount; sourceControlPointIndex++)
 			{
 				const Float2& sourceControlPoint = sourceControlPointSet[sourceControlPointIndex];
-				screenSpaceShapeRendererContext.SetPosition(Float4(sourceControlPoint._x, sourceControlPoint._y, 0.0, 1.0f));
-				screenSpaceShapeRendererContext.DrawCircle(2.0f);
+				shapeRendererContext.SetPosition(Float4(sourceControlPoint._x, sourceControlPoint._y, 0.0, 1.0f));
+				shapeRendererContext.DrawCircle(2.0f);
 
 				if (sourceControlPointIndex > 0)
 				{
 					const Float2& previousSourceControlPoint = sourceControlPointSet[sourceControlPointIndex - 1];
-					screenSpaceShapeRendererContext.DrawLine(previousSourceControlPoint, sourceControlPoint, 1.0f);
+					shapeRendererContext.DrawLine(previousSourceControlPoint, sourceControlPoint, 1.0f);
 				}
 			}
 
@@ -85,8 +85,8 @@ namespace mint
 			Vector<Float2> bSplineLinePointSet;
 			splineGenerator.SetPrecision(64);
 			splineGenerator.GenerateBSpline(bSplineOrder, sourceControlPointSet, bSplineKnotVector, bSplineLinePointSet);
-			screenSpaceShapeRendererContext.SetColor(Color::kMagenta);
-			screenSpaceShapeRendererContext.DrawLineStrip(bSplineLinePointSet, 2.0f);
+			shapeRendererContext.SetColor(Color::kMagenta);
+			shapeRendererContext.DrawLineStrip(bSplineLinePointSet, 2.0f);
 			return true;
 		}
 

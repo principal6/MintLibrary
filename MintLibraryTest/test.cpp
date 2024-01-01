@@ -285,10 +285,10 @@ bool Run3DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 
 			instantRenderer.Render();
 
-			ShapeRendererContext& screenSpaceShapeRendererContext = graphicDevice.GetScreenSpaceShapeRendererContext();
+			ShapeRendererContext& shapeRendererContext = graphicDevice.GetShapeRendererContext();
 
 			// # ShapeRendererContext 테스트
-			//screenSpaceShapeRendererContext.TestDraw(Float2(200, 100));
+			//shapeRendererContext.TestDraw(Float2(200, 100));
 			//Shape testShapeSet;
 			//ShapeGenerator::GenerateTestShapeSet(testShapeSet);
 			//shapeRendererContext.AddShape(testShapeSet);
@@ -297,8 +297,8 @@ bool Run3DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 
 			StackStringW<100> fpsString;
 			FormatString(fpsString, L"FPS: %d", Profiler::FPSCounter::GetFPS());
-			screenSpaceShapeRendererContext.SetTextColor(Color::kBlack);
-			screenSpaceShapeRendererContext.DrawDynamicText(fpsString.CString(), Float2(10, 10), FontRenderingOption());
+			shapeRendererContext.SetTextColor(Color::kBlack);
+			shapeRendererContext.DrawDynamicText(fpsString.CString(), Float2(10, 10), FontRenderingOption());
 
 			graphicDevice.EndRendering();
 		}
