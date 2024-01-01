@@ -18,7 +18,7 @@ namespace mint
 			, _useMultipleViewports{ false }
 		{
 			LowLevelRenderer<VS_INPUT_SHAPE>*& lowLevelRendererCasted = const_cast<LowLevelRenderer<VS_INPUT_SHAPE>*&>(_lowLevelRenderer);
-			lowLevelRendererCasted = MINT_NEW(LowLevelRenderer<VS_INPUT_SHAPE>, graphicDevice);
+			lowLevelRendererCasted = MINT_NEW(LowLevelRenderer<VS_INPUT_SHAPE>, _graphicDevice);
 		}
 
 		IRendererContext::IRendererContext(GraphicDevice& graphicDevice, LowLevelRenderer<VS_INPUT_SHAPE>* const nonOwnedLowLevelRenderer)
@@ -29,6 +29,17 @@ namespace mint
 			, _useMultipleViewports{ false }
 		{
 			__noop;
+		}
+
+		IRendererContext::IRendererContext(const IRendererContext& rhs)
+			: _graphicDevice{ rhs._graphicDevice }
+			, _lowLevelRenderer{ nullptr }
+			, _ownsLowLevelRenderer{ true }
+			, _defaultColor{ Color::kWhite }
+			, _useMultipleViewports{ false }
+		{
+			LowLevelRenderer<VS_INPUT_SHAPE>*& lowLevelRendererCasted = const_cast<LowLevelRenderer<VS_INPUT_SHAPE>*&>(_lowLevelRenderer);
+			lowLevelRendererCasted = MINT_NEW(LowLevelRenderer<VS_INPUT_SHAPE>, _graphicDevice);
 		}
 
 		inline IRendererContext::~IRendererContext()

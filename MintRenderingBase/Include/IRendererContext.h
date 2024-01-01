@@ -35,6 +35,7 @@ namespace mint
 		public:
 			IRendererContext(GraphicDevice& graphicDevice);
 			IRendererContext(GraphicDevice& graphicDevice, LowLevelRenderer<VS_INPUT_SHAPE>* const nonOwnedLowLevelRenderer);
+			IRendererContext(const IRendererContext& rhs);
 			virtual ~IRendererContext();
 
 		public:
