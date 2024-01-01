@@ -154,11 +154,13 @@ bool Run2DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 			//imageRenderer.Render();
 			//imageRenderer.Flush();
 
-			//ShapeRendererContext& shapeRendererContext = graphicDevice.GetShapeRendererContext();
-			//StackStringW<100> fpsString;
-			//FormatString(fpsString, L"FPS: %d", Profiler::FPSCounter::GetFPS());
-			//shapeRendererContext.SetTextColor(Color::kBlack);
-			//shapeRendererContext.DrawDynamicText(fpsString.CString(), Float2(10, 10), FontRenderingOption());
+			ShapeRendererContext& shapeRendererContext = graphicDevice.GetShapeRendererContext();
+			graphicDevice.SetScreenSpace2DProjectionMatrix();
+			shapeRendererContext.Flush();
+			StackStringW<100> fpsString;
+			FormatString(fpsString, L"FPS: %d", Profiler::FPSCounter::GetFPS());
+			shapeRendererContext.SetTextColor(Color::kBlack);
+			shapeRendererContext.DrawDynamicText(fpsString.CString(), Float2(10, 10), FontRenderingOption());
 
 			graphicDevice.EndRendering();
 		}

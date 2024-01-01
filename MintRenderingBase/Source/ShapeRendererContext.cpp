@@ -41,14 +41,24 @@ namespace mint
 				VS_OUTPUT_SHAPE main_shape(VS_INPUT_SHAPE input)
 				{
 					uint transformIndex = input._info & 0x3FFFFFFF;
+					uint info = input._info >> 30;
+					
 					float4 transformedPosition = float4(input._position.xyz, 1.0);
 					transformedPosition = mul(transformedPosition, sbTransform[transformIndex]._transformMatrix);
 						
 					VS_OUTPUT_SHAPE result = (VS_OUTPUT_SHAPE)0;
-					result._position = mul(transformedPosition, _cbViewProjectionMatrix);
+					if (info == 2)
+					{
+						// Font (ignores view matrix)
+						result._position = mul(transformedPosition, _cbProjectionMatrix);
+					}
+					else
+					{
+						result._position = mul(transformedPosition, _cbViewProjectionMatrix);
+					}
 					result._color = input._color;
 					result._texCoord = input._texCoord;
-					result._info = input._info >> 30;
+					result._info = info;
 					result._viewportIndex = 0;
 					return result;
 				}
@@ -391,20 +401,20 @@ namespace mint
 						v._info = ComputeVertexInfo(transformIndex, 2);
 						vertices.PushBack(v);
 
-						v._position._x = glyphRect.Right();
-						v._texCoord._x = glyphInfo._uv1._x;
-						v._texCoord._y = glyphInfo._uv0._y;
-						vertices.PushBack(v);
-
-						v._position._x = glyphRect.Left();
 						v._position._y = glyphRect.Bottom();
 						v._texCoord._x = glyphInfo._uv0._x;
 						v._texCoord._y = glyphInfo._uv1._y;
 						vertices.PushBack(v);
 
 						v._position._x = glyphRect.Right();
+						v._position._y = glyphRect.Bottom();
 						v._texCoord._x = glyphInfo._uv1._x;
 						v._texCoord._y = glyphInfo._uv1._y;
+						vertices.PushBack(v);
+
+						v._position._y = glyphRect.Top();
+						v._texCoord._x = glyphInfo._uv1._x;
+						v._texCoord._y = glyphInfo._uv0._y;
 						vertices.PushBack(v);
 					}
 
@@ -414,8 +424,8 @@ namespace mint
 						const uint32 currentTotalTriangleVertexCount = static_cast<uint32>(vertices.Size());
 						// 오른손 좌표계
 						indices.PushBack((currentTotalTriangleVertexCount - 4) + 0);
-						indices.PushBack((currentTotalTriangleVertexCount - 4) + 3);
 						indices.PushBack((currentTotalTriangleVertexCount - 4) + 1);
+						indices.PushBack((currentTotalTriangleVertexCount - 4) + 2);
 
 						indices.PushBack((currentTotalTriangleVertexCount - 4) + 0);
 						indices.PushBack((currentTotalTriangleVertexCount - 4) + 2);
