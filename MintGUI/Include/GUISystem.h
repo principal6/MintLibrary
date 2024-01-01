@@ -18,6 +18,7 @@ namespace mint
 	namespace Rendering
 	{
 		class GraphicDevice;
+		class ShapeRendererContext;
 	}
 
 	namespace GUI
@@ -43,6 +44,7 @@ namespace mint
 
 		private:
 			Rendering::GraphicDevice& _graphicDevice;
+			OwnPtr<Rendering::ShapeRendererContext> _shapeRendererContext;
 
 		private:
 			bool _isUpdated;

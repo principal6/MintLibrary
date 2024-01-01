@@ -3,6 +3,7 @@
 #include <MintContainer/Include/StringReference.hpp>
 #include <MintContainer/Include/Algorithm.hpp>
 #include <MintRenderingBase/Include/GraphicDevice.h>
+#include <MintRenderingBase/Include/ShapeRendererContext.h>
 #include <MintPlatform/Include/InputContext.h>
 #include <MintPhysics/Include/Intersection.hpp>
 
@@ -136,7 +137,8 @@ namespace mint
 			: _graphicDevice{ graphicDevice }
 			, _isUpdated{ false }
 		{
-			__noop;
+			_shapeRendererContext.Assign(MINT_NEW(Rendering::ShapeRendererContext, graphicDevice.GetScreenSpaceShapeRendererContext()));
+			_shapeRendererContext->InitializeShaders();
 		}
 
 		GUISystem::~GUISystem()
@@ -206,8 +208,13 @@ namespace mint
 					controlInteractionState = GUIControlInteractionState::Hovered;
 				}
 
-				control->Render(_graphicDevice, controlInteractionState);
+				control->Render(*_shapeRendererContext, controlInteractionState);
 			}
+
+			_graphicDevice.UseFullScreenViewport();
+			_graphicDevice.Set2DProjectionMatrix();
+			_shapeRendererContext->Render();
+			_shapeRendererContext->Flush();
 
 			_isUpdated = false;
 		}

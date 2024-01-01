@@ -9,7 +9,7 @@ namespace mint
 	namespace GUI
 	{
 #pragma region GUIControlComponent
-		void GUIControlTextComponent::Render(Rendering::GraphicDevice& graphicDevice, const Float2& controlPosition, const GUIControlInteractionState& controlInteractionState) const
+		void GUIControlTextComponent::Render(Rendering::ShapeRendererContext& shapeRendererContext, const Float2& controlPosition, const GUIControlInteractionState& controlInteractionState) const
 		{
 			using namespace Rendering;
 
@@ -18,23 +18,21 @@ namespace mint
 				return;
 			}
 
-			ShapeRendererContext& screenSpaceShapeRendererContext = graphicDevice.GetScreenSpaceShapeRendererContext();
 			FontRenderingOption fontRenderingOption;
 			fontRenderingOption._directionHorz = TextRenderDirectionHorz::Centered;
 			fontRenderingOption._directionVert = TextRenderDirectionVert::Centered;
-			screenSpaceShapeRendererContext.DrawDynamicText(_text.CString(), controlPosition + _offset, fontRenderingOption);
+			shapeRendererContext.DrawDynamicText(_text.CString(), controlPosition + _offset, fontRenderingOption);
 		}
 
-		void GUIControlShapeComponent::Render(Rendering::GraphicDevice& graphicDevice, const Float2& controlPosition, const GUIControlInteractionState& controlInteractionState) const
+		void GUIControlShapeComponent::Render(Rendering::ShapeRendererContext& shapeRendererContext, const Float2& controlPosition, const GUIControlInteractionState& controlInteractionState) const
 		{
 			using namespace Rendering;
 
-			ShapeRendererContext& screenSpaceShapeRendererContext = graphicDevice.GetScreenSpaceShapeRendererContext();
 			const Float4 controlPosition4{ controlPosition };
-			screenSpaceShapeRendererContext.SetPosition(controlPosition4);
+			shapeRendererContext.SetPosition(controlPosition4);
 
 			const uint32 shapeIndex = static_cast<uint32>(controlInteractionState);
-			screenSpaceShapeRendererContext.AddShape(_shapes[shapeIndex]);
+			shapeRendererContext.AddShape(_shapes[shapeIndex]);
 		}
 #pragma endregion
 
@@ -51,11 +49,11 @@ namespace mint
 #pragma endregion
 
 #pragma region GUIControl
-		void GUIControl::Render(Rendering::GraphicDevice& graphicDevice, const GUIControlInteractionState& controlInteractionState) const
+		void GUIControl::Render(Rendering::ShapeRendererContext& shapeRendererContext, const GUIControlInteractionState& controlInteractionState) const
 		{
 			for (const SharedPtr<GUIControlComponent>& component : _components)
 			{
-				component->Render(graphicDevice, _position, controlInteractionState);
+				component->Render(shapeRendererContext, _position, controlInteractionState);
 			}
 		}
 #pragma endregion

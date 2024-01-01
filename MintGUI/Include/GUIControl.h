@@ -16,7 +16,7 @@ namespace mint
 {
 	namespace Rendering
 	{
-		class GraphicDevice;
+		class ShapeRendererContext;
 	}
 
 	namespace Physics
@@ -56,7 +56,7 @@ namespace mint
 		public:
 			GUIControlComponent() = default;
 			virtual ~GUIControlComponent() = default;
-			virtual void Render(Rendering::GraphicDevice& graphicDevice, const Float2& controlPosition, const GUIControlInteractionState& controlInteractionState) const { __noop; }
+			virtual void Render(Rendering::ShapeRendererContext& shapeRendererContext, const Float2& controlPosition, const GUIControlInteractionState& controlInteractionState) const { __noop; }
 			//protected:
 				//GUIControlID _controlID;
 		};
@@ -65,7 +65,7 @@ namespace mint
 		{
 		public:
 			GUIControlTextComponent() : GUIControlComponent() { __noop; }
-			virtual void Render(Rendering::GraphicDevice& graphicDevice, const Float2& controlPosition, const GUIControlInteractionState& controlInteractionState) const override;
+			virtual void Render(Rendering::ShapeRendererContext& shapeRendererContext, const Float2& controlPosition, const GUIControlInteractionState& controlInteractionState) const override;
 		public:
 			Float2 _offset;
 			StringW _text;
@@ -75,7 +75,7 @@ namespace mint
 		{
 		public:
 			GUIControlShapeComponent() : GUIControlComponent() { __noop; }
-			virtual void Render(Rendering::GraphicDevice& graphicDevice, const Float2& controlPosition, const GUIControlInteractionState& controlInteractionState) const override;
+			virtual void Render(Rendering::ShapeRendererContext& shapeRendererContext, const Float2& controlPosition, const GUIControlInteractionState& controlInteractionState) const override;
 		public:
 			Float2 _offset;
 			Rendering::Shape _shapes[3];
@@ -94,7 +94,7 @@ namespace mint
 			GUIControl() = default;
 			virtual ~GUIControl() = default;
 			void SetPosition(const Float2& position) { _position = position; }
-			void Render(Rendering::GraphicDevice& graphicDevice, const GUIControlInteractionState& controlInteractionState) const;
+			void Render(Rendering::ShapeRendererContext& shapeRendererContext, const GUIControlInteractionState& controlInteractionState) const;
 			uint32 GetComponentCount() const { return _components.Size(); }
 			SharedPtr<GUIControlComponent> GetComponent(const uint32 index) const { return _components.At(index); }
 		protected:

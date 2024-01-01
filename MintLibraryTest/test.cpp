@@ -288,7 +288,7 @@ bool Run3DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 			ShapeRendererContext& screenSpaceShapeRendererContext = graphicDevice.GetScreenSpaceShapeRendererContext();
 
 			// # ShapeRendererContext 테스트
-			screenSpaceShapeRendererContext.TestDraw(Float2(200, 100));
+			//screenSpaceShapeRendererContext.TestDraw(Float2(200, 100));
 			//Shape testShapeSet;
 			//ShapeGenerator::GenerateTestShapeSet(testShapeSet);
 			//shapeRendererContext.AddShape(testShapeSet);
