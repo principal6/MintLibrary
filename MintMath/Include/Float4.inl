@@ -36,6 +36,12 @@ namespace mint
 		__noop;
 	}
 
+	inline constexpr Float4::Float4(const Float3& rhs, const float w)
+		: Float4(rhs._x, rhs._y, rhs._z, w)
+	{
+		__noop;
+	}
+
 	MINT_INLINE Float4& Float4::operator+=(const Float4& rhs)
 	{
 		_x += rhs._x;

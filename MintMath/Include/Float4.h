@@ -24,6 +24,7 @@ namespace mint
 		constexpr explicit Float4(const float x, const float y, const float z, const float w);
 		constexpr explicit Float4(const Float2& rhs);
 		constexpr explicit Float4(const Float3& rhs);
+		constexpr explicit Float4(const Float3& rhs, const float w);
 		constexpr Float4(const Float4& rhs) = default;
 		constexpr Float4(Float4&& rhs) noexcept = default;
 		~Float4() = default;
