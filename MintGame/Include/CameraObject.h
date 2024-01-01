@@ -91,7 +91,7 @@ namespace mint
 			void SetPerspectiveScreenRatio(const float screenRatio);
 
 		public:
-			void Steer(const InputContext& inputContext, const bool isMoveLocked);
+			void SteerDefault(const InputContext& inputContext, const bool is3DMode);
 			void Move(const MoveDirection moveDirection);
 			void RotatePitch(const float angle);
 			void RotateYaw(const float angle);

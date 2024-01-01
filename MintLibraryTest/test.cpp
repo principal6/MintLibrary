@@ -136,7 +136,7 @@ bool Run2DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 			}
 		}
 
-		testCameraObject->Steer(inputContext, false);
+		testCameraObject->SteerDefault(inputContext, false);
 
 		// Rendering
 		{
@@ -283,7 +283,7 @@ bool Run3DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 			objectPool.UpdateScreenSize(Float2(graphicDevice.GetWindowSize()));
 		}
 
-		testCameraObject->Steer(inputContext, false);
+		testCameraObject->SteerDefault(inputContext, true);
 
 		// Rendering
 		{

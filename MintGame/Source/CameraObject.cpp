@@ -53,42 +53,64 @@ namespace mint
 			_projectionMatrix = Float4x4::ProjectionMatrixPerspectiveYUP(_isRightHanded, _fov, _nearZ, _farZ, _screenRatio);
 		}
 
-		void CameraObject::Steer(const InputContext& inputContext, const bool isMoveLocked)
+		void CameraObject::SteerDefault(const InputContext& inputContext, const bool is3DMode)
 		{
-			if (isMoveLocked == false)
+			if (is3DMode)
 			{
 				if (inputContext.IsKeyDown(KeyCode::Q) == true)
 				{
 					Move(CameraObject::MoveDirection::Upward);
 				}
-
 				if (inputContext.IsKeyDown(KeyCode::E) == true)
 				{
 					Move(CameraObject::MoveDirection::Downward);
 				}
-
 				if (inputContext.IsKeyDown(KeyCode::W) == true)
 				{
 					Move(CameraObject::MoveDirection::Forward);
 				}
-
 				if (inputContext.IsKeyDown(KeyCode::S) == true)
 				{
 					Move(CameraObject::MoveDirection::Backward);
 				}
-
 				if (inputContext.IsKeyDown(KeyCode::A) == true)
 				{
 					Move(CameraObject::MoveDirection::Leftward);
 				}
-
+				if (inputContext.IsKeyDown(KeyCode::D) == true)
+				{
+					Move(CameraObject::MoveDirection::Rightward);
+				}
+			}
+			else
+			{
+				if (inputContext.IsKeyDown(KeyCode::Q) == true)
+				{
+					Move(CameraObject::MoveDirection::Forward);
+				}
+				if (inputContext.IsKeyDown(KeyCode::E) == true)
+				{
+					Move(CameraObject::MoveDirection::Backward);
+				}
+				if (inputContext.IsKeyDown(KeyCode::W) == true)
+				{
+					Move(CameraObject::MoveDirection::Upward);
+				}
+				if (inputContext.IsKeyDown(KeyCode::S) == true)
+				{
+					Move(CameraObject::MoveDirection::Downward);
+				}
+				if (inputContext.IsKeyDown(KeyCode::A) == true)
+				{
+					Move(CameraObject::MoveDirection::Leftward);
+				}
 				if (inputContext.IsKeyDown(KeyCode::D) == true)
 				{
 					Move(CameraObject::MoveDirection::Rightward);
 				}
 			}
 
-			if (inputContext.IsMousePointerMoved() == true)
+			if (is3DMode == true && inputContext.IsMousePointerMoved() == true)
 			{
 				if (inputContext.IsMouseButtonDown(MouseButton::Right) == true)
 				{
