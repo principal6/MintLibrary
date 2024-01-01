@@ -33,8 +33,8 @@ namespace mint
 		{
 			float4 _position;
 			float4 _color;
-			float4 _texCoord;
-			float4 _info;
+			float2 _texCoord;
+			uint _info;
 		};
 
 
@@ -53,8 +53,8 @@ namespace mint
 		{
 			float4 _position CPP_HLSL_SEMANTIC_NAME(SV_POSITION);
 			float4 _color;
-			float4 _texCoord;
-			float4 _info;
+			float2 _texCoord;
+			uint _info;
 			uint _viewportIndex CPP_HLSL_SEMANTIC_NAME(SV_ViewportArrayIndex);
 		};
 	}

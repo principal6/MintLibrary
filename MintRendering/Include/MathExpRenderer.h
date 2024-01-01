@@ -86,7 +86,7 @@ namespace mint
 			void Render() noexcept;
 
 		private:
-			ShapeRendererContext _shapeFontRendererContexts[MathExpression::GetModifierTypeCount()];
+			ShapeRendererContext _shapeRendererContexts[MathExpression::GetModifierTypeCount()];
 			BitVector _bitFlagsArray[MathExpression::GetModifierTypeCount()];
 		};
 	}

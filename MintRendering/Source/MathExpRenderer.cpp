@@ -172,7 +172,7 @@ namespace mint
 
 
 		MathExpressionRenderer::MathExpressionRenderer(GraphicDevice& graphicDevice)
-			: _shapeFontRendererContexts{ graphicDevice, graphicDevice, graphicDevice, graphicDevice }
+			: _shapeRendererContexts{ graphicDevice, graphicDevice, graphicDevice, graphicDevice }
 		{
 			const char* const kFontFileNames[MathExpression::GetModifierTypeCount()] =
 			{ Path::MakeAssetPath("cmu_s_italic"), Path::MakeAssetPath("cmu_s_bold"), Path::MakeAssetPath("cmu_s_bold_italic"), Path::MakeAssetPath("cmu_s_roman") };
@@ -180,7 +180,7 @@ namespace mint
 			FontLoader fontLoader;
 			for (uint32 modifierTypeIndex = 0; modifierTypeIndex < MathExpression::GetModifierTypeCount(); ++modifierTypeIndex)
 			{
-				ShapeRendererContext& rendererContext = _shapeFontRendererContexts[modifierTypeIndex];
+				ShapeRendererContext& rendererContext = _shapeRendererContexts[modifierTypeIndex];
 				const char* const kFontFileName = kFontFileNames[modifierTypeIndex];
 				if (FontLoader::ExistsFont(kFontFileName) == false)
 				{
@@ -228,7 +228,7 @@ namespace mint
 
 			for (uint32 modifierTypeIndex = 0; modifierTypeIndex < MathExpression::GetModifierTypeCount(); ++modifierTypeIndex)
 			{
-				ShapeRendererContext& rendererContext = _shapeFontRendererContexts[modifierTypeIndex];
+				ShapeRendererContext& rendererContext = _shapeRendererContexts[modifierTypeIndex];
 
 				rendererContext.DrawDynamicTextBitFlagged(mathExpression.GetPlainString(), Float4(screenPosition._x, screenPosition._y, 0.0f, 1.0f),
 					FontRenderingOption(TextRenderDirectionHorz::Rightward, TextRenderDirectionVert::Downward), _bitFlagsArray[modifierTypeIndex]);
@@ -239,7 +239,7 @@ namespace mint
 		{
 			for (uint32 modifierTypeIndex = 0; modifierTypeIndex < MathExpression::GetModifierTypeCount(); ++modifierTypeIndex)
 			{
-				ShapeRendererContext& rendererContext = _shapeFontRendererContexts[modifierTypeIndex];
+				ShapeRendererContext& rendererContext = _shapeRendererContexts[modifierTypeIndex];
 				rendererContext.Render();
 				rendererContext.Flush();
 			}

@@ -11,8 +11,8 @@ namespace mint
 {
 	namespace Rendering
 	{
-		Plotter::Plotter(ShapeRendererContext& shapeFontRendererContext)
-			: _shapeFontRendererContext{ &shapeFontRendererContext }
+		Plotter::Plotter(ShapeRendererContext& shapeRendererContext)
+			: _shapeRendererContext{ &shapeRendererContext }
 			, _nextPlotType{ PlotType::Circle }
 			, _size{ kDefaultSize }
 			, _frameOffset{ 100.0f, 100.0f }
@@ -107,8 +107,8 @@ namespace mint
 				}
 			}
 
-			_shapeFontRendererContext->Render();
-			_shapeFontRendererContext->Flush();
+			_shapeRendererContext->Render();
+			_shapeRendererContext->Flush();
 
 			Clear();
 		}
@@ -117,15 +117,15 @@ namespace mint
 		{
 			const Float2 plotPosition2 = ComputePlotPosition(x, y);
 
-			_shapeFontRendererContext->SetColor(color);
-			_shapeFontRendererContext->SetPosition(Float4(plotPosition2._x, plotPosition2._y, 0.0f, 1.0f));
+			_shapeRendererContext->SetColor(color);
+			_shapeRendererContext->SetPosition(Float4(plotPosition2._x, plotPosition2._y, 0.0f, 1.0f));
 
 			switch (plotType)
 			{
 			case Plotter::PlotType::Circle:
 			{
 				const float kRadius = 4.0f;
-				_shapeFontRendererContext->DrawCircle(kRadius);
+				_shapeRendererContext->DrawCircle(kRadius);
 				break;
 			}
 			case Plotter::PlotType::X:
@@ -133,8 +133,8 @@ namespace mint
 				const float kLength = 4.0f;
 				const float kHalfLength = kLength * 0.5f;
 				const float kThickness = 2.0f;
-				_shapeFontRendererContext->DrawLine(plotPosition2 - Float2(kHalfLength), plotPosition2 + float2(kLength), kThickness);
-				_shapeFontRendererContext->DrawLine(plotPosition2 - Float2(kHalfLength, -kLength), plotPosition2 + float2(kLength, -kHalfLength), kThickness);
+				_shapeRendererContext->DrawLine(plotPosition2 - Float2(kHalfLength), plotPosition2 + float2(kLength), kThickness);
+				_shapeRendererContext->DrawLine(plotPosition2 - Float2(kHalfLength, -kLength), plotPosition2 + float2(kLength, -kHalfLength), kThickness);
 				break;
 			}
 			case Plotter::PlotType::Triangle:
@@ -143,7 +143,7 @@ namespace mint
 				const float kHeight = 8.0f;
 				const float kHalfHeight = kHeight * 0.5f;
 				const float kHalfWidth = kHeight / kSqrt3;
-				_shapeFontRendererContext->DrawSolidTriangle(
+				_shapeRendererContext->DrawTriangle(
 					plotPosition2 + Float2(-kHalfWidth, +kHalfHeight),
 					plotPosition2 + float2(0.0f, -kHalfHeight),
 					plotPosition2 + Float2(+kHalfWidth, +kHalfHeight));
@@ -175,10 +175,9 @@ namespace mint
 
 		void Plotter::DrawFrame(const Float4& frameCenterPosition) noexcept
 		{
-			_shapeFontRendererContext->SetShapeBorderColor(Color::kBlack);
-			_shapeFontRendererContext->SetColor(Color::kWhite);
-			_shapeFontRendererContext->SetPosition(frameCenterPosition);
-			_shapeFontRendererContext->DrawRectangle(_size, 1.0f, 0.0f);
+			_shapeRendererContext->SetColor(Color::kWhite);
+			_shapeRendererContext->SetPosition(frameCenterPosition);
+			_shapeRendererContext->DrawRectangle(_size, 1.0f, 0.0f);
 		}
 
 		void Plotter::DrawLabels(const Float4& frameCenterPosition) noexcept
@@ -187,14 +186,14 @@ namespace mint
 			Float4 labelPosition = Float4(frameCenterPosition._x, frameCenterPosition._y + _size._y * 0.5f + paddingY, 0.0f, 1.0f);
 			FontRenderingOption labelRenderingOption;
 			labelRenderingOption._directionHorz = TextRenderDirectionHorz::Centered;
-			_shapeFontRendererContext->SetTextColor(Color::kBlack);
-			_shapeFontRendererContext->DrawDynamicText(_xLabel.c_str(), static_cast<uint32>(_xLabel.length()), labelPosition, labelRenderingOption);
+			_shapeRendererContext->SetTextColor(Color::kBlack);
+			_shapeRendererContext->DrawDynamicText(_xLabel.c_str(), static_cast<uint32>(_xLabel.length()), labelPosition, labelRenderingOption);
 
 			const float paddingX = -2.0f;
-			const float textWidth = _shapeFontRendererContext->GetFontData().ComputeTextWidth(_yLabel.c_str(), static_cast<uint32>(_yLabel.length()));
+			const float textWidth = _shapeRendererContext->GetFontData().ComputeTextWidth(_yLabel.c_str(), static_cast<uint32>(_yLabel.length()));
 			labelPosition = Float4(frameCenterPosition._x - _size._x * 0.5f - paddingX, frameCenterPosition._y + textWidth * 0.5f, 0.0f, 1.0f);
 			labelRenderingOption._transformMatrix = Float4x4::RotationMatrixZ(-Math::kPiOverTwo);
-			_shapeFontRendererContext->DrawDynamicText(_yLabel.c_str(), static_cast<uint32>(_yLabel.length()), labelPosition, labelRenderingOption);
+			_shapeRendererContext->DrawDynamicText(_yLabel.c_str(), static_cast<uint32>(_yLabel.length()), labelPosition, labelRenderingOption);
 		}
 	}
 }
