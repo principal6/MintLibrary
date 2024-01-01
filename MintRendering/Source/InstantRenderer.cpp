@@ -199,10 +199,10 @@ namespace mint
 				cbTransform.UpdateBuffer(&_cbTransformData, 1);
 			}
 
-			GraphicResource& sbMaterial = resourcePool.GetResource(_graphicDevice.GetCommonSBMaterialID());
+			if (_sbMaterialDatas.Size() > 0)
 			{
+				GraphicResource& sbMaterial = resourcePool.GetResource(_graphicDevice.GetCommonSBMaterialID());
 				sbMaterial.BindToShader(GraphicShaderType::PixelShader, sbMaterial.GetRegisterIndex());
-
 				sbMaterial.UpdateBuffer(&_sbMaterialDatas[0], _sbMaterialDatas.Size());
 			}
 
