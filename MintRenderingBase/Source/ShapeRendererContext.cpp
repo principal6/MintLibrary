@@ -7,6 +7,7 @@
 
 #include <MintRenderingBase/Include/GraphicDevice.h>
 #include <MintRenderingBase/Include/LowLevelRenderer.hpp>
+#include <MintRenderingBase/Include/ShapeGenerator.h>
 
 #include <MintMath/Include/Float2x2.h>
 #include <MintMath/Include/Float3x3.h>
@@ -268,25 +269,87 @@ namespace mint
 
 		void ShapeRendererContext::DrawLine(const Float2& p0, const Float2& p1, const float thickness)
 		{
+			const uint32 vertexOffset = _lowLevelRenderer->GetVertexCount();
+			const uint32 indexOffset = _lowLevelRenderer->GetIndexCount();
+			const uint32 transformIndex = _sbTransformData.Size();
 
+			ShapeGenerator::GenerateLine(p0, p1, thickness, 8, _defaultColor, _lowLevelRenderer->Vertices(), _lowLevelRenderer->Indices(), ShapeTransform());
+
+			const uint32 deltaVertexCount = _lowLevelRenderer->GetVertexCount() - vertexOffset;
+			for (uint32 i = 0; i < deltaVertexCount; i++)
+			{
+				_lowLevelRenderer->Vertices()[vertexOffset + i]._info = ComputeVertexInfo(transformIndex, 0);
+			}
+			const uint32 deltaIndexCount = _lowLevelRenderer->GetIndexCount() - indexOffset;
+			_lowLevelRenderer->PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, deltaIndexCount, _clipRect);
+
+			PushShapeTransformToBuffer(0.0f);
 		}
 
 		void ShapeRendererContext::DrawLineStrip(const Vector<Float2>& points, const float thickness)
 		{
-
+			const uint32 pointCount = points.Size();
+			for (uint32 i = 1; i < pointCount; i++)
+			{
+				DrawLine(points[i - 1], points[i], thickness);
+			}
 		}
 
 		void ShapeRendererContext::DrawTriangle(const Float2& pointA, const Float2& pointB, const Float2& pointC)
 		{
+			const uint32 vertexOffset = _lowLevelRenderer->GetVertexCount();
+			const uint32 indexOffset = _lowLevelRenderer->GetIndexCount();
+			const uint32 transformIndex = _sbTransformData.Size();
+
+			ShapeGenerator::GenerateConvexShape({ pointA, pointB, pointC }, _defaultColor, _lowLevelRenderer->Vertices(), _lowLevelRenderer->Indices(), ShapeTransform());
+			
+			const uint32 deltaVertexCount = _lowLevelRenderer->GetVertexCount() - vertexOffset;
+			for (uint32 i = 0; i < deltaVertexCount; i++)
+			{
+				_lowLevelRenderer->Vertices()[vertexOffset + i]._info = ComputeVertexInfo(transformIndex, 0);
+			}
+			const uint32 deltaIndexCount = _lowLevelRenderer->GetIndexCount() - indexOffset;
+			_lowLevelRenderer->PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, deltaIndexCount, _clipRect);
+
+			PushShapeTransformToBuffer(0.0f);
 		}
 
 		void ShapeRendererContext::DrawRectangle(const Float2& size, const float borderThickness, const float rotationAngle)
 		{
+			const uint32 vertexOffset = _lowLevelRenderer->GetVertexCount();
+			const uint32 indexOffset = _lowLevelRenderer->GetIndexCount();
+			const uint32 transformIndex = _sbTransformData.Size();
+
+			ShapeGenerator::GenerateRectangle(size, _defaultColor, _lowLevelRenderer->Vertices(), _lowLevelRenderer->Indices(), ShapeTransform());
+
+			const uint32 deltaVertexCount = _lowLevelRenderer->GetVertexCount() - vertexOffset;
+			for (uint32 i = 0; i < deltaVertexCount; i++)
+			{
+				_lowLevelRenderer->Vertices()[vertexOffset + i]._info = ComputeVertexInfo(transformIndex, 0);
+			}
+			const uint32 deltaIndexCount = _lowLevelRenderer->GetIndexCount() - indexOffset;
+			_lowLevelRenderer->PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, deltaIndexCount, _clipRect);
+
+			PushShapeTransformToBuffer(0.0f);
 		}
 
 		void ShapeRendererContext::DrawCircle(const float radius)
 		{
+			const uint32 vertexOffset = _lowLevelRenderer->GetVertexCount();
+			const uint32 indexOffset = _lowLevelRenderer->GetIndexCount();
+			const uint32 transformIndex = _sbTransformData.Size();
 
+			ShapeGenerator::GenerateCircle(radius, 16, _defaultColor, _lowLevelRenderer->Vertices(), _lowLevelRenderer->Indices(), ShapeTransform());
+
+			const uint32 deltaVertexCount = _lowLevelRenderer->GetVertexCount() - vertexOffset;
+			for (uint32 i = 0; i < deltaVertexCount; i++)
+			{
+				_lowLevelRenderer->Vertices()[vertexOffset + i]._info = ComputeVertexInfo(transformIndex, 0);
+			}
+			const uint32 deltaIndexCount = _lowLevelRenderer->GetIndexCount() - indexOffset;
+			_lowLevelRenderer->PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, deltaIndexCount, _clipRect);
+
+			PushShapeTransformToBuffer(0.0f);
 		}
 
 		void ShapeRendererContext::DrawDynamicText(const wchar_t* const wideText, const Float2& position, const FontRenderingOption& fontRenderingOption)

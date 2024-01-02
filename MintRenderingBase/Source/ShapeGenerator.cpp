@@ -30,16 +30,16 @@ namespace mint
 
 
 #pragma region ScopedShapeTransformer
-		ScopedShapeTransformer::ScopedShapeTransformer(Shape& shape, const ShapeTransform& shapeTransform)
-			: _shape{ shape }
+		ScopedShapeTransformer::ScopedShapeTransformer(Vector<VS_INPUT_SHAPE>& vertices, const ShapeTransform& shapeTransform)
+			: _vertices{ vertices }
 			, _shapeTransform{ shapeTransform }
 		{
-			_shapeVertexOffset = _shape._vertices.Size();
+			_shapeVertexOffset = _vertices.Size();
 		}
 
 		ScopedShapeTransformer::~ScopedShapeTransformer()
 		{
-			const uint32 shapeVertexCount = _shape._vertices.Size();
+			const uint32 shapeVertexCount = _vertices.Size();
 			if (_shapeVertexOffset == shapeVertexCount)
 			{
 				return;
@@ -49,7 +49,7 @@ namespace mint
 			Float2 rotatedXY;
 			for (uint32 i = _shapeVertexOffset; i < shapeVertexCount; ++i)
 			{
-				VS_INPUT_SHAPE& vertex = _shape._vertices[i];
+				VS_INPUT_SHAPE& vertex = _vertices[i];
 				rotatedXY = rotationMatrix.Mul(Float2(vertex._position._x, vertex._position._y));
 				vertex._position._x = rotatedXY._x;
 				vertex._position._y = rotatedXY._y;
@@ -61,33 +61,28 @@ namespace mint
 #pragma endregion
 
 
-		MINT_INLINE float4 convertByteColorToFloat4(const ByteColor& byteColor)
-		{
-			return float4(byteColor.RAsFloat(), byteColor.GAsFloat(), byteColor.BAsFloat(), byteColor.AAsFloat());
-		}
-
-		void ShapeGenerator::GenerateCircle(float radius, uint8 sideCount, const ByteColor& byteColor, Shape& outShape, const ShapeTransform& shapeTransform)
+		void ShapeGenerator::GenerateCircle(float radius, uint8 sideCount, const Color& color, Vector<VS_INPUT_SHAPE>& vertices, Vector<IndexElementType>& indices, const ShapeTransform& shapeTransform)
 		{
 			MINT_ASSERT(radius > 0.0f, "radius must be greater than 0");
 			MINT_ASSERT(sideCount > 2, "sideCount must be greater than 2");
 
 			sideCount = Max(sideCount, static_cast<uint8>(3));
 
-			const uint32 vertexBase = outShape._vertices.Size();
+			const uint32 vertexBase = vertices.Size();
 			VS_INPUT_SHAPE v;
-			v._color = convertByteColorToFloat4(byteColor);
+			v._color = color;
 			v._position._w = 1.0f;
 
 			v._position._x = shapeTransform._translation._x;
 			v._position._y = shapeTransform._translation._y;
-			outShape._vertices.PushBack(v);
+			vertices.PushBack(v);
 
 			for (uint8 i = 0; i < sideCount; ++i)
 			{
 				const float theta = (static_cast<float>(i) / sideCount) * Math::kTwoPi;
 				v._position._x = shapeTransform._translation._x + ::cos(theta) * radius;
 				v._position._y = shapeTransform._translation._y + ::sin(theta) * radius;
-				outShape._vertices.PushBack(v);
+				vertices.PushBack(v);
 			}
 
 			//     3
@@ -97,37 +92,37 @@ namespace mint
 			//     7
 			for (uint8 i = 0; i < sideCount - 1; ++i)
 			{
-				outShape._indices.PushBack(vertexBase + 0);
-				outShape._indices.PushBack(vertexBase + i + 1);
-				outShape._indices.PushBack(vertexBase + i + 2);
+				indices.PushBack(vertexBase + 0);
+				indices.PushBack(vertexBase + i + 1);
+				indices.PushBack(vertexBase + i + 2);
 			}
-			outShape._indices.PushBack(vertexBase + 0);
-			outShape._indices.PushBack(vertexBase + sideCount);
-			outShape._indices.PushBack(vertexBase + 1);
+			indices.PushBack(vertexBase + 0);
+			indices.PushBack(vertexBase + sideCount);
+			indices.PushBack(vertexBase + 1);
 		}
 
-		void ShapeGenerator::GenerateHalfCircle(float radius, uint8 sideCount, const ByteColor& byteColor, Shape& outShape, const ShapeTransform& shapeTransform)
+		void ShapeGenerator::GenerateHalfCircle(float radius, uint8 sideCount, const Color& color, Vector<VS_INPUT_SHAPE>& vertices, Vector<IndexElementType>& indices, const ShapeTransform& shapeTransform)
 		{
 			MINT_ASSERT(radius > 0.0f, "radius must be greater than 0");
 			MINT_ASSERT(sideCount > 2, "sideCount must be greater than 2");
 
 			sideCount = Max(sideCount, static_cast<uint8>(3));
 
-			const uint32 vertexBase = outShape._vertices.Size();
+			const uint32 vertexBase = vertices.Size();
 			VS_INPUT_SHAPE v;
-			v._color = convertByteColorToFloat4(byteColor);
+			v._color = color;
 			v._position._w = 1.0f;
 
 			v._position._x = shapeTransform._translation._x;
 			v._position._y = shapeTransform._translation._y;
-			outShape._vertices.PushBack(v);
+			vertices.PushBack(v);
 
 			for (uint8 i = 0; i <= sideCount; ++i)
 			{
 				const float theta = (static_cast<float>(i) / sideCount) * Math::kPi;
 				v._position._x = shapeTransform._translation._x + ::cos(shapeTransform._rotation + theta) * radius;
 				v._position._y = shapeTransform._translation._y + ::sin(shapeTransform._rotation + theta) * radius;
-				outShape._vertices.PushBack(v);
+				vertices.PushBack(v);
 			}
 
 			//     3
@@ -135,34 +130,34 @@ namespace mint
 			// 5   0   1
 			for (uint8 i = 0; i < sideCount; ++i)
 			{
-				outShape._indices.PushBack(vertexBase + 0);
-				outShape._indices.PushBack(vertexBase + i + 1);
-				outShape._indices.PushBack(vertexBase + i + 2);
+				indices.PushBack(vertexBase + 0);
+				indices.PushBack(vertexBase + i + 1);
+				indices.PushBack(vertexBase + i + 2);
 			}
 		}
 
-		void ShapeGenerator::GenerateQuarterCircle(float radius, uint8 sideCount, const ByteColor& byteColor, Shape& outShape, const ShapeTransform& shapeTransform)
+		void ShapeGenerator::GenerateQuarterCircle(float radius, uint8 sideCount, const Color& color, Vector<VS_INPUT_SHAPE>& vertices, Vector<IndexElementType>& indices, const ShapeTransform& shapeTransform)
 		{
 			MINT_ASSERT(radius > 0.0f, "radius must be greater than 0");
 			MINT_ASSERT(sideCount > 0, "sideCount must be greater than 0");
 
 			sideCount = Max(sideCount, static_cast<uint8>(1));
 
-			const uint32 vertexBase = outShape._vertices.Size();
+			const uint32 vertexBase = vertices.Size();
 			VS_INPUT_SHAPE v;
-			v._color = convertByteColorToFloat4(byteColor);
+			v._color = color;
 			v._position._w = 1.0f;
 
 			v._position._x = shapeTransform._translation._x;
 			v._position._y = shapeTransform._translation._y;
-			outShape._vertices.PushBack(v);
+			vertices.PushBack(v);
 
 			for (uint8 i = 0; i <= sideCount; ++i)
 			{
 				const float theta = (static_cast<float>(i) / sideCount) * Math::kPiOverTwo;
 				v._position._x = shapeTransform._translation._x + ::cos(shapeTransform._rotation + theta) * radius;
 				v._position._y = shapeTransform._translation._y + ::sin(shapeTransform._rotation + theta) * radius;
-				outShape._vertices.PushBack(v);
+				vertices.PushBack(v);
 			}
 
 			// 3
@@ -170,50 +165,50 @@ namespace mint
 			// 0   1
 			for (uint8 i = 0; i < sideCount; ++i)
 			{
-				outShape._indices.PushBack(vertexBase + 0);
-				outShape._indices.PushBack(vertexBase + i + 1);
-				outShape._indices.PushBack(vertexBase + i + 2);
+				indices.PushBack(vertexBase + 0);
+				indices.PushBack(vertexBase + i + 1);
+				indices.PushBack(vertexBase + i + 2);
 			}
 		}
 
-		void ShapeGenerator::GenerateRectangle(const Float2& size, const ByteColor& byteColor, Shape& outShape, const ShapeTransform& shapeTransform)
+		void ShapeGenerator::GenerateRectangle(const Float2& size, const Color& color, Vector<VS_INPUT_SHAPE>& vertices, Vector<IndexElementType>& indices, const ShapeTransform& shapeTransform)
 		{
 			MINT_ASSERT(size._x > 0.0f, "size._x must be greater than 0");
 			MINT_ASSERT(size._y > 0.0f, "size._y must be greater than 0");
 
-			const uint32 vertexBase = outShape._vertices.Size();
+			const uint32 vertexBase = vertices.Size();
 			VS_INPUT_SHAPE v;
-			v._color = convertByteColorToFloat4(byteColor);
+			v._color = color;
 			v._position._w = 1.0f;
 
-			const ScopedShapeTransformer scopedShapeTransformer{ outShape, shapeTransform };
+			const ScopedShapeTransformer scopedShapeTransformer{ vertices, shapeTransform };
 			const Float2 halfSize = size * 0.5f;
 			v._position._x = -halfSize._x;
 			v._position._y = +halfSize._y;
-			outShape._vertices.PushBack(v);
+			vertices.PushBack(v);
 
 			v._position._x = -halfSize._x;
 			v._position._y = -halfSize._y;
-			outShape._vertices.PushBack(v);
+			vertices.PushBack(v);
 
 			v._position._x = +halfSize._x;
 			v._position._y = -halfSize._y;
-			outShape._vertices.PushBack(v);
+			vertices.PushBack(v);
 
 			v._position._x = +halfSize._x;
 			v._position._y = +halfSize._y;
-			outShape._vertices.PushBack(v);
+			vertices.PushBack(v);
 
-			outShape._indices.PushBack(vertexBase + 0);
-			outShape._indices.PushBack(vertexBase + 1);
-			outShape._indices.PushBack(vertexBase + 2);
+			indices.PushBack(vertexBase + 0);
+			indices.PushBack(vertexBase + 1);
+			indices.PushBack(vertexBase + 2);
 
-			outShape._indices.PushBack(vertexBase + 0);
-			outShape._indices.PushBack(vertexBase + 2);
-			outShape._indices.PushBack(vertexBase + 3);
+			indices.PushBack(vertexBase + 0);
+			indices.PushBack(vertexBase + 2);
+			indices.PushBack(vertexBase + 3);
 		}
 
-		void ShapeGenerator::GenerateRoundRectangle(const Float2& size, float roundness, uint8 roundSideCount, const ByteColor& byteColor, Shape& outShape, const ShapeTransform& shapeTransform)
+		void ShapeGenerator::GenerateRoundRectangle(const Float2& size, float roundness, uint8 roundSideCount, const Color& color, Vector<VS_INPUT_SHAPE>& vertices, Vector<IndexElementType>& indices, const ShapeTransform& shapeTransform)
 		{
 			MINT_ASSERT(size._x > 0.0f, "size._x must be greater than 0");
 			MINT_ASSERT(size._y > 0.0f, "size._y must be greater than 0");
@@ -224,80 +219,80 @@ namespace mint
 			const float radius = roundness * size.GetMinElement() * 0.5f;
 			if (radius == 0.0f)
 			{
-				GenerateRectangle(size, byteColor, outShape);
+				GenerateRectangle(size, color, vertices, indices, shapeTransform);
 				return;
 			}
 			roundSideCount = Max(roundSideCount, static_cast<uint8>(1));
 
-			const uint32 vertexBase = outShape._vertices.Size();
+			const uint32 vertexBase = vertices.Size();
 			VS_INPUT_SHAPE v;
-			v._color = convertByteColorToFloat4(byteColor);
+			v._color = color;
 			v._position._w = 1.0f;
 
 			const float middleRectangleHeight = size._y - radius * 2.0f;
 			const float topBottomRectangleWidth = size._x - radius * 2.0f;
 			if (topBottomRectangleWidth == 0.0f && middleRectangleHeight == 0.0f)
 			{
-				GenerateCircle(radius, roundSideCount * 4, byteColor, outShape, shapeTransform);
+				GenerateCircle(radius, roundSideCount * 4, color, vertices, indices, shapeTransform);
 				return;
 			}
 
 			const Float2 halfSize = size * 0.5f;
 			if (middleRectangleHeight == 0.0f)
 			{
-				GenerateRectangle(Float2(size._x - radius * 2.0f, size._y), byteColor, outShape, shapeTransform);
-				GenerateHalfCircle(radius, roundSideCount * 2, byteColor, outShape, shapeTransform * ShapeTransform(Math::kPiOverTwo, Float2(-halfSize._x + radius, 0.0f)));
-				GenerateHalfCircle(radius, roundSideCount * 2, byteColor, outShape, shapeTransform * ShapeTransform(-Math::kPiOverTwo, Float2(halfSize._x - radius, 0.0f)));
+				GenerateRectangle(Float2(size._x - radius * 2.0f, size._y), color, vertices, indices, shapeTransform);
+				GenerateHalfCircle(radius, roundSideCount * 2, color, vertices, indices, shapeTransform * ShapeTransform(Math::kPiOverTwo, Float2(-halfSize._x + radius, 0.0f)));
+				GenerateHalfCircle(radius, roundSideCount * 2, color, vertices, indices, shapeTransform * ShapeTransform(-Math::kPiOverTwo, Float2(halfSize._x - radius, 0.0f)));
 				return;
 			}
 
 			// Middle
-			GenerateRectangle(Float2(size._x, middleRectangleHeight), byteColor, outShape, shapeTransform);
+			GenerateRectangle(Float2(size._x, middleRectangleHeight), color, vertices, indices, shapeTransform);
 
 			if (topBottomRectangleWidth > 0.0f)
 			{
 				// Top
-				GenerateRectangle(Float2(topBottomRectangleWidth, radius), byteColor, outShape, shapeTransform * ShapeTransform(Float2(0.0f, (size._y - radius) * 0.5f)));
+				GenerateRectangle(Float2(topBottomRectangleWidth, radius), color, vertices, indices, shapeTransform * ShapeTransform(Float2(0.0f, (size._y - radius) * 0.5f)));
 
 				// Bottom
-				GenerateRectangle(Float2(topBottomRectangleWidth, radius), byteColor, outShape, shapeTransform * ShapeTransform(Float2(0.0f, -(size._y - radius) * 0.5f)));
+				GenerateRectangle(Float2(topBottomRectangleWidth, radius), color, vertices, indices, shapeTransform * ShapeTransform(Float2(0.0f, -(size._y - radius) * 0.5f)));
 			}
 
 			// Corners
-			GenerateQuarterCircle(radius, roundSideCount, byteColor, outShape, shapeTransform * ShapeTransform(Math::kPiOverTwo, Float2(-(halfSize._x - radius), (halfSize._y - radius))));
-			GenerateQuarterCircle(radius, roundSideCount, byteColor, outShape, shapeTransform * ShapeTransform(Math::kPi, Float2(-(halfSize._x - radius), -(halfSize._y - radius))));
-			GenerateQuarterCircle(radius, roundSideCount, byteColor, outShape, shapeTransform * ShapeTransform(-Math::kPiOverTwo, Float2((halfSize._x - radius), -(halfSize._y - radius))));
-			GenerateQuarterCircle(radius, roundSideCount, byteColor, outShape, shapeTransform * ShapeTransform(0.0f, Float2((halfSize._x - radius), (halfSize._y - radius))));
+			GenerateQuarterCircle(radius, roundSideCount, color, vertices, indices, shapeTransform * ShapeTransform(Math::kPiOverTwo, Float2(-(halfSize._x - radius), (halfSize._y - radius))));
+			GenerateQuarterCircle(radius, roundSideCount, color, vertices, indices, shapeTransform * ShapeTransform(Math::kPi, Float2(-(halfSize._x - radius), -(halfSize._y - radius))));
+			GenerateQuarterCircle(radius, roundSideCount, color, vertices, indices, shapeTransform * ShapeTransform(-Math::kPiOverTwo, Float2((halfSize._x - radius), -(halfSize._y - radius))));
+			GenerateQuarterCircle(radius, roundSideCount, color, vertices, indices, shapeTransform * ShapeTransform(0.0f, Float2((halfSize._x - radius), (halfSize._y - radius))));
 		}
 
-		void ShapeGenerator::GenerateConvexShape(const Vector<Float2>& points, const ByteColor& byteColor, Shape& outShape, const ShapeTransform& shapeTransform)
+		void ShapeGenerator::GenerateConvexShape(const Vector<Float2>& points, const Color& color, Vector<VS_INPUT_SHAPE>& vertices, Vector<IndexElementType>& indices, const ShapeTransform& shapeTransform)
 		{
 			Vector<Float2> rawVertices = points;
 			GrahamScan_Convexify(rawVertices);
 
-			const ScopedShapeTransformer scopedShapeTransformer{ outShape, shapeTransform };
-			const uint32 vertexBase = outShape._vertices.Size();
+			const ScopedShapeTransformer scopedShapeTransformer{ vertices, shapeTransform };
+			const uint32 vertexBase = vertices.Size();
 			VS_INPUT_SHAPE v;
-			v._color = Color(byteColor);
+			v._color = color;
 
 			const uint32 rawVertexCount = rawVertices.Size();
-			outShape._vertices.Reserve(outShape._vertices.Size() + rawVertexCount);
+			vertices.Reserve(vertices.Size() + rawVertexCount);
 			for (uint32 i = 0; i < rawVertexCount; ++i)
 			{
 				v._position = Float4(rawVertices[i]);
-				outShape._vertices.PushBack(v);
+				vertices.PushBack(v);
 			}
 			const uint32 triangleCount = rawVertexCount - 2;
-			outShape._indices.Reserve(outShape._indices.Size() + triangleCount * 3);
+			indices.Reserve(indices.Size() + triangleCount * 3);
 			for (uint32 i = 0; i < triangleCount; i++)
 			{
-				outShape._indices.PushBack(vertexBase + 0);
-				outShape._indices.PushBack(vertexBase + rawVertexCount - i - 2);
-				outShape._indices.PushBack(vertexBase + rawVertexCount - i - 1);
+				indices.PushBack(vertexBase + 0);
+				indices.PushBack(vertexBase + rawVertexCount - i - 2);
+				indices.PushBack(vertexBase + rawVertexCount - i - 1);
 			}
 		}
 
-		void ShapeGenerator::GenerateLine(const Float2& positionA, const Float2& positionB, float thickness, uint8 roundSideCount, const ByteColor& byteColor, Shape& outShape, const ShapeTransform& shapeTransform)
+		void ShapeGenerator::GenerateLine(const Float2& positionA, const Float2& positionB, float thickness, uint8 roundSideCount, const Color& color, Vector<VS_INPUT_SHAPE>& vertices, Vector<IndexElementType>& indices, const ShapeTransform& shapeTransform)
 		{
 			MINT_ASSERT(thickness > 0.0f, "thickness must be equal or greater than 0");
 			MINT_ASSERT(roundSideCount > 1, "roundSideCount must be greater than 1");
@@ -314,17 +309,51 @@ namespace mint
 			const float length = aToB.Length();
 			if (length <= 1.0f)
 			{
-				GenerateCircle(thickness, roundSideCount * 2, byteColor, outShape, center);
+				GenerateCircle(thickness, roundSideCount * 2, color, vertices, indices, center);
 				return;
 			}
 
 			const float theta = ::atan2f(aToB._y, aToB._x);
-			GenerateRoundRectangle(Float2(length, thickness), 1.0f, roundSideCount, byteColor, outShape, shapeTransform * ShapeTransform(theta, center));
+			GenerateRoundRectangle(Float2(length, thickness), 1.0f, roundSideCount, color, vertices, indices, shapeTransform * ShapeTransform(theta, center));
 		}
 
-		void ShapeGenerator::FillColor(Shape& inoutShape, const ByteColor& byteColor)
+		void ShapeGenerator::GenerateCircle(float radius, uint8 sideCount, const Color& color, Shape& outShape, const ShapeTransform& shapeTransform)
 		{
-			const float4 color = convertByteColorToFloat4(byteColor);
+			GenerateCircle(radius, sideCount, color, outShape._vertices, outShape._indices, shapeTransform);
+		}
+
+		void ShapeGenerator::GenerateHalfCircle(float radius, uint8 sideCount, const Color& color, Shape& outShape, const ShapeTransform& shapeTransform)
+		{
+			GenerateHalfCircle(radius, sideCount, color, outShape._vertices, outShape._indices, shapeTransform);
+		}
+
+		void ShapeGenerator::GenerateQuarterCircle(float radius, uint8 sideCount, const Color& color, Shape& outShape, const ShapeTransform& shapeTransform)
+		{
+			GenerateQuarterCircle(radius, sideCount, color, outShape._vertices, outShape._indices, shapeTransform);
+		}
+
+		void ShapeGenerator::GenerateRectangle(const Float2& size, const Color& color, Shape& outShape, const ShapeTransform& shapeTransform)
+		{
+			GenerateRectangle(size, color, outShape._vertices, outShape._indices, shapeTransform);
+		}
+
+		void ShapeGenerator::GenerateRoundRectangle(const Float2& size, float roundness, uint8 roundSideCount, const Color& color, Shape& outShape, const ShapeTransform& shapeTransform)
+		{
+			GenerateRoundRectangle(size, roundness, roundSideCount, color, outShape._vertices, outShape._indices, shapeTransform);
+		}
+
+		void ShapeGenerator::GenerateConvexShape(const Vector<Float2>& points, const Color& color, Shape& outShape, const ShapeTransform& shapeTransform)
+		{
+			GenerateConvexShape(points, color, outShape._vertices, outShape._indices, shapeTransform);
+		}
+
+		void ShapeGenerator::GenerateLine(const Float2& positionA, const Float2& positionB, float thickness, uint8 roundSideCount, const Color& color, Shape& outShape, const ShapeTransform& shapeTransform)
+		{
+			GenerateLine(positionA, positionB, thickness, roundSideCount, color, outShape._vertices, outShape._indices, shapeTransform);
+		}
+
+		void ShapeGenerator::FillColor(Shape& inoutShape, const Color& color)
+		{
 			for (auto& vertex : inoutShape._vertices)
 			{
 				vertex._color = color;
