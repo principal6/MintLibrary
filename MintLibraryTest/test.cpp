@@ -186,7 +186,7 @@ bool Run3DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 	ObjectPool objectPool;
 	CameraObject* const testCameraObject = objectPool.CreateCameraObject();
 	Float2 windowSize{ graphicDevice.GetWindowSize() };
-	testCameraObject->SetPerspectiveZRange(1.0f, 100.0f);
+	testCameraObject->SetPerspectiveZRange(0.01f, 100.0f);
 	testCameraObject->SetPerspectiveScreenRatio(windowSize._x / windowSize._y);
 	testCameraObject->GetObjectTransform()._translation._z = 5.0f;
 	testCameraObject->RotatePitch(0.125f);
