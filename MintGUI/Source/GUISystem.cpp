@@ -191,12 +191,13 @@ namespace mint
 		{
 			MINT_ASSERT(_isUpdated == true, "You must call Update() every frame!");
 
-			_graphicDevice.SetSolidCullFrontRasterizer();
-			_graphicDevice.SetScreenSpace2DProjectionMatrix(Float4x4::kIdentity);
-
 			const GUIControlID& hoveredControlID = _controlManager.GetHoveredControlID();
 			const GUIControlID& pressedControlID = _controlManager.GetPressedControlID();
 
+			_graphicDevice.SetSolidCullFrontRasterizer();
+			_graphicDevice.SetScreenSpace2DProjectionMatrix(Float4x4::kIdentity);
+
+			Rendering::ShapeRendererContext& shapeRendererContext = _graphicDevice.GetShapeRendererContext();
 			Vector<SharedPtr<GUIControl>>& controlInstances = _controlManager.AccessControlInstances();
 			for (const SharedPtr<GUIControl>& control : controlInstances)
 			{
@@ -210,11 +211,11 @@ namespace mint
 					controlInteractionState = GUIControlInteractionState::Hovered;
 				}
 
-				control->Render(_graphicDevice.GetShapeRendererContext(), controlInteractionState);
+				control->Render(shapeRendererContext, controlInteractionState);
 			}
 
-			_graphicDevice.GetShapeRendererContext().Render();
-			_graphicDevice.GetShapeRendererContext().Flush();
+			shapeRendererContext.Render();
+			shapeRendererContext.Flush();
 
 			_isUpdated = false;
 		}

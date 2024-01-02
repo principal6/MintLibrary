@@ -60,8 +60,8 @@ int main()
 	audioSystem.LoadAudioMP3("Assets/Christmas_Jazz-SoundStreet.mp3", audioObject0);
 	audioObject0.Play();
 
-	Run2DTestWindow(window, graphicDevice);
-	//Run3DTestWindow(window, graphicDevice);
+	//Run2DTestWindow(window, graphicDevice);
+	Run3DTestWindow(window, graphicDevice);
 	return 0;
 }
 
