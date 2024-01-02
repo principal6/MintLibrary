@@ -54,8 +54,6 @@ namespace mint
 					_cbTransformData._cbWorldMatrix = meshComponent->GetOwnerObject()->GetObjectTransformMatrix();
 					cbTransform.UpdateBuffer(&_cbTransformData, 1);
 
-					_lowLevelRenderer.Flush();
-
 					_lowLevelRenderer.PushMesh(meshComponent->GetMeshData());
 
 					sbMaterialData._diffuseColor = Color::kBlue;
@@ -78,6 +76,8 @@ namespace mint
 						shaderPool.BindShaderIfNot(GraphicShaderType::PixelShader, _psTexCoordAsColorID);
 						_lowLevelRenderer.Render(RenderingPrimitive::TriangleList);
 					}
+
+					_lowLevelRenderer.Flush();
 				}
 
 				shaderPool.UnbindShader(GraphicShaderType::VertexShader);
