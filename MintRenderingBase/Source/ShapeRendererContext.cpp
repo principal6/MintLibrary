@@ -171,6 +171,11 @@ namespace mint
 			}
 		}
 
+		bool ShapeRendererContext::IsEmpty() const noexcept
+		{
+			return _lowLevelRenderer->IsRenderable() == false;
+		}
+
 		void ShapeRendererContext::Flush() noexcept
 		{
 			_lowLevelRenderer->Flush();
@@ -485,14 +490,13 @@ namespace mint
 					{
 						Vector<IndexElementType>& indices = _lowLevelRenderer->Indices();
 						const uint32 currentTotalTriangleVertexCount = static_cast<uint32>(vertices.Size());
-						// 오른손 좌표계
 						indices.PushBack((currentTotalTriangleVertexCount - 4) + 0);
-						indices.PushBack((currentTotalTriangleVertexCount - 4) + 1);
 						indices.PushBack((currentTotalTriangleVertexCount - 4) + 2);
+						indices.PushBack((currentTotalTriangleVertexCount - 4) + 1);
 
 						indices.PushBack((currentTotalTriangleVertexCount - 4) + 0);
-						indices.PushBack((currentTotalTriangleVertexCount - 4) + 2);
 						indices.PushBack((currentTotalTriangleVertexCount - 4) + 3);
+						indices.PushBack((currentTotalTriangleVertexCount - 4) + 2);
 					}
 				}
 			}

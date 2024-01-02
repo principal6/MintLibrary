@@ -78,7 +78,7 @@ bool Run2DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 	imageLoader.LoadImage_("Assets/Test_image.png", byteColorImage);
 	GraphicResourcePool& resourcePool = graphicDevice.GetResourcePool();
 	const GraphicObjectID textureID = resourcePool.AddTexture2D(TextureFormat::R8G8B8A8_UNORM, byteColorImage.GetBytes(), byteColorImage.GetWidth(), byteColorImage.GetHeight());
-	
+
 	const InputContext& inputContext = InputContext::GetInstance();
 
 	ObjectPool objectPool;
@@ -154,13 +154,15 @@ bool Run2DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 			//imageRenderer.Render();
 			//imageRenderer.Flush();
 
-			ShapeRendererContext& shapeRendererContext = graphicDevice.GetShapeRendererContext();
+			graphicDevice.SetSolidCullFrontRasterizer();
 			graphicDevice.SetScreenSpace2DProjectionMatrix();
-			shapeRendererContext.Flush();
+			ShapeRendererContext& shapeRendererContext = graphicDevice.GetShapeRendererContext();
 			StackStringW<100> fpsString;
 			FormatString(fpsString, L"FPS: %d", Profiler::FPSCounter::GetFPS());
 			shapeRendererContext.SetTextColor(Color::kBlack);
 			shapeRendererContext.DrawDynamicText(fpsString.CString(), Float2(10, 10), FontRenderingOption());
+			shapeRendererContext.Render();
+			shapeRendererContext.Flush();
 
 			graphicDevice.EndRendering();
 		}
@@ -182,18 +184,19 @@ bool Run3DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 	const InputContext& inputContext = InputContext::GetInstance();
 
 	ObjectPool objectPool;
-	Object* const testObject = objectPool.CreateObject();
 	CameraObject* const testCameraObject = objectPool.CreateCameraObject();
 	Float2 windowSize{ graphicDevice.GetWindowSize() };
-	testCameraObject->SetPerspectiveZRange(0.01f, 1000.0f);
+	testCameraObject->SetPerspectiveZRange(1.0f, 100.0f);
 	testCameraObject->SetPerspectiveScreenRatio(windowSize._x / windowSize._y);
+	testCameraObject->GetObjectTransform()._translation._z = 5.0f;
+	testCameraObject->RotatePitch(0.125f);
+	Object* const testObject = objectPool.CreateObject();
 	{
 		testObject->AttachComponent(objectPool.CreateMeshComponent());
 
 		Transform& transform = testObject->GetObjectTransform();
-		transform._translation._z = -4.0f;
+		transform._translation._z = -1.0f;
 	}
-	testCameraObject->RotatePitch(0.125f);
 
 	GUISystem guiSystem{ graphicDevice };
 	GUIControlTemplateID roundButton0TemplateID;
@@ -288,27 +291,29 @@ bool Run3DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 		// Rendering
 		{
 			graphicDevice.BeginRendering();
-			
+
 			graphicDevice.SetViewProjectionMatrix(testCameraObject->GetViewMatrix(), testCameraObject->GetProjectionMatrix());
 
 			objectRenderer.Render(objectPool);
-
+			
 			instantRenderer.Render();
+			
+			guiSystem.Render();
 
 			ShapeRendererContext& shapeRendererContext = graphicDevice.GetShapeRendererContext();
-
 			// # ShapeRendererContext 테스트
 			//shapeRendererContext.TestDraw(Float2(200, 100));
 			//Shape testShapeSet;
-			//ShapeGenerator::GenerateTestShapeSet(testShapeSet);
+			//ShapeGenerator::GenerateRectangle(Float2(32, 32), ByteColor(0,255,255), testShapeSet);
 			//shapeRendererContext.AddShape(testShapeSet);
-
-			guiSystem.Render();
-
+			graphicDevice.SetSolidCullFrontRasterizer();
+			graphicDevice.SetScreenSpace2DProjectionMatrix(Float4x4::kIdentity);
 			StackStringW<100> fpsString;
 			FormatString(fpsString, L"FPS: %d", Profiler::FPSCounter::GetFPS());
 			shapeRendererContext.SetTextColor(Color::kBlack);
 			shapeRendererContext.DrawDynamicText(fpsString.CString(), Float2(10, 10), FontRenderingOption());
+			shapeRendererContext.Render();
+			shapeRendererContext.Flush();
 
 			graphicDevice.EndRendering();
 		}

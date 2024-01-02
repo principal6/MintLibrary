@@ -154,6 +154,7 @@ namespace mint
 			void UseWireFrameNoCullingRasterizer() noexcept;
 			void UseWireFrameCullBackRasterizer() noexcept;
 			void UseSolidCullBackRasterizer() noexcept;
+			void SetSolidCullFrontRasterizer() noexcept;
 			const Rect& GetFullScreenClipRect() const noexcept;
 
 		public:
@@ -171,6 +172,7 @@ namespace mint
 
 		public:
 			void SetScreenSpace2DProjectionMatrix() noexcept;
+			void SetScreenSpace2DProjectionMatrix(const Float4x4& viewMatrix) noexcept;
 			void SetViewProjectionMatrix(const Float4x4& viewMatrix, const Float4x4& projectionMatrix) noexcept;
 			const Float4x4& GetProjectionMatrix() const noexcept;
 			const Float4x4& GetViewProjectionMatrix() const noexcept;
@@ -205,6 +207,7 @@ namespace mint
 		private:
 			ID3D11RasterizerState* _currentRasterizerFor3D;
 			ComPtr<ID3D11RasterizerState> _rasterizerStateSolidCullBack;
+			ComPtr<ID3D11RasterizerState> _rasterizerStateSolidCullFront;
 			ComPtr<ID3D11RasterizerState> _rasterizerStateWireFrameNoCulling;
 			ComPtr<ID3D11RasterizerState> _rasterizerStateWireFrameCullBack;
 			ComPtr<ID3D11RasterizerState> _rasterizerStateScissorRectangles;

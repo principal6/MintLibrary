@@ -191,6 +191,9 @@ namespace mint
 		{
 			MINT_ASSERT(_isUpdated == true, "You must call Update() every frame!");
 
+			_graphicDevice.SetSolidCullFrontRasterizer();
+			_graphicDevice.SetScreenSpace2DProjectionMatrix(Float4x4::kIdentity);
+
 			const GUIControlID& hoveredControlID = _controlManager.GetHoveredControlID();
 			const GUIControlID& pressedControlID = _controlManager.GetPressedControlID();
 
@@ -209,6 +212,9 @@ namespace mint
 
 				control->Render(_graphicDevice.GetShapeRendererContext(), controlInteractionState);
 			}
+
+			_graphicDevice.GetShapeRendererContext().Render();
+			_graphicDevice.GetShapeRendererContext().Flush();
 
 			_isUpdated = false;
 		}

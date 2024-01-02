@@ -379,23 +379,32 @@ namespace mint
 			{
 				D3D11_RASTERIZER_DESC rasterizerDescriptor;
 				rasterizerDescriptor.AntialiasedLineEnable = TRUE;
-				rasterizerDescriptor.CullMode = D3D11_CULL_MODE::D3D11_CULL_NONE;
 				rasterizerDescriptor.DepthBias = 0;
 				rasterizerDescriptor.DepthBiasClamp = 0.0f;
 				rasterizerDescriptor.DepthClipEnable = TRUE;
-				rasterizerDescriptor.FillMode = D3D11_FILL_MODE::D3D11_FILL_WIREFRAME;
 				rasterizerDescriptor.FrontCounterClockwise = TRUE; // 오른손 좌표계
 				rasterizerDescriptor.MultisampleEnable = TRUE;
 				rasterizerDescriptor.ScissorEnable = FALSE;
 				rasterizerDescriptor.SlopeScaledDepthBias = 0.0f;
+
+				rasterizerDescriptor.FillMode = D3D11_FILL_MODE::D3D11_FILL_WIREFRAME;
+				rasterizerDescriptor.CullMode = D3D11_CULL_MODE::D3D11_CULL_NONE;
 				_device->CreateRasterizerState(&rasterizerDescriptor, _rasterizerStateWireFrameNoCulling.ReleaseAndGetAddressOf());
 
+				rasterizerDescriptor.FillMode = D3D11_FILL_MODE::D3D11_FILL_WIREFRAME;
 				rasterizerDescriptor.CullMode = D3D11_CULL_MODE::D3D11_CULL_BACK;
 				_device->CreateRasterizerState(&rasterizerDescriptor, _rasterizerStateWireFrameCullBack.ReleaseAndGetAddressOf());
 
 				rasterizerDescriptor.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
+				rasterizerDescriptor.CullMode = D3D11_CULL_MODE::D3D11_CULL_BACK;
 				_device->CreateRasterizerState(&rasterizerDescriptor, _rasterizerStateSolidCullBack.ReleaseAndGetAddressOf());
+				
+				rasterizerDescriptor.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
+				rasterizerDescriptor.CullMode = D3D11_CULL_MODE::D3D11_CULL_FRONT;
+				_device->CreateRasterizerState(&rasterizerDescriptor, _rasterizerStateSolidCullFront.ReleaseAndGetAddressOf());
 
+				rasterizerDescriptor.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
+				rasterizerDescriptor.CullMode = D3D11_CULL_MODE::D3D11_CULL_BACK;
 				rasterizerDescriptor.ScissorEnable = TRUE;
 				_device->CreateRasterizerState(&rasterizerDescriptor, _rasterizerStateScissorRectangles.ReleaseAndGetAddressOf());
 
@@ -674,7 +683,9 @@ namespace mint
 			_deviceContext->ClearRenderTargetView(_backBufferRtv.Get(), _clearColor);
 			_deviceContext->ClearDepthStencilView(_depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-			_shapeRendererContext.Flush();
+			UseFullScreenViewport();
+
+			MINT_ASSERT(_shapeRendererContext.IsEmpty(), "BeginRendering() 호출 전에 채우면 안 됩니다!");
 		}
 
 		void GraphicDevice::Draw(const uint32 vertexCount, const uint32 vertexOffset) noexcept
@@ -695,11 +706,7 @@ namespace mint
 				return;
 			}
 
-#pragma region Renderer Contexts
-			UseFullScreenViewport();
-			SetScreenSpace2DProjectionMatrix();
-			_shapeRendererContext.Render();
-#pragma endregion
+			MINT_ASSERT(_shapeRendererContext.IsEmpty(), "EndRendering() 호출 전에 Flush() 해야 합니다!");
 
 			_swapChain->Present(0, 0);
 
@@ -727,10 +734,15 @@ namespace mint
 		{
 			_currentRasterizerFor3D = _rasterizerStateWireFrameCullBack.Get();
 		}
-
+		
 		void GraphicDevice::UseSolidCullBackRasterizer() noexcept
 		{
 			_currentRasterizerFor3D = _rasterizerStateSolidCullBack.Get();
+		}
+		
+		void GraphicDevice::SetSolidCullFrontRasterizer() noexcept
+		{
+			_stateManager.SetRSRasterizerState(_rasterizerStateSolidCullFront.Get());
 		}
 
 		const Rect& GraphicDevice::GetFullScreenClipRect() const noexcept
@@ -740,6 +752,12 @@ namespace mint
 
 		void GraphicDevice::SetScreenSpace2DProjectionMatrix() noexcept
 		{
+			SetScreenSpace2DProjectionMatrix(_cbViewData._cbViewMatrix);
+		}
+
+		void GraphicDevice::SetScreenSpace2DProjectionMatrix(const Float4x4& viewMatrix) noexcept
+		{
+			_cbViewData._cbViewMatrix = viewMatrix;
 			const Float2 windowSize{ GetWindowSize() };
 			_cbViewData._cbProjectionMatrix = Float4x4::ProjectionMatrix2DFromTopLeft(windowSize._x, windowSize._y);
 			_cbViewData._cbViewProjectionMatrix = _cbViewData._cbProjectionMatrix * _cbViewData._cbViewMatrix;
