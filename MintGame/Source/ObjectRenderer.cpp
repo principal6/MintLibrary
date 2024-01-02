@@ -92,7 +92,6 @@ namespace mint
 			if (mesh2DComponents.IsEmpty() == false)
 			{
 				ShapeRendererContext& shapeRendererContext = _graphicDevice.GetShapeRendererContext();
-				shapeRendererContext.Flush();
 				const uint32 mesh2DComponentCount = mesh2DComponents.Size();
 				for (uint32 i = 0; i < mesh2DComponentCount; ++i)
 				{
@@ -102,6 +101,7 @@ namespace mint
 					shapeRendererContext.AddShape(mesh2DComponent->GetShape());
 				}
 				shapeRendererContext.Render();
+				shapeRendererContext.Flush();
 			}
 		}
 
