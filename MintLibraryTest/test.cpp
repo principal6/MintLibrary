@@ -310,10 +310,12 @@ bool Run3DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 			//shapeRendererContext.AddShape(testShapeSet);
 			graphicDevice.SetSolidCullFrontRasterizer();
 			graphicDevice.SetScreenSpace2DProjectionMatrix(Float4x4::kIdentity);
-			StackStringW<100> fpsString;
-			FormatString(fpsString, L"FPS: %d", Profiler::FPSCounter::GetFPS());
-			shapeRendererContext.SetTextColor(Color::kBlack);
-			shapeRendererContext.DrawDynamicText(fpsString.CString(), Float2(10, 10), FontRenderingOption());
+			{
+				StackStringW<100> fpsString;
+				FormatString(fpsString, L"FPS: %d", Profiler::FPSCounter::GetFPS());
+				shapeRendererContext.SetTextColor(Color::kBlack);
+				shapeRendererContext.DrawDynamicText(fpsString.CString(), Float2(10, 10), FontRenderingOption());
+			}
 			shapeRendererContext.Render();
 			shapeRendererContext.Flush();
 
