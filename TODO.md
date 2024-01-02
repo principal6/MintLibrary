@@ -1,7 +1,7 @@
 ﻿# TODO
-## World Font / Sceen Font 렌더링 구분
-
 ## PhysicsComponent 추가, 간단한 중력 및 충돌 Simulation 추가.
+
+## World Font / Sceen Font 렌더링 구분
 
 ## GUI 렌더링!!
 
