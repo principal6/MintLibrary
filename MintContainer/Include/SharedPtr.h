@@ -65,6 +65,9 @@ namespace mint
 	template<typename T>
 	class SharedPtr
 	{
+		template<typename U>
+		friend class SharedPtr;
+
 		friend SharedPtrViewer;
 
 		template<typename T>
@@ -96,6 +99,16 @@ namespace mint
 		{
 			rhs._referenceCounter = nullptr;
 			rhs._rawPtr = nullptr;
+		}
+		template<typename U>
+		SharedPtr(const SharedPtr<U>& rhs)
+			: _referenceCounter{ rhs._referenceCounter }
+			, _rawPtr{ dynamic_cast<T*>(rhs._rawPtr) }
+		{
+			if (_referenceCounter != nullptr)
+			{
+				_referenceCounter->IncreaseStrongReferenceCount();
+			}
 		}
 		~SharedPtr()
 		{
@@ -146,7 +159,7 @@ namespace mint
 
 	public:
 		bool IsValid() const { return (_referenceCounter == nullptr ? false : _referenceCounter->GetStrongReferenceCount() != 0); }
-		void Clear() 
+		void Clear()
 		{
 			DecreaseReferenceCount();
 
