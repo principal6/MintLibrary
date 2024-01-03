@@ -153,6 +153,8 @@ namespace mint
 			_referenceCounter = nullptr;
 			_rawPtr = nullptr;
 		}
+		T* Get() { return _rawPtr; }
+		const T* Get() const { return _rawPtr; }
 
 	private:
 		SharedPtr(T* const rawPointer)
