@@ -99,20 +99,7 @@ namespace mint
 		}
 		~SharedPtr()
 		{
-			if (_referenceCounter != nullptr)
-			{
-				_referenceCounter->DecreaseStrongReferenceCount();
-
-				if (_referenceCounter->GetStrongReferenceCount() == 0)
-				{
-					MINT_DELETE(_rawPtr);
-
-					if (_referenceCounter->GetWeakReferenceCount() == 0)
-					{
-						MINT_DELETE(_referenceCounter);
-					}
-				}
-			}
+			DecreaseReferenceCount();
 		}
 		SharedPtr& operator=(const SharedPtr& rhs)
 		{
@@ -121,20 +108,7 @@ namespace mint
 				return *this;
 			}
 
-			if (_referenceCounter != nullptr)
-			{
-				_referenceCounter->DecreaseStrongReferenceCount();
-
-				if (_referenceCounter->GetStrongReferenceCount() == 0)
-				{
-					MINT_DELETE(_rawPtr);
-
-					if (_referenceCounter->GetWeakReferenceCount() == 0)
-					{
-						MINT_DELETE(_referenceCounter);
-					}
-				}
-			}
+			DecreaseReferenceCount();
 
 			_referenceCounter = rhs._referenceCounter;
 			_rawPtr = rhs._rawPtr;
@@ -152,20 +126,7 @@ namespace mint
 				return *this;
 			}
 
-			if (_referenceCounter != nullptr)
-			{
-				_referenceCounter->DecreaseStrongReferenceCount();
-
-				if (_referenceCounter->GetStrongReferenceCount() == 0)
-				{
-					MINT_DELETE(_rawPtr);
-
-					if (_referenceCounter->GetWeakReferenceCount() == 0)
-					{
-						MINT_DELETE(_referenceCounter);
-					}
-				}
-			}
+			DecreaseReferenceCount();
 
 			_referenceCounter = rhs._referenceCounter;
 			_rawPtr = rhs._rawPtr;
@@ -185,6 +146,13 @@ namespace mint
 
 	public:
 		bool IsValid() const { return (_referenceCounter == nullptr ? false : _referenceCounter->GetStrongReferenceCount() != 0); }
+		void Clear() 
+		{
+			DecreaseReferenceCount();
+
+			_referenceCounter = nullptr;
+			_rawPtr = nullptr;
+		}
 
 	private:
 		SharedPtr(T* const rawPointer)
@@ -192,6 +160,24 @@ namespace mint
 			, _rawPtr{ rawPointer }
 		{
 			_referenceCounter->IncreaseStrongReferenceCount();
+		}
+
+		void DecreaseReferenceCount()
+		{
+			if (_referenceCounter != nullptr)
+			{
+				_referenceCounter->DecreaseStrongReferenceCount();
+
+				if (_referenceCounter->GetStrongReferenceCount() == 0)
+				{
+					MINT_DELETE(_rawPtr);
+
+					if (_referenceCounter->GetWeakReferenceCount() == 0)
+					{
+						MINT_DELETE(_referenceCounter);
+					}
+				}
+			}
 		}
 
 	private:

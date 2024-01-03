@@ -538,6 +538,8 @@ namespace mint
 			{
 				SharedPtr<StringA> sp0;
 				sp0 = MakeShared<StringA>();
+				sp0.Clear();
+
 				sp0 = MakeShared(StringA("abc"));
 				sp0 = MakeShared(StringA("abcasad sads dsa qew w eq d asd s z"));
 				{
