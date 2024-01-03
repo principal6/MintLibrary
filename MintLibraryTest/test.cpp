@@ -60,8 +60,8 @@ int main()
 	audioSystem.LoadAudioMP3("Assets/Christmas_Jazz-SoundStreet.mp3", audioObject0);
 	audioObject0.Play();
 
-	//Run2DTestWindow(window, graphicDevice);
-	Run3DTestWindow(window, graphicDevice);
+	Run2DTestWindow(window, graphicDevice);
+	//Run3DTestWindow(window, graphicDevice);
 	return 0;
 }
 
@@ -90,6 +90,13 @@ bool Run2DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 		mesh2DComponent->SetShape(std::move(shape));
 		object0->AttachComponent(mesh2DComponent);
 	}
+	{
+		const Shape& shape = ((Mesh2DComponent*)(object0->GetComponent(ObjectComponentType::Mesh2DComponent)))->GetShape();
+		Collision2DComponent* collision2DComponent = objectPool.CreateCollision2DComponent();
+		ConvexCollisionShape2D collisionShape2D = ConvexCollisionShape2D::MakeFromRenderingShape(Float2::kZero, shape);
+		collision2DComponent->SetCollisionShape2D(MakeShared<CollisionShape2D>(collisionShape2D));
+		object0->AttachComponent(collision2DComponent);
+	}
 	Object* const object1 = objectPool.CreateObject();
 	{
 		Mesh2DComponent* mesh2DComponent = objectPool.CreateMesh2DComponent();
@@ -101,6 +108,13 @@ bool Run2DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 		ShapeGenerator::GenerateConvexShape(points, ByteColor(0, 128, 255), shape);
 		mesh2DComponent->SetShape(std::move(shape));
 		object1->AttachComponent(mesh2DComponent);
+	}
+	{
+		const Shape& shape = ((Mesh2DComponent*)(object1->GetComponent(ObjectComponentType::Mesh2DComponent)))->GetShape();
+		Collision2DComponent* collision2DComponent = objectPool.CreateCollision2DComponent();
+		ConvexCollisionShape2D collisionShape2D = ConvexCollisionShape2D::MakeFromRenderingShape(Float2::kZero, shape);
+		collision2DComponent->SetCollisionShape2D(MakeShared<CollisionShape2D>(collisionShape2D));
+		object1->AttachComponent(collision2DComponent);
 	}
 
 	CameraObject* const testCameraObject = objectPool.CreateCameraObject();
@@ -297,9 +311,9 @@ bool Run3DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 			graphicDevice.SetViewProjectionMatrix(testCameraObject->GetViewMatrix(), testCameraObject->GetProjectionMatrix());
 
 			objectRenderer.Render(objectPool);
-			
+
 			instantRenderer.Render();
-			
+
 			guiSystem.Render();
 
 			ShapeRendererContext& shapeRendererContext = graphicDevice.GetShapeRendererContext();

@@ -180,6 +180,7 @@
     <ClInclude Include="Include\ObjectComponent.h" />
     <ClInclude Include="Include\ObjectPool.h" />
     <ClInclude Include="Include\ObjectPool.hpp" />
+    <ClInclude Include="Include\CollisionComponent.h" />
     <ClInclude Include="Include\TransformComponent.h" />
   </ItemGroup>
   <ItemGroup>
@@ -195,6 +196,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="Source\CollisionComponent.cpp" />
     <ClCompile Include="Source\DeltaTimer.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>

@@ -10,6 +10,7 @@
 
 #include <MintGame/Include/DeltaTimer.h>
 #include <MintGame/Include/MeshComponent.h>
+#include <MintGame/Include/CollisionComponent.h>
 #include <MintGame/Include/CameraObject.h>
 
 
@@ -43,19 +44,19 @@ namespace mint
 			const uint32 objectCount = GetObjectCount();
 			for (uint32 objectIndex = 0; objectIndex < objectCount; ++objectIndex)
 			{
-				if (_objectArray[objectIndex] != nullptr)
+				if (_objects[objectIndex] != nullptr)
 				{
-					DestroyObjectComponents(*_objectArray[objectIndex]);
+					DestroyObjectComponents(*_objects[objectIndex]);
 
-					MINT_DELETE(_objectArray[objectIndex]);
+					MINT_DELETE(_objects[objectIndex]);
 				}
 			}
-			_objectArray.Clear();
+			_objects.Clear();
 		}
 
 		MINT_INLINE Object* ObjectPool::CreateObjectInternalXXX(Object* const object)
 		{
-			_objectArray.PushBack(object);
+			_objects.PushBack(object);
 			object->AttachComponent(MINT_NEW(TransformComponent)); // 모든 Object는 TransformComponent 를 필수로 가집니다.
 			return object;
 		}
@@ -63,15 +64,20 @@ namespace mint
 		MINT_INLINE MeshComponent* ObjectPool::CreateMeshComponent()
 		{
 			MeshComponent* result = MINT_NEW(MeshComponent);
-			_meshComponentArray.PushBack(std::move(result));
-			return _meshComponentArray.Back();
+			_meshComponents.PushBack(std::move(result));
+			return _meshComponents.Back();
 		}
 		
 		MINT_INLINE Mesh2DComponent* ObjectPool::CreateMesh2DComponent()
 		{
 			Mesh2DComponent* result = MINT_NEW(Mesh2DComponent);
-			_mesh2DComponentArray.PushBack(std::move(result));
-			return _mesh2DComponentArray.Back();
+			_mesh2DComponents.PushBack(std::move(result));
+			return _mesh2DComponents.Back();
+		}
+
+		MINT_INLINE Collision2DComponent* ObjectPool::CreateCollision2DComponent()
+		{
+			return MINT_NEW(Collision2DComponent);
 		}
 
 		MINT_INLINE void ObjectPool::DestroyObjectComponents(Object& object)
@@ -100,16 +106,16 @@ namespace mint
 				return;
 			}
 
-			const uint32 meshComponentCount = static_cast<uint32>(_meshComponentArray.Size());
+			const uint32 meshComponentCount = static_cast<uint32>(_meshComponents.Size());
 			for (uint32 meshComponentIndex = 0; meshComponentIndex < meshComponentCount; ++meshComponentIndex)
 			{
-				if (_meshComponentArray[meshComponentIndex]->GetID() == meshComponent->GetID())
+				if (_meshComponents[meshComponentIndex]->GetID() == meshComponent->GetID())
 				{
 					return;
 				}
 			}
 
-			_meshComponentArray.PushBack(meshComponent);
+			_meshComponents.PushBack(meshComponent);
 		}
 
 		MINT_INLINE void ObjectPool::DeregisterMeshComponent(MeshComponent* const meshComponent)
@@ -120,10 +126,10 @@ namespace mint
 			}
 
 			int32 foundIndex = -1;
-			const int32 meshComponentCount = static_cast<int32>(_meshComponentArray.Size());
+			const int32 meshComponentCount = static_cast<int32>(_meshComponents.Size());
 			for (int32 meshComponentIndex = 0; meshComponentIndex < meshComponentCount; ++meshComponentIndex)
 			{
-				if (_meshComponentArray[meshComponentIndex]->GetID() == meshComponent->GetID())
+				if (_meshComponents[meshComponentIndex]->GetID() == meshComponent->GetID())
 				{
 					foundIndex = meshComponentIndex;
 					break;
@@ -134,9 +140,9 @@ namespace mint
 			{
 				if (foundIndex < meshComponentCount)
 				{
-					std::swap(_meshComponentArray[foundIndex], _meshComponentArray.Back());
+					std::swap(_meshComponents[foundIndex], _meshComponents.Back());
 				}
-				_meshComponentArray.PopBack();
+				_meshComponents.PopBack();
 			}
 		}
 
@@ -148,10 +154,10 @@ namespace mint
 		MINT_INLINE void ObjectPool::UpdateScreenSize(const Float2& screenSize)
 		{
 			const float screenRatio = (screenSize._x / screenSize._y);
-			const uint32 objectCount = _objectArray.Size();
+			const uint32 objectCount = _objects.Size();
 			for (uint32 objectIndex = 0; objectIndex < objectCount; ++objectIndex)
 			{
-				Object*& object = _objectArray[objectIndex];
+				Object*& object = _objects[objectIndex];
 				if (object->IsTypeOf(ObjectType::CameraObject) == true)
 				{
 					CameraObject* const cameraObject = static_cast<CameraObject*>(object);
@@ -162,17 +168,17 @@ namespace mint
 
 		MINT_INLINE const Vector<MeshComponent*>& ObjectPool::GetMeshComponents() const noexcept
 		{
-			return _meshComponentArray;
+			return _meshComponents;
 		}
 		
 		MINT_INLINE const Vector<Mesh2DComponent*>& ObjectPool::GetMesh2DComponents() const noexcept
 		{
-			return _mesh2DComponentArray;
+			return _mesh2DComponents;
 		}
 
 		MINT_INLINE uint32 ObjectPool::GetObjectCount() const noexcept
 		{
-			return _objectArray.Size();
+			return _objects.Size();
 		}
 
 		MINT_INLINE const DeltaTimer* ObjectPool::GetDeltaTimerXXX() const noexcept

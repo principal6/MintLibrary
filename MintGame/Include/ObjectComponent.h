@@ -32,6 +32,7 @@ namespace mint
 			TransformComponent,
 			MeshComponent,
 			Mesh2DComponent,
+			Collision2DComponent,
 		};
 
 

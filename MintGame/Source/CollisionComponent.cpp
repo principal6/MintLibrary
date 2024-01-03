@@ -1,0 +1,29 @@
+#include <MintGame/Include/CollisionComponent.h>
+
+
+namespace mint
+{
+	namespace Game
+	{
+		Collision2DComponent::Collision2DComponent()
+			: ObjectComponent(ObjectComponentType::Collision2DComponent)
+		{
+			__noop;
+		}
+
+		Collision2DComponent::~Collision2DComponent()
+		{
+			__noop;
+		}
+
+		void Collision2DComponent::SetCollisionShape2D(const SharedPtr<Physics::CollisionShape2D>& collisionShape2D)
+		{
+			_collisionShape2D = collisionShape2D;
+		}
+
+		const SharedPtr<Physics::CollisionShape2D>& Collision2DComponent::GetCollisionShape2D() const noexcept
+		{
+			return _collisionShape2D;
+		}
+	}
+}

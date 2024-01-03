@@ -18,6 +18,7 @@ namespace mint
 		class TransformComponent;
 		class MeshComponent;
 		class Mesh2DComponent;
+		class Collision2DComponent;
 		class CameraObject;
 		class DeltaTimer;
 	}
@@ -46,6 +47,7 @@ namespace mint
 		public:
 			MeshComponent* CreateMeshComponent();
 			Mesh2DComponent* CreateMesh2DComponent();
+			Collision2DComponent* CreateCollision2DComponent();
 
 		public:
 			void DestroyObjectComponents(Object& object);
@@ -70,11 +72,11 @@ namespace mint
 			const DeltaTimer* const _deltaTimer;
 
 		private:
-			Vector<Object*> _objectArray;
+			Vector<Object*> _objects;
 
 		private:
-			Vector<MeshComponent*> _meshComponentArray;
-			Vector<Mesh2DComponent*> _mesh2DComponentArray;
+			Vector<MeshComponent*> _meshComponents;
+			Vector<Mesh2DComponent*> _mesh2DComponents;
 		};
 	}
 }
