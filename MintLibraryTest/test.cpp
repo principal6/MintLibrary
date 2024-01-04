@@ -82,7 +82,7 @@ bool Run2DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 	const InputContext& inputContext = InputContext::GetInstance();
 
 	ObjectPool objectPool;
-	Object* const object0 = objectPool.CreateObject();
+	SharedPtr<Object> object0 = objectPool.CreateObject();
 	{
 		Mesh2DComponent* mesh2DComponent = objectPool.CreateMesh2DComponent();
 		Shape shape;
@@ -97,7 +97,7 @@ bool Run2DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 		collision2DComponent->SetCollisionShape2D(MakeShared<CollisionShape2D>(collisionShape2D));
 		object0->AttachComponent(collision2DComponent);
 	}
-	Object* const object1 = objectPool.CreateObject();
+	SharedPtr<Object> object1 = objectPool.CreateObject();
 	{
 		Mesh2DComponent* mesh2DComponent = objectPool.CreateMesh2DComponent();
 		Shape shape;
@@ -117,7 +117,7 @@ bool Run2DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 		object1->AttachComponent(collision2DComponent);
 	}
 
-	CameraObject* const testCameraObject = objectPool.CreateCameraObject();
+	SharedPtr<CameraObject> testCameraObject = objectPool.CreateCameraObject();
 	testCameraObject->SetPerspectiveZRange(1.0f, 100.0f);
 	Float2 windowSize{ graphicDevice.GetWindowSize() };
 	testCameraObject->SetPerspectiveScreenRatio(windowSize._x / windowSize._y);
@@ -200,13 +200,13 @@ bool Run3DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 	const InputContext& inputContext = InputContext::GetInstance();
 
 	ObjectPool objectPool;
-	CameraObject* const testCameraObject = objectPool.CreateCameraObject();
+	SharedPtr<CameraObject> testCameraObject = objectPool.CreateCameraObject();
 	Float2 windowSize{ graphicDevice.GetWindowSize() };
 	testCameraObject->SetPerspectiveZRange(0.01f, 100.0f);
 	testCameraObject->SetPerspectiveScreenRatio(windowSize._x / windowSize._y);
 	testCameraObject->GetObjectTransform()._translation._z = 5.0f;
 	testCameraObject->RotatePitch(0.125f);
-	Object* const testObject = objectPool.CreateObject();
+	SharedPtr<Object> testObject = objectPool.CreateObject();
 	{
 		testObject->AttachComponent(objectPool.CreateMeshComponent());
 

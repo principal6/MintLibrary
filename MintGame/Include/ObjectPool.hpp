@@ -29,14 +29,14 @@ namespace mint
 			DestroyObjects();
 		}
 
-		MINT_INLINE Object* ObjectPool::CreateObject()
+		MINT_INLINE SharedPtr<Object> ObjectPool::CreateObject()
 		{
-			return CreateObjectInternalXXX(MINT_NEW(Object, this));
+			return CreateObjectInternal(MakeShared<Object>(Object(this)));
 		}
 
-		MINT_INLINE CameraObject* ObjectPool::CreateCameraObject()
+		MINT_INLINE SharedPtr<CameraObject> ObjectPool::CreateCameraObject()
 		{
-			return static_cast<CameraObject*>(CreateObjectInternalXXX(MINT_NEW(CameraObject, this)));
+			return CreateObjectInternal(MakeShared<CameraObject>(CameraObject(this)));
 		}
 
 		MINT_INLINE void ObjectPool::DestroyObjects()
@@ -44,21 +44,19 @@ namespace mint
 			const uint32 objectCount = GetObjectCount();
 			for (uint32 objectIndex = 0; objectIndex < objectCount; ++objectIndex)
 			{
-				if (_objects[objectIndex] != nullptr)
+				if (_objects[objectIndex].IsValid())
 				{
 					DestroyObjectComponents(*_objects[objectIndex]);
-
-					MINT_DELETE(_objects[objectIndex]);
 				}
 			}
 			_objects.Clear();
 		}
 
-		MINT_INLINE Object* ObjectPool::CreateObjectInternalXXX(Object* const object)
+		MINT_INLINE SharedPtr<Object> ObjectPool::CreateObjectInternal(SharedPtr<Object>&& object)
 		{
 			_objects.PushBack(object);
 			object->AttachComponent(MINT_NEW(TransformComponent)); // 모든 Object는 TransformComponent 를 필수로 가집니다.
-			return object;
+			return _objects.Back();
 		}
 
 		MINT_INLINE MeshComponent* ObjectPool::CreateMeshComponent()
@@ -157,10 +155,10 @@ namespace mint
 			const uint32 objectCount = _objects.Size();
 			for (uint32 objectIndex = 0; objectIndex < objectCount; ++objectIndex)
 			{
-				Object*& object = _objects[objectIndex];
+				SharedPtr<Object>& object = _objects[objectIndex];
 				if (object->IsTypeOf(ObjectType::CameraObject) == true)
 				{
-					CameraObject* const cameraObject = static_cast<CameraObject*>(object);
+					CameraObject* const cameraObject = static_cast<CameraObject*>(object.Get());
 					cameraObject->SetPerspectiveScreenRatio(screenRatio);
 				}
 			}

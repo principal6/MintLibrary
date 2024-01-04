@@ -5,9 +5,9 @@
 #define _MINT_GAME_OBJECT_POOL_H_
 
 
-#include <MintGame/Include/Object.h>
-
 #include <MintContainer/Include/Vector.h>
+#include <MintContainer/Include/SharedPtr.h>
+#include <MintGame/Include/Object.h>
 
 
 namespace mint
@@ -15,11 +15,11 @@ namespace mint
 	namespace Game
 	{
 		class GraphicDevice;
+		class CameraObject;
 		class TransformComponent;
 		class MeshComponent;
 		class Mesh2DComponent;
 		class Collision2DComponent;
-		class CameraObject;
 		class DeltaTimer;
 	}
 }
@@ -35,14 +35,14 @@ namespace mint
 			~ObjectPool();
 
 		public:
-			Object* CreateObject();
-			CameraObject* CreateCameraObject();
+			SharedPtr<Object> CreateObject();
+			SharedPtr<CameraObject> CreateCameraObject();
 
 		private:
 			void DestroyObjects();
 
 		private:
-			Object* CreateObjectInternalXXX(Object* const object);
+			SharedPtr<Object> CreateObjectInternal(SharedPtr<Object>&& object);
 
 		public:
 			MeshComponent* CreateMeshComponent();
@@ -72,7 +72,7 @@ namespace mint
 			const DeltaTimer* const _deltaTimer;
 
 		private:
-			Vector<Object*> _objects;
+			Vector<SharedPtr<Object>> _objects;
 
 		private:
 			Vector<MeshComponent*> _meshComponents;

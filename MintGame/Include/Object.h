@@ -42,12 +42,14 @@ namespace mint
 		{
 			friend ObjectPool;
 
+		public:
+			virtual ~Object();
+
 		private:
 			Object(const ObjectPool* const objectPool);
 
 		protected:
 			Object(const ObjectPool* const objectPool, const ObjectType objectType);
-			virtual ~Object();
 
 		public:
 			void AttachComponent(ObjectComponent* const objectComponent);
