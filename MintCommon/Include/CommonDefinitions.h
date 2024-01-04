@@ -95,6 +95,7 @@ static constexpr uint32 kStackSizeLimit = 1 << 14;
 
 // TODO: Index 를 class 로 만들 것
 static constexpr int32 kInvalidIndexInt32 = -1;
+static constexpr int32 kInvalidIndexUint32 = kUint32Max;
 constexpr bool IsValidIndex(int32 index) { return index >= 0; }
 #pragma endregion
 
