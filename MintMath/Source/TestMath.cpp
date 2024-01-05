@@ -10,7 +10,7 @@ namespace mint
 {
 	namespace TestMath
 	{
-		bool Test_intTypes()
+		bool Test_IntTypes()
 		{
 			using namespace mint;
 			Int2 ni;
@@ -22,7 +22,7 @@ namespace mint
 			return true;
 		}
 
-		bool Test_floatTypes()
+		bool Test_FloatTypes()
 		{
 			using namespace mint;
 			float a = 15.000001f;
@@ -102,7 +102,20 @@ namespace mint
 			return true;
 		}
 
-		bool Test_linearAlgebra()
+		bool Test_Transforms()
+		{
+			{
+				Transform2D a(Math::kPiOverTwo, Float2(2, 0));
+				Float3x3 ma = a.ToMatrix();
+				Float3 v0{ 2, 1, 1 };
+				Float3 v1 = a * v0;
+				Float3 v1cmp = ma * v0;
+				MINT_ASSURE(v1 == v1cmp);
+			}
+			return true;
+		}
+
+		bool Test_LinearAlgebra()
 		{
 			using namespace mint;
 
@@ -196,9 +209,10 @@ namespace mint
 
 		bool Test()
 		{
-			MINT_ASSURE(Test_intTypes());
-			MINT_ASSURE(Test_floatTypes());
-			MINT_ASSURE(Test_linearAlgebra());
+			MINT_ASSURE(Test_IntTypes());
+			MINT_ASSURE(Test_FloatTypes());
+			MINT_ASSURE(Test_Transforms());
+			MINT_ASSURE(Test_LinearAlgebra());
 			return true;
 		}
 	}

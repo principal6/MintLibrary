@@ -61,5 +61,28 @@ namespace mint
 		_rotation += rhs._rotation;
 		return *this;
 	}
+
+	Float2 Transform2D::operator*(const Float2& v) const
+	{
+		return Float2x2::RotationMatrix(_rotation).Mul(v) + _translation;
+	}
+
+	Float3 Transform2D::operator*(const Float3& v) const
+	{
+		return Float3(Float2x2::RotationMatrix(_rotation).Mul(v.XY()), v._z) + Float3(_translation);
+	}
+
+	Float3x3 Transform2D::ToMatrix() const
+	{
+		Float3x3 matrix = Float3x3::RotationMatrixZ(_rotation);
+		matrix._13 = _translation._x;
+		matrix._23 = _translation._y;
+		return matrix;
+	}
+
+	Transform2D Transform2D::GetInverted() const
+	{
+		return Transform2D(-_rotation, -_translation);
+	}
 #pragma endregion
 }
