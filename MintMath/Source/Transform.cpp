@@ -58,7 +58,7 @@ namespace mint
 	{
 		// *this == parent, rhs == child
 		_translation += Float2x2::RotationMatrix(_rotation).Mul(rhs._translation);
-		_rotation = _rotation + rhs._rotation;
+		_rotation += rhs._rotation;
 		return *this;
 	}
 #pragma endregion
