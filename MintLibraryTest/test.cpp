@@ -2,7 +2,7 @@
 #include <MintLibrary/Include/AllHpps.h>
 
 #include <MintContainer/Include/TestContainer.h>
-#include <MintMath/Include/Test.h>
+#include <MintMath/Include/TestMath.h>
 #include <MintPhysics/Include/TestPhysics.h>
 #include <MintPlatform/Include/Test.h>
 #include <MintLanguage/Include/Test.h>

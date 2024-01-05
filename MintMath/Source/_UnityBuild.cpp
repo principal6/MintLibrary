@@ -9,4 +9,4 @@
 #include <MintMath/Source/Transform.cpp>
 #include <MintMath/Source/AffineVec.cpp>
 #include <MintMath/Source/Geometry.cpp>
-#include <MintMath/Source/Test.cpp>
+#include <MintMath/Source/TestMath.cpp>

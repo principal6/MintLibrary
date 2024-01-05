@@ -31,7 +31,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="Source\Test.cpp">
+    <ClCompile Include="Source\TestMath.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -111,7 +111,7 @@
     <ClInclude Include="Include\Quaternion.inl" />
     <ClInclude Include="Include\Rect.h" />
     <ClInclude Include="Include\AffineVec.h" />
-    <ClInclude Include="Include\Test.h" />
+    <ClInclude Include="Include\TestMath.h" />
     <ClInclude Include="Include\Transform.h" />
     <ClInclude Include="Include\VectorR.h" />
     <ClInclude Include="Include\VectorR.hpp" />

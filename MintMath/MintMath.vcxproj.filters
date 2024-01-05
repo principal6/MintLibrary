@@ -72,7 +72,7 @@
     <ClInclude Include="Include\Transform.h">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Test.h">
+    <ClInclude Include="Include\TestMath.h">
       <Filter>Include</Filter>
     </ClInclude>
     <ClInclude Include="Include\Geometry.h">
@@ -110,7 +110,7 @@
     <ClCompile Include="Source\AffineVec.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Test.cpp">
+    <ClCompile Include="Source\TestMath.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\Geometry.cpp">

@@ -1,4 +1,4 @@
-﻿#include <MintMath/Include/Test.h>
+﻿#include <MintMath/Include/TestMath.h>
 #include <MintMath/Include/AllHeaders.h>
 #include <MintMath/Include/AllHpps.h>
 
