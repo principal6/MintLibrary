@@ -6,59 +6,47 @@
 
 
 #include <MintRenderingBase/Include/RenderingBaseCommon.h>
+#include <MintMath/Include/Transform.h>
 
 
 namespace mint
 {
 	namespace Rendering
 	{
-		struct ShapeTransform
-		{
-			ShapeTransform() : ShapeTransform(0.0f, Float2::kZero) { __noop; }
-			ShapeTransform(const Float2& translation) : ShapeTransform(0.0f, translation) { __noop; }
-			ShapeTransform(float rotation, const Float2& translation) : _rotation{ rotation }, _translation{ translation } { __noop; }
-
-			ShapeTransform operator*(const ShapeTransform& rhs) const;
-			ShapeTransform& operator*=(const ShapeTransform& rhs);
-
-			float _rotation;
-			Float2 _translation;
-		};
-
 		class ScopedShapeTransformer
 		{
 		public:
-			ScopedShapeTransformer(Vector<VS_INPUT_SHAPE>& vertices, const ShapeTransform& shapeTransform);
+			ScopedShapeTransformer(Vector<VS_INPUT_SHAPE>& vertices, const Transform2D& shapeTransform);
 			~ScopedShapeTransformer();
 		private:
 			Vector<VS_INPUT_SHAPE>& _vertices;
-			const ShapeTransform& _shapeTransform;
+			const Transform2D& _shapeTransform;
 			uint32 _shapeVertexOffset;
 		};
 
 		class ShapeGenerator abstract final
 		{
 		public:
-			static void GenerateCircle(float radius, uint8 sideCount, const Color& color, Vector<VS_INPUT_SHAPE>& vertices, Vector<IndexElementType>& indices, const ShapeTransform& shapeTransform);
-			static void GenerateHalfCircle(float radius, uint8 sideCount, const Color& color, Vector<VS_INPUT_SHAPE>& vertices, Vector<IndexElementType>& indices, const ShapeTransform& shapeTransform);
-			static void GenerateQuarterCircle(float radius, uint8 sideCount, const Color& color, Vector<VS_INPUT_SHAPE>& vertices, Vector<IndexElementType>& indices, const ShapeTransform& shapeTransform);
-			static void GenerateRectangle(const Float2& size, const Color& color, Vector<VS_INPUT_SHAPE>& vertices, Vector<IndexElementType>& indices, const ShapeTransform& shapeTransform);
-			static void GenerateRoundRectangle(const Float2& size, float roundness, uint8 roundSideCount, const Color& color, Vector<VS_INPUT_SHAPE>& vertices, Vector<IndexElementType>& indices, const ShapeTransform& shapeTransform);
-			static void GenerateConvexShape(const Vector<Float2>& points, const Color& color, Vector<VS_INPUT_SHAPE>& vertices, Vector<IndexElementType>& indices, const ShapeTransform& shapeTransform);
-			static void GenerateLine(const Float2& positionA, const Float2& positionB, float thickness, uint8 roundSideCount, const Color& color, Vector<VS_INPUT_SHAPE>& vertices, Vector<IndexElementType>& indices, const ShapeTransform& shapeTransform);
+			static void GenerateCircle(float radius, uint8 sideCount, const Color& color, Vector<VS_INPUT_SHAPE>& vertices, Vector<IndexElementType>& indices, const Transform2D& shapeTransform);
+			static void GenerateHalfCircle(float radius, uint8 sideCount, const Color& color, Vector<VS_INPUT_SHAPE>& vertices, Vector<IndexElementType>& indices, const Transform2D& shapeTransform);
+			static void GenerateQuarterCircle(float radius, uint8 sideCount, const Color& color, Vector<VS_INPUT_SHAPE>& vertices, Vector<IndexElementType>& indices, const Transform2D& shapeTransform);
+			static void GenerateRectangle(const Float2& size, const Color& color, Vector<VS_INPUT_SHAPE>& vertices, Vector<IndexElementType>& indices, const Transform2D& shapeTransform);
+			static void GenerateRoundRectangle(const Float2& size, float roundness, uint8 roundSideCount, const Color& color, Vector<VS_INPUT_SHAPE>& vertices, Vector<IndexElementType>& indices, const Transform2D& shapeTransform);
+			static void GenerateConvexShape(const Vector<Float2>& points, const Color& color, Vector<VS_INPUT_SHAPE>& vertices, Vector<IndexElementType>& indices, const Transform2D& shapeTransform);
+			static void GenerateLine(const Float2& positionA, const Float2& positionB, float thickness, uint8 roundSideCount, const Color& color, Vector<VS_INPUT_SHAPE>& vertices, Vector<IndexElementType>& indices, const Transform2D& shapeTransform);
 
 		public:
-			static void GenerateCircle(float radius, uint8 sideCount, const Color& color, Shape& outShape, const ShapeTransform& shapeTransform = ShapeTransform());
-			static void GenerateHalfCircle(float radius, uint8 sideCount, const Color& color, Shape& outShape, const ShapeTransform& shapeTransform = ShapeTransform());
-			static void GenerateQuarterCircle(float radius, uint8 sideCount, const Color& color, Shape& outShape, const ShapeTransform& shapeTransform = ShapeTransform());
-			static void GenerateRectangle(const Float2& size, const Color& color, Shape& outShape, const ShapeTransform& shapeTransform = ShapeTransform());
-			static void GenerateRoundRectangle(const Float2& size, float roundness, uint8 roundSideCount, const Color& color, Shape& outShape, const ShapeTransform& shapeTransform = ShapeTransform());
-			static void GenerateConvexShape(const Vector<Float2>& points, const Color& color, Shape& outShape, const ShapeTransform& shapeTransform = ShapeTransform());
-			static void GenerateLine(const Float2& positionA, const Float2& positionB, float thickness, uint8 roundSideCount, const Color& color, Shape& outShape, const ShapeTransform& shapeTransform = ShapeTransform());
+			static void GenerateCircle(float radius, uint8 sideCount, const Color& color, Shape& outShape, const Transform2D& shapeTransform = Transform2D());
+			static void GenerateHalfCircle(float radius, uint8 sideCount, const Color& color, Shape& outShape, const Transform2D& shapeTransform = Transform2D());
+			static void GenerateQuarterCircle(float radius, uint8 sideCount, const Color& color, Shape& outShape, const Transform2D& shapeTransform = Transform2D());
+			static void GenerateRectangle(const Float2& size, const Color& color, Shape& outShape, const Transform2D& shapeTransform = Transform2D());
+			static void GenerateRoundRectangle(const Float2& size, float roundness, uint8 roundSideCount, const Color& color, Shape& outShape, const Transform2D& shapeTransform = Transform2D());
+			static void GenerateConvexShape(const Vector<Float2>& points, const Color& color, Shape& outShape, const Transform2D& shapeTransform = Transform2D());
+			static void GenerateLine(const Float2& positionA, const Float2& positionB, float thickness, uint8 roundSideCount, const Color& color, Shape& outShape, const Transform2D& shapeTransform = Transform2D());
 			static void FillColor(Shape& inoutShape, const Color& color);
 
 		public:
-			static void GenerateTestShapeSet(Shape& outShape, const ShapeTransform& shapeTransform = ShapeTransform());
+			static void GenerateTestShapeSet(Shape& outShape, const Transform2D& shapeTransform = Transform2D());
 		};
 	}
 }

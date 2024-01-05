@@ -7,8 +7,8 @@ namespace mint
 {
 	Float2x2 Float2x2::RotationMatrix(const float angle) noexcept
 	{
-		const float cosTheta = cos(angle);
-		const float sinTheta = sin(angle);
+		const float cosTheta = ::cos(angle);
+		const float sinTheta = ::sin(angle);
 		return Float2x2
 		(
 			cosTheta, -sinTheta,

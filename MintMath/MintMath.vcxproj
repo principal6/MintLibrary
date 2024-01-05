@@ -37,6 +37,12 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="Source\Transform.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="Source\_UnityBuild.cpp" />
     <ClInclude Include="Include\AllHpps.h" />
     <ClInclude Include="Include\Easing.h" />
@@ -118,7 +124,6 @@
     <None Include="Include\AffineMat.inl" />
     <None Include="Include\Rect.inl" />
     <None Include="Include\AffineVec.inl" />
-    <None Include="Include\Transform.inl" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MintCommon\MintCommon.vcxproj">

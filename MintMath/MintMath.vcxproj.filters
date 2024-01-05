@@ -116,6 +116,9 @@
     <ClCompile Include="Source\Geometry.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Transform.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Include\Float4.inl">
@@ -137,9 +140,6 @@
       <Filter>Include</Filter>
     </None>
     <None Include="Include\AffineMat.inl">
-      <Filter>Include</Filter>
-    </None>
-    <None Include="Include\Transform.inl">
       <Filter>Include</Filter>
     </None>
   </ItemGroup>

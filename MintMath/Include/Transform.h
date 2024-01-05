@@ -11,6 +11,7 @@
 
 namespace mint
 {
+#pragma region Transform
 	struct Transform
 	{
 	public:
@@ -18,17 +19,30 @@ namespace mint
 		Transform(const Float3& translation);
 
 	public:
-		Float4x4 ToMatrix() const noexcept { return Float4x4::SRTMatrix(_scale, _rotation, _translation); }
+		Float4x4 ToMatrix() const noexcept;
 
 	public:
-		Float3 _scale = Float3::kUnitScale;
+		Float3 _scale;
 		QuaternionF _rotation;
 		Float3 _translation;
 	};
+#pragma endregion
+
+#pragma region Transform2D
+	struct Transform2D
+	{
+		Transform2D();
+		Transform2D(const Float2& translation);
+		Transform2D(float rotation, const Float2& translation);
+
+		Transform2D operator*(const Transform2D& rhs) const;
+		Transform2D& operator*=(const Transform2D& rhs);
+
+		float _rotation;
+		Float2 _translation;
+	};
+#pragma endregion
 }
-
-
-#include <MintMath/Include/Transform.inl>
 
 
 #endif // !_MINT_MATH_TRANSFORM_H_
