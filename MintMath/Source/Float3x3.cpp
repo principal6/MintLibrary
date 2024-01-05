@@ -8,37 +8,37 @@ namespace mint
 {
 	Float3x3 Float3x3::RotationMatrixX(const float angle) noexcept
 	{
-		const float cosAngle = cos(angle);
-		const float sinAngle = sin(angle);
+		const float cosAngle = ::cos(angle);
+		const float sinAngle = ::sin(angle);
 		return Float3x3
 		(
-			+1.0f, 0.0f, 0.0f,
-			0.0f, +cosAngle, -sinAngle,
-			0.0f, +sinAngle, +cosAngle
+			+1.0f, 0.0f     , 0.0f     ,
+			 0.0f, +cosAngle, -sinAngle,
+			 0.0f, +sinAngle, +cosAngle
 		);
 	}
 
 	Float3x3 Float3x3::RotationMatrixY(const float angle) noexcept
 	{
-		const float cosAngle = cos(angle);
-		const float sinAngle = sin(angle);
+		const float cosAngle = ::cos(angle);
+		const float sinAngle = ::sin(angle);
 		return Float3x3
 		(
-			+cosAngle, 0.0f, +sinAngle,
-			0.0f, +1.0f, 0.0f,
-			-sinAngle, 0.0f, +cosAngle
+			+cosAngle,  0.0f, +sinAngle,
+			0.0f     , +1.0f, 0.0f     ,
+			-sinAngle,  0.0f, +cosAngle
 		);
 	}
 
 	Float3x3 Float3x3::RotationMatrixZ(const float angle) noexcept
 	{
-		const float cosAngle = cos(angle);
-		const float sinAngle = sin(angle);
+		const float cosAngle = ::cos(angle);
+		const float sinAngle = ::sin(angle);
 		return Float3x3
 		(
-			+cosAngle, -sinAngle, 0.0f,
-			+sinAngle, +cosAngle, 0.0f,
-			0.0f, 0.0f, +1.0f
+			+cosAngle, -sinAngle,  0.0f,
+			+sinAngle, +cosAngle,  0.0f,
+			0.0f     , 0.0f     , +1.0f
 		);
 	}
 
