@@ -7,6 +7,12 @@ namespace mint
 {
 	namespace Rendering
 	{
+		ImageRenderer::ImageRenderer(GraphicDevice& graphicDevice, const uint32 psTextureSlot)
+			: ImageRenderer(graphicDevice, psTextureSlot, ByteColor(0, 0, 0, 0))
+		{
+			__noop;
+		}
+
 		ImageRenderer::ImageRenderer(GraphicDevice& graphicDevice, const uint32 psTextureSlot, const ByteColor& transparentColor)
 			: ShapeRendererContext(graphicDevice)
 			, _psTextureSlot{ psTextureSlot }
@@ -61,18 +67,31 @@ namespace mint
 				shaderString += textBuffer.CString();
 				shaderString += ");\n";
 
-				StackStringA<256> transparentColorString;
-				FormatString(transparentColorString, "float4(%.1f, %.1f, %.1f, %.1f);\n", _transparentColor.RAsFloat(), _transparentColor.GAsFloat(), _transparentColor.BAsFloat(), _transparentColor.AAsFloat());
+				bool usesTransparentColor = (_transparentColor != ByteColor(0, 0, 0, 0));
+				if (usesTransparentColor)
+				{
+					StackStringA<256> transparentColorString;
+					FormatString(transparentColorString, "float4(%.1f, %.1f, %.1f, %.1f);\n", _transparentColor.RAsFloat(), _transparentColor.GAsFloat(), _transparentColor.BAsFloat(), _transparentColor.AAsFloat());
 
-				shaderString += "float4 main_image(VS_OUTPUT_SHAPE input) : SV_Target\n";
-				shaderString += "{\n";
-				shaderString += "	const float4 kTransparentColor = ";
-				shaderString += transparentColorString;
-				shaderString += "	const float4 sampledColor = g_texture0.Sample(g_pointSampler, input._texCoord.xy);\n";
-				shaderString += "	const float alpha = clamp(distance(sampledColor.rgb, kTransparentColor.rgb), 0.0, 1.0);\n";
-				shaderString += "	float4 result = float4(sampledColor.rgb * alpha, alpha);\n";
-				shaderString += "	return result;\n";
-				shaderString += "}";
+					shaderString += "float4 main_image(VS_OUTPUT_SHAPE input) : SV_Target\n";
+					shaderString += "{\n";
+					shaderString += "	const float4 kTransparentColor = ";
+					shaderString += transparentColorString;
+					shaderString += "	const float4 sampledColor = g_texture0.Sample(g_pointSampler, input._texCoord.xy);\n";
+					shaderString += "	const float alpha = clamp(distance(sampledColor.rgb, kTransparentColor.rgb), 0.0, 1.0);\n";
+					shaderString += "	float4 result = float4(sampledColor.rgb * alpha, alpha);\n";
+					shaderString += "	return result;\n";
+					shaderString += "}";
+				}
+				else
+				{
+					shaderString += "float4 main_image(VS_OUTPUT_SHAPE input) : SV_Target\n";
+					shaderString += "{\n";
+					shaderString += "	const float4 sampledColor = g_texture0.Sample(g_pointSampler, input._texCoord.xy);\n";
+					shaderString += "	return sampledColor;\n";
+					shaderString += "}";
+				}
+				
 				if (_pixelShaderID.IsValid())
 				{
 					shaderPool.RemoveShader(_pixelShaderID);
