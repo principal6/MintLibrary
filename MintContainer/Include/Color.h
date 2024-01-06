@@ -31,6 +31,10 @@ namespace mint
 		constexpr ByteColor(byte r, byte g, byte b) : ByteColor(r, g, b, 255) { __noop; }
 		constexpr ByteColor(byte r, byte g, byte b, byte a) : _c{ r, g, b, a } { __noop; }
 
+		bool operator==(const ByteColor& rhs) const { return _c[0] == rhs._c[0] && _c[1] == rhs._c[1] && _c[2] == rhs._c[2] && _c[3] == rhs._c[3]; }
+		bool operator!=(const ByteColor& rhs) const { return !(*this == rhs); }
+
+	public:
 		MINT_INLINE byte& R() noexcept { return _c[0]; }
 		MINT_INLINE byte& G() noexcept { return _c[1]; }
 		MINT_INLINE byte& B() noexcept { return _c[2]; }
