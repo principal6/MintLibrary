@@ -48,15 +48,7 @@ namespace mint
 					transformedPosition = mul(transformedPosition, sbTransform[transformIndex]._transformMatrix);
 						
 					VS_OUTPUT_SHAPE result = (VS_OUTPUT_SHAPE)0;
-					if (info == 2)
-					{
-						// Font (ignores view matrix)
-						result._position = mul(transformedPosition, _cbProjectionMatrix);
-					}
-					else
-					{
-						result._position = mul(transformedPosition, _cbViewProjectionMatrix);
-					}
+					result._position = mul(transformedPosition, _cbViewProjectionMatrix);
 					result._color = input._color;
 					result._texCoord = input._texCoord;
 					result._info = info;
@@ -307,7 +299,7 @@ namespace mint
 			const uint32 transformIndex = _sbTransformData.Size();
 
 			ShapeGenerator::GenerateConvexShape({ pointA, pointB, pointC }, _defaultColor, _lowLevelRenderer->Vertices(), _lowLevelRenderer->Indices(), Transform2D());
-			
+
 			const uint32 deltaVertexCount = _lowLevelRenderer->GetVertexCount() - vertexOffset;
 			for (uint32 i = 0; i < deltaVertexCount; i++)
 			{

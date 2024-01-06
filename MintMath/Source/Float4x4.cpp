@@ -186,7 +186,7 @@ namespace mint
 		(
 			+2.0f / pixelWidth,  0.0f              , 0.0f, -1.0f,
 			 0.0f             , -2.0f / pixelHeight, 0.0f, +1.0f,
-			 0.0f             ,  0.0f              , 1.0f,  0.0f,
+			 0.0f             ,  0.0f              , 0.0f,  0.0f,
 			 0.0f             ,  0.0f              , 0.0f,  1.0f
 		);
 	}
