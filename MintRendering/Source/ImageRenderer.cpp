@@ -116,7 +116,7 @@ namespace mint
 			SetPosition(Float4(position + halfSize));
 			_uv0 = uv0;
 			_uv1 = uv1;
-			DrawRectangle(halfSize, 0.0f, 0.0f);
+			DrawRectangle(size, 0.0f, 0.0f);
 			PushShapeTransformToBuffer(0.0f);
 		}
 	}
