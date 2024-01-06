@@ -740,6 +740,11 @@ namespace mint
 			_currentRasterizerFor3D = _rasterizerStateSolidCullBack.Get();
 		}
 		
+		void GraphicDevice::SetSolidCullBackRasterizer() noexcept
+		{
+			_stateManager.SetRSRasterizerState(_rasterizerStateSolidCullBack.Get());
+		}
+
 		void GraphicDevice::SetSolidCullFrontRasterizer() noexcept
 		{
 			_stateManager.SetRSRasterizerState(_rasterizerStateSolidCullFront.Get());

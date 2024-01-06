@@ -154,6 +154,7 @@ namespace mint
 			void UseWireFrameNoCullingRasterizer() noexcept;
 			void UseWireFrameCullBackRasterizer() noexcept;
 			void UseSolidCullBackRasterizer() noexcept;
+			void SetSolidCullBackRasterizer() noexcept;
 			void SetSolidCullFrontRasterizer() noexcept;
 			const Rect& GetFullScreenClipRect() const noexcept;
 
