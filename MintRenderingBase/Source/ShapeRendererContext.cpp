@@ -324,6 +324,12 @@ namespace mint
 			{
 				_lowLevelRenderer->Vertices()[vertexOffset + i]._info = ComputeVertexInfo(transformIndex, 0);
 			}
+
+			_lowLevelRenderer->Vertices()[vertexOffset + 0]._texCoord = Float2(_uv0._x, _uv0._y);
+			_lowLevelRenderer->Vertices()[vertexOffset + 1]._texCoord = Float2(_uv0._x, _uv1._y);
+			_lowLevelRenderer->Vertices()[vertexOffset + 2]._texCoord = Float2(_uv1._x, _uv1._y);
+			_lowLevelRenderer->Vertices()[vertexOffset + 3]._texCoord = Float2(_uv1._x, _uv0._y);
+
 			const uint32 deltaIndexCount = _lowLevelRenderer->GetIndexCount() - indexOffset;
 			_lowLevelRenderer->PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, deltaIndexCount, _clipRect);
 
