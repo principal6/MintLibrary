@@ -66,10 +66,7 @@ namespace mint
 
 		public:
 			uint32 GetObjectCount() const noexcept;
-			const DeltaTimer* GetDeltaTimerXXX() const noexcept;
-
-		private:
-			const DeltaTimer* const _deltaTimer;
+			float GetDeltaTimeSec() const noexcept;
 
 		private:
 			Vector<SharedPtr<Object>> _objects;

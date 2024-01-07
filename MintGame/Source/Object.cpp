@@ -116,11 +116,5 @@ namespace mint
 		{
 			return static_cast<TransformComponent*>(_componentArray[0]);
 		}
-
-		float Object::GetDeltaTimeSec() const noexcept
-		{
-			const DeltaTimer& deltaTimer = *_objectPool->GetDeltaTimerXXX();
-			return deltaTimer.GetDeltaTimeSec();
-		}
 	}
 }

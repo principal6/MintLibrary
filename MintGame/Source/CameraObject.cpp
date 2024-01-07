@@ -121,7 +121,7 @@ namespace mint
 
 		void CameraObject::Move(const MoveDirection moveDirection)
 		{
-			const float deltaTimeSec = GetDeltaTimeSec();
+			const float deltaTimeSec = _objectPool->GetDeltaTimeSec();
 
 			const float handnessSign = GetHandednessSign();
 			const Float3& leftDirection = Float3::Cross(_forwardDirection, Float3::kAxisY) * handnessSign;

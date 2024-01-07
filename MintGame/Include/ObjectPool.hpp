@@ -19,7 +19,6 @@ namespace mint
 	namespace Game
 	{
 		inline ObjectPool::ObjectPool()
-			: _deltaTimer{ &DeltaTimer::GetInstance() }
 		{
 			__noop;
 		}
@@ -146,7 +145,7 @@ namespace mint
 
 		MINT_INLINE void ObjectPool::ComputeDeltaTime() const noexcept
 		{
-			_deltaTimer->ComputeDeltaTimeSec();
+			DeltaTimer::GetInstance().ComputeDeltaTimeSec();
 		}
 
 		MINT_INLINE void ObjectPool::UpdateScreenSize(const Float2& screenSize)
@@ -179,9 +178,9 @@ namespace mint
 			return _objects.Size();
 		}
 
-		MINT_INLINE const DeltaTimer* ObjectPool::GetDeltaTimerXXX() const noexcept
+		MINT_INLINE float ObjectPool::GetDeltaTimeSec() const noexcept
 		{
-			return _deltaTimer;
+			return DeltaTimer::GetInstance().GetDeltaTimeSec();
 		}
 	}
 }

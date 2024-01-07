@@ -73,11 +73,11 @@ bool Run2DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 	using namespace Physics;
 	using namespace Game;
 
-	ByteColorImage byteColorImage;
+	ByteColorImage corgiSpriteSheet;
 	ImageLoader imageLoader;
-	imageLoader.LoadImage_("Assets/Test_image.png", byteColorImage);
+	imageLoader.LoadImage_("Assets/corgi-asset_Miniyeti.png", corgiSpriteSheet);
 	GraphicResourcePool& resourcePool = graphicDevice.GetResourcePool();
-	const GraphicObjectID textureID = resourcePool.AddTexture2D(TextureFormat::R8G8B8A8_UNORM, byteColorImage.GetBytes(), byteColorImage.GetWidth(), byteColorImage.GetHeight());
+	const GraphicObjectID corgiSpriteSheetTextureID = resourcePool.AddTexture2D(TextureFormat::R8G8B8A8_UNORM, corgiSpriteSheet.GetBytes(), corgiSpriteSheet.GetWidth(), corgiSpriteSheet.GetHeight());
 
 	const InputContext& inputContext = InputContext::GetInstance();
 
@@ -125,7 +125,7 @@ bool Run2DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 
 	ObjectRenderer objectRenderer{ graphicDevice };
 	InstantRenderer instantRenderer{ graphicDevice };
-	ImageRenderer imageRenderer{ graphicDevice, 1, ByteColor(0, 0, 0, 0) };
+	ImageRenderer imageRenderer{ graphicDevice, 1 };
 	while (window.IsRunning() == true)
 	{
 		objectPool.ComputeDeltaTime();
@@ -158,15 +158,17 @@ bool Run2DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 
 			graphicDevice.SetViewProjectionMatrix(testCameraObject->GetViewMatrix(), testCameraObject->GetProjectionMatrix());
 
-			objectRenderer.Render(objectPool);
+			//objectRenderer.Render(objectPool);
 
 			//instantRenderer.DrawTriangle({ Float3(0, 1, 0), Float3(-1, 0, 0), Float3(1, 0, 0) }, { Float2(0.5, 0), Float2(0, 1), Float2(1, 1) }, Color::kYellow);
 			//instantRenderer.Render();
 
-			//resourcePool.GetResource(textureID).BindToShader(GraphicShaderType::PixelShader, 1);
-			//imageRenderer.DrawImage(Float2(50, 50), Float2(80, 20), Float2(0, 0), Float2(1, 1));
-			//imageRenderer.Render();
-			//imageRenderer.Flush();
+			graphicDevice.SetScreenSpace2DProjectionMatrix();
+			resourcePool.GetResource(corgiSpriteSheetTextureID).BindToShader(GraphicShaderType::PixelShader, 1);
+			//imageRenderer.DrawImageScreenSpace(Float2(0, 0), Float2(800, 512), Float2(0, 0), Float2(1, 1));
+			imageRenderer.DrawImageScreenSpace(Float2(64, 64), Float2(128, 128), Float2(96.0f / 800.0f, 64.0f / 512.0f), Float2((96.0f + 64.0f) / 800.0f, 128.0f / 512.0f));
+			imageRenderer.Render();
+			imageRenderer.Flush();
 
 			graphicDevice.SetSolidCullFrontRasterizer();
 			graphicDevice.SetScreenSpace2DProjectionMatrix();
