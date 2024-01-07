@@ -459,6 +459,11 @@ namespace mint
 			return GraphicObjectID::kInvalidGraphicObjectID;
 		}
 
+		GraphicObjectID GraphicResourcePool::AddTexture2D(const ByteColorImage& byteColorImage)
+		{
+			return AddTexture2D(TextureFormat::R8G8B8A8_UNORM, byteColorImage.GetBytes(), byteColorImage.GetWidth(), byteColorImage.GetHeight());
+		}
+
 		GraphicObjectID GraphicResourcePool::AddTexture2D(const TextureFormat format, const byte* const textureContent, const uint32 width, const uint32 height)
 		{
 			GraphicResource resource{ _graphicDevice };

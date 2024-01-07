@@ -77,9 +77,7 @@ bool Run2DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 	ImageLoader imageLoader;
 	imageLoader.LoadImage_("Assets/corgi-asset_Miniyeti.png", corgiSpriteSheet);
 	GraphicResourcePool& resourcePool = graphicDevice.GetResourcePool();
-	const GraphicObjectID corgiSpriteSheetTextureID = resourcePool.AddTexture2D(TextureFormat::R8G8B8A8_UNORM, corgiSpriteSheet.GetBytes(), corgiSpriteSheet.GetWidth(), corgiSpriteSheet.GetHeight());
-
-	const InputContext& inputContext = InputContext::GetInstance();
+	const GraphicObjectID corgiSpriteSheetTextureID = resourcePool.AddTexture2D(corgiSpriteSheet);
 
 	ObjectPool objectPool;
 	SharedPtr<Object> object0 = objectPool.CreateObject();
@@ -126,6 +124,7 @@ bool Run2DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 	ObjectRenderer objectRenderer{ graphicDevice };
 	//InstantRenderer instantRenderer{ graphicDevice };
 	ImageRenderer imageRenderer{ graphicDevice, 1 };
+	const InputContext& inputContext = InputContext::GetInstance();
 	while (window.IsRunning() == true)
 	{
 		objectPool.ComputeDeltaTime();

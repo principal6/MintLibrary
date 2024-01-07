@@ -142,6 +142,7 @@ namespace mint
 			GraphicObjectID AddStructuredBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount, const uint32 registerIndex);
 
 		public:
+			GraphicObjectID AddTexture2D(const ByteColorImage& byteColorImage);
 			GraphicObjectID AddTexture2D(const TextureFormat format, const byte* const textureContent, const uint32 width, const uint32 height);
 
 		public:
