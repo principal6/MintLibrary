@@ -124,7 +124,7 @@ bool Run2DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 	testCameraObject->GetObjectTransform()._translation._z = 5.0f;
 
 	ObjectRenderer objectRenderer{ graphicDevice };
-	InstantRenderer instantRenderer{ graphicDevice };
+	//InstantRenderer instantRenderer{ graphicDevice };
 	ImageRenderer imageRenderer{ graphicDevice, 1 };
 	while (window.IsRunning() == true)
 	{
@@ -153,17 +153,15 @@ bool Run2DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 		testCameraObject->SteerDefault(inputContext, false);
 
 		// Rendering
+		graphicDevice.BeginRendering();
 		{
-			graphicDevice.BeginRendering();
-
 			graphicDevice.SetViewProjectionMatrix(testCameraObject->GetViewMatrix(), testCameraObject->GetProjectionMatrix());
-
-			//objectRenderer.Render(objectPool);
+			objectRenderer.Render(objectPool);
 
 			//instantRenderer.DrawTriangle({ Float3(0, 1, 0), Float3(-1, 0, 0), Float3(1, 0, 0) }, { Float2(0.5, 0), Float2(0, 1), Float2(1, 1) }, Color::kYellow);
 			//instantRenderer.Render();
 
-			graphicDevice.SetScreenSpace2DProjectionMatrix();
+			graphicDevice.SetViewProjectionMatrix(Float4x4::kIdentity, graphicDevice.GetScreenSpace2DProjectionMatrix());
 			resourcePool.GetResource(corgiSpriteSheetTextureID).BindToShader(GraphicShaderType::PixelShader, 1);
 			//imageRenderer.DrawImageScreenSpace(Float2(0, 0), Float2(800, 512), Float2(0, 0), Float2(1, 1));
 			imageRenderer.DrawImageScreenSpace(Float2(64, 64), Float2(128, 128), Float2(96.0f / 800.0f, 64.0f / 512.0f), Float2((96.0f + 64.0f) / 800.0f, 128.0f / 512.0f));
@@ -171,7 +169,6 @@ bool Run2DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 			imageRenderer.Flush();
 
 			graphicDevice.SetSolidCullFrontRasterizer();
-			graphicDevice.SetScreenSpace2DProjectionMatrix();
 			ShapeRendererContext& shapeRendererContext = graphicDevice.GetShapeRendererContext();
 			{
 				StackStringW<100> fpsString;
@@ -181,9 +178,8 @@ bool Run2DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 			}
 			shapeRendererContext.Render();
 			shapeRendererContext.Flush();
-
-			graphicDevice.EndRendering();
 		}
+		graphicDevice.EndRendering();
 
 		Profiler::FPSCounter::Count();
 	}
@@ -325,7 +321,7 @@ bool Run3DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 			//ShapeGenerator::GenerateRectangle(Float2(32, 32), ByteColor(0,255,255), testShapeSet);
 			//shapeRendererContext.AddShape(testShapeSet);
 			graphicDevice.SetSolidCullFrontRasterizer();
-			graphicDevice.SetScreenSpace2DProjectionMatrix(Float4x4::kIdentity);
+			graphicDevice.SetViewProjectionMatrix(testCameraObject->GetViewMatrix(), graphicDevice.GetScreenSpace2DProjectionMatrix());
 			{
 				StackStringW<100> fpsString;
 				FormatString(fpsString, L"FPS: %d", Profiler::FPSCounter::GetFPS());

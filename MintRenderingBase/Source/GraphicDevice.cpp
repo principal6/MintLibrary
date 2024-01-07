@@ -342,7 +342,7 @@ namespace mint
 			InitializeBackBuffer();
 			InitializeDepthStencilBufferAndView(_window.GetSize());
 			InitializeFullScreenData(_window.GetSize());
-			SetScreenSpace2DProjectionMatrix();
+			SetViewProjectionMatrix(Float4x4::kIdentity, GetScreenSpace2DProjectionMatrix());
 
 			SetDefaultRenderTargetsAndDepthStencil();
 
@@ -566,7 +566,7 @@ namespace mint
 					_cbTransformID = _resourcePool.AddConstantBuffer(&cbTransformData, sizeof(cbTransformData), typeMetaData._customData.GetRegisterIndex());
 				}
 
-				SetScreenSpace2DProjectionMatrix();
+				SetViewProjectionMatrix(Float4x4::kIdentity, GetScreenSpace2DProjectionMatrix());
 			}
 
 			// Structured buffers
@@ -755,20 +755,10 @@ namespace mint
 			return _fullScreenClipRect;
 		}
 
-		void GraphicDevice::SetScreenSpace2DProjectionMatrix() noexcept
+		Float4x4 GraphicDevice::GetScreenSpace2DProjectionMatrix() const noexcept
 		{
-			SetScreenSpace2DProjectionMatrix(_cbViewData._cbViewMatrix);
-		}
-
-		void GraphicDevice::SetScreenSpace2DProjectionMatrix(const Float4x4& viewMatrix) noexcept
-		{
-			_cbViewData._cbViewMatrix = viewMatrix;
 			const Float2 windowSize{ GetWindowSize() };
-			_cbViewData._cbProjectionMatrix = Float4x4::ProjectionMatrix2DFromTopLeft(windowSize._x, windowSize._y);
-			_cbViewData._cbViewProjectionMatrix = _cbViewData._cbProjectionMatrix * _cbViewData._cbViewMatrix;
-
-			GraphicResource& cbView = _resourcePool.GetResource(_cbViewID);
-			cbView.UpdateBuffer(&_cbViewData, 1);
+			return Float4x4::ProjectionMatrix2DFromTopLeft(windowSize._x, windowSize._y);
 		}
 
 		void GraphicDevice::SetViewProjectionMatrix(const Float4x4& viewMatrix, const Float4x4& projectionMatrix) noexcept

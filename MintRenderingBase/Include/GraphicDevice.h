@@ -172,11 +172,10 @@ namespace mint
 			GraphicObjectID GetCommonSBMaterialID() const noexcept;
 
 		public:
-			void SetScreenSpace2DProjectionMatrix() noexcept;
-			void SetScreenSpace2DProjectionMatrix(const Float4x4& viewMatrix) noexcept;
 			void SetViewProjectionMatrix(const Float4x4& viewMatrix, const Float4x4& projectionMatrix) noexcept;
 			const Float4x4& GetProjectionMatrix() const noexcept;
 			const Float4x4& GetViewProjectionMatrix() const noexcept;
+			Float4x4 GetScreenSpace2DProjectionMatrix() const noexcept;
 
 		public:
 			ID3D11Device* GetDxDevice() noexcept;

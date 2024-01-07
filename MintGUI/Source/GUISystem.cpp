@@ -195,7 +195,7 @@ namespace mint
 			const GUIControlID& pressedControlID = _controlManager.GetPressedControlID();
 
 			_graphicDevice.SetSolidCullFrontRasterizer();
-			_graphicDevice.SetScreenSpace2DProjectionMatrix(Float4x4::kIdentity);
+			_graphicDevice.SetViewProjectionMatrix(Float4x4::kIdentity, _graphicDevice.GetScreenSpace2DProjectionMatrix());
 
 			Rendering::ShapeRendererContext& shapeRendererContext = _graphicDevice.GetShapeRendererContext();
 			Vector<SharedPtr<GUIControl>>& controlInstances = _controlManager.AccessControlInstances();
