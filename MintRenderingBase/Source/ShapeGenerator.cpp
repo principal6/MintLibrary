@@ -152,8 +152,8 @@ namespace mint
 
 		void ShapeGenerator::GenerateRectangle(const Float2& size, const Color& color, Vector<VS_INPUT_SHAPE>& vertices, Vector<IndexElementType>& indices, const Transform2D& shapeTransform)
 		{
-			MINT_ASSERT(size._x > 0.0f, "size._x must be greater than 0");
-			MINT_ASSERT(size._y > 0.0f, "size._y must be greater than 0");
+			//MINT_ASSERT(size._x > 0.0f, "size._x must be greater than 0");
+			//MINT_ASSERT(size._y > 0.0f, "size._y must be greater than 0");
 
 			const uint32 vertexBase = vertices.Size();
 			VS_INPUT_SHAPE v;

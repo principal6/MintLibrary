@@ -112,11 +112,20 @@ namespace mint
 
 		void ImageRenderer::DrawImage(const Float2& position, const Float2& size, const Float2& uv0, const Float2& uv1)
 		{
+			SetPosition(Float4(position));
+			_uv0 = uv0;
+			_uv1 = uv1;
+			DrawRectangle(size, 0.0f, 0.0f);
+			PushShapeTransformToBuffer(0.0f);
+		}
+
+		void ImageRenderer::DrawImageScreenSpace(const Float2& position, const Float2& size, const Float2& uv0, const Float2& uv1)
+		{
 			const Float2 halfSize = size * 0.5f;
 			SetPosition(Float4(position + halfSize));
 			_uv0 = uv0;
 			_uv1 = uv1;
-			DrawRectangle(size, 0.0f, 0.0f);
+			DrawRectangle(Float2(size._x, -size._y), 0.0f, 0.0f);
 			PushShapeTransformToBuffer(0.0f);
 		}
 	}
