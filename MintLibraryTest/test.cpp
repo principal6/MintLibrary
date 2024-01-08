@@ -129,13 +129,13 @@ bool Run2DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 		const Float2 kTextureSize{ 800, 512 };
 		{
 			SpriteAnimation spriteAnimation{ kTextureSize, kTimePerFrame };
-			spriteAnimation.AddFrame(kOffsetInTexture, kSizeInTexture, 0, 5, 1);
-			corgiAnimationSet.AddAnimation(L"IDLE1", spriteAnimation);
+			spriteAnimation.AddFrame(kOffsetInTexture, kSizeInTexture, 0, 5, 2);
+			corgiAnimationSet.AddAnimation(L"IDLE", spriteAnimation);
 		}
 		{
 			SpriteAnimation spriteAnimation{ kTextureSize, kTimePerFrame };
-			spriteAnimation.AddFrame(kOffsetInTexture, kSizeInTexture, 0, 5, 2);
-			corgiAnimationSet.AddAnimation(L"IDLE2", spriteAnimation);
+			spriteAnimation.AddFrame(kOffsetInTexture, kSizeInTexture, 0, 5, 1);
+			corgiAnimationSet.AddAnimation(L"IDLE_HAPPY", spriteAnimation);
 		}
 		{
 			SpriteAnimation spriteAnimation{ kTextureSize, kTimePerFrame };
