@@ -121,6 +121,13 @@ bool Run2DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 	testCameraObject->SetPerspectiveScreenRatio(windowSize._x / windowSize._y);
 	testCameraObject->GetObjectTransform()._translation._z = 5.0f;
 
+	SpriteAnimation spriteAnimation{ SpriteAnimation(Float2(800, 512), 0.125f) };
+	spriteAnimation.AddFrame(Float2(96.0f + 64.0f * 0, 64.0f * 1), Float2(64.0f, 64.0f));
+	spriteAnimation.AddFrame(Float2(96.0f + 64.0f * 1, 64.0f * 1), Float2(64.0f, 64.0f));
+	spriteAnimation.AddFrame(Float2(96.0f + 64.0f * 2, 64.0f * 1), Float2(64.0f, 64.0f));
+	spriteAnimation.AddFrame(Float2(96.0f + 64.0f * 3, 64.0f * 1), Float2(64.0f, 64.0f));
+	spriteAnimation.AddFrame(Float2(96.0f + 64.0f * 4, 64.0f * 1), Float2(64.0f, 64.0f));
+
 	ObjectRenderer objectRenderer{ graphicDevice };
 	//InstantRenderer instantRenderer{ graphicDevice };
 	ImageRenderer imageRenderer{ graphicDevice, 1 };
@@ -163,7 +170,8 @@ bool Run2DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 			graphicDevice.SetViewProjectionMatrix(Float4x4::kIdentity, graphicDevice.GetScreenSpace2DProjectionMatrix());
 			resourcePool.GetResource(corgiSpriteSheetTextureID).BindToShader(GraphicShaderType::PixelShader, 1);
 			//imageRenderer.DrawImageScreenSpace(Float2(0, 0), Float2(800, 512), Float2(0, 0), Float2(1, 1));
-			imageRenderer.DrawImageScreenSpace(Float2(64, 64), Float2(128, 128), Float2(96.0f / 800.0f, 64.0f / 512.0f), Float2((96.0f + 64.0f) / 800.0f, 128.0f / 512.0f));
+			spriteAnimation.Update(objectPool.GetDeltaTimeSec());
+			imageRenderer.DrawImageScreenSpace(Float2(64, 64), Float2(128, 128), spriteAnimation.GetCurrentFrameUV0(), spriteAnimation.GetCurrentFrameUV1());
 			imageRenderer.Render();
 			imageRenderer.Flush();
 

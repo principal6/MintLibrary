@@ -214,6 +214,7 @@
     <ClInclude Include="Include\RenderingBaseCommon.h" />
     <ClInclude Include="Include\LowLevelRenderer.h" />
     <ClInclude Include="Include\LowLevelRenderer.hpp" />
+    <ClInclude Include="Include\SpriteAnimation.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Include\CppHlsl\Parser.inl" />
@@ -311,6 +312,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="Source\SpriteAnimation.cpp" />
     <ClCompile Include="Source\_UnityBuild.cpp" />
   </ItemGroup>
   <ItemGroup>
