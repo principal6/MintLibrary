@@ -6,12 +6,14 @@
 
 
 #include <MintRenderingBase/Include/RenderingBaseCommon.h>
+#include <MintContainer/Include/String.h>
 
 
 namespace mint
 {
 	namespace Rendering
 	{
+#pragma region SpriteAnimation
 		class SpriteAnimation
 		{
 		private:
@@ -27,7 +29,11 @@ namespace mint
 			~SpriteAnimation() = default;
 
 		public:
+			void AddFrame(const Float2& offsetInTexture, const Float2& sizeInTexture, uint32 rowIndex, uint32 rowCount, uint32 column);
+			void AddFrame(const Float2& offsetInTexture, const Float2& sizeInTexture, uint32 row, uint32 column);
 			void AddFrame(const Float2& positionInTexrue, const Float2& sizeInTexture);
+
+		public:
 			void Update(float deltaTime);
 			void SetCurrentFrame(const uint32 frameIndex);
 			void SetLoops(bool loops);
@@ -49,6 +55,41 @@ namespace mint
 			float _elapsedTime;
 			bool _loops;
 		};
+#pragma endregion
+
+#pragma region SpriteAnimationSet
+		class SpriteAnimationSet
+		{
+			struct NamedSpriteAnimation
+			{
+				StringW _name;
+				SpriteAnimation _spriteAnimation;
+			};
+
+		public:
+			SpriteAnimationSet();
+			~SpriteAnimationSet() = default;
+
+		public:
+			void AddAnimation(const StringW& animationName, SpriteAnimation&& animation);
+			void AddAnimation(const StringW& animationName, const SpriteAnimation& animation);
+			void SetAnimation(const StringW& animationName);
+			void SetAnimationByIndex(uint32 animationIndex);
+			void SetAnimationNextInOrder();
+			void Update(float deltaTime);
+
+		public:
+			const SpriteAnimation& GetCurrentAnimation() const;
+			const StringW& GetCurrentAnimationName() const;
+
+		private:
+			NamedSpriteAnimation& GetCurrentNamedSpriteAnimation();
+
+		private:
+			Vector<NamedSpriteAnimation> _spriteAnimations;
+			uint32 _currentAnimationIndex;
+		};
+#pragma endregion
 	}
 }
 

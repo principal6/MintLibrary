@@ -1,11 +1,13 @@
 #include <MintRenderingBase/Include/SpriteAnimation.h>
 #include <MintContainer/Include/Vector.hpp>
+#include <MintContainer/Include/String.hpp>
 
 
 namespace mint
 {
 	namespace Rendering
 	{
+#pragma region SpriteAnimation
 		SpriteAnimation::Frame::Frame(const Float2& positionInTexrue, const Float2& sizeInTexture)
 			: _positionInTexrue{ positionInTexrue }
 			, _sizeInTexture{ sizeInTexture }
@@ -21,6 +23,19 @@ namespace mint
 			, _loops{ true }
 		{
 			__noop;
+		}
+
+		void SpriteAnimation::AddFrame(const Float2& offsetInTexture, const Float2& sizeInTexture, uint32 rowIndex, uint32 rowCount, uint32 column)
+		{
+			for (uint32 row = rowIndex; row < rowIndex + rowCount; ++row)
+			{
+				AddFrame(offsetInTexture + Float2(sizeInTexture._x * row, sizeInTexture._y * column), sizeInTexture);
+			}
+		}
+
+		void SpriteAnimation::AddFrame(const Float2& offsetInTexture, const Float2& sizeInTexture, uint32 row, uint32 column)
+		{
+			AddFrame(offsetInTexture + Float2(sizeInTexture._x * row, sizeInTexture._y * column), sizeInTexture);
 		}
 
 		void SpriteAnimation::AddFrame(const Float2& positionInTexrue, const Float2& sizeInTexture)
@@ -39,7 +54,7 @@ namespace mint
 				_elapsedTime = (_loops ? 0.0f : _totalTime);
 			}
 		}
-		
+
 		void SpriteAnimation::SetCurrentFrame(const uint32 frameIndex)
 		{
 			_elapsedTime = _timePerFrame * frameIndex;
@@ -95,5 +110,75 @@ namespace mint
 			const float v1 = v0 + _frames[frameIndex]._sizeInTexture._y / _textureSize._y;
 			return Float2(u1, v1);
 		}
+#pragma endregion
+
+#pragma region
+		SpriteAnimationSet::SpriteAnimationSet()
+			: _currentAnimationIndex{ 0 }
+		{
+			__noop;
+		}
+
+		void SpriteAnimationSet::AddAnimation(const StringW& animationName, SpriteAnimation&& animation)
+		{
+			_spriteAnimations.PushBack({ animationName, std::move(animation) });
+		}
+
+		void SpriteAnimationSet::AddAnimation(const StringW& animationName, const SpriteAnimation& animation)
+		{
+			_spriteAnimations.PushBack({ animationName, animation });
+		}
+
+		void SpriteAnimationSet::SetAnimation(const StringW& animationName)
+		{
+			const uint32 animationCount = _spriteAnimations.Size();
+			for (uint32 i = 0; i < animationCount; i++)
+			{
+				if (_spriteAnimations[i]._name == animationName)
+				{
+					_currentAnimationIndex = i;
+					return;
+				}
+			}
+		}
+		
+		void SpriteAnimationSet::SetAnimationByIndex(uint32 animationIndex)
+		{
+			_currentAnimationIndex = animationIndex;
+
+			if (_currentAnimationIndex >= _spriteAnimations.Size())
+			{
+				_currentAnimationIndex = 0;
+			}
+		}
+
+		void SpriteAnimationSet::SetAnimationNextInOrder()
+		{
+			SetAnimationByIndex(_currentAnimationIndex + 1);
+		}
+
+		void SpriteAnimationSet::Update(float deltaTime)
+		{
+			GetCurrentNamedSpriteAnimation()._spriteAnimation.Update(deltaTime);
+		}
+
+		const SpriteAnimation& SpriteAnimationSet::GetCurrentAnimation() const
+		{
+			MINT_ASSERT(_spriteAnimations.IsEmpty() == false, "No animation was added!");
+			return _spriteAnimations[_currentAnimationIndex]._spriteAnimation;
+		}
+
+		const StringW& SpriteAnimationSet::GetCurrentAnimationName() const
+		{
+			MINT_ASSERT(_spriteAnimations.IsEmpty() == false, "No animation was added!");
+			return _spriteAnimations[_currentAnimationIndex]._name;
+		}
+
+		SpriteAnimationSet::NamedSpriteAnimation& SpriteAnimationSet::GetCurrentNamedSpriteAnimation()
+		{
+			MINT_ASSERT(_spriteAnimations.IsEmpty() == false, "No animation was added!");
+			return _spriteAnimations[_currentAnimationIndex];
+		}
+#pragma endregion
 	}
 }

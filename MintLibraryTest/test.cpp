@@ -121,12 +121,59 @@ bool Run2DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 	testCameraObject->SetPerspectiveScreenRatio(windowSize._x / windowSize._y);
 	testCameraObject->GetObjectTransform()._translation._z = 5.0f;
 
-	SpriteAnimation spriteAnimation{ SpriteAnimation(Float2(800, 512), 0.125f) };
-	spriteAnimation.AddFrame(Float2(96.0f + 64.0f * 0, 64.0f * 1), Float2(64.0f, 64.0f));
-	spriteAnimation.AddFrame(Float2(96.0f + 64.0f * 1, 64.0f * 1), Float2(64.0f, 64.0f));
-	spriteAnimation.AddFrame(Float2(96.0f + 64.0f * 2, 64.0f * 1), Float2(64.0f, 64.0f));
-	spriteAnimation.AddFrame(Float2(96.0f + 64.0f * 3, 64.0f * 1), Float2(64.0f, 64.0f));
-	spriteAnimation.AddFrame(Float2(96.0f + 64.0f * 4, 64.0f * 1), Float2(64.0f, 64.0f));
+	SpriteAnimationSet corgiAnimationSet;
+	{
+		const float kTimePerFrame = 0.125f;
+		const Float2 kOffsetInTexture{ 96.0f, 0.0f };
+		const Float2 kSizeInTexture{ 64.0f, 64.0f };
+		const Float2 kTextureSize{ 800, 512 };
+		{
+			SpriteAnimation spriteAnimation{ kTextureSize, kTimePerFrame };
+			spriteAnimation.AddFrame(kOffsetInTexture, kSizeInTexture, 0, 5, 1);
+			corgiAnimationSet.AddAnimation(L"IDLE1", spriteAnimation);
+		}
+		{
+			SpriteAnimation spriteAnimation{ kTextureSize, kTimePerFrame };
+			spriteAnimation.AddFrame(kOffsetInTexture, kSizeInTexture, 0, 5, 2);
+			corgiAnimationSet.AddAnimation(L"IDLE2", spriteAnimation);
+		}
+		{
+			SpriteAnimation spriteAnimation{ kTextureSize, kTimePerFrame };
+			spriteAnimation.AddFrame(kOffsetInTexture, kSizeInTexture, 0, 5, 4);
+			corgiAnimationSet.AddAnimation(L"WALK", spriteAnimation);
+		}
+		{
+			SpriteAnimation spriteAnimation{ kTextureSize, kTimePerFrame };
+			spriteAnimation.AddFrame(kOffsetInTexture, kSizeInTexture, 0, 8, 5);
+			corgiAnimationSet.AddAnimation(L"RUN", spriteAnimation);
+		}
+		{
+			SpriteAnimation spriteAnimation{ kTextureSize, kTimePerFrame };
+			spriteAnimation.AddFrame(kOffsetInTexture, kSizeInTexture, 0, 10, 0);
+			corgiAnimationSet.AddAnimation(L"JUMP", spriteAnimation);
+		}
+		{
+			SpriteAnimation spriteAnimation{ kTextureSize, kTimePerFrame };
+			spriteAnimation.AddFrame(kOffsetInTexture, kSizeInTexture, 0, 3, 3);
+			corgiAnimationSet.AddAnimation(L"SIT_BEGIN", spriteAnimation);
+		}
+		{
+			SpriteAnimation spriteAnimation{ kTextureSize, kTimePerFrame };
+			spriteAnimation.AddFrame(kOffsetInTexture, kSizeInTexture, 3, 6, 3);
+			corgiAnimationSet.AddAnimation(L"SIT_ING", spriteAnimation);
+		}
+		{
+			SpriteAnimation spriteAnimation{ kTextureSize, kTimePerFrame };
+			spriteAnimation.AddFrame(kOffsetInTexture, kSizeInTexture, 0, 8, 6);
+			corgiAnimationSet.AddAnimation(L"SNIFF", spriteAnimation);
+		}
+		{
+			SpriteAnimation spriteAnimation{ kTextureSize, kTimePerFrame };
+			spriteAnimation.AddFrame(kOffsetInTexture, kSizeInTexture, 0, 8, 7);
+			corgiAnimationSet.AddAnimation(L"SNIFF_WALK", spriteAnimation);
+		}
+	}
+	
 
 	ObjectRenderer objectRenderer{ graphicDevice };
 	//InstantRenderer instantRenderer{ graphicDevice };
@@ -144,15 +191,7 @@ bool Run2DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 			}
 			else if (inputContext.IsKeyDown(KeyCode::Num1) == true)
 			{
-				graphicDevice.UseSolidCullBackRasterizer();
-			}
-			else if (inputContext.IsKeyDown(KeyCode::Num2) == true)
-			{
-				graphicDevice.UseWireFrameCullBackRasterizer();
-			}
-			else if (inputContext.IsKeyDown(KeyCode::Num3) == true)
-			{
-				graphicDevice.UseWireFrameNoCullingRasterizer();
+				corgiAnimationSet.SetAnimationNextInOrder();
 			}
 		}
 
@@ -170,8 +209,9 @@ bool Run2DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 			graphicDevice.SetViewProjectionMatrix(Float4x4::kIdentity, graphicDevice.GetScreenSpace2DProjectionMatrix());
 			resourcePool.GetResource(corgiSpriteSheetTextureID).BindToShader(GraphicShaderType::PixelShader, 1);
 			//imageRenderer.DrawImageScreenSpace(Float2(0, 0), Float2(800, 512), Float2(0, 0), Float2(1, 1));
-			spriteAnimation.Update(objectPool.GetDeltaTimeSec());
-			imageRenderer.DrawImageScreenSpace(Float2(64, 64), Float2(128, 128), spriteAnimation.GetCurrentFrameUV0(), spriteAnimation.GetCurrentFrameUV1());
+			corgiAnimationSet.Update(objectPool.GetDeltaTimeSec());
+			const SpriteAnimation& corgiCurrentAnimation = corgiAnimationSet.GetCurrentAnimation();
+			imageRenderer.DrawImageScreenSpace(Float2(64, 64), Float2(128, 128), corgiCurrentAnimation.GetCurrentFrameUV0(), corgiCurrentAnimation.GetCurrentFrameUV1());
 			imageRenderer.Render();
 			imageRenderer.Flush();
 
