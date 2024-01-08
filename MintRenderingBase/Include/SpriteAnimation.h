@@ -29,8 +29,8 @@ namespace mint
 			~SpriteAnimation() = default;
 
 		public:
-			void AddFrame(const Float2& offsetInTexture, const Float2& sizeInTexture, uint32 rowIndex, uint32 rowCount, uint32 column);
-			void AddFrame(const Float2& offsetInTexture, const Float2& sizeInTexture, uint32 row, uint32 column);
+			void AddFrames(const Float2& offsetInTexture, const Float2& sizeInTexture, uint32 rowIndex, uint32 rowCount, uint32 column, bool flipsHorz = false);
+			void AddFrame(const Float2& offsetInTexture, const Float2& sizeInTexture, uint32 row, uint32 column, bool flipsHorz = false);
 			void AddFrame(const Float2& positionInTexrue, const Float2& sizeInTexture);
 
 		public:

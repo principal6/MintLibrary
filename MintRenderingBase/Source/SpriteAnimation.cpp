@@ -25,17 +25,24 @@ namespace mint
 			__noop;
 		}
 
-		void SpriteAnimation::AddFrame(const Float2& offsetInTexture, const Float2& sizeInTexture, uint32 rowIndex, uint32 rowCount, uint32 column)
+		void SpriteAnimation::AddFrames(const Float2& offsetInTexture, const Float2& sizeInTexture, uint32 rowIndex, uint32 rowCount, uint32 column, bool flipsHorz)
 		{
 			for (uint32 row = rowIndex; row < rowIndex + rowCount; ++row)
 			{
-				AddFrame(offsetInTexture + Float2(sizeInTexture._x * row, sizeInTexture._y * column), sizeInTexture);
+				AddFrame(offsetInTexture, sizeInTexture, row, column, flipsHorz);
 			}
 		}
 
-		void SpriteAnimation::AddFrame(const Float2& offsetInTexture, const Float2& sizeInTexture, uint32 row, uint32 column)
+		void SpriteAnimation::AddFrame(const Float2& offsetInTexture, const Float2& sizeInTexture, uint32 row, uint32 column, bool flipsHorz)
 		{
-			AddFrame(offsetInTexture + Float2(sizeInTexture._x * row, sizeInTexture._y * column), sizeInTexture);
+			if (flipsHorz)
+			{
+				AddFrame(offsetInTexture + Float2(sizeInTexture._x * (row + 1), sizeInTexture._y * column), Float2(-sizeInTexture._x, sizeInTexture._y));
+			}
+			else
+			{
+				AddFrame(offsetInTexture + Float2(sizeInTexture._x * row, sizeInTexture._y * column), sizeInTexture);
+			}
 		}
 
 		void SpriteAnimation::AddFrame(const Float2& positionInTexrue, const Float2& sizeInTexture)
@@ -141,7 +148,7 @@ namespace mint
 				}
 			}
 		}
-		
+
 		void SpriteAnimationSet::SetAnimationByIndex(uint32 animationIndex)
 		{
 			_currentAnimationIndex = animationIndex;

@@ -129,51 +129,56 @@ bool Run2DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 		const Float2 kTextureSize{ 800, 512 };
 		{
 			SpriteAnimation spriteAnimation{ kTextureSize, kTimePerFrame };
-			spriteAnimation.AddFrame(kOffsetInTexture, kSizeInTexture, 0, 5, 2);
-			corgiAnimationSet.AddAnimation(L"IDLE", spriteAnimation);
+			spriteAnimation.AddFrames(kOffsetInTexture, kSizeInTexture, 0, 5, 2);
+			corgiAnimationSet.AddAnimation(L"IDLE_R", spriteAnimation);
 		}
 		{
 			SpriteAnimation spriteAnimation{ kTextureSize, kTimePerFrame };
-			spriteAnimation.AddFrame(kOffsetInTexture, kSizeInTexture, 0, 5, 1);
+			spriteAnimation.AddFrames(kOffsetInTexture, kSizeInTexture, 0, 5, 2, true);
+			corgiAnimationSet.AddAnimation(L"IDLE_L", spriteAnimation);
+		}
+		{
+			SpriteAnimation spriteAnimation{ kTextureSize, kTimePerFrame };
+			spriteAnimation.AddFrames(kOffsetInTexture, kSizeInTexture, 0, 5, 1);
 			corgiAnimationSet.AddAnimation(L"IDLE_HAPPY", spriteAnimation);
 		}
 		{
 			SpriteAnimation spriteAnimation{ kTextureSize, kTimePerFrame };
-			spriteAnimation.AddFrame(kOffsetInTexture, kSizeInTexture, 0, 5, 4);
+			spriteAnimation.AddFrames(kOffsetInTexture, kSizeInTexture, 0, 5, 4);
 			corgiAnimationSet.AddAnimation(L"WALK", spriteAnimation);
 		}
 		{
 			SpriteAnimation spriteAnimation{ kTextureSize, kTimePerFrame };
-			spriteAnimation.AddFrame(kOffsetInTexture, kSizeInTexture, 0, 8, 5);
+			spriteAnimation.AddFrames(kOffsetInTexture, kSizeInTexture, 0, 8, 5);
 			corgiAnimationSet.AddAnimation(L"RUN", spriteAnimation);
 		}
 		{
 			SpriteAnimation spriteAnimation{ kTextureSize, kTimePerFrame };
-			spriteAnimation.AddFrame(kOffsetInTexture, kSizeInTexture, 0, 10, 0);
+			spriteAnimation.AddFrames(kOffsetInTexture, kSizeInTexture, 0, 10, 0);
 			corgiAnimationSet.AddAnimation(L"JUMP", spriteAnimation);
 		}
 		{
 			SpriteAnimation spriteAnimation{ kTextureSize, kTimePerFrame };
-			spriteAnimation.AddFrame(kOffsetInTexture, kSizeInTexture, 0, 3, 3);
+			spriteAnimation.AddFrames(kOffsetInTexture, kSizeInTexture, 0, 3, 3);
 			corgiAnimationSet.AddAnimation(L"SIT_BEGIN", spriteAnimation);
 		}
 		{
 			SpriteAnimation spriteAnimation{ kTextureSize, kTimePerFrame };
-			spriteAnimation.AddFrame(kOffsetInTexture, kSizeInTexture, 3, 6, 3);
+			spriteAnimation.AddFrames(kOffsetInTexture, kSizeInTexture, 3, 6, 3);
 			corgiAnimationSet.AddAnimation(L"SIT_ING", spriteAnimation);
 		}
 		{
 			SpriteAnimation spriteAnimation{ kTextureSize, kTimePerFrame };
-			spriteAnimation.AddFrame(kOffsetInTexture, kSizeInTexture, 0, 8, 6);
+			spriteAnimation.AddFrames(kOffsetInTexture, kSizeInTexture, 0, 8, 6);
 			corgiAnimationSet.AddAnimation(L"SNIFF", spriteAnimation);
 		}
 		{
 			SpriteAnimation spriteAnimation{ kTextureSize, kTimePerFrame };
-			spriteAnimation.AddFrame(kOffsetInTexture, kSizeInTexture, 0, 8, 7);
+			spriteAnimation.AddFrames(kOffsetInTexture, kSizeInTexture, 0, 8, 7);
 			corgiAnimationSet.AddAnimation(L"SNIFF_WALK", spriteAnimation);
 		}
 	}
-	
+
 
 	ObjectRenderer objectRenderer{ graphicDevice };
 	//InstantRenderer instantRenderer{ graphicDevice };
