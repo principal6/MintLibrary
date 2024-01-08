@@ -132,6 +132,15 @@ namespace mint
 				lhs[i] -= rhs[i];
 			}
 		}
+		
+		template<int32 N, typename T>
+		MINT_INLINE void SetMulVec(T(&lhs)[N], const T(&rhs)[N]) noexcept
+		{
+			for (int32 i = 0; i < N; ++i)
+			{
+				lhs[i] *= rhs[i];
+			}
+		}
 
 		template<int32 N, typename T>
 		MINT_INLINE void SetMulVec(T(&vec)[N], const float scalar) noexcept
