@@ -3,5 +3,6 @@
 #include <MintGame/Source/CameraObject.cpp>
 #include <MintGame/Source/ObjectComponent.cpp>
 #include <MintGame/Source/MeshComponent.cpp>
+#include <MintGame/Source/CollisionComponent.cpp>
 #include <MintGame/Source/ObjectRenderer.cpp>
 #include <MintGame/Source/Animation/AnimationCore.cpp>
