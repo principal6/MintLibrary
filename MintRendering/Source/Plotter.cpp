@@ -108,7 +108,6 @@ namespace mint
 			}
 
 			_shapeRendererContext->Render();
-			_shapeRendererContext->Flush();
 
 			Clear();
 		}

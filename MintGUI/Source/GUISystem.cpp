@@ -215,7 +215,6 @@ namespace mint
 			}
 
 			shapeRendererContext.Render();
-			shapeRendererContext.Flush();
 
 			_isUpdated = false;
 		}

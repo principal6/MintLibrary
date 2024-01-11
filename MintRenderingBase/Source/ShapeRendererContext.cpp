@@ -211,6 +211,8 @@ namespace mint
 			{
 				shaderPool.UnbindShader(GraphicShaderType::GeometryShader);
 			}
+
+			Flush();
 		}
 
 		bool ShapeRendererContext::InitializeFontData(const FontData& fontData)

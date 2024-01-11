@@ -239,9 +239,8 @@ namespace mint
 		{
 			for (uint32 modifierTypeIndex = 0; modifierTypeIndex < MathExpression::GetModifierTypeCount(); ++modifierTypeIndex)
 			{
-				ShapeRendererContext& rendererContext = _shapeRendererContexts[modifierTypeIndex];
-				rendererContext.Render();
-				rendererContext.Flush();
+				ShapeRendererContext& shapeRendererContext = _shapeRendererContexts[modifierTypeIndex];
+				shapeRendererContext.Render();
 			}
 		}
 	}

@@ -101,7 +101,6 @@ namespace mint
 					shapeRendererContext.AddShape(mesh2DComponent->GetShape());
 				}
 				shapeRendererContext.Render();
-				shapeRendererContext.Flush();
 			}
 		}
 

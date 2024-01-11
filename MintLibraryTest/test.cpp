@@ -218,7 +218,6 @@ bool Run2DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 			const SpriteAnimation& corgiCurrentAnimation = corgiAnimationSet.GetCurrentAnimation();
 			imageRenderer.DrawImageScreenSpace(Float2(64, 64), Float2(128, 128), corgiCurrentAnimation.GetCurrentFrameUV0(), corgiCurrentAnimation.GetCurrentFrameUV1());
 			imageRenderer.Render();
-			imageRenderer.Flush();
 
 			graphicDevice.SetSolidCullFrontRasterizer();
 			ShapeRendererContext& shapeRendererContext = graphicDevice.GetShapeRendererContext();
@@ -229,7 +228,6 @@ bool Run2DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 				shapeRendererContext.DrawDynamicText(fpsString.CString(), Float2(10, 10), FontRenderingOption());
 			}
 			shapeRendererContext.Render();
-			shapeRendererContext.Flush();
 		}
 		graphicDevice.EndRendering();
 
@@ -381,7 +379,6 @@ bool Run3DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 				shapeRendererContext.DrawDynamicText(fpsString.CString(), Float2(10, 10), FontRenderingOption());
 			}
 			shapeRendererContext.Render();
-			shapeRendererContext.Flush();
 
 			graphicDevice.EndRendering();
 		}
