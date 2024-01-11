@@ -163,7 +163,7 @@
     <ClCompile Include="Source\CommonDefinitions.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Assets\CodingConvention.md" />
+    <None Include="..\CodingConvention.md" />
     <None Include="..\TODO.md" />
     <None Include="Include\ScopedCPUProfiler.inl" />
   </ItemGroup>
