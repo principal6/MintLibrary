@@ -154,10 +154,13 @@ namespace mint
 		void ExcludeExtension(String<T>& inoutText);
 
 		template <typename T>
-		void Tokenize(const std::basic_string<T>& inputString, const T delimiter, Vector<std::basic_string<T>>& outTokens);
-		template <typename T>
-		void Tokenize(const std::basic_string<T>& inputString, const Vector<T>& delimiters, Vector<std::basic_string<T>>& outTokens);
+		void Trim(String<T>& inoutString);
 
+		template <typename T>
+		void Tokenize(const String<T>& inputString, const T delimiter, Vector<String<T>>& outTokens);
+		template <typename T>
+		void Tokenize(const String<T>& inputString, const Vector<T>& delimiters, Vector<String<T>>& outTokens);
+		
 		template<typename INT, typename T>
 		std::enable_if_t<std::is_integral_v<INT>, void> ToString(const INT i, MutableString<T>& outString);
 		template<typename FLT, typename T>

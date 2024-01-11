@@ -321,35 +321,78 @@ namespace mint
 		}
 
 		template <typename T>
-		inline void Tokenize(const std::basic_string<T>& inputString, const T delimiter, Vector<std::basic_string<T>>& outTokens)
+		inline void Trim(String<T>& inoutString)
 		{
-			Vector<char> delimiters;
+			const int32 oldLength = static_cast<int32>(inoutString.Length());
+			if (oldLength == 0)
+				return;
+
+			int32 begin = 0;
+			for (int32 i = 0; i < oldLength; ++i)
+			{
+				if (inoutString[i] == ' ' || inoutString[i] == '\r' || inoutString[i] == '\n' || inoutString[i] == '\t')
+				{
+					begin = i + 1;
+				}
+				else
+				{
+					break;
+				}
+			}
+
+			int32 end = oldLength - 1;
+			for (int32 i = end; i > begin; --i)
+			{
+				if (inoutString[i] == ' ' || inoutString[i] == '\r' || inoutString[i] == '\n' || inoutString[i] == '\t')
+				{
+					end = i - 1;
+				}
+				else
+				{
+					break;
+				}
+			}
+
+			if (begin >= end)
+			{
+				inoutString.Clear();
+			}
+			else
+			{
+				inoutString = inoutString.Substring(begin, end - begin + 1);
+			}
+		}
+
+		template <typename T>
+		inline void Tokenize(const String<T>& inputString, const T delimiter, Vector<String<T>>& outTokens)
+		{
+			Vector<T> delimiters;
 			delimiters.PushBack(delimiter);
 			Tokenize(inputString, delimiters, outTokens);
 		}
 
 		template <typename T>
-		inline void Tokenize(const std::basic_string<T>& inputString, const Vector<T>& delimiters, Vector<std::basic_string<T>>& outTokens)
+		inline void Tokenize(const String<T>& inputString, const Vector<T>& delimiters, Vector<String<T>>& outTokens)
 		{
 			outTokens.Clear();
 
-			if (inputString.empty() == true)
+			if (inputString.IsEmpty() == true)
 			{
 				return;
 			}
 
 			uint32 prevAt = 0;
-			const uint32 delimiterCount = static_cast<uint32>(delimiters.Size());
-			const uint32 Length = static_cast<uint32>(inputString.length());
+			const uint32 delimiterCount = delimiters.Size();
+			const uint32 Length = inputString.Length();
 			for (uint32 at = 0; at < Length; ++at)
 			{
 				for (uint32 delimiterIndex = 0; delimiterIndex < delimiterCount; ++delimiterIndex)
 				{
-					if (inputString.at(at) == delimiters.At(delimiterIndex))
+					if (inputString.At(at) == delimiters.At(delimiterIndex))
 					{
 						if (prevAt < at)
 						{
-							outTokens.PushBack(inputString.substr(prevAt, at - prevAt));
+							outTokens.PushBack(inputString.Substring(prevAt, at - prevAt));
 						}
 
 						prevAt = at + 1;
@@ -359,7 +402,7 @@ namespace mint
 
 			if (prevAt < Length)
 			{
-				outTokens.PushBack(inputString.substr(prevAt, Length - prevAt));
+				outTokens.PushBack(inputString.Substring(prevAt, Length - prevAt));
 			}
 		}
 

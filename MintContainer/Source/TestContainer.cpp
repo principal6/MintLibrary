@@ -727,11 +727,18 @@ namespace mint
 		bool Test_StringUtil()
 		{
 			{
-				const std::string testA{ "ab c   def g" };
-				Vector<std::string> testATokens;
+				StringA text = "\r\n 1,2,3,4,5,6,7,8,9,10,11,12,13,14,\t \r\n";
+				StringUtil::Trim(text);
+				Vector<StringA> tokens;
+				StringUtil::Tokenize(text, ',', tokens);
+			}
+
+			{
+				const StringA testA{ "ab c   def g" };
+				Vector<StringA> testATokens;
 				StringUtil::Tokenize(testA, ' ', testATokens);
 
-				std::string testB{
+				StringA testB{
 					R"(
                 #include <ShaderStructDefinitions>
                 #include <VsConstantBuffers>
@@ -748,7 +755,7 @@ namespace mint
                 )"
 				};
 				const Vector<char> delimiters{ ' ', '\t', '\n' };
-				Vector<std::string> testBTokens;
+				Vector<StringA> testBTokens;
 				StringUtil::Tokenize(testB, delimiters, testBTokens);
 			}
 
