@@ -127,56 +127,16 @@ bool Run2DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 		const Float2 kOffsetInTexture{ 96.0f, 0.0f };
 		const Float2 kSizeInTexture{ 64.0f, 64.0f };
 		const Float2 kTextureSize{ 800, 512 };
-		{
-			SpriteAnimation spriteAnimation{ kTextureSize, kTimePerFrame };
-			spriteAnimation.AddFrames(kOffsetInTexture, kSizeInTexture, 0, 5, 2);
-			corgiAnimationSet.AddAnimation(L"IDLE_R", spriteAnimation);
-		}
-		{
-			SpriteAnimation spriteAnimation{ kTextureSize, kTimePerFrame };
-			spriteAnimation.AddFrames(kOffsetInTexture, kSizeInTexture, 0, 5, 2, true);
-			corgiAnimationSet.AddAnimation(L"IDLE_L", spriteAnimation);
-		}
-		{
-			SpriteAnimation spriteAnimation{ kTextureSize, kTimePerFrame };
-			spriteAnimation.AddFrames(kOffsetInTexture, kSizeInTexture, 0, 5, 1);
-			corgiAnimationSet.AddAnimation(L"IDLE_HAPPY", spriteAnimation);
-		}
-		{
-			SpriteAnimation spriteAnimation{ kTextureSize, kTimePerFrame };
-			spriteAnimation.AddFrames(kOffsetInTexture, kSizeInTexture, 0, 5, 4);
-			corgiAnimationSet.AddAnimation(L"WALK", spriteAnimation);
-		}
-		{
-			SpriteAnimation spriteAnimation{ kTextureSize, kTimePerFrame };
-			spriteAnimation.AddFrames(kOffsetInTexture, kSizeInTexture, 0, 8, 5);
-			corgiAnimationSet.AddAnimation(L"RUN", spriteAnimation);
-		}
-		{
-			SpriteAnimation spriteAnimation{ kTextureSize, kTimePerFrame };
-			spriteAnimation.AddFrames(kOffsetInTexture, kSizeInTexture, 0, 10, 0);
-			corgiAnimationSet.AddAnimation(L"JUMP", spriteAnimation);
-		}
-		{
-			SpriteAnimation spriteAnimation{ kTextureSize, kTimePerFrame };
-			spriteAnimation.AddFrames(kOffsetInTexture, kSizeInTexture, 0, 3, 3);
-			corgiAnimationSet.AddAnimation(L"SIT_BEGIN", spriteAnimation);
-		}
-		{
-			SpriteAnimation spriteAnimation{ kTextureSize, kTimePerFrame };
-			spriteAnimation.AddFrames(kOffsetInTexture, kSizeInTexture, 3, 6, 3);
-			corgiAnimationSet.AddAnimation(L"SIT_ING", spriteAnimation);
-		}
-		{
-			SpriteAnimation spriteAnimation{ kTextureSize, kTimePerFrame };
-			spriteAnimation.AddFrames(kOffsetInTexture, kSizeInTexture, 0, 8, 6);
-			corgiAnimationSet.AddAnimation(L"SNIFF", spriteAnimation);
-		}
-		{
-			SpriteAnimation spriteAnimation{ kTextureSize, kTimePerFrame };
-			spriteAnimation.AddFrames(kOffsetInTexture, kSizeInTexture, 0, 8, 7);
-			corgiAnimationSet.AddAnimation(L"SNIFF_WALK", spriteAnimation);
-		}
+		corgiAnimationSet.AddAnimation(L"IDLE_R", SpriteAnimation(kTextureSize, kTimePerFrame, kOffsetInTexture, kSizeInTexture, 0, 5, 2));
+		corgiAnimationSet.AddAnimation(L"IDLE_L", SpriteAnimation(kTextureSize, kTimePerFrame, kOffsetInTexture, kSizeInTexture, 0, 5, 2, true));
+		corgiAnimationSet.AddAnimation(L"IDLE_HAPPY", SpriteAnimation(kTextureSize, kTimePerFrame, kOffsetInTexture, kSizeInTexture, 0, 5, 1));
+		corgiAnimationSet.AddAnimation(L"WALK", SpriteAnimation(kTextureSize, kTimePerFrame, kOffsetInTexture, kSizeInTexture, 0, 5, 4));
+		corgiAnimationSet.AddAnimation(L"RUN", SpriteAnimation(kTextureSize, kTimePerFrame, kOffsetInTexture, kSizeInTexture, 0, 8, 5));
+		corgiAnimationSet.AddAnimation(L"JUMP", SpriteAnimation(kTextureSize, kTimePerFrame, kOffsetInTexture, kSizeInTexture, 0, 10, 0));
+		corgiAnimationSet.AddAnimation(L"SIT_BEGIN", SpriteAnimation(kTextureSize, kTimePerFrame, kOffsetInTexture, kSizeInTexture, 0, 3, 3));
+		corgiAnimationSet.AddAnimation(L"SIT_ING", SpriteAnimation(kTextureSize, kTimePerFrame, kOffsetInTexture, kSizeInTexture, 3, 6, 3));
+		corgiAnimationSet.AddAnimation(L"SNIFF", SpriteAnimation(kTextureSize, kTimePerFrame, kOffsetInTexture, kSizeInTexture, 0, 8, 6));
+		corgiAnimationSet.AddAnimation(L"SNIFF_WALK", SpriteAnimation(kTextureSize, kTimePerFrame, kOffsetInTexture, kSizeInTexture, 0, 8, 7));
 	}
 
 
@@ -210,7 +170,7 @@ bool Run2DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 
 			//instantRenderer.DrawTriangle({ Float3(0, 1, 0), Float3(-1, 0, 0), Float3(1, 0, 0) }, { Float2(0.5, 0), Float2(0, 1), Float2(1, 1) }, Color::kYellow);
 			//instantRenderer.Render();
-			
+
 			graphicDevice.SetViewProjectionMatrix(Float4x4::kIdentity, graphicDevice.GetScreenSpace2DProjectionMatrix());
 			resourcePool.GetResource(corgiSpriteSheetTextureID).BindToShader(GraphicShaderType::PixelShader, 1);
 			//imageRenderer.DrawImageScreenSpace(Float2(0, 0), Float2(800, 512), Float2(0, 0), Float2(1, 1));

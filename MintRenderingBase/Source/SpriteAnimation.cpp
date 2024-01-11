@@ -25,6 +25,12 @@ namespace mint
 			__noop;
 		}
 
+		SpriteAnimation::SpriteAnimation(const Float2& textureSize, float timePerFrame, const Float2& offsetInTexture, const Float2& sizeInTexture, uint32 rowIndex, uint32 rowCount, uint32 column, bool flipsHorz)
+			: SpriteAnimation(textureSize, timePerFrame)
+		{
+			AddFrames(offsetInTexture, sizeInTexture, rowIndex, rowCount, column, flipsHorz);
+		}
+
 		void SpriteAnimation::AddFrames(const Float2& offsetInTexture, const Float2& sizeInTexture, uint32 rowIndex, uint32 rowCount, uint32 column, bool flipsHorz)
 		{
 			for (uint32 row = rowIndex; row < rowIndex + rowCount; ++row)

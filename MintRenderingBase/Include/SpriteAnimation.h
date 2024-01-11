@@ -26,6 +26,7 @@ namespace mint
 
 		public:
 			SpriteAnimation(const Float2& textureSize, float timePerFrame);
+			SpriteAnimation(const Float2& textureSize, float timePerFrame, const Float2& offsetInTexture, const Float2& sizeInTexture, uint32 rowIndex, uint32 rowCount, uint32 column, bool flipsHorz = false);
 			~SpriteAnimation() = default;
 
 		public:
