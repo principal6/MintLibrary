@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+	<Type Name="mint::XML::Attribute">
+		<DisplayString Condition="_valueLength == 0">Attribute[{&amp;_xml->_namePool[_nameAt],[_nameLength] na}]</DisplayString>
+		<DisplayString Condition="_valueLength &gt; 0">Attribute[{&amp;_xml->_namePool[_nameAt],[_nameLength] na}] = {&amp;_xml->_valuePool[_valueAt],[_valueLength] na}</DisplayString>
+		<Expand>
+			<Item Name="ID">_ID</Item>
+			<Item Name="Name">&amp;_xml->_namePool[_nameAt],[_nameLength] na</Item>
+			<Item Name="Value" Condition="_valueLength > 0">&amp;_xml->_valuePool[_valueAt],[_valueLength] na</Item>
+		</Expand>
+	</Type>
+	<Type Name="mint::XML::Node">
+		<DisplayString>Node[{&amp;_xml->_namePool[_nameAt],[_nameLength] na}]</DisplayString>
+
+		<Expand>
+			<Item Name="ID">_ID</Item>
+			<Item Name="Name">&amp;_xml->_namePool[_nameAt],[_nameLength] na</Item>
+			<Item Name="Text" Condition="_textLength > 0">&amp;_xml->_textPool[_textAt],[_textLength] na</Item>
+			<Synthetic Name="Attributes" Condition="_attributeIDs._size &gt; 0">
+				<DisplayString>{_attributeIDs}</DisplayString>
+				<Expand>
+					<CustomListItems MaxItemsPerView="64" >
+						<Variable Name="myAttributeIndex" InitialValue="0" />
+						<Variable Name="xmlAttributeIndex" InitialValue="0" />
+						<Size>_attributeIDs._size</Size>
+						<Loop>
+							<Break Condition="myAttributeIndex &gt;= _attributeIDs._size" />
+							<Exec>xmlAttributeIndex = 0</Exec>
+							<Loop>
+								<Break Condition="_xml->_attributes[xmlAttributeIndex]._ID == _attributeIDs[myAttributeIndex]" />
+								<Exec>++xmlAttributeIndex</Exec>
+							</Loop>
+							<Item>_xml->_attributes[xmlAttributeIndex]</Item>
+							<Exec>++myAttributeIndex</Exec>
+						</Loop>
+					</CustomListItems>
+				</Expand>
+			</Synthetic>
+			<Synthetic Name="Child Nodes" Condition="_childNodeIDs._size &gt; 0">
+				<DisplayString>{_childNodeIDs}</DisplayString>
+				<Expand>
+					<CustomListItems MaxItemsPerView="64" >
+						<Variable Name="myChildNodeIndex" InitialValue="0" />
+						<Variable Name="xmlNodeIndex" InitialValue="0" />
+						<Size>_childNodeIDs._size</Size>
+						<Loop>
+							<Break Condition="myChildNodeIndex &gt;= _childNodeIDs._size" />
+							<Exec>xmlNodeIndex = 0</Exec>
+							<Loop>
+								<Break Condition="_xml->_nodes[xmlNodeIndex]._ID == _childNodeIDs[myChildNodeIndex]" />
+								<Exec>++xmlNodeIndex</Exec>
+							</Loop>
+							<Item>_xml->_nodes[xmlNodeIndex]</Item>
+							<Exec>++myChildNodeIndex</Exec>
+						</Loop>
+					</CustomListItems>
+				</Expand>
+			</Synthetic>
+		</Expand>
+	</Type>
+</AutoVisualizer>

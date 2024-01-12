@@ -45,6 +45,9 @@
     <ClInclude Include="Include\Window.h">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="Include\XML.h">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\BinaryFile.cpp">
@@ -65,5 +68,11 @@
     <ClCompile Include="Source\Window.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="Source\XML.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="MintPlatform.natvis" />
   </ItemGroup>
 </Project>

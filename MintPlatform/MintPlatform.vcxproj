@@ -182,6 +182,7 @@
     <ClInclude Include="Include\Test.h" />
     <ClInclude Include="Include\TextFile.h" />
     <ClInclude Include="Include\Window.h" />
+    <ClInclude Include="Include\XML.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\BinaryFile.cpp">
@@ -214,12 +215,21 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="Source\XML.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="Source\_UnityBuild.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MintContainer\MintContainer.vcxproj">
       <Project>{0152168d-27a5-4c7d-be25-1310b5c023c9}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="MintPlatform.natvis" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -7,6 +7,7 @@ robocopy Assets Out/Assets /S
 : Natvis Files
 robocopy MintContainer/ Out/Natvis *.natvis /xd Out
 robocopy MintMath/ Out/Natvis *.natvis /xd Out
+robocopy MintPlatform/ Out/Natvis *.natvis /xd Out
 
 : Include Directory
 robocopy MintAudio/Include Out/Include/MintAudio/Include /S
