@@ -282,7 +282,7 @@ namespace mint
 				break;
 			}
 		}
-		if (nextAttributeIndex > attributeCount)
+		if (nextAttributeIndex >= attributeCount)
 		{
 			return nullptr;
 		}
