@@ -54,6 +54,9 @@
     <ClInclude Include="Include\CollisionComponent.h">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="Include\TileMap.h">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Animation\AnimationCore.cpp">
@@ -81,6 +84,9 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\CollisionComponent.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\TileMap.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
