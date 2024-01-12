@@ -98,6 +98,7 @@ namespace mint
 			XML::Attribute attribute;
 			attribute._xml = &_xml;
 			attribute._nodeID = node._ID;
+			attribute._ID = _xml._attributes.Size();
 			while (_at < _length)
 			{
 				if (_text[_at] == '>')
@@ -318,6 +319,16 @@ namespace mint
 			}
 		}
 		return nullptr;
+	}
+
+	XML::Attribute* XML::Node::GetFirstAttribute() const
+	{
+		return (_xml == nullptr || _attributeIDs.IsEmpty() ? nullptr : _xml->GetAttribute(_attributeIDs[0]));
+	}
+
+	XML::Node* XML::Node::GetFirstChildNode() const
+	{
+		return (_xml == nullptr || _childNodeIDs.IsEmpty() ? nullptr : _xml->GetNode(_childNodeIDs[0]));
 	}
 
 	XML::Node* XML::Node::GetNextSiblingNode() const

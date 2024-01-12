@@ -74,8 +74,8 @@ namespace mint
 			const char* GetName() const { return (_xml == nullptr || _nameLength == 0 ? nullptr : &_xml->_namePool[_nameAt]); }
 			const char* GetText() const { return (_xml == nullptr || _textLength == 0 ? nullptr : &_xml->_textPool[_textAt]); }
 			Attribute* FindAttribute(const StringReferenceA& attributeName) const;
-			Attribute* GetFirstAttribute() const { return (_xml == nullptr || _attributeIDs.IsEmpty() ? nullptr : &_xml->_attributes[_attributeIDs[0]]); }
-			Node* GetFirstChildNode() const { return (_xml == nullptr || _childNodeIDs.IsEmpty() ? nullptr : &_xml->_nodes[_childNodeIDs[0]]); }
+			Attribute* GetFirstAttribute() const;
+			Node* GetFirstChildNode() const;
 			Node* GetNextSiblingNode() const;
 
 		private:
