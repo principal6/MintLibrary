@@ -37,8 +37,8 @@ namespace mint
 		public:
 			uint32 GetID() const { return _ID; }
 			bool HasName() const { return _nameLength > 0; }
-			const char* GetName() const { (_xml == nullptr || _nameLength == 0 ? nullptr : &_xml->_namePool[_nameAt]); }
-			const char* GetValue() const { (_xml == nullptr || _valueLength == 0 ? nullptr : &_xml->_valuePool[_valueAt]); }
+			const char* GetName() const { return (_xml == nullptr || _nameLength == 0 ? nullptr : &_xml->_namePool[_nameAt]); }
+			const char* GetValue() const { return (_xml == nullptr || _valueLength == 0 ? nullptr : &_xml->_valuePool[_valueAt]); }
 			Attribute* GetNextSiblingAttribute() const;
 
 		private:
@@ -71,10 +71,11 @@ namespace mint
 			uint32 GetID() const { return _ID; }
 			bool HasName() const { return _nameLength > 0; }
 			NodeType GetNodeType() const { return _nodeType; }
-			const char* GetName() const { (_xml == nullptr || _nameLength == 0 ? nullptr : &_xml->_namePool[_nameAt]); }
-			const char* GetText() const { (_xml == nullptr || _textLength == 0 ? nullptr : &_xml->_textPool[_textAt]); }
-			Attribute* GetFirstAttribute() const { (_xml == nullptr || _attributeIDs.IsEmpty() ? nullptr : &_xml->_attributes[_attributeIDs[0]]); }
-			Node* GetFirstChildNode() const { (_xml == nullptr || _childNodeIDs.IsEmpty() ? nullptr : &_xml->_nodes[_childNodeIDs[0]]); }
+			const char* GetName() const { return (_xml == nullptr || _nameLength == 0 ? nullptr : &_xml->_namePool[_nameAt]); }
+			const char* GetText() const { return (_xml == nullptr || _textLength == 0 ? nullptr : &_xml->_textPool[_textAt]); }
+			Attribute* FindAttribute(const StringReferenceA& attributeName) const;
+			Attribute* GetFirstAttribute() const { return (_xml == nullptr || _attributeIDs.IsEmpty() ? nullptr : &_xml->_attributes[_attributeIDs[0]]); }
+			Node* GetFirstChildNode() const { return (_xml == nullptr || _childNodeIDs.IsEmpty() ? nullptr : &_xml->_nodes[_childNodeIDs[0]]); }
 			Node* GetNextSiblingNode() const;
 
 		private:

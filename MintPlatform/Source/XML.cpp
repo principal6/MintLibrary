@@ -308,6 +308,18 @@ namespace mint
 	{
 	}
 
+	XML::Attribute* XML::Node::FindAttribute(const StringReferenceA& attributeName) const
+	{
+		for (XML::Attribute* attribute = GetFirstAttribute(); attribute != nullptr; attribute = attribute->GetNextSiblingAttribute())
+		{
+			if (attributeName == attribute->GetName())
+			{
+				return attribute;
+			}
+		}
+		return nullptr;
+	}
+
 	XML::Node* XML::Node::GetNextSiblingNode() const
 	{
 		if (_xml == nullptr)
