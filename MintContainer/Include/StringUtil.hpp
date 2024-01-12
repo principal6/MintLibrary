@@ -504,6 +504,18 @@ namespace mint
 		{
 			return ::_wtoi(string.CString());
 		}
+		
+		template<typename T>
+		inline uint32 StringToUint32(const StringReference<T>& string)
+		{
+			return static_cast<uint32>(::atoll(reinterpret_cast<const char*>(string.CString())));
+		}
+
+		template<>
+		inline uint32 StringToUint32(const StringReference<wchar_t>& string)
+		{
+			return static_cast<uint32>(::_wtoll(string.CString()));
+		}
 
 		template<typename T>
 		inline int64 StringToInt64(const StringReference<T>& string)

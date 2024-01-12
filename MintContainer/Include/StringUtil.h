@@ -184,6 +184,8 @@ namespace mint
 		template<typename T>
 		int32 StringToInt32(const StringReference<T>& string);
 		template<typename T>
+		uint32 StringToUint32(const StringReference<T>& string);
+		template<typename T>
 		int64 StringToInt64(const StringReference<T>& string);
 		template<typename T>
 		double StringToDouble(const StringReference<T>& string);
