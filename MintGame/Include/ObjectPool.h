@@ -14,7 +14,6 @@ namespace mint
 {
 	namespace Game
 	{
-		class GraphicDevice;
 		class CameraObject;
 		class TransformComponent;
 		class MeshComponent;
