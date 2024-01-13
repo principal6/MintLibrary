@@ -12,6 +12,7 @@
 #include <MintGame/Include/MeshComponent.h>
 #include <MintGame/Include/ObjectRenderer.h>
 #include <MintGame/Include/TileMap.h>
+#include <MintGame/Include/GameBase.h>
 #include <MintGame/Include/Animation/AnimationCore.h>
 
 
