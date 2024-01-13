@@ -32,14 +32,17 @@ namespace mint
 	{
 		__noop;
 	}
+
 	AudioObject::~AudioObject()
 	{
+		Stop();
+
 		if (_sourceVoice != nullptr)
 		{
-			Stop();
 			_sourceVoice->DestroyVoice();
 		}
 	}
+
 	bool AudioObject::Play()
 	{
 		if (_sourceVoice == nullptr)
@@ -48,6 +51,7 @@ namespace mint
 		_sourceVoice->Start();
 		return true;
 	}
+
 	void AudioObject::Stop()
 	{
 		if (_sourceVoice == nullptr)
