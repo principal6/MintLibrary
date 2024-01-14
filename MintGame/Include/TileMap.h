@@ -65,13 +65,15 @@ namespace mint
 			void Draw(ImageRenderer& imageRenderer) const;
 
 		public:
-			const TileSet& getTileSet() const { return _tileSet; }
-			const Vector<uint32>& getTiles() const { return _tiles; }
-			uint32 getWidth() const { return _width; }
+			const TileSet& GetTileSet() const { return _tileSet; }
+			const Vector<uint32>& GetTiles() const { return _tiles; }
+			uint32 GetWidth() const { return _width; }
+			uint32 GetHeight() const { return _height; }
 
 		private:
 			Vector<uint32> _tiles;
 			uint32 _width;
+			uint32 _height;
 			uint32 _tileWidth;
 			uint32 _tileHeight;
 			TileSet _tileSet;

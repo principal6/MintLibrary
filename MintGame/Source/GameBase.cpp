@@ -7,6 +7,7 @@
 #include <MintAudio/Include/AudioSystem.h>
 #include <MintGame/Include/DeltaTimer.h>
 #include <MintGame/Include/TileMap.h>
+#include <MintGame/Include/ObjectPool.hpp>
 
 
 namespace mint
@@ -16,6 +17,8 @@ namespace mint
 		GameBase2D::GameBase2D(const StringA& title, const Int2& windowSize)
 			: _window{ MINT_NEW(Window) }
 			, _imageLoader{ MINT_NEW(Rendering::ImageLoader) }
+			, _characterFloorOffsetFromBottom(0.0f)
+			, _characterScale(1.0f)
 		{
 			WindowCreationDesc windowCreationDesc;
 			windowCreationDesc._size = windowSize;
@@ -37,6 +40,11 @@ namespace mint
 			_mapRenderer.Assign(MINT_NEW(Rendering::ImageRenderer, *_graphicDevice, 2));
 
 			_audioSystem.Assign(MINT_NEW(AudioSystem));
+
+			_objectPool.Assign(MINT_NEW(ObjectPool));
+
+			InitializeMainCharacterObject();
+			InitializeMainCameraOject();
 		}
 
 		GameBase2D::~GameBase2D()
@@ -47,6 +55,18 @@ namespace mint
 		bool GameBase2D::IsRunning()
 		{
 			return _window->IsRunning();
+		}
+
+		void GameBase2D::Update()
+		{
+			_mainCharacterObject->GetObjectTransform()._translation._x = _character._position._x;
+			_mainCharacterObject->GetObjectTransform()._translation._y = _character._position._y;
+
+			const Float2 windowSize{ _graphicDevice->GetWindowSize() };
+			Float3& cameraPosition = _mainCameraObject->GetObjectTransform()._translation;
+			cameraPosition = _mainCharacterObject->GetObjectTransform()._translation;
+			cameraPosition._x = Max(cameraPosition._x, windowSize._x * 0.5f);
+			cameraPosition._y = Max(cameraPosition._y, windowSize._y * 0.5f);
 		}
 
 		void GameBase2D::BeginRendering()
@@ -73,10 +93,21 @@ namespace mint
 			_graphicDevice->EndRendering();
 		}
 
+		void GameBase2D::InitializeMainCharacterObject()
+		{
+			_mainCharacterObject = _objectPool->CreateObject();
+		}
+
+		void GameBase2D::InitializeMainCameraOject()
+		{
+			_mainCameraObject = _objectPool->CreateCameraObject();
+			Float2 windowSize{ _graphicDevice->GetWindowSize() };
+			_mainCameraObject->SetOrthographic2DCamera(windowSize);
+		}
+
 		void GameBase2D::Render()
 		{
-			_graphicDevice->SetViewProjectionMatrix(Float4x4::kIdentity, _graphicDevice->GetScreenSpace2DProjectionMatrix());
-
+			_graphicDevice->SetViewProjectionMatrix(_mainCameraObject->GetViewMatrix(), _mainCameraObject->GetProjectionMatrix());
 			_graphicDevice->SetSolidCullBackRasterizer();
 
 			_tileMap.Draw(*_mapRenderer);
@@ -85,19 +116,21 @@ namespace mint
 			Rendering::ShapeRendererContext& shapeRendererContext = _graphicDevice->GetShapeRendererContext();
 			_characterAnimationSet.Update(DeltaTimer::GetInstance().GetDeltaTimeSec());
 			const Rendering::SpriteAnimation& characterCurrentAnimation = _characterAnimationSet.GetCurrentAnimation();
-			_characterRenderer->DrawImageScreenSpace(Float2(64, 64), Float2(128, 128), characterCurrentAnimation.GetCurrentFrameUV0(), characterCurrentAnimation.GetCurrentFrameUV1());
+
+			const Float2 scaledCharacterSize = _characterSize * _characterScale;
+			const float scaledFloorOffset = _characterFloorOffsetFromBottom * _characterScale;
+			const Float2 characterDrawPosition = _mainCharacterObject->GetObjectTransform()._translation.XY() + Float2(0.0f, scaledCharacterSize._y * 0.5f - scaledFloorOffset);
+			_characterRenderer->DrawImage(characterDrawPosition, scaledCharacterSize, characterCurrentAnimation.GetCurrentFrameUV0(), characterCurrentAnimation.GetCurrentFrameUV1());
 			_characterRenderer->Render();
 
+			_graphicDevice->SetViewProjectionMatrix(Float4x4::kIdentity, _graphicDevice->GetScreenSpace2DProjectionMatrix());
 			_graphicDevice->SetSolidCullFrontRasterizer();
-			shapeRendererContext.SetTextColor(Color::kBlack);
-			shapeRendererContext.DrawDynamicText(L"WELCOME!", Float4(10, 10, 0, 1), Rendering::FontRenderingOption());
-			shapeRendererContext.Render();
 		}
 
 		void GameBase2D::LoadTileMap(const StringA& tileMapeFileName)
 		{
 			_tileMap.Load(tileMapeFileName);
-			_tileSetImage = LoadImageFile(_tileMap.getTileSet().getImageFileName());
+			_tileSetImage = LoadImageFile(_tileMap.GetTileSet().getImageFileName());
 			SetTileMapImage(_tileSetImage);
 		}
 
@@ -109,15 +142,24 @@ namespace mint
 			return Image(resourcePool.AddTexture2D(image));
 		}
 
-		void GameBase2D::SetCharacterImage(const Image& image)
+		void GameBase2D::SetCharacterImage(const Image& image, const Int2& characterSize, uint32 floorOffsetFromBottom, float scale)
 		{
 			Rendering::GraphicResourcePool& resourcePool = _graphicDevice->GetResourcePool();
 			resourcePool.GetResource(image._graphicObjectID).BindToShader(Rendering::GraphicShaderType::PixelShader, _characterTextureSlot);
+
+			_characterSize = Float2(characterSize);
+			_characterFloorOffsetFromBottom = static_cast<float>(floorOffsetFromBottom);
+			_characterScale = scale;
 		}
 
 		void GameBase2D::SetCharacterAnimationSet(const Rendering::SpriteAnimationSet& spriteAnimationSet)
 		{
 			_characterAnimationSet = spriteAnimationSet;
+		}
+
+		Character2D& GameBase2D::GetCharacter()
+		{
+			return _character;
 		}
 
 		void GameBase2D::SetTileMapImage(const Image& image)

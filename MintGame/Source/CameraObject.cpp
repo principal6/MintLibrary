@@ -10,6 +10,7 @@ namespace mint
 	{
 		CameraObject::CameraObject(const ObjectPool* const objectPool)
 			: Object(objectPool, ObjectType::CameraObject)
+			, _usePerspectiveProjection{ true }
 			, _isRightHanded{ true }
 			, _fov{ Math::ToRadian(60.0f) }
 			, _nearZ{ 1.0f }
@@ -21,7 +22,7 @@ namespace mint
 			, _moveSpeed{ MoveSpeed::x8_0 }
 			, _isBoostMode{ false }
 		{
-			UpdatePerspectiveMatrix();
+			UpdateProjectionMatrix();
 		}
 
 		CameraObject::~CameraObject()
@@ -29,28 +30,46 @@ namespace mint
 			__noop;
 		}
 
-		void CameraObject::SetPerspectiveFov(const float fov)
+		void CameraObject::SetPerspectiveCamera(const float fov, const float nearZ, const float farZ, const float screenRatio)
 		{
-			_fov = fov;
-			UpdatePerspectiveMatrix();
-		}
+			_usePerspectiveProjection = true;
 
-		void CameraObject::SetPerspectiveZRange(const float nearZ, const float farZ)
-		{
+			_fov = fov;
 			_nearZ = nearZ;
 			_farZ = farZ;
-			UpdatePerspectiveMatrix();
-		}
-
-		void CameraObject::SetPerspectiveScreenRatio(const float screenRatio)
-		{
 			_screenRatio = screenRatio;
-			UpdatePerspectiveMatrix();
+
+			UpdateProjectionMatrix();
 		}
 
-		void CameraObject::UpdatePerspectiveMatrix() noexcept
+		void CameraObject::SetPerspectiveCameraScreenRatio(const float screenRatio)
 		{
-			_projectionMatrix = Float4x4::ProjectionMatrixPerspectiveYUP(_isRightHanded, _fov, _nearZ, _farZ, _screenRatio);
+			_usePerspectiveProjection = true;
+
+			_screenRatio = screenRatio;
+
+			UpdateProjectionMatrix();
+		}
+
+		void CameraObject::SetOrthographic2DCamera(const Float2& screenSize)
+		{
+			_usePerspectiveProjection = false;
+
+			_screenSize = screenSize;
+
+			UpdateProjectionMatrix();
+		}
+
+		void CameraObject::UpdateProjectionMatrix() noexcept
+		{
+			if (_usePerspectiveProjection)
+			{
+				_projectionMatrix = Float4x4::ProjectionMatrixPerspectiveYUP(_isRightHanded, _fov, _nearZ, _farZ, _screenRatio);
+			}
+			else
+			{
+				_projectionMatrix = Float4x4::ProjectionMatrix2DNormal(_screenSize._x, _screenSize._y);
+			}
 		}
 
 		void CameraObject::SteerDefault(const InputContext& inputContext, const bool is3DMode)

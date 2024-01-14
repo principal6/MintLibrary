@@ -74,7 +74,7 @@ namespace mint
 
 			const XML::Node* const mapNode = xmlDocument.GetRootNode();
 			_width = StringUtil::StringToUint32(StringReferenceA(mapNode->FindAttribute("width")->GetValue()));
-			const int32 height = StringUtil::StringToInt32(StringReferenceA(mapNode->FindAttribute("height")->GetValue()));
+			_height = StringUtil::StringToInt32(StringReferenceA(mapNode->FindAttribute("height")->GetValue()));
 			_tileWidth = StringUtil::StringToUint32(StringReferenceA(mapNode->FindAttribute("tilewidth")->GetValue()));
 			_tileHeight = StringUtil::StringToUint32(StringReferenceA(mapNode->FindAttribute("tileheight")->GetValue()));
 
@@ -99,7 +99,7 @@ namespace mint
 				_tiles[i] = StringUtil::StringToUint32(tileStrings[i]);
 			}
 
-			MINT_ASSERT(_width * height == _tiles.Size(), "Wrong width or tile count!");
+			MINT_ASSERT(_width * _height == _tiles.Size(), "Wrong width or tile count!");
 			MINT_ASSERT(_tileWidth > 0, "Wrong Tile Width");
 			MINT_ASSERT(_tileHeight > 0, "Wrong Tile Height");
 			return true;
@@ -107,12 +107,15 @@ namespace mint
 
 		void TileMap::Draw(ImageRenderer& imageRenderer) const
 		{
-			const Vector<uint32>& tiles = getTiles();
-			const uint32 mapWidth = getWidth();
+			const Vector<uint32>& tiles = GetTiles();
+			const uint32 mapWidth = GetWidth();
 			const uint32 mapHeight = tiles.Size() / mapWidth;
-			const TileSet& tileSet = getTileSet();
-			const uint32 tileWidth = tileSet.getTileWidth();
-			const uint32 tileHeight = tileSet.getTileHeight();
+			const TileSet& tileSet = GetTileSet();
+			const float tileWidth = static_cast<float>(tileSet.getTileWidth());
+			const float tileHeight = static_cast<float>(tileSet.getTileHeight());
+			const float tileHalfWidth = tileWidth * 0.5f;
+			const float tileHalfHeight = tileHeight * 0.5f;
+			const float yOffset = static_cast<float>(mapHeight) * tileHeight;
 			for (uint32 x = 0; x < mapWidth; ++x)
 			{
 				for (uint32 y = 0; y < mapHeight; ++y)
@@ -133,7 +136,7 @@ namespace mint
 					tileV0 /= tileSet.getImageHeight();
 					tileV1 /= tileSet.getImageHeight();
 
-					imageRenderer.DrawImageScreenSpace(Float2((float)x * tileWidth, (float)y * tileHeight), Float2(Int2(tileWidth, tileHeight))
+					imageRenderer.DrawImage(Float2(tileHalfWidth + tileWidth * x, -tileHalfHeight + yOffset + -tileHeight * y), Float2(tileWidth, tileHeight)
 						, Float2(tileU0, tileV0), Float2(tileU1, tileV1));
 				}
 			}

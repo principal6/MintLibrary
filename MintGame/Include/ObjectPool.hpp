@@ -158,7 +158,7 @@ namespace mint
 				if (object->IsTypeOf(ObjectType::CameraObject) == true)
 				{
 					CameraObject* const cameraObject = static_cast<CameraObject*>(object.Get());
-					cameraObject->SetPerspectiveScreenRatio(screenRatio);
+					cameraObject->SetPerspectiveCameraScreenRatio(screenRatio);
 				}
 			}
 		}

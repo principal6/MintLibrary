@@ -6,6 +6,7 @@
 
 
 #include <MintContainer/Include/OwnPtr.h>
+#include <MintContainer/Include/SharedPtr.h>
 #include <MintContainer/Include/String.h>
 #include <MintRenderingBase/Include/GraphicObject.h>
 #include <MintRenderingBase/Include/SpriteAnimation.h>
@@ -28,6 +29,9 @@ namespace mint
 	namespace Game
 	{
 		class GameBase2D;
+		class ObjectPool;
+		class Object;
+		class CameraObject;
 	}
 }
 
@@ -50,6 +54,12 @@ namespace mint
 			Rendering::GraphicObjectID _graphicObjectID;
 		};
 
+		class Character2D
+		{
+		public:
+			Float2 _position;
+		};
+
 		class GameBase2D
 		{
 		public:
@@ -58,6 +68,9 @@ namespace mint
 
 		public:
 			bool IsRunning();
+			void Update();
+
+		public:
 			void BeginRendering();
 			void DrawTextToScreen(const StringA& text, const Int2& position, const ByteColor& color);
 			void EndRendering();
@@ -65,10 +78,19 @@ namespace mint
 		public:
 			void LoadTileMap(const StringA& tileMapeFileName);
 			Image LoadImageFile(const StringA& imageFileName);
-			void SetCharacterImage(const Image& image);
+
+		public:
+			void SetCharacterImage(const Image& image, const Int2& characterSize, uint32 floorOffsetFromBottom, float scale);
 			void SetCharacterAnimationSet(const Rendering::SpriteAnimationSet& spriteAnimationSet);
+			Character2D& GetCharacter();
+
+		public:
 			void SetTileMapImage(const Image& image);
 			void SetBackgroundMusic(const StringReferenceA& audioFileName);
+
+		protected:
+			void InitializeMainCharacterObject();
+			void InitializeMainCameraOject();
 
 		private:
 			void Render();
@@ -81,7 +103,13 @@ namespace mint
 		protected:
 			TileMap _tileMap;
 			Image _tileSetImage;
+
+		protected:
 			Rendering::SpriteAnimationSet _characterAnimationSet;
+			Float2 _characterSize;
+			float _characterScale;
+			float _characterFloorOffsetFromBottom;
+			Character2D _character;
 
 		protected:
 			static constexpr const uint32 _characterTextureSlot = 1;
@@ -92,6 +120,11 @@ namespace mint
 		protected:
 			OwnPtr<AudioSystem> _audioSystem;
 			OwnPtr<AudioObject> _backgroundMusic;
+
+		protected:
+			OwnPtr<ObjectPool> _objectPool;
+			SharedPtr<Object> _mainCharacterObject;
+			SharedPtr<CameraObject> _mainCameraObject;
 		};
 	}
 }

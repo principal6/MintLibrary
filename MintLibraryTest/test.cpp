@@ -116,9 +116,8 @@ bool Run2DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 	}
 
 	SharedPtr<CameraObject> testCameraObject = objectPool.CreateCameraObject();
-	testCameraObject->SetPerspectiveZRange(1.0f, 100.0f);
 	Float2 windowSize{ graphicDevice.GetWindowSize() };
-	testCameraObject->SetPerspectiveScreenRatio(windowSize._x / windowSize._y);
+	testCameraObject->SetPerspectiveCamera(Math::ToRadian(60.0f), 1.0f, 100.0f, windowSize._x / windowSize._y);
 	testCameraObject->GetObjectTransform()._translation._z = 5.0f;
 
 	SpriteAnimationSet corgiAnimationSet;
@@ -210,8 +209,7 @@ bool Run3DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 	ObjectPool objectPool;
 	SharedPtr<CameraObject> testCameraObject = objectPool.CreateCameraObject();
 	Float2 windowSize{ graphicDevice.GetWindowSize() };
-	testCameraObject->SetPerspectiveZRange(0.01f, 100.0f);
-	testCameraObject->SetPerspectiveScreenRatio(windowSize._x / windowSize._y);
+	testCameraObject->SetPerspectiveCamera(Math::ToRadian(60.0f), 0.01f, 100.0f, windowSize._x / windowSize._y);
 	testCameraObject->GetObjectTransform()._translation._z = 5.0f;
 	testCameraObject->RotatePitch(0.125f);
 	SharedPtr<Object> testObject = objectPool.CreateObject();

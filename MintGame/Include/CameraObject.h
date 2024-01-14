@@ -86,9 +86,9 @@ namespace mint
 			virtual ~CameraObject();
 
 		public:
-			void SetPerspectiveFov(const float fov);
-			void SetPerspectiveZRange(const float nearZ, const float farZ);
-			void SetPerspectiveScreenRatio(const float screenRatio);
+			void SetPerspectiveCamera(const float fov, const float nearZ, const float farZ, const float screenRatio);
+			void SetPerspectiveCameraScreenRatio(const float screenRatio);
+			void SetOrthographic2DCamera(const Float2& screenSize);
 
 		public:
 			void SteerDefault(const InputContext& inputContext, const bool is3DMode);
@@ -107,7 +107,7 @@ namespace mint
 			const Float4x4& GetProjectionMatrix() const noexcept;
 
 		private:
-			void UpdatePerspectiveMatrix() noexcept;
+			void UpdateProjectionMatrix() noexcept;
 			Float4x4 GetRotationMatrix() const noexcept;
 			float GetHandednessSign() const noexcept;
 
@@ -116,10 +116,18 @@ namespace mint
 
 			mutable Float3 _forwardDirection;
 
+			bool _usePerspectiveProjection;
 			bool _isRightHanded;
 			float _fov;
-			float _nearZ;
-			float _farZ;
+			union
+			{
+				struct
+				{
+					float _nearZ;
+					float _farZ;
+				};
+				Float2 _screenSize;
+			};
 			float _screenRatio;
 
 			float _pitch;
