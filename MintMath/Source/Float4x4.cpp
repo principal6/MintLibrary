@@ -190,7 +190,18 @@ namespace mint
 			 0.0f             ,  0.0f              , 0.0f,  1.0f
 		);
 	}
-	
+
+	Float4x4 Float4x4::ProjectionMatrix2DNormal(const float pixelWidth, const float pixelHeight) noexcept
+	{
+		return Float4x4
+		(
+			+2.0f / pixelWidth,  0.0f              , 0.0f, 0.0f,
+			 0.0f             , +2.0f / pixelHeight, 0.0f, 0.0f,
+			 0.0f             ,  0.0f              , 0.0f, 0.0f,
+			 0.0f             ,  0.0f              , 0.0f, 1.0f
+		);
+	}
+
 	Float4x4::Float4x4()
 		: Float4x4(
 			1.0f, 0.0f, 0.0f, 0.0f,
