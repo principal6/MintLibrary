@@ -156,6 +156,7 @@ namespace mint
 			void UseSolidCullBackRasterizer() noexcept;
 			void SetSolidCullBackRasterizer() noexcept;
 			void SetSolidCullFrontRasterizer() noexcept;
+			void SetSolidCullNoneRasterizer() noexcept;
 			const Rect& GetFullScreenClipRect() const noexcept;
 
 		public:
@@ -208,6 +209,7 @@ namespace mint
 			ID3D11RasterizerState* _currentRasterizerFor3D;
 			ComPtr<ID3D11RasterizerState> _rasterizerStateSolidCullBack;
 			ComPtr<ID3D11RasterizerState> _rasterizerStateSolidCullFront;
+			ComPtr<ID3D11RasterizerState> _rasterizerStateSolidCullNone;
 			ComPtr<ID3D11RasterizerState> _rasterizerStateWireFrameNoCulling;
 			ComPtr<ID3D11RasterizerState> _rasterizerStateWireFrameCullBack;
 			ComPtr<ID3D11RasterizerState> _rasterizerStateScissorRectangles;

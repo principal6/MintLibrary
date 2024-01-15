@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ActionChart>
+	<Variables>
+		<BoolVariable Name="IsWalking"/>
+		<BoolVariable Name="IsJumping"/>
+		<BoolVariable Name="IsRunning"/>
+	</Variables>
+	<Action Name="IDLE">
+		<Animation Name="IDLE"/>
+		<Transition ActionName="WALK">
+			<Condition Variable="IsWalking" Operator="Equal" Value="true"/>
+		</Transition>
+	</Action>
+	<Action Name="WALK">
+		<Animation Name="WALK"/>
+		<Transition ActionName="JUMP">
+			<Condition Variable="IsJumping" Operator="Equal" Value="true"/>
+		</Transition>
+		<Transition ActionName="IDLE">
+			<Condition Variable="IsWalking" Operator="Equal" Value="false"/>
+		</Transition>
+	</Action>
+	<Action Name="RUN">
+		<Animation Name="RUN"/>
+		<Transition ActionName="JUMP">
+			<Condition Variable="IsJumping" Operator="Equal" Value="true"/>
+		</Transition>
+		<Transition ActionName="WALK">
+			<Condition Variable="IsRunning" Operator="Equal" Value="false"/>
+		</Transition>
+		<Transition ActionName="IDLE">
+			<Condition Variable="IsRunning" Operator="Equal" Value="false"/>
+			<Condition Variable="IsWalking" Operator="Equal" Value="false"/>
+		</Transition>
+	</Action>
+	<Action Name="JUMP">
+		<Animation Name="JUMP"/>
+		<Transition ActionName="WALK">
+			<Condition Variable="IsOnGround"/>
+			<Condition Variable="IsWalking" Operator="Equal" RHS="false"/>
+		</Transition>
+		<Transition ActionName="RUN">
+			<Condition Variable="IsOnGround"/>
+			<Condition Variable="IsRunning" Operator="Equal" RHS="false"/>
+		</Transition>
+		<Transition ActionName="IDLE">
+			<Condition Variable="IsOnGround"/>
+		</Transition>
+	</Action>
+</ActionChart>

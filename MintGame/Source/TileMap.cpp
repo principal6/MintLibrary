@@ -49,7 +49,7 @@ namespace mint
 			return true;
 		}
 
-		Int2 TileSet::getTileCoordinates(uint32 tileIndex) const
+		Int2 TileSet::GetTileCoordinates(uint32 tileIndex) const
 		{
 			int32 y = tileIndex / _columnCount;
 			int32 x = tileIndex % _columnCount;
@@ -111,8 +111,8 @@ namespace mint
 			const uint32 mapWidth = GetWidth();
 			const uint32 mapHeight = tiles.Size() / mapWidth;
 			const TileSet& tileSet = GetTileSet();
-			const float tileWidth = static_cast<float>(tileSet.getTileWidth());
-			const float tileHeight = static_cast<float>(tileSet.getTileHeight());
+			const float tileWidth = static_cast<float>(tileSet.GetTileWidth());
+			const float tileHeight = static_cast<float>(tileSet.GetTileHeight());
 			const float tileHalfWidth = tileWidth * 0.5f;
 			const float tileHalfHeight = tileHeight * 0.5f;
 			const float yOffset = static_cast<float>(mapHeight) * tileHeight;
@@ -126,15 +126,15 @@ namespace mint
 						continue;
 					}
 
-					const Int2 tileCoordinates = tileSet.getTileCoordinates(tileID - 1);
-					float tileU0 = static_cast<float>(tileCoordinates._x) * tileSet.getTileWidth();
-					float tileV0 = static_cast<float>(tileCoordinates._y) * tileSet.getTileHeight();
-					float tileU1 = tileU0 + tileSet.getTileWidth();
-					float tileV1 = tileV0 + tileSet.getTileHeight();
-					tileU0 /= tileSet.getImageWidth();
-					tileU1 /= tileSet.getImageWidth();
-					tileV0 /= tileSet.getImageHeight();
-					tileV1 /= tileSet.getImageHeight();
+					const Int2 tileCoordinates = tileSet.GetTileCoordinates(tileID - 1);
+					float tileU0 = static_cast<float>(tileCoordinates._x) * tileSet.GetTileWidth();
+					float tileV0 = static_cast<float>(tileCoordinates._y) * tileSet.GetTileHeight();
+					float tileU1 = tileU0 + tileSet.GetTileWidth();
+					float tileV1 = tileV0 + tileSet.GetTileHeight();
+					tileU0 /= tileSet.GetImageWidth();
+					tileU1 /= tileSet.GetImageWidth();
+					tileV0 /= tileSet.GetImageHeight();
+					tileV1 /= tileSet.GetImageHeight();
 
 					imageRenderer.DrawImage(Float2(tileHalfWidth + tileWidth * x, -tileHalfHeight + yOffset + -tileHeight * y), Float2(tileWidth, tileHeight)
 						, Float2(tileU0, tileV0), Float2(tileU1, tileV1));

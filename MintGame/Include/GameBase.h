@@ -10,6 +10,7 @@
 #include <MintContainer/Include/String.h>
 #include <MintRenderingBase/Include/GraphicObject.h>
 #include <MintRenderingBase/Include/SpriteAnimation.h>
+#include <MintPlatform/Include/XML.h>
 
 
 namespace mint
@@ -54,10 +55,100 @@ namespace mint
 			Rendering::GraphicObjectID _graphicObjectID;
 		};
 
+		class Value abstract
+		{
+		public:
+			enum class Type
+			{
+				Bool,
+				Real
+			};
+			Value() = default;
+			virtual ~Value() = default;
+			virtual Type GetType() const = 0;
+		};
+
+		template<typename ValueType, Value::Type kType>
+		class TypedValue : public Value
+		{
+		public:
+			virtual Type GetType() const override { return kType; }
+			ValueType _value{};
+		};
+		using BoolValue = TypedValue<bool, Value::Type::Bool>;
+		using RealValue = TypedValue<double, Value::Type::Real>;
+
+		class Variable
+		{
+		public:
+			StringA _name;
+			OwnPtr<Value> _value;
+		};
+
+		class Action
+		{
+		public:
+			enum class Operator
+			{
+				Equal,
+				NotEqual,
+				Less,
+				LessEqual,
+				Greater,
+				GreaterEqual,
+				COUNT
+			};
+
+			class Condition
+			{
+			public:
+				bool Evaluate() const;
+				SharedPtr<Variable> _variable;
+				Operator _operator;
+				SharedPtr<Value> _value;
+			};
+
+			class Transition
+			{
+			public:
+				Vector<Condition> _conditions;
+				StringA _actionName;
+			};
+
+		public:
+			StringA _name;
+			StringA _animationName;
+			Vector<Transition> _transitions;
+		};
+
+		class ActionChart
+		{
+		public:
+			ActionChart();
+			bool Load(const StringA& fileName);
+
+		public:
+			uint32 GetActionIndex(const StringA& actionName) const;
+			const Action& GetCurrentAction() const;
+			SharedPtr<Variable> GetVariable(const StringA& variableName) const;
+			bool SetBoolVariable(const StringA& variableName, bool value);
+
+		private:
+			bool ParseVariable(const XML::Node* varaibleNode, SharedPtr<Variable>& outVariable);
+			bool ParseAction(const XML::Node* actionNode, Action& outAction);
+			bool ParseCondition(const XML::Node* conditionNode, Action::Condition& outCondition);
+
+		public:
+			Vector<SharedPtr<Variable>> _variables;
+			Vector<Action> _actions;
+			uint32 _currentActionIndex;
+		};
+
 		class Character2D
 		{
 		public:
 			Float2 _position;
+			Float2 _scale = Float2(1, 1);
 		};
 
 		class GameBase2D
@@ -80,8 +171,10 @@ namespace mint
 			Image LoadImageFile(const StringA& imageFileName);
 
 		public:
-			void SetCharacterImage(const Image& image, const Int2& characterSize, uint32 floorOffsetFromBottom, float scale);
+			void SetCharacterImage(const Image& image, const Int2& characterSize, uint32 floorOffsetFromBottom);
 			void SetCharacterAnimationSet(const Rendering::SpriteAnimationSet& spriteAnimationSet);
+			bool SetCharacterActionChart(const StringA& fileName);
+			ActionChart& GetCharacterActionChart();
 			Character2D& GetCharacter();
 
 		public:
@@ -106,8 +199,8 @@ namespace mint
 
 		protected:
 			Rendering::SpriteAnimationSet _characterAnimationSet;
+			ActionChart _characterActionChart;
 			Float2 _characterSize;
-			float _characterScale;
 			float _characterFloorOffsetFromBottom;
 			Character2D _character;
 

@@ -132,31 +132,44 @@ namespace mint
 			__noop;
 		}
 
-		void SpriteAnimationSet::AddAnimation(const StringW& animationName, SpriteAnimation&& animation)
+		void SpriteAnimationSet::AddAnimation(const StringA& animationName, SpriteAnimation&& animation)
 		{
 			_spriteAnimations.PushBack({ animationName, std::move(animation) });
 		}
 
-		void SpriteAnimationSet::AddAnimation(const StringW& animationName, const SpriteAnimation& animation)
+		void SpriteAnimationSet::AddAnimation(const StringA& animationName, const SpriteAnimation& animation)
 		{
 			_spriteAnimations.PushBack({ animationName, animation });
 		}
 
-		void SpriteAnimationSet::SetAnimation(const StringW& animationName)
+		void SpriteAnimationSet::SetAnimation(const StringA& animationName)
 		{
+			if (GetCurrentAnimationName() == animationName)
+			{
+				return;
+			}
+
+			uint32 animationIndex = 0;
 			const uint32 animationCount = _spriteAnimations.Size();
 			for (uint32 i = 0; i < animationCount; i++)
 			{
 				if (_spriteAnimations[i]._name == animationName)
 				{
-					_currentAnimationIndex = i;
-					return;
+					animationIndex = i;
+					break;
 				}
 			}
+
+			SetAnimationByIndex(animationIndex);
 		}
 
 		void SpriteAnimationSet::SetAnimationByIndex(uint32 animationIndex)
 		{
+			if (_currentAnimationIndex == animationIndex)
+			{
+				return;
+			}
+
 			_currentAnimationIndex = animationIndex;
 
 			if (_currentAnimationIndex >= _spriteAnimations.Size())
@@ -181,7 +194,7 @@ namespace mint
 			return _spriteAnimations[_currentAnimationIndex]._spriteAnimation;
 		}
 
-		const StringW& SpriteAnimationSet::GetCurrentAnimationName() const
+		const StringA& SpriteAnimationSet::GetCurrentAnimationName() const
 		{
 			MINT_ASSERT(_spriteAnimations.IsEmpty() == false, "No animation was added!");
 			return _spriteAnimations[_currentAnimationIndex]._name;

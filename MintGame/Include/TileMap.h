@@ -30,12 +30,12 @@ namespace mint
 
 		public:
 			bool Load(const StringA& tileSetFileName);
-			const StringA& getImageFileName() const { return _imageFileName; }
-			uint32 getTileWidth() const { return _tileWidth; }
-			uint32 getTileHeight() const { return _tileHeight; }
-			uint32 getImageWidth() const { return _imageWidth; }
-			uint32 getImageHeight() const { return _imageHeight; }
-			Int2 getTileCoordinates(uint32 tileIndex) const;
+			const StringA& GetImageFileName() const { return _imageFileName; }
+			uint32 GetTileWidth() const { return _tileWidth; }
+			uint32 GetTileHeight() const { return _tileHeight; }
+			uint32 GetImageWidth() const { return _imageWidth; }
+			uint32 GetImageHeight() const { return _imageHeight; }
+			Int2 GetTileCoordinates(uint32 tileIndex) const;
 
 		private:
 			StringA _tileSetFileName;

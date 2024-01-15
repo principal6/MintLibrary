@@ -10,6 +10,7 @@
 #include <MintRenderingBase/Source/RenderingBaseCommon.cpp>
 #include <MintRenderingBase/Source/ShapeRendererContext.cpp>
 #include <MintRenderingBase/Source/ShapeGenerator.cpp>
+#include <MintRenderingBase/Source/SpriteAnimation.cpp>
 #include <MintRenderingBase/Source/CppHlsl/Interpreter.cpp>
 #include <MintRenderingBase/Source/CppHlsl/Lexer.cpp>
 #include <MintRenderingBase/Source/CppHlsl/Parser.cpp>

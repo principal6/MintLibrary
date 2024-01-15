@@ -63,7 +63,7 @@ namespace mint
 		{
 			struct NamedSpriteAnimation
 			{
-				StringW _name;
+				StringA _name;
 				SpriteAnimation _spriteAnimation;
 			};
 
@@ -72,16 +72,16 @@ namespace mint
 			~SpriteAnimationSet() = default;
 
 		public:
-			void AddAnimation(const StringW& animationName, SpriteAnimation&& animation);
-			void AddAnimation(const StringW& animationName, const SpriteAnimation& animation);
-			void SetAnimation(const StringW& animationName);
+			void AddAnimation(const StringA& animationName, SpriteAnimation&& animation);
+			void AddAnimation(const StringA& animationName, const SpriteAnimation& animation);
+			void SetAnimation(const StringA& animationName);
 			void SetAnimationByIndex(uint32 animationIndex);
 			void SetAnimationNextInOrder();
 			void Update(float deltaTime);
 
 		public:
 			const SpriteAnimation& GetCurrentAnimation() const;
-			const StringW& GetCurrentAnimationName() const;
+			const StringA& GetCurrentAnimationName() const;
 
 		private:
 			NamedSpriteAnimation& GetCurrentNamedSpriteAnimation();

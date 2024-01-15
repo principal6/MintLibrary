@@ -402,6 +402,10 @@ namespace mint
 				rasterizerDescriptor.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
 				rasterizerDescriptor.CullMode = D3D11_CULL_MODE::D3D11_CULL_FRONT;
 				_device->CreateRasterizerState(&rasterizerDescriptor, _rasterizerStateSolidCullFront.ReleaseAndGetAddressOf());
+				
+				rasterizerDescriptor.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
+				rasterizerDescriptor.CullMode = D3D11_CULL_MODE::D3D11_CULL_NONE;
+				_device->CreateRasterizerState(&rasterizerDescriptor, _rasterizerStateSolidCullNone.ReleaseAndGetAddressOf());
 
 				rasterizerDescriptor.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
 				rasterizerDescriptor.CullMode = D3D11_CULL_MODE::D3D11_CULL_BACK;
@@ -748,6 +752,11 @@ namespace mint
 		void GraphicDevice::SetSolidCullFrontRasterizer() noexcept
 		{
 			_stateManager.SetRSRasterizerState(_rasterizerStateSolidCullFront.Get());
+		}
+
+		void GraphicDevice::SetSolidCullNoneRasterizer() noexcept
+		{
+			_stateManager.SetRSRasterizerState(_rasterizerStateSolidCullNone.Get());
 		}
 
 		const Rect& GraphicDevice::GetFullScreenClipRect() const noexcept
