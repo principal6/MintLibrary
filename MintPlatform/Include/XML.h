@@ -54,7 +54,7 @@ namespace mint
 		enum class NodeType
 		{
 			Meta,
-			Expaned,
+			Expanded,
 			OpenClose
 		};
 

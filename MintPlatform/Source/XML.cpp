@@ -61,7 +61,10 @@ namespace mint
 
 				const uint32 nodeID = parentNodeID;
 				XML::Node& node = _xml._nodes[nodeID];
-				ParseString(_xml._textPool, node._textAt, node._textLength);
+				if (node._childNodeIDs.IsEmpty())
+				{
+					ParseString(_xml._textPool, node._textAt, node._textLength);
+				}
 
 				// Sklp '</{NAME}>'
 				_at += node._nameLength + 3;
@@ -71,7 +74,7 @@ namespace mint
 			else
 			{
 				// Opening node
-				node._nodeType = XML::NodeType::Expaned;
+				node._nodeType = XML::NodeType::Expanded;
 
 				// Sklp '<'
 				++_at;
@@ -82,7 +85,7 @@ namespace mint
 			node._parentID = parentNodeID;
 			while (_at < _length)
 			{
-				if (IsWhiteSpace(_text[_at]))
+				if (IsWhiteSpace(_text[_at]) == true || _text[_at] == '>')
 				{
 					ParseString(_xml._namePool, node._nameAt, node._nameLength);
 					break;
@@ -157,7 +160,7 @@ namespace mint
 
 		void ParseString(Vector<char>& pool, uint32& outNameAt, uint32& outNameLength)
 		{
-			MINT_ASSERT(IsWhiteSpace(_text[_at]) == true || _text[_at] == '=' || _text[_at] == '\"' || _text[_at] == '<', "!!!");
+			MINT_ASSERT(IsWhiteSpace(_text[_at]) == true || _text[_at] == '=' || _text[_at] == '\"' || _text[_at] == '<' || _text[_at] == '>', "!!!");
 
 			while (IsWhiteSpace(_text[_atPrev]))
 			{
@@ -296,7 +299,7 @@ namespace mint
 	XML::Node::Node()
 		: _xml{ nullptr }
 		, _ID{ 0 }
-		, _nodeType{ NodeType::Expaned }
+		, _nodeType{ NodeType::Expanded }
 		, _parentID{ 0 }
 		, _nameAt{ 0 }
 		, _nameLength{ 0 }
