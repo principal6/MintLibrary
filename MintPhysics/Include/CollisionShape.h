@@ -12,6 +12,7 @@
 namespace mint
 {
 	class ByteColor;
+	struct Transform2D;
 
 	namespace Rendering
 	{
@@ -122,6 +123,8 @@ namespace mint
 
 		public:
 			ConvexCollisionShape2D(const Float2& center, const Vector<Float2>& vertices);
+			ConvexCollisionShape2D(const CollisionShape2D& rhs, const Transform2D& transform2D);
+			ConvexCollisionShape2D(const ConvexCollisionShape2D& rhs, const Transform2D& transform2D);
 
 		public:
 			virtual void DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Float2& offset = Float2::kZero) const override final;

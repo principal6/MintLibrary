@@ -2,6 +2,7 @@
 #include <MintContainer/Include/Vector.hpp>
 #include <MintMath/Include/Float2x2.h>
 #include <MintMath/Include/Geometry.h>
+#include <MintMath/Include/Transform.h>
 #include <MintRenderingBase/Include/ShapeRendererContext.h>
 
 
@@ -135,6 +136,26 @@ namespace mint
 			, _vertices{ vertices }
 		{
 			__noop;
+		}
+
+		ConvexCollisionShape2D::ConvexCollisionShape2D(const CollisionShape2D& rhs, const Transform2D& transform2D)
+		{
+			*this = MakeFromShape2D(rhs);
+
+			for (Float2& vertex : _vertices)
+			{
+				vertex = transform2D * vertex;
+			}
+		}
+
+		ConvexCollisionShape2D::ConvexCollisionShape2D(const ConvexCollisionShape2D& rhs, const Transform2D& transform2D)
+			: CollisionShape2D(rhs._center)
+			, _vertices{ rhs._vertices }
+		{
+			for (Float2& vertex : _vertices)
+			{
+				vertex = transform2D * vertex;
+			}
 		}
 
 		ConvexCollisionShape2D::ConvexCollisionShape2D()
