@@ -196,8 +196,11 @@ namespace mint
 				{
 				case InputKeyboardEventType::KeyPressed:
 				{
-					_keyboardState._keyStates[keyIndex] = KeyState::Pressed;
-					_keyboardState._pressedKeyCode = keyboardData._keyCode;
+					if (_keyboardState._keyStates[keyIndex] != KeyState::Down)
+					{
+						_keyboardState._keyStates[keyIndex] = KeyState::Pressed;
+						_keyboardState._pressedKeyCode = keyboardData._keyCode;
+					}
 					break;
 				}
 				case InputKeyboardEventType::KeyReleased:
