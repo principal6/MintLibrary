@@ -174,6 +174,7 @@ namespace mint
 			void SetCharacterImage(const Image& image, const Int2& characterSize, uint32 floorOffsetFromBottom);
 			void SetCharacterAnimationSet(const Rendering::SpriteAnimationSet& spriteAnimationSet);
 			bool SetCharacterActionChart(const StringA& fileName);
+			const Rendering::SpriteAnimationSet& GetCharacterAnimationSet() const;
 			ActionChart& GetCharacterActionChart();
 			Character2D& GetCharacter();
 

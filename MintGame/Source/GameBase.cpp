@@ -459,6 +459,11 @@ namespace mint
 			return _characterActionChart.Load(fileName);
 		}
 
+		const Rendering::SpriteAnimationSet& GameBase2D::GetCharacterAnimationSet() const
+		{
+			return _characterAnimationSet;
+		}
+
 		ActionChart& GameBase2D::GetCharacterActionChart()
 		{
 			return _characterActionChart;
