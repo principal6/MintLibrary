@@ -42,20 +42,25 @@ namespace mint
 			UpdateProjectionMatrix();
 		}
 
-		void CameraObject::SetPerspectiveCameraScreenRatio(const float screenRatio)
-		{
-			_usePerspectiveProjection = true;
-
-			_screenRatio = screenRatio;
-
-			UpdateProjectionMatrix();
-		}
-
 		void CameraObject::SetOrthographic2DCamera(const Float2& screenSize)
 		{
 			_usePerspectiveProjection = false;
 
 			_screenSize = screenSize;
+
+			UpdateProjectionMatrix();
+		}
+
+		void CameraObject::UpdateScreenSize(const Float2& screenSize)
+		{
+			if (_usePerspectiveProjection)
+			{
+				_screenRatio = (screenSize._x / screenSize._y);
+			}
+			else
+			{
+				_screenSize = screenSize;
+			}
 
 			UpdateProjectionMatrix();
 		}

@@ -150,7 +150,6 @@ namespace mint
 
 		MINT_INLINE void ObjectPool::UpdateScreenSize(const Float2& screenSize)
 		{
-			const float screenRatio = (screenSize._x / screenSize._y);
 			const uint32 objectCount = _objects.Size();
 			for (uint32 objectIndex = 0; objectIndex < objectCount; ++objectIndex)
 			{
@@ -158,7 +157,7 @@ namespace mint
 				if (object->IsTypeOf(ObjectType::CameraObject) == true)
 				{
 					CameraObject* const cameraObject = static_cast<CameraObject*>(object.Get());
-					cameraObject->SetPerspectiveCameraScreenRatio(screenRatio);
+					cameraObject->UpdateScreenSize(screenSize);
 				}
 			}
 		}

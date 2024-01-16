@@ -87,8 +87,8 @@ namespace mint
 
 		public:
 			void SetPerspectiveCamera(const float fov, const float nearZ, const float farZ, const float screenRatio);
-			void SetPerspectiveCameraScreenRatio(const float screenRatio);
 			void SetOrthographic2DCamera(const Float2& screenSize);
+			void UpdateScreenSize(const Float2& screenSize);
 
 		public:
 			void SteerDefault(const InputContext& inputContext, const bool is3DMode);
