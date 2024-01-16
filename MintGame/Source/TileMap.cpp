@@ -4,7 +4,7 @@
 #include <MintMath/Include/Float2.h>
 #include <MintRendering/Include/ImageRenderer.h>
 #include <MintPlatform/Include/XML.h>
-#include <MintPhysics/Include/Intersection.hpp>
+#include <MintPhysics/Include/CollisionShape.h>
 
 
 namespace mint

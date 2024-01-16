@@ -27,6 +27,9 @@
     <ClInclude Include="Include\TestPhysics.h">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="Include\CollisionShape.h">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\TimeStepCalculator.cpp">
@@ -39,6 +42,9 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\TestPhysics.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\CollisionShape.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>

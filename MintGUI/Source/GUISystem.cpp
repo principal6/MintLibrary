@@ -5,6 +5,7 @@
 #include <MintRenderingBase/Include/GraphicDevice.h>
 #include <MintRenderingBase/Include/ShapeRendererContext.h>
 #include <MintPlatform/Include/InputContext.h>
+#include <MintPhysics/Include/CollisionShape.h>
 #include <MintPhysics/Include/Intersection.hpp>
 
 
