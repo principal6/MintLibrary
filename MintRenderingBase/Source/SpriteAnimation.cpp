@@ -25,30 +25,23 @@ namespace mint
 			__noop;
 		}
 
-		SpriteAnimation::SpriteAnimation(const Float2& textureSize, float timePerFrame, const Float2& offsetInTexture, const Float2& sizeInTexture, uint32 rowIndex, uint32 rowCount, uint32 column, bool flipsHorz)
+		SpriteAnimation::SpriteAnimation(const Float2& textureSize, float timePerFrame, const Float2& offsetInTexture, const Float2& sizeInTexture, uint32 rowIndex, uint32 rowCount, uint32 column)
 			: SpriteAnimation(textureSize, timePerFrame)
 		{
-			AddFrames(offsetInTexture, sizeInTexture, rowIndex, rowCount, column, flipsHorz);
+			AddFrames(offsetInTexture, sizeInTexture, rowIndex, rowCount, column);
 		}
 
-		void SpriteAnimation::AddFrames(const Float2& offsetInTexture, const Float2& sizeInTexture, uint32 rowIndex, uint32 rowCount, uint32 column, bool flipsHorz)
+		void SpriteAnimation::AddFrames(const Float2& offsetInTexture, const Float2& sizeInTexture, uint32 rowIndex, uint32 rowCount, uint32 column)
 		{
 			for (uint32 row = rowIndex; row < rowIndex + rowCount; ++row)
 			{
-				AddFrame(offsetInTexture, sizeInTexture, row, column, flipsHorz);
+				AddFrame(offsetInTexture, sizeInTexture, row, column);
 			}
 		}
 
-		void SpriteAnimation::AddFrame(const Float2& offsetInTexture, const Float2& sizeInTexture, uint32 row, uint32 column, bool flipsHorz)
+		void SpriteAnimation::AddFrame(const Float2& offsetInTexture, const Float2& sizeInTexture, uint32 row, uint32 column)
 		{
-			if (flipsHorz)
-			{
-				AddFrame(offsetInTexture + Float2(sizeInTexture._x * (row + 1), sizeInTexture._y * column), Float2(-sizeInTexture._x, sizeInTexture._y));
-			}
-			else
-			{
-				AddFrame(offsetInTexture + Float2(sizeInTexture._x * row, sizeInTexture._y * column), sizeInTexture);
-			}
+			AddFrame(offsetInTexture + Float2(sizeInTexture._x * row, sizeInTexture._y * column), sizeInTexture);
 		}
 
 		void SpriteAnimation::AddFrame(const Float2& positionInTexrue, const Float2& sizeInTexture)
