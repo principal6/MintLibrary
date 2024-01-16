@@ -42,9 +42,11 @@ namespace mint
 		public:
 			Float2 GetCurrentFrameUV0() const;
 			Float2 GetCurrentFrameUV1() const;
+			float GetElapsedTime() const { return _elapsedTime; }
+			float GetTotalTime() const { return _totalTime; }
+			uint32 GetCurrentFrameIndex() const;
 
 		private:
-			uint32 GetCurrentFrameIndex() const;
 			Float2 GetFrameUV0(uint32 frameIndex) const;
 			Float2 GetFrameUV1(uint32 frameIndex) const;
 
