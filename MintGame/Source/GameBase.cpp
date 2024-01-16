@@ -397,6 +397,13 @@ namespace mint
 		void GameBase2D::InitializeMainCharacterObject()
 		{
 			_mainCharacterObject = _objectPool->CreateObject();
+
+			{
+				Collision2DComponent* collision2DComponent = _objectPool->CreateCollision2DComponent();
+				const float radius = 32.0f;
+				collision2DComponent->SetCollisionShape2D(MakeShared<Physics::CircleCollisionShape2D>(Physics::CircleCollisionShape2D(Float2(0.0f, radius * 0.5f), 32.0f)));
+				_mainCharacterObject->AttachComponent(collision2DComponent);
+			}
 		}
 
 		void GameBase2D::InitializeMainCameraOject()
@@ -429,6 +436,13 @@ namespace mint
 			const Float2 characterDrawPosition = _mainCharacterObject->GetObjectTransform()._translation.XY() + Float2(0.0f, scaledCharacterSize._y * 0.5f - scaledFloorOffset);
 			_characterRenderer->DrawImage(characterDrawPosition, scaledCharacterSize, characterCurrentAnimation.GetCurrentFrameUV0(), characterCurrentAnimation.GetCurrentFrameUV1());
 			_characterRenderer->Render();
+
+			const Collision2DComponent* const mainCharacterCollision2DComponent = static_cast<Collision2DComponent*>(_mainCharacterObject->GetComponent(ObjectComponentType::Collision2DComponent));
+			if (mainCharacterCollision2DComponent != nullptr)
+			{
+				mainCharacterCollision2DComponent->GetCollisionShape2D()->DebugDrawShape(shapeRendererContext, ByteColor(0, 0, 255), _mainCharacterObject->GetObjectTransform()._translation.XY());
+				shapeRendererContext.Render();
+			}
 
 			_graphicDevice->SetViewProjectionMatrix(Float4x4::kIdentity, _graphicDevice->GetScreenSpace2DProjectionMatrix());
 		}
@@ -465,6 +479,12 @@ namespace mint
 		bool GameBase2D::SetCharacterActionChart(const StringA& fileName)
 		{
 			return _characterActionChart.Load(fileName);
+		}
+
+		void GameBase2D::SetCharacterCollisionRadius(float radius)
+		{
+			Collision2DComponent* const mainCharacterCollision2DComponent = static_cast<Collision2DComponent*>(_mainCharacterObject->GetComponent(ObjectComponentType::Collision2DComponent));
+			mainCharacterCollision2DComponent->SetCollisionShape2D(MakeShared<Physics::CircleCollisionShape2D>(Physics::CircleCollisionShape2D(Float2(0.0f, _characterFloorOffsetFromBottom + radius * 0.5f), radius)));
 		}
 
 		const Rendering::SpriteAnimationSet& GameBase2D::GetCharacterAnimationSet() const

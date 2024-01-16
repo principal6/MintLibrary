@@ -11,6 +11,7 @@
 #include <MintRenderingBase/Include/GraphicObject.h>
 #include <MintRenderingBase/Include/SpriteAnimation.h>
 #include <MintPlatform/Include/XML.h>
+#include <MintPhysics/Include/Intersection.h>
 
 
 namespace mint
@@ -174,6 +175,7 @@ namespace mint
 			void SetCharacterImage(const Image& image, const Int2& characterSize, uint32 floorOffsetFromBottom);
 			void SetCharacterAnimationSet(const Rendering::SpriteAnimationSet& spriteAnimationSet);
 			bool SetCharacterActionChart(const StringA& fileName);
+			void SetCharacterCollisionRadius(float radius);
 			const Rendering::SpriteAnimationSet& GetCharacterAnimationSet() const;
 			ActionChart& GetCharacterActionChart();
 			Character2D& GetCharacter();
