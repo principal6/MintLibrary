@@ -4,6 +4,7 @@
 #include <MintMath/Include/Float2.h>
 #include <MintRendering/Include/ImageRenderer.h>
 #include <MintPlatform/Include/XML.h>
+#include <MintPhysics/Include/Intersection.hpp>
 
 
 namespace mint
@@ -46,6 +47,57 @@ namespace mint
 			MINT_ASSERT(_columnCount * _tileWidth == _imageWidth, "Wrong image width!");
 			const uint32 rowCount = _tileCount / _columnCount;
 			MINT_ASSERT(rowCount * _tileHeight == _imageHeight, "Wrong image height!");
+
+			const XML::Node* const firstTileNode = imageNode->GetNextSiblingNode();
+			if (firstTileNode != nullptr)
+			{
+				_tileCollisionShapes.Resize(_tileCount);
+
+				const float halfTileWidth = 0.5f * _tileWidth;
+				const float halfTileHeight = 0.5f * _tileHeight;
+				const Float2 coordsFixer(-halfTileWidth, +halfTileHeight);
+
+				for (const XML::Node* tileNode = firstTileNode; tileNode != nullptr; tileNode = tileNode->GetNextSiblingNode())
+				{
+					const uint32 id = StringUtil::StringToUint32(StringReferenceA(tileNode->GetFirstAttribute()->GetValue()));;
+					const XML::Node* const objectGroupNode = tileNode->GetFirstChildNode();
+					const XML::Node* const objectNode = objectGroupNode->GetFirstChildNode();
+					const XML::Node* const objectChildNode = objectNode->GetFirstChildNode();
+					if (objectChildNode == nullptr)
+					{
+						// bounding box
+						const float x = StringUtil::StringToFloat(StringReferenceA(objectNode->FindAttribute("x")->GetValue()));
+						const float y = StringUtil::StringToFloat(StringReferenceA(objectNode->FindAttribute("y")->GetValue()));
+						const float width = StringUtil::StringToFloat(StringReferenceA(objectNode->FindAttribute("width")->GetValue()));
+						const float height = StringUtil::StringToFloat(StringReferenceA(objectNode->FindAttribute("height")->GetValue()));
+						Vector<Float2> points;
+						points.Resize(4);
+						points[0] = Float2(x, -y) + coordsFixer;
+						points[1] = Float2(x, -y - height) + coordsFixer;
+						points[2] = Float2(x + width, -y - height) + coordsFixer;
+						points[3] = Float2(x + width, -y) + coordsFixer;
+						_tileCollisionShapes[id].Assign(MINT_NEW(Physics::ConvexCollisionShape2D, Physics::ConvexCollisionShape2D::MakeFromPoints(Float2::kZero, points)));
+					}
+					else
+					{
+						MINT_ASSERT(StringUtil::Equals(objectChildNode->GetName(), "polygon"), "Non-polygon objects are not supported!");
+						Vector<StringA> textPoints;
+						StringUtil::Tokenize(StringA(objectChildNode->GetFirstAttribute()->GetValue()), ' ', textPoints);
+						Vector<Float2> points;
+						points.Resize(textPoints.Size());
+						{
+							Vector<StringA> coords;
+							for (uint32 i = 0; i < textPoints.Size(); ++i)
+							{
+								StringUtil::Tokenize(textPoints[i], ',', coords);
+								points[i]._x = StringUtil::StringToFloat(coords[0]) - halfTileWidth;
+								points[i]._y = -(StringUtil::StringToFloat(coords[1]) - halfTileHeight);
+							}
+						}
+						_tileCollisionShapes[id].Assign(MINT_NEW(Physics::ConvexCollisionShape2D, Physics::ConvexCollisionShape2D::MakeFromPoints(Float2::kZero, points)));
+					}
+				}
+			}
 			return true;
 		}
 
@@ -58,6 +110,7 @@ namespace mint
 
 		TileMap::TileMap()
 			: _width{ 0 }
+			, _height{ 0 }
 			, _tileWidth{ 0 }
 			, _tileHeight{ 0 }
 		{
@@ -120,13 +173,14 @@ namespace mint
 			{
 				for (uint32 y = 0; y < mapHeight; ++y)
 				{
-					const uint32 tileID = tiles[y * mapWidth + x];
-					if (tileID == 0)
+					const uint32 tileNumber = tiles[y * mapWidth + x];
+					if (tileNumber == 0)
 					{
 						continue;
 					}
 
-					const Int2 tileCoordinates = tileSet.GetTileCoordinates(tileID - 1);
+					const uint32 tileID = tileNumber - 1;
+					const Int2 tileCoordinates = tileSet.GetTileCoordinates(tileID);
 					float tileU0 = static_cast<float>(tileCoordinates._x) * tileSet.GetTileWidth();
 					float tileV0 = static_cast<float>(tileCoordinates._y) * tileSet.GetTileHeight();
 					float tileU1 = tileU0 + tileSet.GetTileWidth();
@@ -138,6 +192,34 @@ namespace mint
 
 					imageRenderer.DrawImage(Float2(tileHalfWidth + tileWidth * x, -tileHalfHeight + yOffset + -tileHeight * y), Float2(tileWidth, tileHeight)
 						, Float2(tileU0, tileV0), Float2(tileU1, tileV1));
+				}
+			}
+		}
+
+		void TileMap::DrawCollisions(Rendering::ShapeRendererContext& shapeRendererContext) const
+		{
+			const Vector<uint32>& tiles = GetTiles();
+			const uint32 mapWidth = GetWidth();
+			const uint32 mapHeight = tiles.Size() / mapWidth;
+			const TileSet& tileSet = GetTileSet();
+			const float tileWidth = static_cast<float>(tileSet.GetTileWidth());
+			const float tileHeight = static_cast<float>(tileSet.GetTileHeight());
+			const float tileHalfWidth = tileWidth * 0.5f;
+			const float tileHalfHeight = tileHeight * 0.5f;
+			const float yOffset = static_cast<float>(mapHeight) * tileHeight;
+			for (uint32 x = 0; x < mapWidth; ++x)
+			{
+				for (uint32 y = 0; y < mapHeight; ++y)
+				{
+					const uint32 tileNumber = tiles[y * mapWidth + x];
+					if (tileNumber == 0)
+					{
+						continue;
+					}
+
+					const uint32 tileID = tileNumber - 1;
+					const Float2 position = Float2(tileHalfWidth + tileWidth * x, -tileHalfHeight + yOffset + -tileHeight * y);
+					tileSet.GetTileCollisionShapes()[tileID]->DebugDrawShape(shapeRendererContext, ByteColor(255, 0, 0), position);
 				}
 			}
 		}

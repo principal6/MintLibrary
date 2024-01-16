@@ -5,6 +5,7 @@
 #define _MINT_GAME_TILE_MAP_H_
 
 
+#include <MintContainer/Include/OwnPtr.h>
 #include <MintContainer/Include/Vector.h>
 #include <MintContainer/Include/StringUtil.h>
 #include <MintMath/Include/Int2.h>
@@ -15,6 +16,12 @@ namespace mint
 	namespace Rendering
 	{
 		class ImageRenderer;
+		class ShapeRendererContext;
+	}
+
+	namespace Physics
+	{
+		class ConvexCollisionShape2D;
 	}
 }
 
@@ -36,6 +43,7 @@ namespace mint
 			uint32 GetImageWidth() const { return _imageWidth; }
 			uint32 GetImageHeight() const { return _imageHeight; }
 			Int2 GetTileCoordinates(uint32 tileIndex) const;
+			const Vector<OwnPtr<Physics::ConvexCollisionShape2D>>& GetTileCollisionShapes() const { return _tileCollisionShapes; }
 
 		private:
 			StringA _tileSetFileName;
@@ -46,6 +54,7 @@ namespace mint
 			StringA _imageFileName;
 			uint32 _imageWidth;
 			uint32 _imageHeight;
+			Vector<OwnPtr<Physics::ConvexCollisionShape2D>> _tileCollisionShapes;
 		};
 
 		class TileMap
@@ -63,6 +72,7 @@ namespace mint
 		public:
 			bool Load(const StringA& tileMapFileName);
 			void Draw(ImageRenderer& imageRenderer) const;
+			void DrawCollisions(Rendering::ShapeRendererContext& shapeRendererContext) const;
 
 		public:
 			const TileSet& GetTileSet() const { return _tileSet; }

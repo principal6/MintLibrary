@@ -408,12 +408,20 @@ namespace mint
 
 		void GameBase2D::Render()
 		{
+			if (_window->IsResized())
+			{
+				_objectPool->UpdateScreenSize(Float2(_window->GetSize()));
+			}
+
 			_graphicDevice->SetViewProjectionMatrix(_mainCameraObject->GetViewMatrix(), _mainCameraObject->GetProjectionMatrix());
 
 			_tileMap.Draw(*_mapRenderer);
+			Rendering::ShapeRendererContext& shapeRendererContext = _graphicDevice->GetShapeRendererContext();
 			_mapRenderer->Render();
 
-			Rendering::ShapeRendererContext& shapeRendererContext = _graphicDevice->GetShapeRendererContext();
+			_tileMap.DrawCollisions(shapeRendererContext);
+			shapeRendererContext.Render();
+
 			const Rendering::SpriteAnimation& characterCurrentAnimation = _characterAnimationSet.GetCurrentAnimation();
 
 			const Float2 scaledCharacterSize = _characterSize * _character._scale;
