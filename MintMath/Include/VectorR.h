@@ -66,6 +66,9 @@ namespace mint
 
 		template <int32 N, typename T>
 		void SetDivVec(T(&vec)[N], const float scalar) noexcept;
+
+		template <int32 N, typename T>
+		void SetDivVec(T(&lhs)[N], const T(&rhs)[N]) noexcept;
 	}
 
 

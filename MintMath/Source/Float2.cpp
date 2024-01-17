@@ -72,6 +72,13 @@ namespace mint
 		Math::SetMulVec(result._c, rhs._c);
 		return result;
 	}
+	
+	Float2 Float2::operator/(const Float2& rhs) const noexcept
+	{
+		Float2 result = *this;
+		Math::SetDivVec(result._c, rhs._c);
+		return result;
+	}
 
 	Float2 Float2::operator*(const float scalar) const noexcept
 	{

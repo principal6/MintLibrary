@@ -59,6 +59,7 @@ namespace mint
 		Float2 operator+(const Float2& rhs) const noexcept;
 		Float2 operator-(const Float2& rhs) const noexcept;
 		Float2 operator*(const Float2& rhs) const noexcept;
+		Float2 operator/(const Float2& rhs) const noexcept;
 		Float2 operator*(const float scalar) const noexcept;
 		Float2 operator/(const float scalar) const noexcept;
 
