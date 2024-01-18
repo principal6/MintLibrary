@@ -118,6 +118,15 @@ namespace mint
 			}
 			Value& operator*() noexcept
 			{
+				return GetValue();
+			}
+			Key& GetKey() noexcept
+			{
+				Bucket<Key, Value>& bucket = _hashMap._bucketArray[_bucketIndex];
+				return bucket._key;
+			}			
+			Value& GetValue() noexcept
+			{
 				Bucket<Key, Value>& bucket = _hashMap._bucketArray[_bucketIndex];
 				return bucket._value;
 			}

@@ -430,8 +430,8 @@ namespace mint
 	template<typename Key, typename Value>
 	MINT_INLINE HashMap<Key, Value>::Iterator HashMap<Key, Value>::begin() noexcept
 	{
-		int32 firstBucketIndex = 0;
 		const int32 bucketArraySize = static_cast<int32>(_bucketArray.Size());
+		int32 firstBucketIndex = bucketArraySize;
 		for (int32 bucketIndex = 0; bucketIndex < bucketArraySize; ++bucketIndex)
 		{
 			if (_bucketArray[bucketIndex]._isUsed == true)
