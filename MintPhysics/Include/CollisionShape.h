@@ -83,8 +83,10 @@ namespace mint
 		public:
 			AABBCollisionShape2D(const Float2& center, const Float2& halfSize);
 			AABBCollisionShape2D(const CollisionShape2D& collisionShape2D);
+			AABBCollisionShape2D(const AABBCollisionShape2D& aabbCollisionShape2D, const Transform2D& transform2D);
 
 		public:
+			void Set(const AABBCollisionShape2D& aabbCollisionShape2D, const Transform2D& transform2D);
 			virtual void DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Float2& offset = Float2::kZero) const override final;
 			virtual Float2 ComputeSupportPoint(const Float2& direction) const override final;
 			virtual CollisionShapeType GetCollisionShapeType() const override final { return CollisionShapeType::AABB; }

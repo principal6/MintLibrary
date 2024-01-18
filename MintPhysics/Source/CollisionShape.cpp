@@ -69,7 +69,7 @@ namespace mint
 		}
 
 		AABBCollisionShape2D::AABBCollisionShape2D(const CollisionShape2D& collisionShape2D)
-			: CollisionShape2D()
+			: CollisionShape2D(collisionShape2D)
 		{
 			if (collisionShape2D.GetCollisionShapeType() == CollisionShapeType::Convex)
 			{
@@ -92,6 +92,33 @@ namespace mint
 			{
 				MINT_ASSERT(false, "Not implemented yet.");
 			}
+		}
+
+		AABBCollisionShape2D::AABBCollisionShape2D(const AABBCollisionShape2D& aabbCollisionShape2D, const Transform2D& transform2D)
+			: CollisionShape2D(aabbCollisionShape2D)
+		{
+			Set(aabbCollisionShape2D, transform2D);
+		}
+
+		void AABBCollisionShape2D::Set(const AABBCollisionShape2D& aabbCollisionShape2D, const Transform2D& transform2D)
+		{
+			_center = transform2D._translation;
+			const Float2x2 rotationMatrix = Float2x2::RotationMatrix(transform2D._rotation);
+			const Float2& x = rotationMatrix._row[0];
+			const Float2& y = rotationMatrix._row[1];
+			const Float2 rotatedHalfSizeX = x * aabbCollisionShape2D._halfSize._x;
+			const Float2 rotatedHalfSizeY = y * aabbCollisionShape2D._halfSize._y;
+			const Float2 p0 = -rotatedHalfSizeX + +rotatedHalfSizeY;
+			const Float2 p1 = -rotatedHalfSizeX + -rotatedHalfSizeY;
+			const Float2 p2 = +rotatedHalfSizeX + -rotatedHalfSizeY;
+			const Float2 p3 = +rotatedHalfSizeX + +rotatedHalfSizeY;
+			const float minX = Min(Min(Min(p0._x, p1._x), p2._x), p3._x);
+			const float minY = Min(Min(Min(p0._y, p1._y), p2._y), p3._y);
+			const float maxX = Max(Max(Max(p0._x, p1._x), p2._x), p3._x);
+			const float maxY = Max(Max(Max(p0._y, p1._y), p2._y), p3._y);
+			_halfSize._x = maxX - minX;
+			_halfSize._y = maxY - minY;
+			_halfSize *= 0.5f;
 		}
 
 		void AABBCollisionShape2D::DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Float2& offset) const
@@ -133,26 +160,26 @@ namespace mint
 		{
 			shapeRendererContext.SetColor(color);
 
-			const Float2& halfX = GetHalfLengthedAxisX();
-			const Float2& halfY = GetHalfLengthedAxisY();
+			const Float2& halfSizeX = GetHalfLengthedAxisX();
+			const Float2& halfSizeY = GetHalfLengthedAxisY();
 			const Float2 common = offset + _center;
-			shapeRendererContext.DrawLine(common + halfX + halfY, common - halfX + halfY, 1.0f);
-			shapeRendererContext.DrawLine(common - halfX + halfY, common - halfX - halfY, 1.0f);
-			shapeRendererContext.DrawLine(common - halfX - halfY, common + halfX - halfY, 1.0f);
-			shapeRendererContext.DrawLine(common + halfX - halfY, common + halfX + halfY, 1.0f);
+			shapeRendererContext.DrawLine(common + halfSizeX + halfSizeY, common - halfSizeX + halfSizeY, 1.0f);
+			shapeRendererContext.DrawLine(common - halfSizeX + halfSizeY, common - halfSizeX - halfSizeY, 1.0f);
+			shapeRendererContext.DrawLine(common - halfSizeX - halfSizeY, common + halfSizeX - halfSizeY, 1.0f);
+			shapeRendererContext.DrawLine(common + halfSizeX - halfSizeY, common + halfSizeX + halfSizeY, 1.0f);
 		}
 
 		Float2 BoxCollisionShape2D::ComputeSupportPoint(const Float2& direction) const
 		{
-			const Float2& halfX = GetHalfLengthedAxisX();
-			const Float2& halfY = GetHalfLengthedAxisY();
-			if (direction.Dot(halfY) >= 0.0f)
+			const Float2& halfSizeX = GetHalfLengthedAxisX();
+			const Float2& halfSizeY = GetHalfLengthedAxisY();
+			if (direction.Dot(halfSizeY) >= 0.0f)
 			{
-				return _center + halfY + (direction.Dot(halfX) >= 0.0f ? halfX : -halfX);
+				return _center + halfSizeY + (direction.Dot(halfSizeX) >= 0.0f ? halfSizeX : -halfSizeX);
 			}
 			else
 			{
-				return _center - halfY + (direction.Dot(halfX) >= 0.0f ? halfX : -halfX);
+				return _center - halfSizeY + (direction.Dot(halfSizeX) >= 0.0f ? halfSizeX : -halfSizeX);
 			}
 		}
 #pragma endregion
