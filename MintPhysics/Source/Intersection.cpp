@@ -127,6 +127,19 @@ namespace mint
 			return false;
 		}
 
+		bool Intersect2D_AABB_AABB(const AABBCollisionShape2D& shapeA, const AABBCollisionShape2D& shapeB)
+		{
+			Float2 minA = shapeA._center - shapeA._halfSize;
+			Float2 maxA = shapeA._center + shapeA._halfSize;
+			Float2 minB = shapeB._center - shapeB._halfSize;
+			Float2 maxB = shapeB._center + shapeB._halfSize;
+			if (maxA._x < minB._x || maxB._x < minA._x || maxA._y < minB._y || maxB._y < minA._y)
+			{
+				return false;
+			}
+			return true;
+		}
+
 		bool Intersect2D_GJK(const CollisionShape2D& shapeA, const CollisionShape2D& shapeB, uint32* const outLoopCount)
 		{
 			uint32 loopCount = 0;
@@ -148,7 +161,7 @@ namespace mint
 				++loopCount;
 
 				minkowskiDifferenceVertex = GJK2D_getMinkowskiDifferenceVertex(shapeA, shapeB, direction);
-				
+
 				const float signedDistance = minkowskiDifferenceVertex.Dot(direction);
 				if (signedDistance < 0.0f)
 				{

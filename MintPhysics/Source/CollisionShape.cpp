@@ -68,22 +68,30 @@ namespace mint
 			__noop;
 		}
 
-		AABBCollisionShape2D::AABBCollisionShape2D(const ConvexCollisionShape2D& convexCollisionShape2D)
+		AABBCollisionShape2D::AABBCollisionShape2D(const CollisionShape2D& collisionShape2D)
 			: CollisionShape2D()
 		{
-			const Vector<Float2>& vertices = convexCollisionShape2D.GetVertices();
-			Float2 vertexMin = +Float2::kMax;
-			Float2 vertexMax = -Float2::kMax;
-			for (const Float2& vertex : vertices)
+			if (collisionShape2D.GetCollisionShapeType() == CollisionShapeType::Convex)
 			{
-				vertexMin = Float2::Min(vertexMin, vertex);
-				vertexMax = Float2::Max(vertexMax, vertex);
-			}
+				const ConvexCollisionShape2D& convexCollisionShape2D = static_cast<const ConvexCollisionShape2D&>(collisionShape2D);
+				const Vector<Float2>& vertices = convexCollisionShape2D.GetVertices();
+				Float2 vertexMin = +Float2::kMax;
+				Float2 vertexMax = -Float2::kMax;
+				for (const Float2& vertex : vertices)
+				{
+					vertexMin = Float2::Min(vertexMin, vertex);
+					vertexMax = Float2::Max(vertexMax, vertex);
+				}
 
-			const Float2 center = (vertexMax + vertexMin) * 0.5f;
-			const Float2 size = vertexMax - vertexMin;
-			_center = center;
-			_halfSize = size * 0.5f;
+				const Float2 center = (vertexMax + vertexMin) * 0.5f;
+				const Float2 size = vertexMax - vertexMin;
+				_center = center;
+				_halfSize = size * 0.5f;
+			}
+			else
+			{
+				MINT_ASSERT(false, "Not implemented yet.");
+			}
 		}
 
 		void AABBCollisionShape2D::DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Float2& offset) const

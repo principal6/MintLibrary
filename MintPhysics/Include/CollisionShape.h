@@ -82,7 +82,7 @@ namespace mint
 		{
 		public:
 			AABBCollisionShape2D(const Float2& center, const Float2& halfSize);
-			AABBCollisionShape2D(const ConvexCollisionShape2D& convexCollisionShape2D);
+			AABBCollisionShape2D(const CollisionShape2D& collisionShape2D);
 
 		public:
 			virtual void DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Float2& offset = Float2::kZero) const override final;
