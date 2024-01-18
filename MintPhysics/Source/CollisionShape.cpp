@@ -119,39 +119,40 @@ namespace mint
 #pragma region CollisionShape2D - BoxCollisionShape2D
 		BoxCollisionShape2D::BoxCollisionShape2D(const Float2& center, const Float2& halfSize, const float angle)
 			: CollisionShape2D(center)
-			, _halfSize{ halfSize }
-			, _angle{ angle }
+			, _halfLengthedAxisX{ Float2::kZero }
+			, _halfLengthedAxisY{ Float2::kZero }
 		{
-			__noop;
+			const Float2x2 rotationMatrix = Float2x2::RotationMatrix(angle);
+			const Float2& x = rotationMatrix._row[0];
+			const Float2& y = rotationMatrix._row[1];
+			_halfLengthedAxisX = x * halfSize._x;
+			_halfLengthedAxisY = y * halfSize._y;
 		}
 
 		void BoxCollisionShape2D::DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Float2& offset) const
 		{
-			const Float2x2 rotationMatrix = Float2x2::RotationMatrix(_angle);
-			const Float2& i = rotationMatrix._row[0];
-			const Float2& j = rotationMatrix._row[1];
-
 			shapeRendererContext.SetColor(color);
 
+			const Float2& halfX = GetHalfLengthedAxisX();
+			const Float2& halfY = GetHalfLengthedAxisY();
 			const Float2 common = offset + _center;
-			shapeRendererContext.DrawLine(common + i * _halfSize._x + j * _halfSize._y, common - i * _halfSize._x + j * _halfSize._y, 1.0f);
-			shapeRendererContext.DrawLine(common - i * _halfSize._x + j * _halfSize._y, common - i * _halfSize._x - j * _halfSize._y, 1.0f);
-			shapeRendererContext.DrawLine(common - i * _halfSize._x - j * _halfSize._y, common + i * _halfSize._x - j * _halfSize._y, 1.0f);
-			shapeRendererContext.DrawLine(common + i * _halfSize._x - j * _halfSize._y, common + i * _halfSize._x + j * _halfSize._y, 1.0f);
+			shapeRendererContext.DrawLine(common + halfX + halfY, common - halfX + halfY, 1.0f);
+			shapeRendererContext.DrawLine(common - halfX + halfY, common - halfX - halfY, 1.0f);
+			shapeRendererContext.DrawLine(common - halfX - halfY, common + halfX - halfY, 1.0f);
+			shapeRendererContext.DrawLine(common + halfX - halfY, common + halfX + halfY, 1.0f);
 		}
 
 		Float2 BoxCollisionShape2D::ComputeSupportPoint(const Float2& direction) const
 		{
-			const Float2x2 rotationMatrix = Float2x2::RotationMatrix(_angle);
-			const Float2& i = rotationMatrix._row[0];
-			const Float2& j = rotationMatrix._row[1];
-			if (direction.Dot(j) >= 0.0f)
+			const Float2& halfX = GetHalfLengthedAxisX();
+			const Float2& halfY = GetHalfLengthedAxisY();
+			if (direction.Dot(halfY) >= 0.0f)
 			{
-				return _center + j * _halfSize._y + (direction.Dot(i) >= 0.0f ? i * _halfSize._x : -i * _halfSize._x);
+				return _center + halfY + (direction.Dot(halfX) >= 0.0f ? halfX : -halfX);
 			}
 			else
 			{
-				return _center - j * _halfSize._y + (direction.Dot(i) >= 0.0f ? i * _halfSize._x : -i * _halfSize._x);
+				return _center - halfY + (direction.Dot(halfX) >= 0.0f ? halfX : -halfX);
 			}
 		}
 #pragma endregion
@@ -199,16 +200,15 @@ namespace mint
 
 		ConvexCollisionShape2D ConvexCollisionShape2D::MakeFromBoxShape2D(const BoxCollisionShape2D& shape)
 		{
-			const Float2x2 rotationMatrix = Float2x2::RotationMatrix(shape._angle);
-			const Float2& i = rotationMatrix._row[0];
-			const Float2& j = rotationMatrix._row[1];
+			const Float2& halfX = shape.GetHalfLengthedAxisX();
+			const Float2& halfY = shape.GetHalfLengthedAxisY();
 
 			ConvexCollisionShape2D result;
 			result._center = shape._center;
-			result._vertices.PushBack(+i * shape._halfSize._x + +j * shape._halfSize._y);
-			result._vertices.PushBack(-i * shape._halfSize._x + +j * shape._halfSize._y);
-			result._vertices.PushBack(-i * shape._halfSize._x + -j * shape._halfSize._y);
-			result._vertices.PushBack(+i * shape._halfSize._x + -j * shape._halfSize._y);
+			result._vertices.PushBack(+halfX + +halfY);
+			result._vertices.PushBack(-halfX + +halfY);
+			result._vertices.PushBack(-halfX + -halfY);
+			result._vertices.PushBack(+halfX + -halfY);
 			return result;
 		}
 

@@ -102,10 +102,12 @@ namespace mint
 			virtual void DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Float2& offset = Float2::kZero) const override final;
 			virtual Float2 ComputeSupportPoint(const Float2& direction) const override final;
 			virtual CollisionShapeType GetCollisionShapeType() const override final { return CollisionShapeType::Box; }
+			const Float2& GetHalfLengthedAxisX() const { return _halfLengthedAxisX; }
+			const Float2& GetHalfLengthedAxisY() const { return _halfLengthedAxisY; }
 
-		public:
-			Float2 _halfSize;
-			float _angle;
+		private:
+			Float2 _halfLengthedAxisX;
+			Float2 _halfLengthedAxisY;
 		};
 
 		// CCW winding
