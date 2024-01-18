@@ -25,8 +25,8 @@ namespace mint
 {
 	namespace Physics
 	{
+		class ConvexCollisionShape2D;
 		using mint::Rendering::ShapeRendererContext;
-
 
 		enum class CollisionShapeType
 		{
@@ -82,6 +82,7 @@ namespace mint
 		{
 		public:
 			AABBCollisionShape2D(const Float2& center, const Float2& halfSize);
+			AABBCollisionShape2D(const ConvexCollisionShape2D& convexCollisionShape2D);
 
 		public:
 			virtual void DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Float2& offset = Float2::kZero) const override final;
@@ -130,6 +131,7 @@ namespace mint
 			virtual void DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Float2& offset = Float2::kZero) const override final;
 			virtual Float2 ComputeSupportPoint(const Float2& direction) const override final;
 			virtual CollisionShapeType GetCollisionShapeType() const override final { return CollisionShapeType::Convex; }
+			const Vector<Float2>& GetVertices() const { return _vertices; }
 
 		private:
 			ConvexCollisionShape2D();
