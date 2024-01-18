@@ -9,7 +9,7 @@ namespace mint
 	{
 		DeltaTimer::DeltaTimer()
 			: _deltaTimeS{ 0.0f }
-			, _prevTimePointUs{ 0 }
+			, _prevTimePointUs{ Profiler::GetCurrentTimeUs() }
 		{
 			__noop;
 		}
