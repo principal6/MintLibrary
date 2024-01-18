@@ -88,6 +88,12 @@ namespace mint
 				_center = center;
 				_halfSize = size * 0.5f;
 			}
+			else if (collisionShape2D.GetCollisionShapeType() == CollisionShapeType::AABB)
+			{
+				const AABBCollisionShape2D& aabbCollisionShape2D = static_cast<const AABBCollisionShape2D&>(collisionShape2D);
+				_center = aabbCollisionShape2D._center;
+				_halfSize = aabbCollisionShape2D._halfSize;
+			}
 			else
 			{
 				MINT_ASSERT(false, "Not implemented yet.");
