@@ -17,10 +17,10 @@ namespace mint
 			__noop;
 		}
 
-		void PointCollisionShape2D::DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Float2& offset) const
+		void PointCollisionShape2D::DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Transform2D& transform2D) const
 		{
 			shapeRendererContext.SetColor(color);
-			shapeRendererContext.SetPosition(Float4(_center + offset));
+			shapeRendererContext.SetPosition(Float4(_center + transform2D._translation));
 			shapeRendererContext.DrawCircle(2.0f);
 		}
 
@@ -38,7 +38,7 @@ namespace mint
 			MINT_ASSERT(radius > 0.0f, "radius(%f) 가 0 이하입니다. 의도한 게 맞나요?", radius);
 		}
 
-		void CircleCollisionShape2D::DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Float2& offset) const
+		void CircleCollisionShape2D::DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Transform2D& transform2D) const
 		{
 			shapeRendererContext.SetColor(color);
 
@@ -50,7 +50,7 @@ namespace mint
 				const float thetaB = kThetaUnit * sideIndex;
 				const Float2 pointA = Float2(::cos(thetaA) * _radius, -::sin(thetaA) * _radius);
 				const Float2 pointB = Float2(::cos(thetaB) * _radius, -::sin(thetaB) * _radius);
-				shapeRendererContext.DrawLine(offset + _center + pointA, offset + _center + pointB, 1.0f);
+				shapeRendererContext.DrawLine(transform2D._translation + _center + pointA, transform2D._translation + _center + pointB, 1.0f);
 			}
 		}
 
@@ -71,33 +71,45 @@ namespace mint
 		AABBCollisionShape2D::AABBCollisionShape2D(const CollisionShape2D& collisionShape2D)
 			: CollisionShape2D(collisionShape2D)
 		{
-			if (collisionShape2D.GetCollisionShapeType() == CollisionShapeType::Convex)
-			{
-				const ConvexCollisionShape2D& convexCollisionShape2D = static_cast<const ConvexCollisionShape2D&>(collisionShape2D);
-				const Vector<Float2>& vertices = convexCollisionShape2D.GetVertices();
-				Float2 vertexMin = +Float2::kMax;
-				Float2 vertexMax = -Float2::kMax;
-				for (const Float2& vertex : vertices)
-				{
-					vertexMin = Float2::Min(vertexMin, vertex);
-					vertexMax = Float2::Max(vertexMax, vertex);
-				}
-
-				const Float2 center = (vertexMax + vertexMin) * 0.5f;
-				const Float2 size = vertexMax - vertexMin;
-				_center = center;
-				_halfSize = size * 0.5f;
-			}
-			else if (collisionShape2D.GetCollisionShapeType() == CollisionShapeType::AABB)
+			if (collisionShape2D.GetCollisionShapeType() == CollisionShapeType::AABB)
 			{
 				const AABBCollisionShape2D& aabbCollisionShape2D = static_cast<const AABBCollisionShape2D&>(collisionShape2D);
 				_center = aabbCollisionShape2D._center;
 				_halfSize = aabbCollisionShape2D._halfSize;
 			}
+			else if (collisionShape2D.GetCollisionShapeType() == CollisionShapeType::Box)
+			{
+				const BoxCollisionShape2D& boxCollisionShape2D = static_cast<const BoxCollisionShape2D&>(collisionShape2D);
+				_center = boxCollisionShape2D._center;
+				const Float2 max = _center + boxCollisionShape2D.GetHalfLengthedAxisX() + boxCollisionShape2D.GetHalfLengthedAxisY();
+				const Float2 min = _center - boxCollisionShape2D.GetHalfLengthedAxisX() - boxCollisionShape2D.GetHalfLengthedAxisY();
+
+				const Float2 center = (max + min) * 0.5f;
+				const Float2 size = max - min;
+				_center = center;
+				_halfSize = size * 0.5f;
+			}
+			else if (collisionShape2D.GetCollisionShapeType() == CollisionShapeType::Convex)
+			{
+				const ConvexCollisionShape2D& convexCollisionShape2D = static_cast<const ConvexCollisionShape2D&>(collisionShape2D);
+				const Vector<Float2>& vertices = convexCollisionShape2D.GetVertices();
+				Float2 min = +Float2::kMax;
+				Float2 max = -Float2::kMax;
+				for (const Float2& vertex : vertices)
+				{
+					min = Float2::Min(min, vertex);
+					max = Float2::Max(max, vertex);
+				}
+
+				const Float2 center = (max + min) * 0.5f;
+				const Float2 size = max - min;
+				_center = center;
+				_halfSize = size * 0.5f;
+			}
 			else
 			{
 				MINT_ASSERT(false, "Not implemented yet.");
-			}
+				}
 		}
 
 		AABBCollisionShape2D::AABBCollisionShape2D(const AABBCollisionShape2D& aabbCollisionShape2D, const Transform2D& transform2D)
@@ -127,16 +139,16 @@ namespace mint
 			_halfSize *= 0.5f;
 		}
 
-		void AABBCollisionShape2D::DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Float2& offset) const
+		void AABBCollisionShape2D::DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Transform2D& transform2D) const
 		{
 			shapeRendererContext.SetColor(color);
 
 			const Float2 halfSizeX = Float2(_halfSize._x, 0.0f);
 			const Float2 halfSizeY = Float2(0.0f, _halfSize._y);
-			shapeRendererContext.DrawLine(offset + _center - halfSizeX + halfSizeY, offset + _center + halfSizeX + halfSizeY, 1.0f);
-			shapeRendererContext.DrawLine(offset + _center - halfSizeX - halfSizeY, offset + _center + halfSizeX - halfSizeY, 1.0f);
-			shapeRendererContext.DrawLine(offset + _center + halfSizeX + halfSizeY, offset + _center + halfSizeX - halfSizeY, 1.0f);
-			shapeRendererContext.DrawLine(offset + _center - halfSizeX + halfSizeY, offset + _center - halfSizeX - halfSizeY, 1.0f);
+			shapeRendererContext.DrawLine(transform2D._translation + _center - halfSizeX + halfSizeY, transform2D._translation + _center + halfSizeX + halfSizeY, 1.0f);
+			shapeRendererContext.DrawLine(transform2D._translation + _center - halfSizeX - halfSizeY, transform2D._translation + _center + halfSizeX - halfSizeY, 1.0f);
+			shapeRendererContext.DrawLine(transform2D._translation + _center + halfSizeX + halfSizeY, transform2D._translation + _center + halfSizeX - halfSizeY, 1.0f);
+			shapeRendererContext.DrawLine(transform2D._translation + _center - halfSizeX + halfSizeY, transform2D._translation + _center - halfSizeX - halfSizeY, 1.0f);
 		}
 
 		Float2 AABBCollisionShape2D::ComputeSupportPoint(const Float2& direction) const
@@ -162,17 +174,18 @@ namespace mint
 			_halfLengthedAxisY = y * halfSize._y;
 		}
 
-		void BoxCollisionShape2D::DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Float2& offset) const
+		void BoxCollisionShape2D::DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Transform2D& transform2D) const
 		{
 			shapeRendererContext.SetColor(color);
 
-			const Float2& halfSizeX = GetHalfLengthedAxisX();
-			const Float2& halfSizeY = GetHalfLengthedAxisY();
-			const Float2 common = offset + _center;
-			shapeRendererContext.DrawLine(common + halfSizeX + halfSizeY, common - halfSizeX + halfSizeY, 1.0f);
-			shapeRendererContext.DrawLine(common - halfSizeX + halfSizeY, common - halfSizeX - halfSizeY, 1.0f);
-			shapeRendererContext.DrawLine(common - halfSizeX - halfSizeY, common + halfSizeX - halfSizeY, 1.0f);
-			shapeRendererContext.DrawLine(common + halfSizeX - halfSizeY, common + halfSizeX + halfSizeY, 1.0f);
+			const Float2x2 rotationMatrix = Float2x2::RotationMatrix(transform2D._rotation);
+			const Float2 halfSizeX = rotationMatrix * GetHalfLengthedAxisX();
+			const Float2 halfSizeY = rotationMatrix * GetHalfLengthedAxisY();
+			const Float2 center = transform2D._translation + _center;
+			shapeRendererContext.DrawLine(center + halfSizeX + halfSizeY, center - halfSizeX + halfSizeY, 1.0f);
+			shapeRendererContext.DrawLine(center - halfSizeX + halfSizeY, center - halfSizeX - halfSizeY, 1.0f);
+			shapeRendererContext.DrawLine(center - halfSizeX - halfSizeY, center + halfSizeX - halfSizeY, 1.0f);
+			shapeRendererContext.DrawLine(center + halfSizeX - halfSizeY, center + halfSizeX + halfSizeY, 1.0f);
 		}
 
 		Float2 BoxCollisionShape2D::ComputeSupportPoint(const Float2& direction) const
@@ -332,16 +345,18 @@ namespace mint
 			return shape;
 		}
 
-		void ConvexCollisionShape2D::DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Float2& offset) const
+		void ConvexCollisionShape2D::DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Transform2D& transform2D) const
 		{
 			shapeRendererContext.SetColor(color);
 
+			const Float2x2 rotationMatrix = Float2x2::RotationMatrix(transform2D._rotation);
 			const uint32 vertexCount = _vertices.Size();
+			const Float2 center = _center + transform2D._translation;
 			for (uint32 vertexIndex = 1; vertexIndex < vertexCount; ++vertexIndex)
 			{
-				shapeRendererContext.DrawLine(_center + offset + _vertices[vertexIndex - 1], _center + offset + _vertices[vertexIndex], 1.0f);
+				shapeRendererContext.DrawLine(center + rotationMatrix * _vertices[vertexIndex - 1], center + rotationMatrix * _vertices[vertexIndex], 1.0f);
 			}
-			shapeRendererContext.DrawLine(_center + offset + _vertices[vertexCount - 1], _center + offset + _vertices[0], 1.0f);
+			shapeRendererContext.DrawLine(center + rotationMatrix * _vertices[vertexCount - 1], center + rotationMatrix * _vertices[0], 1.0f);
 		}
 
 		Float2 ConvexCollisionShape2D::ComputeSupportPoint(const Float2& direction) const

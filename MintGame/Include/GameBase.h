@@ -12,6 +12,7 @@
 #include <MintRenderingBase/Include/SpriteAnimation.h>
 #include <MintPlatform/Include/XML.h>
 #include <MintPhysics/Include/Intersection.h>
+#include <MintPhysics/Include/PhysicsWorld.h>
 
 
 namespace mint
@@ -160,7 +161,7 @@ namespace mint
 
 		public:
 			bool IsRunning();
-			void Update();
+			void Update(float deltaTime);
 
 		public:
 			void BeginRendering();
@@ -221,6 +222,7 @@ namespace mint
 			OwnPtr<ObjectPool> _objectPool;
 			SharedPtr<Object> _mainCharacterObject;
 			SharedPtr<CameraObject> _mainCameraObject;
+			Physics::World _physicsWorld;
 		};
 	}
 }

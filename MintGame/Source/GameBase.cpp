@@ -320,6 +320,25 @@ namespace mint
 
 			_objectPool.Assign(MINT_NEW(ObjectPool));
 
+			// TEST
+			{
+				Physics::Body2DCreationDesc testBodyCreationDesc;
+				testBodyCreationDesc._collisionShape2D = MakeShared<Physics::BoxCollisionShape2D>(Physics::BoxCollisionShape2D(Float2::kZero, Float2(50, 25), 0.0f));
+				testBodyCreationDesc._isDynamic = true;
+				testBodyCreationDesc._transform2D._translation._x = 100.0f;
+				testBodyCreationDesc._transform2D._translation._y = 256.0f;
+				Physics::BodyID bodyIDA = _physicsWorld.CreateBody(testBodyCreationDesc);
+				_physicsWorld.AccessBody(bodyIDA)._linearVelocity._y = -10.0f;
+				_physicsWorld.AccessBody(bodyIDA)._angularVelocity = 0.5f;
+
+				Physics::Body2DCreationDesc testBodyCreationDesc1;
+				testBodyCreationDesc1._collisionShape2D = MakeShared<Physics::BoxCollisionShape2D>(Physics::BoxCollisionShape2D(Float2::kZero, Float2(200, 50), 0.0f));
+				testBodyCreationDesc1._isDynamic = false;
+				testBodyCreationDesc1._transform2D._translation._x = 100.0f;
+				testBodyCreationDesc1._transform2D._translation._y = 100.0f;
+				Physics::BodyID bodyIDB = _physicsWorld.CreateBody(testBodyCreationDesc1);
+			}
+
 			InitializeMainCharacterObject();
 			InitializeMainCameraOject();
 		}
@@ -334,7 +353,7 @@ namespace mint
 			return _window->IsRunning();
 		}
 
-		void GameBase2D::Update()
+		void GameBase2D::Update(float deltaTime)
 		{
 			MINT_ASSERT(_characterActionChart._actions.IsEmpty() == false, "Character Action must not be empty!");
 
@@ -368,6 +387,8 @@ namespace mint
 			const StringA& currentAnimationName = _characterActionChart.GetCurrentAction()._animationName;
 			_characterAnimationSet.SetAnimation(currentAnimationName);
 			_characterAnimationSet.Update(DeltaTimer::GetInstance().GetDeltaTimeSec());
+
+			_physicsWorld.Step(deltaTime);
 		}
 
 		void GameBase2D::BeginRendering()
@@ -443,6 +464,8 @@ namespace mint
 				mainCharacterCollision2DComponent->GetCollisionShape2D()->DebugDrawShape(shapeRendererContext, ByteColor(0, 0, 255), _mainCharacterObject->GetObjectTransform()._translation.XY());
 				shapeRendererContext.Render();
 			}
+
+			_physicsWorld.RenderDebug(shapeRendererContext);
 
 			_graphicDevice->SetViewProjectionMatrix(Float4x4::kIdentity, _graphicDevice->GetScreenSpace2DProjectionMatrix());
 		}
