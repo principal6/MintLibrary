@@ -109,7 +109,7 @@ namespace mint
 			else
 			{
 				MINT_ASSERT(false, "Not implemented yet.");
-				}
+			}
 		}
 
 		AABBCollisionShape2D::AABBCollisionShape2D(const AABBCollisionShape2D& aabbCollisionShape2D, const Transform2D& transform2D)
