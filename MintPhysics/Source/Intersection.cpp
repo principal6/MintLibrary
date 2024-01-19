@@ -35,12 +35,12 @@ namespace mint
 			++_validPointCount;
 		}
 
-		MINT_INLINE Float2 GJK2D_getMinkowskiDifferenceVertex(const CollisionShape2D& shapeA, const CollisionShape2D& shapeB, const Float2& direction)
+		MINT_INLINE Float2 GJK2D_GetMinkowskiDifferenceVertex(const CollisionShape2D& shapeA, const CollisionShape2D& shapeB, const Float2& direction)
 		{
 			return shapeA.ComputeSupportPoint(direction) - shapeB.ComputeSupportPoint(-direction);
 		}
 
-		MINT_INLINE Float2 GJK2D_computePerpABToAC(const Float2& ab, const Float2& ac)
+		MINT_INLINE Float2 GJK2D_ComputePerpABToAC(const Float2& ab, const Float2& ac)
 		{
 			const Float2 normalizedAB = Float2::Normalize(ab);
 			const Float2 result = ac - normalizedAB * normalizedAB.Dot(ac);
@@ -56,7 +56,7 @@ namespace mint
 			return result;
 		}
 		// returns true whenever it's sure that there's an intersection
-		bool GJK2D_processSimplex(GJK2DSimplex& inoutSimplex, Float2& outDirection)
+		bool GJK2D_ProcessSimplex(GJK2DSimplex& inoutSimplex, Float2& outDirection)
 		{
 			const Float2& a = inoutSimplex.GetPointA();
 			const Float2& b = inoutSimplex.GetPointB();
@@ -69,7 +69,7 @@ namespace mint
 				if (ab_dot_ao > 0.0f)
 				{
 					// origin is enclosed by the segment region AB
-					outDirection = GJK2D_computePerpABToAC(ab, ao);
+					outDirection = GJK2D_ComputePerpABToAC(ab, ao);
 					if (outDirection == Float2::kZero)
 					{
 						// EDGE_CASE: ab and ao are colineaer!
@@ -91,13 +91,13 @@ namespace mint
 				const Float2& c = inoutSimplex.GetPointC();
 				const Float2 ac = c - a;
 				const float ac_dot_ao = ac.Dot(ao);
-				const Float2 perpDirection_ab_to_ao = GJK2D_computePerpABToAC(ab, ao);
-				const Float2 perpDirection_ab_to_ac = GJK2D_computePerpABToAC(ab, ac);
+				const Float2 perpDirection_ab_to_ao = GJK2D_ComputePerpABToAC(ab, ao);
+				const Float2 perpDirection_ab_to_ac = GJK2D_ComputePerpABToAC(ab, ac);
 				if (perpDirection_ab_to_ao.Dot(perpDirection_ab_to_ac) > 0.0f)
 				{
 					// origin is inside the 3-simplex segment region AB
-					const Float2 perpDirection_ac_to_ao = GJK2D_computePerpABToAC(ac, ao);
-					const Float2 perpDirection_ac_to_ab = GJK2D_computePerpABToAC(ac, ab);
+					const Float2 perpDirection_ac_to_ao = GJK2D_ComputePerpABToAC(ac, ao);
+					const Float2 perpDirection_ac_to_ab = GJK2D_ComputePerpABToAC(ac, ab);
 					if (perpDirection_ac_to_ao.Dot(perpDirection_ac_to_ab) > 0.0f)
 					{
 						// origin is inside the 3-simplex segment region AC
@@ -144,7 +144,7 @@ namespace mint
 		{
 			uint32 loopCount = 0;
 			Float2 direction = Float2(1, 0);
-			Float2 minkowskiDifferenceVertex = GJK2D_getMinkowskiDifferenceVertex(shapeA, shapeB, direction);
+			Float2 minkowskiDifferenceVertex = GJK2D_GetMinkowskiDifferenceVertex(shapeA, shapeB, direction);
 			if (minkowskiDifferenceVertex == Float2::kZero)
 			{
 				// EDGE_CASE: The origin is included in the Minkowski Sum, thus the two shapes intersect.
@@ -160,7 +160,7 @@ namespace mint
 			{
 				++loopCount;
 
-				minkowskiDifferenceVertex = GJK2D_getMinkowskiDifferenceVertex(shapeA, shapeB, direction);
+				minkowskiDifferenceVertex = GJK2D_GetMinkowskiDifferenceVertex(shapeA, shapeB, direction);
 
 				const float signedDistance = minkowskiDifferenceVertex.Dot(direction);
 				if (signedDistance < 0.0f)
@@ -176,7 +176,7 @@ namespace mint
 				}
 
 				simplex.AppendPoint(minkowskiDifferenceVertex);
-				if (GJK2D_processSimplex(simplex, direction))
+				if (GJK2D_ProcessSimplex(simplex, direction))
 				{
 					return Intersect2D_GJK_Retrun(true, loopCount, outLoopCount);
 				}
@@ -187,7 +187,7 @@ namespace mint
 		{
 			uint32 step = 0;
 			direction = Float2(1, 0);
-			Float2 minkowskiDifferenceVertex = GJK2D_getMinkowskiDifferenceVertex(shapeA, shapeB, direction);
+			Float2 minkowskiDifferenceVertex = GJK2D_GetMinkowskiDifferenceVertex(shapeA, shapeB, direction);
 			if (minkowskiDifferenceVertex == Float2::kZero)
 			{
 				// EDGE_CASE: The origin is included in the Minkowski Sum, thus the two shapes intersect.
@@ -206,7 +206,7 @@ namespace mint
 
 			while (true)
 			{
-				minkowskiDifferenceVertex = GJK2D_getMinkowskiDifferenceVertex(shapeA, shapeB, direction);
+				minkowskiDifferenceVertex = GJK2D_GetMinkowskiDifferenceVertex(shapeA, shapeB, direction);
 				const float signedDistance = minkowskiDifferenceVertex.Dot(direction);
 				if (signedDistance < 0.0f)
 				{
@@ -227,7 +227,7 @@ namespace mint
 				if (step >= maxStep)
 					break;
 
-				if (GJK2D_processSimplex(simplex, direction))
+				if (GJK2D_ProcessSimplex(simplex, direction))
 				{
 					return true;
 				}
