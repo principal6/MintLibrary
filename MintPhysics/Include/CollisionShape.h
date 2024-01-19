@@ -116,6 +116,7 @@ namespace mint
 		class ConvexCollisionShape2D : public CollisionShape2D
 		{
 		private:
+			static ConvexCollisionShape2D MakeFromAABBShape2D(const AABBCollisionShape2D& shape);
 			static ConvexCollisionShape2D MakeFromBoxShape2D(const BoxCollisionShape2D& shape);
 			static ConvexCollisionShape2D MakeFromCircleShape2D(const CircleCollisionShape2D& shape);
 

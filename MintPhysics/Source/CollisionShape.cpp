@@ -231,6 +231,17 @@ namespace mint
 			return shape;
 		}
 
+		ConvexCollisionShape2D ConvexCollisionShape2D::MakeFromAABBShape2D(const AABBCollisionShape2D& shape)
+		{
+			ConvexCollisionShape2D result;
+			result._center = shape._center;
+			result._vertices.PushBack(Float2(-shape._halfSize._x, +shape._halfSize._y));
+			result._vertices.PushBack(Float2(-shape._halfSize._x, -shape._halfSize._y));
+			result._vertices.PushBack(Float2(+shape._halfSize._x, -shape._halfSize._y));
+			result._vertices.PushBack(Float2(+shape._halfSize._x, +shape._halfSize._y));
+			return result;
+		}
+
 		ConvexCollisionShape2D ConvexCollisionShape2D::MakeFromBoxShape2D(const BoxCollisionShape2D& shape)
 		{
 			const Float2& halfX = shape.GetHalfLengthedAxisX();
@@ -268,6 +279,10 @@ namespace mint
 			else if (shape.GetCollisionShapeType() == CollisionShapeType::Box)
 			{
 				return MakeFromBoxShape2D(static_cast<const BoxCollisionShape2D&>(shape));
+			}
+			else if (shape.GetCollisionShapeType() == CollisionShapeType::AABB)
+			{
+				return MakeFromAABBShape2D(static_cast<const AABBCollisionShape2D&>(shape));
 			}
 			else
 			{
