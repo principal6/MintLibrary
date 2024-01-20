@@ -272,20 +272,24 @@ namespace mint
 		ConvexCollisionShape2D ConvexCollisionShape2D::MakeFromCircleShape2D(const CircleCollisionShape2D& shape)
 		{
 			ConvexCollisionShape2D result;
-			result._center = shape._center;
+			//result._center = shape._center;
 			for (uint32 i = 0; i <= 32; i++)
 			{
 				float theta = (static_cast<float>(i) / 32.0f) * Math::kTwoPi;
 				const float x = ::cos(theta) * shape._radius;
 				const float y = ::sin(theta) * shape._radius;
-				result._vertices.PushBack(Float2(x, y));
+				result._vertices.PushBack(shape._center + Float2(x, y));
 			}
 			return result;
 		}
 
 		ConvexCollisionShape2D ConvexCollisionShape2D::MakeFromShape2D(const CollisionShape2D& shape)
 		{
-			if (shape.GetCollisionShapeType() == CollisionShapeType::Circle)
+			if (shape.GetCollisionShapeType() == CollisionShapeType::Convex)
+			{
+				return static_cast<const ConvexCollisionShape2D&>(shape);
+			}
+			else if (shape.GetCollisionShapeType() == CollisionShapeType::Circle)
 			{
 				return MakeFromCircleShape2D(static_cast<const CircleCollisionShape2D&>(shape));
 			}

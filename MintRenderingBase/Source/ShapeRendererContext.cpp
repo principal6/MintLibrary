@@ -294,6 +294,51 @@ namespace mint
 			}
 		}
 
+		void ShapeRendererContext::DrawArrow(const Float2& begin, const Float2& end, const float thickness, float headLengthRatio, float headWidthRatio)
+		{
+			const Float2 difference = end - begin;
+			const float length = difference.Length();
+			if (length == 0.0f)
+			{
+				return;
+			}
+
+			const uint32 vertexOffset = _lowLevelRenderer->GetVertexCount();
+			const uint32 indexOffset = _lowLevelRenderer->GetIndexCount();
+			const uint32 transformIndex = _sbTransformData.Size();
+
+			ShapeGenerator::GenerateLine(begin, end, thickness, 8, _defaultColor, _lowLevelRenderer->Vertices(), _lowLevelRenderer->Indices(), Transform2D());
+			{
+				const float headLength = length * headLengthRatio;
+				const float headWidth = thickness * headWidthRatio;
+				if (headLength > 0.0f && headWidth > 0.0f)
+				{
+					const Float2 direction = Float2::Normalize(difference);
+					float angle = ::atan2(direction._y, direction._x);
+					angle -= Math::kPiOverTwo;
+
+					const Transform2D transform2D{ angle, begin };
+					Float2 point0{ -headWidth * 0.5f, length - headLength };
+					Float2 point1{ +headWidth * 0.5f, length - headLength };
+					Float2 point2{ 0.0f, length };
+					point0 = transform2D * point0;
+					point1 = transform2D * point1;
+					point2 = transform2D * point2;
+					ShapeGenerator::GenerateConvexShape({ point0, point1, point2 }, _defaultColor, _lowLevelRenderer->Vertices(), _lowLevelRenderer->Indices(), Transform2D());
+				}
+			}
+
+			const uint32 deltaVertexCount = _lowLevelRenderer->GetVertexCount() - vertexOffset;
+			for (uint32 i = 0; i < deltaVertexCount; i++)
+			{
+				_lowLevelRenderer->Vertices()[vertexOffset + i]._info = ComputeVertexInfo(transformIndex, 0);
+			}
+			const uint32 deltaIndexCount = _lowLevelRenderer->GetIndexCount() - indexOffset;
+			_lowLevelRenderer->PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, deltaIndexCount, _clipRect);
+
+			PushShapeTransformToBuffer(0.0f, false);
+		}
+
 		void ShapeRendererContext::DrawTriangle(const Float2& pointA, const Float2& pointB, const Float2& pointC)
 		{
 			const uint32 vertexOffset = _lowLevelRenderer->GetVertexCount();

@@ -160,7 +160,7 @@ void RunGJKTestWindow()
 				graphicDevice.SetViewProjectionMatrix(Float4x4::kIdentity, Float4x4::ProjectionMatrix2DNormal(windowSize._x, windowSize._y));
 
 				//ConvexCollisionShape2D shapeA{ Float2::kZero, { Float2(-10, 80), Float2(-10, -20), Float2(80, -10), Float2(70, 70) } };
-				ConvexCollisionShape2D shapeA = ConvexCollisionShape2D(CircleCollisionShape2D(Float2(0, 0), 64), shapeATransform2D);
+				CircleCollisionShape2D shapeA = CircleCollisionShape2D(shapeATransform2D._translation, 64);
 				ConvexCollisionShape2D shapeB{ Float2::kZero, { Float2(-10, 80), Float2(-10, -20), Float2(80, -10), Float2(70, 70) } };
 				shapeB = ConvexCollisionShape2D(shapeB, shapeBTransform2D);
 				const bool intersects = Intersect2D_GJK(shapeA, shapeB, &gjk2DInfo);
@@ -185,7 +185,9 @@ void RunGJKTestWindow()
 				shapeRendererContext.DrawLine(Float2(-800, 0), Float2(800, 0), 1.0f);
 
 				// Direction
-				shapeRendererContext.DrawLine(Float2::kZero, gjk2DInfo._direction * 100.0f, 2.0f);
+				shapeRendererContext.DrawArrow(shapeATransform2D._translation, shapeATransform2D._translation + gjk2DInfo._direction * 50.0f, 1.0f, 0.125f, 4.0f);
+				shapeRendererContext.DrawArrow(shapeBTransform2D._translation, shapeBTransform2D._translation - gjk2DInfo._direction * 50.0f, 1.0f, 0.125f, 4.0f);
+				shapeRendererContext.DrawArrow(Float2::kZero, gjk2DInfo._direction * 100.0f, 2.0f, 0.125f, 4.0f);
 
 				shapeRendererContext.Render();
 			}
@@ -194,9 +196,9 @@ void RunGJKTestWindow()
 
 				shapeRendererContext.SetTextColor(Color::kBlack);
 				StackStringW<100> buffer;
-				FormatString(buffer, L"Loop: (%d / Max %u)", gjk2DInfo._loopCount, gjk2DInfo._maxLoopCount);
+				FormatString(buffer, L"Loop: %d / Max %u (Q/W)", gjk2DInfo._loopCount, gjk2DInfo._maxLoopCount);
 				shapeRendererContext.DrawDynamicText(buffer.CString(), Float2(10, 10), FontRenderingOption());
-				FormatString(buffer, L"Selected: (%s)", (selectionMode == SelectionMode::None ? L"None" : (selectionMode == SelectionMode::ShapeA ? L"ShapeA" : L"ShapeB")));
+				FormatString(buffer, L"Selected: %s (1: None / 2: A / 3: B)", (selectionMode == SelectionMode::None ? L"None" : (selectionMode == SelectionMode::ShapeA ? L"ShapeA" : L"ShapeB")));
 				shapeRendererContext.DrawDynamicText(buffer.CString(), Float2(10, 30), FontRenderingOption());
 
 				shapeRendererContext.Render();

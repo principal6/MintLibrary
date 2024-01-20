@@ -99,6 +99,10 @@ namespace mint
 			// No rotation allowed
 			void DrawLineStrip(const Vector<Float2>& points, const float thickness);
 
+			// Independent from internal position set by SetPosition() call
+			// No rotation allowed
+			void DrawArrow(const Float2& begin, const Float2& end, const float thickness, float headLengthRatio, float headWidthRatio);
+
 			void DrawTriangle(const Float2& pointA, const Float2& pointB, const Float2& pointC);
 			void DrawRectangle(const Float2& size, const float borderThickness, const float rotationAngle);
 			void DrawCircle(const float radius);
