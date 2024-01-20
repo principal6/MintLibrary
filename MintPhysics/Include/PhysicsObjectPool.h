@@ -39,6 +39,8 @@ namespace mint
 			bool IsFull() const { return _nextSlotIndex == kInvalidIndexUint32; }
 			void GrowIfFull()
 			{
+				UpdateNextSlotIndex();
+
 				if (IsFull() == false)
 				{
 					return;
