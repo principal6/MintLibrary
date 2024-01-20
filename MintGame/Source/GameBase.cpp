@@ -324,16 +324,17 @@ namespace mint
 			{
 				Physics::Body2DCreationDesc testBodyCreationDesc;
 				testBodyCreationDesc._collisionShape2D = MakeShared<Physics::BoxCollisionShape2D>(Physics::BoxCollisionShape2D(Float2::kZero, Float2(50, 25), 0.0f));
-				testBodyCreationDesc._isDynamic = true;
+				testBodyCreationDesc._bodyMotionType = Physics::BodyMotionType::Dynamic;
 				testBodyCreationDesc._transform2D._translation._x = 100.0f;
-				testBodyCreationDesc._transform2D._translation._y = 256.0f;
+				testBodyCreationDesc._transform2D._translation._y = 200.0f;
+				testBodyCreationDesc._transform2D._rotation = 0.25f;
 				Physics::BodyID bodyIDA = _physicsWorld.CreateBody(testBodyCreationDesc);
 				_physicsWorld.AccessBody(bodyIDA)._linearVelocity._y = -10.0f;
 				_physicsWorld.AccessBody(bodyIDA)._angularVelocity = 0.5f;
 
 				Physics::Body2DCreationDesc testBodyCreationDesc1;
 				testBodyCreationDesc1._collisionShape2D = MakeShared<Physics::BoxCollisionShape2D>(Physics::BoxCollisionShape2D(Float2::kZero, Float2(200, 50), 0.0f));
-				testBodyCreationDesc1._isDynamic = false;
+				testBodyCreationDesc1._bodyMotionType = Physics::BodyMotionType::Static;
 				testBodyCreationDesc1._transform2D._translation._x = 200.0f;
 				testBodyCreationDesc1._transform2D._translation._y = 100.0f;
 				Physics::BodyID bodyIDB = _physicsWorld.CreateBody(testBodyCreationDesc1);

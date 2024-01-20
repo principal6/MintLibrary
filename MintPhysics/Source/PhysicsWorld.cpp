@@ -13,7 +13,7 @@ namespace mint
 	{
 #pragma region Body2D
 		Body2D::Body2D()
-			: _isDynamic{ false }
+			: _bodyMotionType{ BodyMotionType::Static }
 			, _angularVelocity{ 0.0f }
 			, _angularAcceleration{ 0.0f }
 		{
@@ -69,7 +69,7 @@ namespace mint
 				body._shape._shapeAABB = MakeShared<AABBCollisionShape2D>(AABBCollisionShape2D(*body._shape._collisionShape));
 				body._transform2D = body2DCreationDesc._transform2D;
 				body._bodyAABB = MakeShared<AABBCollisionShape2D>(AABBCollisionShape2D(*body._shape._shapeAABB, body._transform2D));
-				body._isDynamic = body2DCreationDesc._isDynamic;
+				body._bodyMotionType = body2DCreationDesc._bodyMotionType;
 				_bodyPool.Create(slotIndex, std::move(body));
 
 				_worldMin = Float2::Min(_worldMin, body._bodyAABB->_center - body._bodyAABB->_halfSize);
@@ -117,7 +117,14 @@ namespace mint
 
 						BodyID bodyIDA = _collisionSectors[i]._bodyIDs[indexA];
 						BodyID bodyIDB = _collisionSectors[i]._bodyIDs[indexB];
-						if (Intersect2D_AABB_AABB(*GetBody(bodyIDA)._bodyAABB, *GetBody(bodyIDB)._bodyAABB) == false)
+						const Body2D& bodyA = GetBody(bodyIDA);
+						const Body2D& bodyB = GetBody(bodyIDB);
+						if (bodyA._bodyMotionType != BodyMotionType::Dynamic && bodyB._bodyMotionType != BodyMotionType::Dynamic)
+						{
+							continue;
+						}
+
+						if (Intersect2D_AABB_AABB(*bodyA._bodyAABB, *bodyB._bodyAABB) == false)
 						{
 							continue;
 						}
@@ -140,16 +147,54 @@ namespace mint
 			}
 
 			// Narrow phase
+			_narrowPhaseCollisionInfos.Clear();
+			GJK2DInfo gjk2DInfo;
 			for (const auto& iter : _broadPhaseBodyPairs)
 			{
 				const Body2D& bodyA = GetBody(iter._bodyIDA);
 				const Body2D& bodyB = GetBody(iter._bodyIDB);
 
+				const Float2 relativeLinearVelocityAB = bodyA._linearVelocity - bodyB._linearVelocity;
+				if (relativeLinearVelocityAB == Float2::kZero)
+				{
+					continue;
+				}
+
 				Transform2D transformBInASpace = bodyB._transform2D;
 				transformBInASpace *= bodyA._transform2D.GetInverted();
-				if (Intersect2D_GJK(*bodyA._shape._collisionShape, ConvexCollisionShape2D(*bodyB._shape._collisionShape, transformBInASpace)))
+				if (Intersect2D_GJK(*bodyA._shape._collisionShape, ConvexCollisionShape2D(*bodyB._shape._collisionShape, transformBInASpace), &gjk2DInfo))
 				{
-					// TODO: COLLIDED!!!
+					const GJK2DSimplex::Point& closestPoint = gjk2DInfo._simplex.GetClosestPoint();
+					NarrowPhaseCollisionInfo narrowPhaseCollisionInfo;
+					narrowPhaseCollisionInfo._bodyIDA = iter._bodyIDA;
+					narrowPhaseCollisionInfo._bodyIDB = iter._bodyIDB;
+
+					Float2 separatingDirection = -relativeLinearVelocityAB;
+					separatingDirection.Normalize();
+
+					Float2 edgeVertex0;
+					Float2 edgeVertex1;
+					const ConvexCollisionShape2D shapeB{ *bodyB._shape._collisionShape, bodyB._transform2D };
+					shapeB.ComputeSupportEdge(separatingDirection, edgeVertex0, edgeVertex1);
+					if (edgeVertex0._x > edgeVertex1._x)
+					{
+						Float2 edgeVertexTemp = edgeVertex0;
+						edgeVertex0 = edgeVertex1;
+						edgeVertex1 = edgeVertexTemp;
+					}
+					Float2 edgeDirection = edgeVertex1 - edgeVertex0;
+					edgeDirection.Normalize();
+					narrowPhaseCollisionInfo._collisionNormal = Float2(-edgeDirection._y, edgeDirection._x);
+
+					const ConvexCollisionShape2D shapeA{ *bodyA._shape._collisionShape, bodyA._transform2D };
+					const Float2 bodyAPoint = shapeA.ComputeSupportPoint(-narrowPhaseCollisionInfo._collisionNormal);
+					narrowPhaseCollisionInfo._collisionPosition = bodyAPoint;
+
+					narrowPhaseCollisionInfo._collisionEdgeVertex0 = edgeVertex0;
+					narrowPhaseCollisionInfo._collisionEdgeVertex1 = edgeVertex1;
+					narrowPhaseCollisionInfo._signedDistance = narrowPhaseCollisionInfo._collisionNormal.Dot(narrowPhaseCollisionInfo._collisionPosition - edgeVertex0);
+
+					_narrowPhaseCollisionInfos.PushBack(narrowPhaseCollisionInfo);
 				}
 			}
 		}
@@ -158,17 +203,44 @@ namespace mint
 		{
 			_worldSizePreStepSolve = _worldSize;
 
+			// Resolve Collisions
+			for (const NarrowPhaseCollisionInfo& narrowPhaseCollisionInfo : _narrowPhaseCollisionInfos)
+			{
+				Body2D* bodyA = &AccessBody(narrowPhaseCollisionInfo._bodyIDA);
+				Body2D* bodyB = &AccessBody(narrowPhaseCollisionInfo._bodyIDB);
+				if (bodyA->_bodyMotionType == BodyMotionType::Dynamic && bodyB->_bodyMotionType == BodyMotionType::Dynamic)
+				{
+					// TODO
+					MINT_NEVER;
+				}
+				else
+				{
+					// Make sure bodyA is Dynamic!
+					if (bodyB->_bodyMotionType == BodyMotionType::Dynamic)
+					{
+						Body2D* bodyTemp = bodyA;
+						bodyA = bodyB;
+						bodyB = bodyTemp;
+					}
+
+					// TODO ...
+					if (narrowPhaseCollisionInfo._signedDistance < 0.0f)
+					{
+						bodyA->_transform2D._translation += narrowPhaseCollisionInfo._collisionNormal * -narrowPhaseCollisionInfo._signedDistance;
+					}
+				}
+			}
+
+			// Integrate
 			const uint32 collisionSectorBufferSize = _collisionSectorSideCount * _collisionSectorSideCount;
 			for (uint32 i = 0; i < collisionSectorBufferSize; ++i)
 			{
 				_collisionSectors[i]._bodyIDs.Clear();
 			}
-
 			const Float2 worldMinPreStepSolve = _worldMin;
 			const Float2 worldMaxPreStepSolve = _worldMax;
 			const Float2 worldSizePreStepSolve = (worldMaxPreStepSolve - worldMinPreStepSolve);
 			const Float2 collisionSectorSize = worldSizePreStepSolve / static_cast<float>(1 + _collisionSectorDepth);
-
 			Vector<uint32> collisionSectorIndices;
 			collisionSectorIndices.Resize(4);
 			const uint32 bodyCount = _bodyPool.GetObjects().Size();
@@ -180,16 +252,18 @@ namespace mint
 					continue;
 				}
 
-				if (body._isDynamic)
+				if (body._bodyMotionType == BodyMotionType::Dynamic)
 				{
 					// integrate acceleration
 					body._linearVelocity += body._linearAcceleration * deltaTime;
 					body._angularVelocity += body._angularAcceleration * deltaTime;
 
 					// integrate velocity
+					body._transform2DPrevStep = body._transform2D;
 					body._transform2D._translation += body._linearVelocity * deltaTime;
 					body._transform2D._rotation += body._angularVelocity * deltaTime;
 				}
+
 				body._bodyAABB->Set(*body._shape._shapeAABB, body._transform2D);
 
 				ComputeCollisionSectorIndices(*body._bodyAABB, worldMinPreStepSolve, collisionSectorSize, collisionSectorIndices);
@@ -289,6 +363,19 @@ namespace mint
 				body._bodyAABB->DebugDrawShape(shapeRendererContext, ByteColor(255, 255, 0), Transform2D());
 
 				body._shape._collisionShape->DebugDrawShape(shapeRendererContext, ByteColor(255, 0, 0), body._transform2D);
+			}
+
+			for (const NarrowPhaseCollisionInfo& narrowPhaseCollisionInfo : _narrowPhaseCollisionInfos)
+			{
+				shapeRendererContext.SetPosition(Float4(narrowPhaseCollisionInfo._collisionEdgeVertex0));
+				shapeRendererContext.DrawCircle(4.0f);
+				shapeRendererContext.SetPosition(Float4(narrowPhaseCollisionInfo._collisionEdgeVertex1));
+				shapeRendererContext.DrawCircle(4.0f);
+				shapeRendererContext.DrawLine(narrowPhaseCollisionInfo._collisionEdgeVertex0, narrowPhaseCollisionInfo._collisionEdgeVertex1, 2.0f);
+
+				shapeRendererContext.SetPosition(Float4(narrowPhaseCollisionInfo._collisionPosition));
+				shapeRendererContext.DrawCircle(4.0f);
+				shapeRendererContext.DrawLine(narrowPhaseCollisionInfo._collisionPosition, narrowPhaseCollisionInfo._collisionPosition + narrowPhaseCollisionInfo._collisionNormal * 64.0f, 2.0f);
 			}
 
 			shapeRendererContext.Render();

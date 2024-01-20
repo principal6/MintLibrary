@@ -42,6 +42,12 @@ namespace mint
 			SharedPtr<AABBCollisionShape2D> _shapeAABB;
 		};
 
+		enum class BodyMotionType
+		{
+			Static,
+			Dynamic,
+			KeyFramed,
+		};
 		class Body2D
 		{
 		public:
@@ -57,8 +63,11 @@ namespace mint
 			BodyShape2D _shape;
 			SharedPtr<AABBCollisionShape2D> _bodyAABB;
 			Transform2D _transform2D;
+			Transform2D _transform2DPrevStep;
 
-			bool _isDynamic = false;
+			BodyMotionType _bodyMotionType;
+			// TODO
+			float _mass = 1.0f;
 			Float2 _linearVelocity;
 			Float2 _linearAcceleration;
 			float _angularVelocity;
@@ -69,9 +78,7 @@ namespace mint
 		{
 			SharedPtr<CollisionShape2D> _collisionShape2D;
 			Transform2D _transform2D;
-
-			// TODO
-			bool _isDynamic = false;
+			BodyMotionType _bodyMotionType = BodyMotionType::Static;
 		};
 
 		struct CollisionSector
@@ -90,6 +97,17 @@ namespace mint
 			// A must be smaller than B
 			BodyID _bodyIDA;
 			BodyID _bodyIDB;
+		};
+
+		struct NarrowPhaseCollisionInfo
+		{
+			BodyID _bodyIDA;
+			BodyID _bodyIDB;
+			Float2 _collisionPosition;
+			Float2 _collisionNormal;
+			Float2 _collisionEdgeVertex0;
+			Float2 _collisionEdgeVertex1;
+			float _signedDistance = 0.0f;
 		};
 
 		class World
@@ -135,6 +153,7 @@ namespace mint
 			uint32 _collisionSectorSideCount = kCollisionSectorTessellationPerSide;
 			Vector<CollisionSector> _collisionSectors;
 			HashMap<BroadPhaseBodyPair::Key, BroadPhaseBodyPair> _broadPhaseBodyPairs;
+			Vector<NarrowPhaseCollisionInfo> _narrowPhaseCollisionInfos;
 		};
 	}
 }
