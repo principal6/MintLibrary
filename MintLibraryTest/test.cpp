@@ -80,8 +80,8 @@ void RunGJKTestWindow()
 		ShapeB
 	};
 	SelectionMode selectionMode{ SelectionMode::None };
-	Transform2D shapeATransform2D{ Float2(-50, 0) };
-	Transform2D shapeBTransform2D;
+	Transform2D shapeATransform2D{ Float2(128, 128) };
+	Transform2D shapeBTransform2D{ Float2(196, 128) };
 	while (window.IsRunning() == true)
 	{
 		const float deltaTime = Game::DeltaTimer::GetInstance().ComputeDeltaTimeSec();
@@ -168,9 +168,8 @@ void RunGJKTestWindow()
 				const ByteColor kShapeAColor(255, 0, 0);
 				const ByteColor kShapeBColor(64, 128, 0);
 				const ByteColor kIntersectedColor(32, 196, 32);
-				const Float2 shapeABDrawOffset(128, 128);
-				shapeA.DebugDrawShape(shapeRendererContext, (intersects ? kIntersectedColor : kShapeAColor), Transform2D(shapeABDrawOffset));
-				shapeB.DebugDrawShape(shapeRendererContext, (intersects ? kIntersectedColor : kShapeBColor), Transform2D(shapeABDrawOffset));
+				shapeA.DebugDrawShape(shapeRendererContext, (intersects ? kIntersectedColor : kShapeAColor), Transform2D());
+				shapeB.DebugDrawShape(shapeRendererContext, (intersects ? kIntersectedColor : kShapeBColor), Transform2D());
 
 				// Minkowski Difference Shape
 				const ByteColor kShapeMDColor(64, 64, 64);
