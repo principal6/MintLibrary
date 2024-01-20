@@ -16,16 +16,102 @@
 #pragma optimize("", off)
 
 
-bool Run2DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graphicDevice);
-bool Run3DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graphicDevice);
+void RunGJKTestWindow();
+bool Run2DTestWindow();
+bool Run3DTestWindow();
 
 
 int main()
 {
-	mint::Library::Initialize();
+#if defined MINT_DEBUG
+	//mint::Logger::SetOutputFileName("LOG.txt");
+	mint::TestContainers::Test();
+	mint::TestMath::Test();
+	mint::TestPhysics::Test();
+	mint::TestPlatform::Test();
+	mint::TestLanguage::Test();
+	mint::TestReflection::Test();
+	mint::TestLibrary::Test();
 
+	mint::AudioSystem audioSystem;
+	mint::AudioObject audioObject0;
+	audioSystem.LoadAudioMP3("Assets/Christmas_Jazz-SoundStreet.mp3", audioObject0);
+	audioObject0.Play();
+#endif
+
+	RunGJKTestWindow();
+	//Run2DTestWindow();
+	//Run3DTestWindow();
+	return 0;
+}
+
+
+void RunGJKTestWindow()
+{
 	using namespace mint;
 	using namespace Rendering;
+	using namespace Game;
+
+	mint::Library::Initialize();
+
+	WindowCreationDesc windowCreationDesc;
+	windowCreationDesc._position.Set(200, 100);
+	windowCreationDesc._size.Set(1024, 768);
+	windowCreationDesc._title = L"GJK Test";
+	windowCreationDesc._backgroundColor = ByteColor(224, 224, 224);
+
+	Window window;
+	if (window.Create(windowCreationDesc) == false)
+	{
+		WindowCreationError windowCreationError = window.GetWindowCreationError();
+		return;
+	}
+
+	GraphicDevice graphicDevice{ window, true };
+	graphicDevice.Initialize();
+
+	ShapeRendererContext& shapeRendererContext = graphicDevice.GetShapeRendererContext();
+	const InputContext& inputContext = InputContext::GetInstance();
+	while (window.IsRunning() == true)
+	{
+		if (inputContext.IsKeyPressed())
+		{
+			if (inputContext.IsKeyDown(KeyCode::Escape) == true)
+			{
+				return;
+			}
+		}
+
+		const Float2 windowSize{ window.GetSize() };
+		graphicDevice.SetViewProjectionMatrix(Float4x4::kIdentity, Float4x4::ProjectionMatrix2DNormal(windowSize._x, windowSize._y));
+
+		graphicDevice.BeginRendering();
+		{
+			Physics::ConvexCollisionShape2D shapeA{ Float2::kZero, { Float2(-100, 0), Float2(0, 0), Float2(0, 100) } };
+			Physics::ConvexCollisionShape2D shapeB{ Float2::kZero, { Float2(-10, 80), Float2(-10, -20), Float2(80, -10), Float2(70, 70) } };
+
+			const bool intersects = Physics::Intersect2D_GJK(shapeA, shapeB);
+
+			const ByteColor kShapeAColor(255, 0, 0);
+			const ByteColor kShapeBColor(64, 128, 0);
+			const ByteColor kIntersectedColor(32, 255, 32);
+			shapeA.DebugDrawShape(shapeRendererContext, (intersects ? kIntersectedColor : kShapeAColor), Transform2D());
+			shapeB.DebugDrawShape(shapeRendererContext, (intersects ? kIntersectedColor : kShapeBColor), Transform2D());
+
+			shapeRendererContext.Render();
+		}
+		graphicDevice.EndRendering();
+	}
+}
+
+bool Run2DTestWindow()
+{
+	using namespace mint;
+	using namespace Rendering;
+	using namespace Physics;
+	using namespace Game;
+
+	mint::Library::Initialize();
 
 	WindowCreationDesc windowCreationDesc;
 	windowCreationDesc._position.Set(200, 100);
@@ -42,36 +128,6 @@ int main()
 
 	GraphicDevice graphicDevice{ window, true };
 	graphicDevice.Initialize();
-
-#if defined MINT_DEBUG
-	//Logger::SetOutputFileName("LOG.txt");
-	TestContainers::Test();
-	TestMath::Test();
-	TestPhysics::Test();
-	TestPlatform::Test();
-	TestLanguage::Test();
-	TestReflection::Test();
-	TestLibrary::Test();
-#endif
-
-	AudioSystem audioSystem;
-	AudioObject audioObject0;
-	//audioSystem.LoadAudioWAV("Assets/Christmas_Jazz-SoundStreet.wav", audioObject0);
-	audioSystem.LoadAudioMP3("Assets/Christmas_Jazz-SoundStreet.mp3", audioObject0);
-	audioObject0.Play();
-
-	Run2DTestWindow(window, graphicDevice);
-	//Run3DTestWindow(window, graphicDevice);
-	return 0;
-}
-
-
-bool Run2DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graphicDevice)
-{
-	using namespace mint;
-	using namespace Rendering;
-	using namespace Physics;
-	using namespace Game;
 
 	ByteColorImage corgiSpriteSheet;
 	ImageLoader imageLoader;
@@ -194,12 +250,31 @@ bool Run2DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graph
 	return true;
 }
 
-bool Run3DTestWindow(mint::Window& window, mint::Rendering::GraphicDevice& graphicDevice)
+bool Run3DTestWindow()
 {
 	using namespace mint;
 	using namespace Rendering;
 	using namespace GUI;
 	using namespace Game;
+
+	mint::Library::Initialize();
+
+	WindowCreationDesc windowCreationDesc;
+	windowCreationDesc._position.Set(200, 100);
+	windowCreationDesc._size.Set(1024, 768);
+	windowCreationDesc._title = L"HI";
+	windowCreationDesc._backgroundColor = ByteColor(224, 224, 224);
+
+	Window window;
+	if (window.Create(windowCreationDesc) == false)
+	{
+		WindowCreationError windowCreationError = window.GetWindowCreationError();
+		return false;
+	}
+
+	GraphicDevice graphicDevice{ window, true };
+	graphicDevice.Initialize();
+
 
 	ObjectRenderer objectRenderer{ graphicDevice };
 	InstantRenderer instantRenderer{ graphicDevice };
