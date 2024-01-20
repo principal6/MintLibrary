@@ -151,6 +151,11 @@ namespace mint
 				// 3-simplex (triangle)
 				const GJK2DSimplex::Point& c = inoutSimplex.GetPointC();
 				const Float2 ac = c._position - a._position;
+				if (ac == Float2::kZero)
+				{
+					// EDGE_CASE: ac are colinear!
+					return true;
+				}
 				const float ac_dot_ao = ac.Dot(ao);
 				const Float2 perpDirection_ab_to_ao = GJK2D_ComputePerpABToAC(ab, ao);
 				const Float2 perpDirection_ab_to_ac = GJK2D_ComputePerpABToAC(ab, ac);
