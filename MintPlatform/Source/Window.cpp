@@ -214,13 +214,14 @@ namespace mint
 		_WPARAMKeyCodePairArray.PushBack(WPARAMKeyCodePair(VK_DOWN, KeyCode::Down));
 		_WPARAMKeyCodePairArray.PushBack(WPARAMKeyCodePair(VK_LEFT, KeyCode::Left));
 		_WPARAMKeyCodePairArray.PushBack(WPARAMKeyCodePair(VK_RIGHT, KeyCode::Right));
-		_WPARAMKeyCodePairArray.PushBack(WPARAMKeyCodePair(VK_DELETE, KeyCode::Delete));
 		_WPARAMKeyCodePairArray.PushBack(WPARAMKeyCodePair(VK_HOME, KeyCode::Home));
 		_WPARAMKeyCodePairArray.PushBack(WPARAMKeyCodePair(VK_END, KeyCode::End));
 		_WPARAMKeyCodePairArray.PushBack(WPARAMKeyCodePair(VK_SHIFT, KeyCode::Shift));
 		_WPARAMKeyCodePairArray.PushBack(WPARAMKeyCodePair(VK_CONTROL, KeyCode::Control));
 		_WPARAMKeyCodePairArray.PushBack(WPARAMKeyCodePair(VK_MENU, KeyCode::Alt));
 		_WPARAMKeyCodePairArray.PushBack(WPARAMKeyCodePair(VK_SPACE, KeyCode::SpaceBar));
+		_WPARAMKeyCodePairArray.PushBack(WPARAMKeyCodePair(VK_INSERT, KeyCode::Insert));
+		_WPARAMKeyCodePairArray.PushBack(WPARAMKeyCodePair(VK_DELETE, KeyCode::Delete));
 		_WPARAMKeyCodePairArray.PushBack(WPARAMKeyCodePair('A', KeyCode::A));
 		_WPARAMKeyCodePairArray.PushBack(WPARAMKeyCodePair('B', KeyCode::B));
 		_WPARAMKeyCodePairArray.PushBack(WPARAMKeyCodePair('C', KeyCode::C));
