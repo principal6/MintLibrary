@@ -221,13 +221,17 @@ namespace mint
 			}
 
 			GJK2DSimplex::Point minkowskiDifferencePoint = GJK2D_ComputeMinkowskiDifferencePoint(shapeA, shapeB, direction);
+			GJK2DSimplex simplex{ minkowskiDifferencePoint };
 			if (minkowskiDifferencePoint._position == Float2::kZero)
 			{
 				// EDGE_CASE: The origin is included in the Minkowski Sum, thus the two shapes intersect.
+				if (outGJK2DInfo != nullptr)
+				{
+					outGJK2DInfo->_simplex = simplex;
+				}
 				return true;
 			}
 
-			GJK2DSimplex simplex{ minkowskiDifferencePoint };
 			// minkowskiDifferenceVertex to origin
 			direction = -minkowskiDifferencePoint._position;
 			direction.Normalize();
