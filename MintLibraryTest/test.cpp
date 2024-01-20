@@ -161,7 +161,7 @@ void RunGJKTestWindow()
 
 				//ConvexCollisionShape2D shapeA{ Float2::kZero, { Float2(-10, 80), Float2(-10, -20), Float2(80, -10), Float2(70, 70) } };
 				CircleCollisionShape2D shapeA = CircleCollisionShape2D(shapeATransform2D._translation, 64);
-				ConvexCollisionShape2D shapeB{ Float2::kZero, { Float2(-10, 80), Float2(-10, -20), Float2(80, -10), Float2(70, 70) } };
+				ConvexCollisionShape2D shapeB{ { Float2(-10, 80), Float2(-10, -20), Float2(80, -10), Float2(70, 70) } };
 				shapeB = ConvexCollisionShape2D(shapeB, shapeBTransform2D);
 				const bool intersects = Intersect2D_GJK(shapeA, shapeB, &gjk2DInfo);
 

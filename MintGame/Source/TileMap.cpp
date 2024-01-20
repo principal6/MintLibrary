@@ -2,6 +2,7 @@
 #include <MintContainer/Include/Vector.hpp>
 #include <MintContainer/Include/StringUtil.hpp>
 #include <MintMath/Include/Float2.h>
+#include <MintMath/Include/Transform.h>
 #include <MintRendering/Include/ImageRenderer.h>
 #include <MintPlatform/Include/XML.h>
 #include <MintPhysics/Include/CollisionShape.h>
@@ -76,7 +77,7 @@ namespace mint
 						points[1] = Float2(x, -y - height) + coordsFixer;
 						points[2] = Float2(x + width, -y - height) + coordsFixer;
 						points[3] = Float2(x + width, -y) + coordsFixer;
-						_tileCollisionShapes[id].Assign(MINT_NEW(Physics::ConvexCollisionShape2D, Physics::ConvexCollisionShape2D::MakeFromPoints(Float2::kZero, points)));
+						_tileCollisionShapes[id].Assign(MINT_NEW(Physics::ConvexCollisionShape2D, Physics::ConvexCollisionShape2D::MakeFromPoints(points)));
 					}
 					else
 					{
@@ -94,7 +95,7 @@ namespace mint
 								points[i]._y = -(StringUtil::StringToFloat(coords[1]) - halfTileHeight);
 							}
 						}
-						_tileCollisionShapes[id].Assign(MINT_NEW(Physics::ConvexCollisionShape2D, Physics::ConvexCollisionShape2D::MakeFromPoints(Float2::kZero, points)));
+						_tileCollisionShapes[id].Assign(MINT_NEW(Physics::ConvexCollisionShape2D, Physics::ConvexCollisionShape2D::MakeFromPoints(points)));
 					}
 				}
 			}
@@ -219,7 +220,7 @@ namespace mint
 
 					const uint32 tileID = tileNumber - 1;
 					const Float2 position = Float2(tileHalfWidth + tileWidth * x, -tileHalfHeight + yOffset + -tileHeight * y);
-					tileSet.GetTileCollisionShapes()[tileID]->DebugDrawShape(shapeRendererContext, ByteColor(255, 0, 0), position);
+					tileSet.GetTileCollisionShapes()[tileID]->DebugDrawShape(shapeRendererContext, ByteColor(255, 0, 0), Transform2D(position));
 				}
 			}
 		}

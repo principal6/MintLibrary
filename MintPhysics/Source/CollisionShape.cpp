@@ -12,7 +12,8 @@ namespace mint
 	{
 #pragma region CollisionShape2D - PointCollisionShape2D
 		PointCollisionShape2D::PointCollisionShape2D(const Float2& center)
-			: CollisionShape2D(center)
+			: CollisionShape2D()
+			, _center{ center }
 		{
 			__noop;
 		}
@@ -32,7 +33,8 @@ namespace mint
 
 #pragma region CollisionShape2D - CircleCollisionShape2D
 		CircleCollisionShape2D::CircleCollisionShape2D(const Float2& center, const float radius)
-			: CollisionShape2D(center)
+			: CollisionShape2D()
+			, _center{ center }
 			, _radius{ radius }
 		{
 			MINT_ASSERT(radius > 0.0f, "radius(%f) 가 0 이하입니다. 의도한 게 맞나요?", radius);
@@ -62,7 +64,8 @@ namespace mint
 
 #pragma region CollisionShape2D - AABBCollisionShape2D
 		AABBCollisionShape2D::AABBCollisionShape2D(const Float2& center, const Float2& halfSize)
-			: CollisionShape2D(center)
+			: CollisionShape2D()
+			, _center{ center }
 			, _halfSize{ halfSize }
 		{
 			__noop;
@@ -163,7 +166,8 @@ namespace mint
 
 #pragma region CollisionShape2D - BoxCollisionShape2D
 		BoxCollisionShape2D::BoxCollisionShape2D(const Float2& center, const Float2& halfSize, const float angle)
-			: CollisionShape2D(center)
+			: CollisionShape2D()
+			, _center{ center }
 			, _halfLengthedAxisX{ Float2::kZero }
 			, _halfLengthedAxisY{ Float2::kZero }
 		{
@@ -204,8 +208,8 @@ namespace mint
 #pragma endregion
 
 #pragma region CollisionShape2D - ConvexCollisionShape2D
-		ConvexCollisionShape2D::ConvexCollisionShape2D(const Float2& center, const Vector<Float2>& vertices)
-			: CollisionShape2D(center)
+		ConvexCollisionShape2D::ConvexCollisionShape2D(const Vector<Float2>& vertices)
+			: CollisionShape2D()
 			, _vertices{ vertices }
 		{
 			__noop;
@@ -222,7 +226,7 @@ namespace mint
 		}
 
 		ConvexCollisionShape2D::ConvexCollisionShape2D(const ConvexCollisionShape2D& rhs, const Transform2D& transform2D)
-			: CollisionShape2D(rhs._center)
+			: CollisionShape2D()
 			, _vertices{ rhs._vertices }
 		{
 			for (Float2& vertex : _vertices)
@@ -232,14 +236,14 @@ namespace mint
 		}
 
 		ConvexCollisionShape2D::ConvexCollisionShape2D()
-			: CollisionShape2D(Float2::kZero)
+			: CollisionShape2D()
 		{
 			__noop;
 		}
 
-		ConvexCollisionShape2D ConvexCollisionShape2D::MakeFromPoints(const Float2& center, const Vector<Float2>& points)
+		ConvexCollisionShape2D ConvexCollisionShape2D::MakeFromPoints(const Vector<Float2>& points)
 		{
-			ConvexCollisionShape2D shape(center, points);
+			ConvexCollisionShape2D shape(points);
 			GrahamScan_Convexify(shape._vertices);
 			return shape;
 		}
@@ -247,11 +251,10 @@ namespace mint
 		ConvexCollisionShape2D ConvexCollisionShape2D::MakeFromAABBShape2D(const AABBCollisionShape2D& shape)
 		{
 			ConvexCollisionShape2D result;
-			result._center = shape._center;
-			result._vertices.PushBack(Float2(-shape._halfSize._x, +shape._halfSize._y));
-			result._vertices.PushBack(Float2(-shape._halfSize._x, -shape._halfSize._y));
-			result._vertices.PushBack(Float2(+shape._halfSize._x, -shape._halfSize._y));
-			result._vertices.PushBack(Float2(+shape._halfSize._x, +shape._halfSize._y));
+			result._vertices.PushBack(shape._center + Float2(-shape._halfSize._x, +shape._halfSize._y));
+			result._vertices.PushBack(shape._center + Float2(-shape._halfSize._x, -shape._halfSize._y));
+			result._vertices.PushBack(shape._center + Float2(+shape._halfSize._x, -shape._halfSize._y));
+			result._vertices.PushBack(shape._center + Float2(+shape._halfSize._x, +shape._halfSize._y));
 			return result;
 		}
 
@@ -261,18 +264,16 @@ namespace mint
 			const Float2& halfY = shape.GetHalfLengthedAxisY();
 
 			ConvexCollisionShape2D result;
-			result._center = shape._center;
-			result._vertices.PushBack(+halfX + +halfY);
-			result._vertices.PushBack(-halfX + +halfY);
-			result._vertices.PushBack(-halfX + -halfY);
-			result._vertices.PushBack(+halfX + -halfY);
+			result._vertices.PushBack(shape._center + +halfX + +halfY);
+			result._vertices.PushBack(shape._center + -halfX + +halfY);
+			result._vertices.PushBack(shape._center + -halfX + -halfY);
+			result._vertices.PushBack(shape._center + +halfX + -halfY);
 			return result;
 		}
 
 		ConvexCollisionShape2D ConvexCollisionShape2D::MakeFromCircleShape2D(const CircleCollisionShape2D& shape)
 		{
 			ConvexCollisionShape2D result;
-			//result._center = shape._center;
 			for (uint32 i = 0; i <= 32; i++)
 			{
 				float theta = (static_cast<float>(i) / 32.0f) * Math::kTwoPi;
@@ -313,16 +314,16 @@ namespace mint
 			const uint32 vertexCount = renderingShape._vertices.Size();
 			if (vertexCount == 0)
 			{
-				return ConvexCollisionShape2D(center, Vector<Float2>());
+				return ConvexCollisionShape2D(Vector<Float2>());
 			}
 
 			Vector<Float2> points;
 			points.Resize(vertexCount);
 			for (uint32 i = 0; i < vertexCount; ++i)
 			{
-				points[i] = renderingShape._vertices[i]._position.GetXY();
+				points[i] = center + renderingShape._vertices[i]._position.GetXY();
 			}
-			ConvexCollisionShape2D shape(center, points);
+			ConvexCollisionShape2D shape(points);
 			GrahamScan_Convexify(shape._vertices);
 			return shape;
 		}
@@ -335,8 +336,6 @@ namespace mint
 		ConvexCollisionShape2D ConvexCollisionShape2D::MakeMinkowskiDifferenceShape(const ConvexCollisionShape2D& a, const ConvexCollisionShape2D& b)
 		{
 			ConvexCollisionShape2D shape;
-			shape._center = Float2(0, 0);
-
 			shape._vertices.Clear();
 			for (uint32 i = 0; i < a._vertices.Size(); i++)
 			{
@@ -355,7 +354,7 @@ namespace mint
 
 			const Float2x2 rotationMatrix = Float2x2::RotationMatrix(transform2D._rotation);
 			const uint32 vertexCount = _vertices.Size();
-			const Float2 center = _center + transform2D._translation;
+			const Float2 center = transform2D._translation;
 			for (uint32 vertexIndex = 1; vertexIndex < vertexCount; ++vertexIndex)
 			{
 				shapeRendererContext.DrawLine(center + rotationMatrix * _vertices[vertexIndex - 1], center + rotationMatrix * _vertices[vertexIndex], 1.0f);
@@ -382,7 +381,7 @@ namespace mint
 					targetVertexIndex = vertexIndex;
 				}
 			}
-			return _center + _vertices[targetVertexIndex];
+			return _vertices[targetVertexIndex];
 		}
 #pragma endregion
 	}

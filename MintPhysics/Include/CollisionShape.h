@@ -41,16 +41,12 @@ namespace mint
 		{
 		public:
 			CollisionShape2D() = default;
-			CollisionShape2D(const Float2& center) : _center{ center } { __noop; }
 			virtual ~CollisionShape2D() = default;
 
 		public:
 			virtual void DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Transform2D& transform2D) const { __noop; }
 			virtual Float2 ComputeSupportPoint(const Float2& direction) const abstract;
 			virtual CollisionShapeType GetCollisionShapeType() const abstract;
-
-		public:
-			Float2 _center;
 		};
 
 		class PointCollisionShape2D : public CollisionShape2D
@@ -62,6 +58,9 @@ namespace mint
 			virtual void DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Transform2D& transform2D) const override final;
 			virtual Float2 ComputeSupportPoint(const Float2& direction) const override final;
 			virtual CollisionShapeType GetCollisionShapeType() const override final { return CollisionShapeType::Point; }
+
+		public:
+			Float2 _center;
 		};
 
 		class CircleCollisionShape2D : public CollisionShape2D
@@ -75,6 +74,7 @@ namespace mint
 			virtual CollisionShapeType GetCollisionShapeType() const override final { return CollisionShapeType::Circle; }
 
 		public:
+			Float2 _center;
 			float _radius;
 		};
 
@@ -92,6 +92,7 @@ namespace mint
 			virtual CollisionShapeType GetCollisionShapeType() const override final { return CollisionShapeType::AABB; }
 
 		public:
+			Float2 _center;
 			Float2 _halfSize;
 		};
 
@@ -107,6 +108,9 @@ namespace mint
 			const Float2& GetHalfLengthedAxisX() const { return _halfLengthedAxisX; }
 			const Float2& GetHalfLengthedAxisY() const { return _halfLengthedAxisY; }
 
+		public:
+			Float2 _center;
+
 		private:
 			Float2 _halfLengthedAxisX;
 			Float2 _halfLengthedAxisY;
@@ -121,14 +125,14 @@ namespace mint
 			static ConvexCollisionShape2D MakeFromCircleShape2D(const CircleCollisionShape2D& shape);
 
 		public:
-			static ConvexCollisionShape2D MakeFromPoints(const Float2& center, const Vector<Float2>& points);
+			static ConvexCollisionShape2D MakeFromPoints(const Vector<Float2>& points);
 			static ConvexCollisionShape2D MakeFromShape2D(const CollisionShape2D& shape);
 			static ConvexCollisionShape2D MakeFromRenderingShape(const Float2& center, const Rendering::Shape& renderingShape);
 			static ConvexCollisionShape2D MakeMinkowskiDifferenceShape(const CollisionShape2D& a, const CollisionShape2D& b);
 			static ConvexCollisionShape2D MakeMinkowskiDifferenceShape(const ConvexCollisionShape2D& a, const ConvexCollisionShape2D& b);
 
 		public:
-			ConvexCollisionShape2D(const Float2& center, const Vector<Float2>& vertices);
+			ConvexCollisionShape2D(const Vector<Float2>& vertices);
 			ConvexCollisionShape2D(const CollisionShape2D& rhs, const Transform2D& transform2D);
 			ConvexCollisionShape2D(const ConvexCollisionShape2D& rhs, const Transform2D& transform2D);
 
