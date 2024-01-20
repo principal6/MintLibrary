@@ -102,6 +102,12 @@ namespace mint
 				_center = aabbCollisionShape2D._center;
 				_halfSize = aabbCollisionShape2D._halfSize;
 			}
+			else if (collisionShape2D.GetCollisionShapeType() == CollisionShapeType::Circle)
+			{
+				const CircleCollisionShape2D& circleCollisionShape2D = static_cast<const CircleCollisionShape2D&>(collisionShape2D);
+				_center = circleCollisionShape2D._center;
+				_halfSize = Float2(circleCollisionShape2D._radius, circleCollisionShape2D._radius);
+			}
 			else if (collisionShape2D.GetCollisionShapeType() == CollisionShapeType::Box)
 			{
 				const BoxCollisionShape2D& boxCollisionShape2D = static_cast<const BoxCollisionShape2D&>(collisionShape2D);
