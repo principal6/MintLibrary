@@ -51,12 +51,12 @@ namespace mint
 				if (GetValidPointCount() == 1)
 				{
 					shapeRendererContext.SetPosition(Float4(GetPointA()._positions[i]));
-					shapeRendererContext.DrawCircle(kCircleRadius);
+					shapeRendererContext.DrawCircle(kCircleRadius * 2.0f);
 				}
 				else if (GetValidPointCount() == 2)
 				{
 					shapeRendererContext.SetPosition(Float4(GetPointA()._positions[i]));
-					shapeRendererContext.DrawCircle(kCircleRadius);
+					shapeRendererContext.DrawCircle(kCircleRadius * 2.0f);
 					shapeRendererContext.SetPosition(Float4(GetPointB()._positions[i]));
 					shapeRendererContext.DrawCircle(kCircleRadius);
 					shapeRendererContext.DrawLine(GetPointA()._positions[i], GetPointB()._positions[i], kLineThickness);
@@ -64,7 +64,7 @@ namespace mint
 				else if (GetValidPointCount() == 3)
 				{
 					shapeRendererContext.SetPosition(Float4(GetPointA()._positions[i]));
-					shapeRendererContext.DrawCircle(kCircleRadius);
+					shapeRendererContext.DrawCircle(kCircleRadius * 2.0f);
 					shapeRendererContext.SetPosition(Float4(GetPointB()._positions[i]));
 					shapeRendererContext.DrawCircle(kCircleRadius);
 					shapeRendererContext.SetPosition(Float4(GetPointC()._positions[i]));
