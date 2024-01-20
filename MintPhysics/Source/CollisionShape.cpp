@@ -29,6 +29,17 @@ namespace mint
 		{
 			return _center;
 		}
+
+		void PointCollisionShape2D::ComputeSupportEdge(const Float2& direction, Float2& outVertexA, Float2& outVertexB) const
+		{
+			outVertexA = _center;
+			outVertexB = _center;
+
+			Float2 halfLeft{ -direction._y, direction._x };
+			halfLeft *= 0.5f;
+			outVertexA += halfLeft;
+			outVertexA -= halfLeft;
+		}
 #pragma endregion
 
 #pragma region CollisionShape2D - CircleCollisionShape2D
@@ -59,6 +70,17 @@ namespace mint
 		Float2 CircleCollisionShape2D::ComputeSupportPoint(const Float2& direction) const
 		{
 			return _center + direction * _radius;
+		}
+
+		void CircleCollisionShape2D::ComputeSupportEdge(const Float2& direction, Float2& outVertexA, Float2& outVertexB) const
+		{
+			outVertexA = ComputeSupportPoint(direction);
+			outVertexB = outVertexA;
+
+			Float2 left{ -direction._y, direction._x };
+			left *= _radius;
+			outVertexA += left;
+			outVertexB -= left;
 		}
 #pragma endregion
 
@@ -156,11 +178,45 @@ namespace mint
 
 		Float2 AABBCollisionShape2D::ComputeSupportPoint(const Float2& direction) const
 		{
-			if (direction._x > 0.0f)
+			if (direction._x >= 0.0f)
 			{
-				return _center + Float2(_halfSize._x, (direction._y > 0.0f ? +_halfSize._y : -_halfSize._y));
+				return _center + Float2(_halfSize._x, (direction._y >= 0.0f ? +_halfSize._y : -_halfSize._y));
 			}
-			return _center + Float2(-_halfSize._x, (direction._y > 0.0f ? +_halfSize._y : -_halfSize._y));
+			return _center + Float2(-_halfSize._x, (direction._y >= 0.0f ? +_halfSize._y : -_halfSize._y));
+		}
+
+		void AABBCollisionShape2D::ComputeSupportEdge(const Float2& direction, Float2& outVertexA, Float2& outVertexB) const
+		{
+			const float diagonalLength = ::sqrt(_halfSize._x * _halfSize._x + _halfSize._y * _halfSize._y);
+			const Float2 diagonalLengthedDirection = direction * diagonalLength;
+			if (diagonalLengthedDirection._y > _halfSize._y)
+			{
+				// Upper
+				outVertexA = _center + Float2(+_halfSize._x, +_halfSize._y);
+				outVertexB = _center + Float2(-_halfSize._x, +_halfSize._y);
+			}
+			else if (diagonalLengthedDirection._y < +_halfSize._y && diagonalLengthedDirection._y > -_halfSize._y)
+			{
+				// Side
+				if (diagonalLengthedDirection._x > 0.0f)
+				{
+					// Right
+					outVertexA = _center + Float2(+_halfSize._x, -_halfSize._y);
+					outVertexB = _center + Float2(+_halfSize._x, +_halfSize._y);
+				}
+				else
+				{
+					// Left
+					outVertexA = _center + Float2(-_halfSize._x, +_halfSize._y);
+					outVertexB = _center + Float2(-_halfSize._x, -_halfSize._y);
+				}
+			}
+			else
+			{
+				// Lower
+				outVertexA = _center + Float2(-_halfSize._x, -_halfSize._y);
+				outVertexB = _center + Float2(+_halfSize._x, -_halfSize._y);
+			}
 		}
 #pragma endregion
 
@@ -203,6 +259,45 @@ namespace mint
 			else
 			{
 				return _center - halfSizeY + (direction.Dot(halfSizeX) >= 0.0f ? halfSizeX : -halfSizeX);
+			}
+		}
+
+		void BoxCollisionShape2D::ComputeSupportEdge(const Float2& direction, Float2& outVertexA, Float2& outVertexB) const
+		{
+			const Float2& halfSizeX = GetHalfLengthedAxisX();
+			const Float2& halfSizeY = GetHalfLengthedAxisY();
+			const float halfWidth = halfSizeX.Length();
+			const float halfHeight = halfSizeY.Length();
+			const float halfDiagonalLength = ::sqrt(halfWidth * halfWidth + halfHeight * halfHeight);
+			const Float2 halfDiagonalLengthedDirection = direction * halfDiagonalLength;
+			const float dotY = halfDiagonalLengthedDirection.Dot(halfSizeY);
+			if (dotY > +halfHeight)
+			{
+				// Upper
+				outVertexA = _center + halfSizeX + halfSizeY;
+				outVertexB = _center - halfSizeX + halfSizeY;
+			}
+			else if (dotY <= -halfHeight && dotY >= -halfHeight)
+			{
+				// Side
+				if (direction.Dot(halfSizeX) >= 0.0f)
+				{
+					// Right
+					outVertexA = _center + halfSizeX - halfSizeY;
+					outVertexB = _center + halfSizeX + halfSizeY;
+				}
+				else
+				{
+					// Left
+					outVertexA = _center - halfSizeX + halfSizeY;
+					outVertexB = _center - halfSizeX - halfSizeY;
+				}
+			}
+			else
+			{
+				// Lower
+				outVertexA = _center - halfSizeX - halfSizeY;
+				outVertexB = _center + halfSizeX - halfSizeY;
 			}
 		}
 #pragma endregion
@@ -360,6 +455,9 @@ namespace mint
 				shapeRendererContext.DrawLine(center + rotationMatrix * _vertices[vertexIndex - 1], center + rotationMatrix * _vertices[vertexIndex], 1.0f);
 			}
 			shapeRendererContext.DrawLine(center + rotationMatrix * _vertices[vertexCount - 1], center + rotationMatrix * _vertices[0], 1.0f);
+
+			shapeRendererContext.SetPosition(Float4(center));
+			shapeRendererContext.DrawCircle(4.0f);
 		}
 
 		Float2 ConvexCollisionShape2D::ComputeSupportPoint(const Float2& direction) const
@@ -369,8 +467,56 @@ namespace mint
 				return Float2::kZero;
 			}
 
-			float maxDotProduct = -Math::kFloatMax;
 			uint32 targetVertexIndex = 0;
+			ComputeSupportPointIndex(direction, targetVertexIndex);
+			return _vertices[targetVertexIndex];
+		}
+
+		void ConvexCollisionShape2D::ComputeSupportEdge(const Float2& direction, Float2& outVertexA, Float2& outVertexB) const
+		{
+			uint32 targetVertexIndex = 0;
+			ComputeSupportPointIndex(direction, targetVertexIndex);
+
+			const Float2& targetVertex = _vertices[targetVertexIndex];
+			const Float2* sideVertex0 = nullptr;
+			const Float2* sideVertex1 = nullptr;
+			if (targetVertexIndex == 0)
+			{
+				sideVertex0 = &_vertices.Back();
+				sideVertex1 = &_vertices[targetVertexIndex + 1];
+			}
+			else if (targetVertexIndex == _vertices.Size() - 1)
+			{
+				sideVertex0 = &_vertices[0];
+				sideVertex1 = &_vertices[targetVertexIndex - 1];
+			}
+			else
+			{
+				sideVertex0 = &_vertices[targetVertexIndex - 1];
+				sideVertex1 = &_vertices[targetVertexIndex + 1];
+			}
+
+			Float2 v0 = (*sideVertex0 - targetVertex);
+			v0.Normalize();
+			Float2 v1 = (*sideVertex1 - targetVertex);
+			v1.Normalize();
+			const float dot0 = direction.Dot(v0);
+			const float dot1 = direction.Dot(v1);
+			if (dot0 > dot1)
+			{
+				outVertexA = *sideVertex0;
+				outVertexB = targetVertex;
+			}
+			else
+			{
+				outVertexA = *sideVertex1;
+				outVertexB = targetVertex;
+			}
+		}
+
+		void ConvexCollisionShape2D::ComputeSupportPointIndex(const Float2& direction, uint32& outIndex) const
+		{
+			float maxDotProduct = -Math::kFloatMax;
 			const uint32 vertexCount = _vertices.Size();
 			for (uint32 vertexIndex = 0; vertexIndex < vertexCount; ++vertexIndex)
 			{
@@ -378,10 +524,9 @@ namespace mint
 				if (dotProduct > maxDotProduct)
 				{
 					maxDotProduct = dotProduct;
-					targetVertexIndex = vertexIndex;
+					outIndex = vertexIndex;
 				}
 			}
-			return _vertices[targetVertexIndex];
 		}
 #pragma endregion
 	}

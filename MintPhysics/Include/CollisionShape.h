@@ -46,6 +46,7 @@ namespace mint
 		public:
 			virtual void DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Transform2D& transform2D) const { __noop; }
 			virtual Float2 ComputeSupportPoint(const Float2& direction) const abstract;
+			virtual void ComputeSupportEdge(const Float2& direction, Float2& outVertexA, Float2& outVertexB) const abstract;
 			virtual CollisionShapeType GetCollisionShapeType() const abstract;
 		};
 
@@ -57,6 +58,7 @@ namespace mint
 		public:
 			virtual void DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Transform2D& transform2D) const override final;
 			virtual Float2 ComputeSupportPoint(const Float2& direction) const override final;
+			virtual void ComputeSupportEdge(const Float2& direction, Float2& outVertexA, Float2& outVertexB) const override final;
 			virtual CollisionShapeType GetCollisionShapeType() const override final { return CollisionShapeType::Point; }
 
 		public:
@@ -71,6 +73,7 @@ namespace mint
 		public:
 			virtual void DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Transform2D& transform2D) const  override final;
 			virtual Float2 ComputeSupportPoint(const Float2& direction) const override final;
+			virtual void ComputeSupportEdge(const Float2& direction, Float2& outVertexA, Float2& outVertexB) const override final;
 			virtual CollisionShapeType GetCollisionShapeType() const override final { return CollisionShapeType::Circle; }
 
 		public:
@@ -89,6 +92,7 @@ namespace mint
 			void Set(const AABBCollisionShape2D& aabbCollisionShape2D, const Transform2D& transform2D);
 			virtual void DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Transform2D& transform2D) const override final;
 			virtual Float2 ComputeSupportPoint(const Float2& direction) const override final;
+			virtual void ComputeSupportEdge(const Float2& direction, Float2& outVertexA, Float2& outVertexB) const override final;
 			virtual CollisionShapeType GetCollisionShapeType() const override final { return CollisionShapeType::AABB; }
 
 		public:
@@ -104,6 +108,7 @@ namespace mint
 		public:
 			virtual void DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Transform2D& transform2D) const override final;
 			virtual Float2 ComputeSupportPoint(const Float2& direction) const override final;
+			virtual void ComputeSupportEdge(const Float2& direction, Float2& outVertexA, Float2& outVertexB) const override final;
 			virtual CollisionShapeType GetCollisionShapeType() const override final { return CollisionShapeType::Box; }
 			const Float2& GetHalfLengthedAxisX() const { return _halfLengthedAxisX; }
 			const Float2& GetHalfLengthedAxisY() const { return _halfLengthedAxisY; }
@@ -139,11 +144,15 @@ namespace mint
 		public:
 			virtual void DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Transform2D& transform2D) const override final;
 			virtual Float2 ComputeSupportPoint(const Float2& direction) const override final;
+			virtual void ComputeSupportEdge(const Float2& direction, Float2& outVertexA, Float2& outVertexB) const override final;
 			virtual CollisionShapeType GetCollisionShapeType() const override final { return CollisionShapeType::Convex; }
 			const Vector<Float2>& GetVertices() const { return _vertices; }
 
 		private:
 			ConvexCollisionShape2D();
+
+		private:
+			void ComputeSupportPointIndex(const Float2& direction, uint32& outIndex) const;
 
 		private:
 			Vector<Float2> _vertices;

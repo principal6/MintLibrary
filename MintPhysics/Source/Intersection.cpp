@@ -51,12 +51,12 @@ namespace mint
 				if (GetValidPointCount() == 1)
 				{
 					shapeRendererContext.SetPosition(Float4(GetPointA()._positions[i]));
-					shapeRendererContext.DrawCircle(kCircleRadius * 2.0f);
+					shapeRendererContext.DrawCircle(kCircleRadius);
 				}
 				else if (GetValidPointCount() == 2)
 				{
 					shapeRendererContext.SetPosition(Float4(GetPointA()._positions[i]));
-					shapeRendererContext.DrawCircle(kCircleRadius * 2.0f);
+					shapeRendererContext.DrawCircle(kCircleRadius);
 					shapeRendererContext.SetPosition(Float4(GetPointB()._positions[i]));
 					shapeRendererContext.DrawCircle(kCircleRadius);
 					shapeRendererContext.DrawLine(GetPointA()._positions[i], GetPointB()._positions[i], kLineThickness);
@@ -64,7 +64,7 @@ namespace mint
 				else if (GetValidPointCount() == 3)
 				{
 					shapeRendererContext.SetPosition(Float4(GetPointA()._positions[i]));
-					shapeRendererContext.DrawCircle(kCircleRadius * 2.0f);
+					shapeRendererContext.DrawCircle(kCircleRadius);
 					shapeRendererContext.SetPosition(Float4(GetPointB()._positions[i]));
 					shapeRendererContext.DrawCircle(kCircleRadius);
 					shapeRendererContext.SetPosition(Float4(GetPointC()._positions[i]));
@@ -75,6 +75,29 @@ namespace mint
 					shapeRendererContext.DrawLine(GetPointB()._positions[i], GetPointC()._positions[i], kLineThickness);
 				}
 			}
+		}
+
+		const GJK2DSimplex::Point& GJK2DSimplex::GetClosestPoint() const
+		{
+			if (GetValidPointCount() == 0)
+			{
+				MINT_ASSERT(false, "No valid points exist!");
+				static const GJK2DSimplex::Point kInvalid;
+				return kInvalid;
+			}
+
+			uint32 closestPointIndex = 0;
+			float minLength = Math::kFloatMax;
+			for (uint32 i = 0; i < _validPointCount; ++i)
+			{
+				float length = _points[i]._position.Length();
+				if (length < minLength)
+				{
+					closestPointIndex = i;
+					minLength = length;
+				}
+			}
+			return _points[closestPointIndex];
 		}
 
 		MINT_INLINE GJK2DSimplex::Point GJK2D_ComputeMinkowskiDifferencePoint(const CollisionShape2D& shapeA, const CollisionShape2D& shapeB, const Float2& direction)

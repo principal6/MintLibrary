@@ -13,6 +13,7 @@
 namespace mint
 {
 	class Rect;
+	struct Transform2D;
 
 	namespace Rendering
 	{
@@ -61,6 +62,7 @@ namespace mint
 
 		public:
 			void DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Transform2D& transform2D) const;
+			const Point& GetClosestPoint() const;
 			const uint8 GetValidPointCount() const { return _validPointCount; }
 			const Point& GetPointA() const { return _points[_validPointCount - 1]; }
 			const Point& GetPointB() const { return _points[_validPointCount - 2]; }
