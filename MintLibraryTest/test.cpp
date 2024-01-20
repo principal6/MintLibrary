@@ -50,7 +50,7 @@ void RunGJKTestWindow()
 {
 	using namespace mint;
 	using namespace Rendering;
-	using namespace Game;
+	using namespace Physics;
 
 	mint::Library::Initialize();
 
@@ -70,35 +70,138 @@ void RunGJKTestWindow()
 	GraphicDevice graphicDevice{ window, true };
 	graphicDevice.Initialize();
 
+	GJK2DInfo gjk2DInfo;
 	ShapeRendererContext& shapeRendererContext = graphicDevice.GetShapeRendererContext();
 	const InputContext& inputContext = InputContext::GetInstance();
+	enum class SelectionMode
+	{
+		None,
+		ShapeA,
+		ShapeB
+	};
+	SelectionMode selectionMode{ SelectionMode::None };
+	Transform2D shapeATransform2D{ Float2(-50, 0) };
+	Transform2D shapeBTransform2D;
 	while (window.IsRunning() == true)
 	{
+		const float deltaTime = Game::DeltaTimer::GetInstance().ComputeDeltaTimeSec();
+
 		if (inputContext.IsKeyPressed())
 		{
 			if (inputContext.IsKeyDown(KeyCode::Escape) == true)
 			{
 				return;
 			}
+
+			if (inputContext.IsKeyDown(KeyCode::W) == true)
+			{
+				++gjk2DInfo._maxLoopCount;
+			}
+			else if (inputContext.IsKeyDown(KeyCode::Q) == true)
+			{
+				--gjk2DInfo._maxLoopCount;
+			}
+			else if (inputContext.IsKeyDown(KeyCode::Num1) == true)
+			{
+				selectionMode = SelectionMode::None;
+			}
+			else if (inputContext.IsKeyDown(KeyCode::Num2) == true)
+			{
+				selectionMode = SelectionMode::ShapeA;
+			}
+			else if (inputContext.IsKeyDown(KeyCode::Num3) == true)
+			{
+				selectionMode = SelectionMode::ShapeB;
+			}
+		}
+
+		Transform2D* targetTransform2D = nullptr;
+		if (selectionMode == SelectionMode::ShapeA)
+		{
+			targetTransform2D = &shapeATransform2D;
+		}
+		else if (selectionMode == SelectionMode::ShapeB)
+		{
+			targetTransform2D = &shapeBTransform2D;
+		}
+		if (targetTransform2D != nullptr)
+		{
+			if (inputContext.IsKeyDown(KeyCode::Up) == true)
+			{
+				targetTransform2D->_translation._y += 64.0f * deltaTime;
+			}
+			if (inputContext.IsKeyDown(KeyCode::Down) == true)
+			{
+				targetTransform2D->_translation._y -= 64.0f * deltaTime;
+			}
+			if (inputContext.IsKeyDown(KeyCode::Left) == true)
+			{
+				targetTransform2D->_translation._x -= 64.0f * deltaTime;
+			}
+			if (inputContext.IsKeyDown(KeyCode::Right) == true)
+			{
+				targetTransform2D->_translation._x += 64.0f * deltaTime;
+			}
+			if (inputContext.IsKeyDown(KeyCode::Insert) == true)
+			{
+				targetTransform2D->_rotation += Math::kPiOverTwo * deltaTime;
+			}
+			if (inputContext.IsKeyDown(KeyCode::Delete) == true)
+			{
+				targetTransform2D->_rotation -= Math::kPiOverTwo * deltaTime;
+			}
 		}
 
 		const Float2 windowSize{ window.GetSize() };
-		graphicDevice.SetViewProjectionMatrix(Float4x4::kIdentity, Float4x4::ProjectionMatrix2DNormal(windowSize._x, windowSize._y));
-
 		graphicDevice.BeginRendering();
 		{
-			Physics::ConvexCollisionShape2D shapeA{ Float2::kZero, { Float2(-100, 0), Float2(0, 0), Float2(0, 100) } };
-			Physics::ConvexCollisionShape2D shapeB{ Float2::kZero, { Float2(-10, 80), Float2(-10, -20), Float2(80, -10), Float2(70, 70) } };
+			graphicDevice.SetSolidCullNoneRasterizer();
+			{
+				graphicDevice.SetViewProjectionMatrix(Float4x4::kIdentity, Float4x4::ProjectionMatrix2DNormal(windowSize._x, windowSize._y));
 
-			const bool intersects = Physics::Intersect2D_GJK(shapeA, shapeB);
+				//ConvexCollisionShape2D shapeA{ Float2::kZero, { Float2(-10, 80), Float2(-10, -20), Float2(80, -10), Float2(70, 70) } };
+				ConvexCollisionShape2D shapeA = ConvexCollisionShape2D(CircleCollisionShape2D(Float2(0, 0), 64), shapeATransform2D);
+				ConvexCollisionShape2D shapeB{ Float2::kZero, { Float2(-10, 80), Float2(-10, -20), Float2(80, -10), Float2(70, 70) } };
+				shapeB = ConvexCollisionShape2D(shapeB, shapeBTransform2D);
+				const bool intersects = Intersect2D_GJK(shapeA, shapeB, &gjk2DInfo);
 
-			const ByteColor kShapeAColor(255, 0, 0);
-			const ByteColor kShapeBColor(64, 128, 0);
-			const ByteColor kIntersectedColor(32, 255, 32);
-			shapeA.DebugDrawShape(shapeRendererContext, (intersects ? kIntersectedColor : kShapeAColor), Transform2D());
-			shapeB.DebugDrawShape(shapeRendererContext, (intersects ? kIntersectedColor : kShapeBColor), Transform2D());
+				const ByteColor kShapeAColor(255, 0, 0);
+				const ByteColor kShapeBColor(64, 128, 0);
+				const ByteColor kIntersectedColor(32, 196, 32);
+				const Float2 shapeABDrawOffset(128, 128);
+				shapeA.DebugDrawShape(shapeRendererContext, (intersects ? kIntersectedColor : kShapeAColor), Transform2D(shapeABDrawOffset));
+				shapeB.DebugDrawShape(shapeRendererContext, (intersects ? kIntersectedColor : kShapeBColor), Transform2D(shapeABDrawOffset));
 
-			shapeRendererContext.Render();
+				// Minkowski Difference Shape
+				const ByteColor kShapeMDColor(64, 64, 64);
+				ConvexCollisionShape2D shapeMD{ ConvexCollisionShape2D::MakeMinkowskiDifferenceShape(shapeA, shapeB) };
+				shapeMD.DebugDrawShape(shapeRendererContext, kShapeMDColor, Transform2D());
+
+				// Simplex
+				gjk2DInfo._simplex.DebugDrawShape(shapeRendererContext, ByteColor(255, 0, 255), Transform2D());
+
+				// Grid
+				shapeRendererContext.SetColor(kShapeMDColor);
+				shapeRendererContext.DrawLine(Float2(0, -800), Float2(0, 800), 1.0f);
+				shapeRendererContext.DrawLine(Float2(-800, 0), Float2(800, 0), 1.0f);
+
+				// Direction
+				shapeRendererContext.DrawLine(Float2::kZero, gjk2DInfo._direction * 100.0f, 2.0f);
+
+				shapeRendererContext.Render();
+			}
+			{
+				graphicDevice.SetViewProjectionMatrix(Float4x4::kIdentity, Float4x4::ProjectionMatrix2DFromTopLeft(windowSize._x, windowSize._y));
+
+				shapeRendererContext.SetTextColor(Color::kBlack);
+				StackStringW<100> buffer;
+				FormatString(buffer, L"Loop: (%d / Max %u)", gjk2DInfo._loopCount, gjk2DInfo._maxLoopCount);
+				shapeRendererContext.DrawDynamicText(buffer.CString(), Float2(10, 10), FontRenderingOption());
+				FormatString(buffer, L"Selected: (%s)", (selectionMode == SelectionMode::None ? L"None" : (selectionMode == SelectionMode::ShapeA ? L"ShapeA" : L"ShapeB")));
+				shapeRendererContext.DrawDynamicText(buffer.CString(), Float2(10, 30), FontRenderingOption());
+
+				shapeRendererContext.Render();
+			}
 		}
 		graphicDevice.EndRendering();
 	}

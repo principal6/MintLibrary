@@ -35,6 +35,45 @@ namespace mint
 			++_validPointCount;
 		}
 
+		void GJK2DSimplex::DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Transform2D& transform2D) const
+		{
+			if (GetValidPointCount() == 0)
+			{
+				return;
+			}
+
+			const float kCircleRadius = 2.0f;
+			const float kLineThickness = 1.0f;
+			shapeRendererContext.SetColor(color);
+
+			if (GetValidPointCount() == 1)
+			{
+				shapeRendererContext.SetPosition(Float4(GetPointA()));
+				shapeRendererContext.DrawCircle(kCircleRadius);
+			}
+			else if (GetValidPointCount() == 2)
+			{
+				shapeRendererContext.SetPosition(Float4(GetPointA()));
+				shapeRendererContext.DrawCircle(kCircleRadius);
+				shapeRendererContext.SetPosition(Float4(GetPointB()));
+				shapeRendererContext.DrawCircle(kCircleRadius);
+				shapeRendererContext.DrawLine(GetPointA(), GetPointB(), kLineThickness);
+			}
+			else if (GetValidPointCount() == 3)
+			{
+				shapeRendererContext.SetPosition(Float4(GetPointA()));
+				shapeRendererContext.DrawCircle(kCircleRadius);
+				shapeRendererContext.SetPosition(Float4(GetPointB()));
+				shapeRendererContext.DrawCircle(kCircleRadius);
+				shapeRendererContext.SetPosition(Float4(GetPointC()));
+				shapeRendererContext.DrawCircle(kCircleRadius);
+
+				shapeRendererContext.DrawLine(GetPointA(), GetPointB(), kLineThickness);
+				shapeRendererContext.DrawLine(GetPointA(), GetPointC(), kLineThickness);
+				shapeRendererContext.DrawLine(GetPointB(), GetPointC(), kLineThickness);
+			}
+		}
+
 		MINT_INLINE Float2 GJK2D_GetMinkowskiDifferenceVertex(const CollisionShape2D& shapeA, const CollisionShape2D& shapeB, const Float2& direction)
 		{
 			return shapeA.ComputeSupportPoint(direction) - shapeB.ComputeSupportPoint(-direction);
@@ -47,14 +86,6 @@ namespace mint
 			return (result.LengthSqaure() <= Math::kFloatEpsilon ? Float2::kZero : Float2::Normalize(result));
 		}
 
-		MINT_INLINE bool Intersect2D_GJK_Retrun(const bool result, const uint32 loopCount, uint32* const outLoopCount)
-		{
-			if (outLoopCount != nullptr)
-			{
-				*outLoopCount = loopCount;
-			}
-			return result;
-		}
 		// returns true whenever it's sure that there's an intersection
 		bool GJK2D_ProcessSimplex(GJK2DSimplex& inoutSimplex, Float2& outDirection)
 		{
@@ -140,25 +171,40 @@ namespace mint
 			return true;
 		}
 
-		bool Intersect2D_GJK(const CollisionShape2D& shapeA, const CollisionShape2D& shapeB, uint32* const outLoopCount)
+		bool Intersect2D_GJK(const CollisionShape2D& shapeA, const CollisionShape2D& shapeB, GJK2DInfo* const outGJK2DInfo)
 		{
-			uint32 loopCount = 0;
 			Float2 direction = Float2(1, 0);
+			if (outGJK2DInfo != nullptr)
+			{
+				outGJK2DInfo->_loopCount = 0;
+				outGJK2DInfo->_direction = direction;
+			}
+
 			Float2 minkowskiDifferenceVertex = GJK2D_GetMinkowskiDifferenceVertex(shapeA, shapeB, direction);
 			if (minkowskiDifferenceVertex == Float2::kZero)
 			{
 				// EDGE_CASE: The origin is included in the Minkowski Sum, thus the two shapes intersect.
-				return Intersect2D_GJK_Retrun(true, loopCount, outLoopCount);
+				return true;
 			}
 
 			GJK2DSimplex simplex{ minkowskiDifferenceVertex };
 			// minkowskiDifferenceVertex to origin
 			direction = -minkowskiDifferenceVertex;
 			direction.Normalize();
-
+			
+			bool result = false;
 			while (true)
 			{
-				++loopCount;
+				if (outGJK2DInfo != nullptr)
+				{
+					if (outGJK2DInfo->_loopCount >= outGJK2DInfo->_maxLoopCount)
+					{
+						break;
+					}
+
+					outGJK2DInfo->_direction = direction;
+					++outGJK2DInfo->_loopCount;
+				}
 
 				minkowskiDifferenceVertex = GJK2D_GetMinkowskiDifferenceVertex(shapeA, shapeB, direction);
 
@@ -167,20 +213,28 @@ namespace mint
 				{
 					// MinkowskiDifferenceVertex did not pass the origin
 					// Thus, an intersection is not possible.
-					return Intersect2D_GJK_Retrun(false, loopCount, outLoopCount);
+					break;
 				}
 				else if (signedDistance == 0.0f)
 				{
 					// EDGE_CASE: The origin is included in the Minkowski Sum, thus the two shapes intersect.
-					return Intersect2D_GJK_Retrun(true, loopCount, outLoopCount);
+					result = true;
+					break;
 				}
 
 				simplex.AppendPoint(minkowskiDifferenceVertex);
-				if (GJK2D_ProcessSimplex(simplex, direction))
+				if (GJK2D_ProcessSimplex(simplex, direction) == true)
 				{
-					return Intersect2D_GJK_Retrun(true, loopCount, outLoopCount);
+					result = true;
+					break;
 				}
 			}
+
+			if (outGJK2DInfo != nullptr)
+			{
+				outGJK2DInfo->_simplex = simplex;
+			}
+			return result;
 		}
 	}
 }
