@@ -282,7 +282,7 @@ namespace mint
 			const uint32 deltaIndexCount = _lowLevelRenderer->GetIndexCount() - indexOffset;
 			_lowLevelRenderer->PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, deltaIndexCount, _clipRect);
 
-			PushShapeTransformToBuffer(0.0f);
+			PushShapeTransformToBuffer(0.0f, false);
 		}
 
 		void ShapeRendererContext::DrawLineStrip(const Vector<Float2>& points, const float thickness)
