@@ -77,7 +77,7 @@ namespace mint
 						points[1] = Float2(x, -y - height) + coordsFixer;
 						points[2] = Float2(x + width, -y - height) + coordsFixer;
 						points[3] = Float2(x + width, -y) + coordsFixer;
-						_tileCollisionShapes[id].Assign(MINT_NEW(Physics::ConvexCollisionShape2D, Physics::ConvexCollisionShape2D::MakeFromPoints(points)));
+						_tileCollisionShapes[id] = MakeShared<Physics::ConvexCollisionShape2D>(Physics::ConvexCollisionShape2D::MakeFromPoints(points));
 					}
 					else
 					{
@@ -95,7 +95,7 @@ namespace mint
 								points[i]._y = -(StringUtil::StringToFloat(coords[1]) - halfTileHeight);
 							}
 						}
-						_tileCollisionShapes[id].Assign(MINT_NEW(Physics::ConvexCollisionShape2D, Physics::ConvexCollisionShape2D::MakeFromPoints(points)));
+						_tileCollisionShapes[id] = MakeShared<Physics::ConvexCollisionShape2D>(Physics::ConvexCollisionShape2D::MakeFromPoints(points));
 					}
 				}
 			}
@@ -201,7 +201,7 @@ namespace mint
 		{
 			const Vector<uint32>& tiles = GetTiles();
 			const uint32 mapWidth = GetWidth();
-			const uint32 mapHeight = tiles.Size() / mapWidth;
+			const uint32 mapHeight = GetHeight();
 			const TileSet& tileSet = GetTileSet();
 			const float tileWidth = static_cast<float>(tileSet.GetTileWidth());
 			const float tileHeight = static_cast<float>(tileSet.GetTileHeight());
@@ -219,10 +219,22 @@ namespace mint
 					}
 
 					const uint32 tileID = tileNumber - 1;
-					const Float2 position = Float2(tileHalfWidth + tileWidth * x, -tileHalfHeight + yOffset + -tileHeight * y);
+					const Float2 position = ComputeTilePosition(x, y);
 					tileSet.GetTileCollisionShapes()[tileID]->DebugDrawShape(shapeRendererContext, ByteColor(255, 0, 0), Transform2D(position));
 				}
 			}
+		}
+
+		Float2 TileMap::ComputeTilePosition(uint32 x, uint32 y) const
+		{
+			const uint32 mapHeight = GetHeight();
+			const TileSet& tileSet = GetTileSet();
+			const float tileWidth = static_cast<float>(tileSet.GetTileWidth());
+			const float tileHeight = static_cast<float>(tileSet.GetTileHeight());
+			const float tileHalfWidth = tileWidth * 0.5f;
+			const float tileHalfHeight = tileHeight * 0.5f;
+			const float yOffset = static_cast<float>(mapHeight) * tileHeight;
+			return Float2(tileHalfWidth + tileWidth * x, -tileHalfHeight + yOffset + -tileHeight * y);
 		}
 	}
 }

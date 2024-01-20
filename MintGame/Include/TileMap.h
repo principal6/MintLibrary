@@ -5,7 +5,7 @@
 #define _MINT_GAME_TILE_MAP_H_
 
 
-#include <MintContainer/Include/OwnPtr.h>
+#include <MintContainer/Include/SharedPtr.h>
 #include <MintContainer/Include/Vector.h>
 #include <MintContainer/Include/StringUtil.h>
 #include <MintMath/Include/Int2.h>
@@ -43,7 +43,7 @@ namespace mint
 			uint32 GetImageWidth() const { return _imageWidth; }
 			uint32 GetImageHeight() const { return _imageHeight; }
 			Int2 GetTileCoordinates(uint32 tileIndex) const;
-			const Vector<OwnPtr<Physics::ConvexCollisionShape2D>>& GetTileCollisionShapes() const { return _tileCollisionShapes; }
+			const Vector<SharedPtr<Physics::ConvexCollisionShape2D>>& GetTileCollisionShapes() const { return _tileCollisionShapes; }
 
 		private:
 			StringA _tileSetFileName;
@@ -54,7 +54,7 @@ namespace mint
 			StringA _imageFileName;
 			uint32 _imageWidth;
 			uint32 _imageHeight;
-			Vector<OwnPtr<Physics::ConvexCollisionShape2D>> _tileCollisionShapes;
+			Vector<SharedPtr<Physics::ConvexCollisionShape2D>> _tileCollisionShapes;
 		};
 
 		class TileMap
@@ -79,6 +79,7 @@ namespace mint
 			const Vector<uint32>& GetTiles() const { return _tiles; }
 			uint32 GetWidth() const { return _width; }
 			uint32 GetHeight() const { return _height; }
+			Float2 ComputeTilePosition(uint32 x, uint32 y) const;
 
 		private:
 			Vector<uint32> _tiles;
