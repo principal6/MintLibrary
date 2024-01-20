@@ -334,7 +334,7 @@ namespace mint
 				Physics::Body2DCreationDesc testBodyCreationDesc1;
 				testBodyCreationDesc1._collisionShape2D = MakeShared<Physics::BoxCollisionShape2D>(Physics::BoxCollisionShape2D(Float2::kZero, Float2(200, 50), 0.0f));
 				testBodyCreationDesc1._isDynamic = false;
-				testBodyCreationDesc1._transform2D._translation._x = 100.0f;
+				testBodyCreationDesc1._transform2D._translation._x = 200.0f;
 				testBodyCreationDesc1._transform2D._translation._y = 100.0f;
 				Physics::BodyID bodyIDB = _physicsWorld.CreateBody(testBodyCreationDesc1);
 			}
@@ -386,7 +386,7 @@ namespace mint
 
 			const StringA& currentAnimationName = _characterActionChart.GetCurrentAction()._animationName;
 			_characterAnimationSet.SetAnimation(currentAnimationName);
-			_characterAnimationSet.Update(DeltaTimer::GetInstance().GetDeltaTimeSec());
+			_characterAnimationSet.Update(deltaTime);
 
 			_physicsWorld.Step(deltaTime);
 		}
