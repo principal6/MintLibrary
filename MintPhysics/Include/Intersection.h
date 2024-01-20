@@ -60,8 +60,6 @@ namespace mint
 		bool Intersect2D_AABB_Point(const Rect& aabb, const Float2& point);
 		bool Intersect2D_AABB_AABB(const AABBCollisionShape2D& shapeA, const AABBCollisionShape2D& shapeB);
 		bool Intersect2D_GJK(const CollisionShape2D& shapeA, const CollisionShape2D& shapeB, uint32* const outLoopCount = nullptr);
-
-		void Intersect2D_GJK_StepByStep(const uint32 maxStep, ShapeRendererContext& shapeRendererContext, const Float2& offset, const CollisionShape2D& shapeA, const CollisionShape2D& shapeB);
 	}
 }
 
