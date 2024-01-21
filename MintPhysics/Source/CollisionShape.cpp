@@ -20,6 +20,11 @@ namespace mint
 				const PointCollisionShape2D& castedShape = static_cast<const PointCollisionShape2D&>(shape);
 				return MakeShared<PointCollisionShape2D>(PointCollisionShape2D(castedShape._center + transform2D._translation));
 			}
+			case mint::Physics::CollisionShapeType::Edge:
+			{
+				const EdgeCollisionShape2D& castedShape = static_cast<const EdgeCollisionShape2D&>(shape);
+				return MakeShared<EdgeCollisionShape2D>(EdgeCollisionShape2D(castedShape._vertexA, castedShape._vertexB, transform2D));
+			}
 			case mint::Physics::CollisionShapeType::Circle:
 			{
 				const CircleCollisionShape2D& castedShape = static_cast<const CircleCollisionShape2D&>(shape);
@@ -183,7 +188,15 @@ namespace mint
 		AABBCollisionShape2D::AABBCollisionShape2D(const CollisionShape2D& collisionShape2D)
 			: CollisionShape2D(collisionShape2D)
 		{
-			if (collisionShape2D.GetCollisionShapeType() == CollisionShapeType::AABB)
+			if (collisionShape2D.GetCollisionShapeType() == CollisionShapeType::Edge)
+			{
+				const EdgeCollisionShape2D& edgeCollisionShape2D = static_cast<const EdgeCollisionShape2D&>(collisionShape2D);
+				_center = (edgeCollisionShape2D._vertexA + edgeCollisionShape2D._vertexB) * 0.5f;
+				_halfSize = (edgeCollisionShape2D._vertexA - edgeCollisionShape2D._vertexB) * 0.5f;
+				_halfSize._x = Max(::abs(_halfSize._x), 1.0f);
+				_halfSize._y = Max(::abs(_halfSize._y), 1.0f);
+			}
+			else if (collisionShape2D.GetCollisionShapeType() == CollisionShapeType::AABB)
 			{
 				const AABBCollisionShape2D& aabbCollisionShape2D = static_cast<const AABBCollisionShape2D&>(collisionShape2D);
 				_center = aabbCollisionShape2D._center;
