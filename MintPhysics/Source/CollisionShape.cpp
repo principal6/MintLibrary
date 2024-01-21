@@ -35,10 +35,10 @@ namespace mint
 			outVertexA = _center;
 			outVertexB = _center;
 
-			Float2 halfLeft{ -direction._y, direction._x };
-			halfLeft *= 0.5f;
-			outVertexA += halfLeft;
-			outVertexA -= halfLeft;
+			Float2 tangent{ -direction._y, direction._x };
+			outVertexA -= tangent;
+			outVertexB += tangent;
+			MINT_ASSERT(tangent.Dot(direction) == 0.0f, "!!!");
 		}
 #pragma endregion
 
@@ -77,10 +77,10 @@ namespace mint
 			outVertexA = ComputeSupportPoint(direction);
 			outVertexB = outVertexA;
 
-			Float2 left{ -direction._y, direction._x };
-			left *= _radius;
-			outVertexA += left;
-			outVertexB -= left;
+			Float2 tangent{ -direction._y, direction._x };
+			outVertexA -= tangent;
+			outVertexB += tangent;
+			MINT_ASSERT(tangent.Dot(direction) == 0.0f, "!!!");
 		}
 #pragma endregion
 
@@ -151,7 +151,7 @@ namespace mint
 
 		void AABBCollisionShape2D::Set(const AABBCollisionShape2D& aabbCollisionShape2D, const Transform2D& transform2D)
 		{
-			_center = transform2D._translation;
+			_center = aabbCollisionShape2D._center + transform2D._translation;
 			const Float2x2 rotationMatrix = Float2x2::RotationMatrix(transform2D._rotation);
 			const Float2& x = rotationMatrix._row[0];
 			const Float2& y = rotationMatrix._row[1];
@@ -484,39 +484,39 @@ namespace mint
 			ComputeSupportPointIndex(direction, targetVertexIndex);
 
 			const Float2& targetVertex = _vertices[targetVertexIndex];
-			const Float2* sideVertex0 = nullptr;
-			const Float2* sideVertex1 = nullptr;
+			const Float2* sideVertexCW = nullptr;
+			const Float2* sideVertexCCW = nullptr;
 			if (targetVertexIndex == 0)
 			{
-				sideVertex0 = &_vertices.Back();
-				sideVertex1 = &_vertices[targetVertexIndex + 1];
+				sideVertexCW = &_vertices.Back();
+				sideVertexCCW = &_vertices[targetVertexIndex + 1];
 			}
 			else if (targetVertexIndex == _vertices.Size() - 1)
 			{
-				sideVertex0 = &_vertices[0];
-				sideVertex1 = &_vertices[targetVertexIndex - 1];
+				sideVertexCW = &_vertices[targetVertexIndex - 1];
+				sideVertexCCW = &_vertices[0];
 			}
 			else
 			{
-				sideVertex0 = &_vertices[targetVertexIndex - 1];
-				sideVertex1 = &_vertices[targetVertexIndex + 1];
+				sideVertexCW = &_vertices[targetVertexIndex - 1];
+				sideVertexCCW = &_vertices[targetVertexIndex + 1];
 			}
 
-			Float2 v0 = (*sideVertex0 - targetVertex);
+			Float2 v0 = (*sideVertexCW - targetVertex);
 			v0.Normalize();
-			Float2 v1 = (*sideVertex1 - targetVertex);
+			Float2 v1 = (*sideVertexCCW - targetVertex);
 			v1.Normalize();
 			const float dot0 = direction.Dot(v0);
 			const float dot1 = direction.Dot(v1);
 			if (dot0 > dot1)
 			{
-				outVertexA = *sideVertex0;
+				outVertexA = *sideVertexCW;
 				outVertexB = targetVertex;
 			}
 			else
 			{
-				outVertexA = *sideVertex1;
-				outVertexB = targetVertex;
+				outVertexA = targetVertex;
+				outVertexB = *sideVertexCCW;
 			}
 		}
 
