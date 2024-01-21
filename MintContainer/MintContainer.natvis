@@ -1,5 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?> 
 <AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+	<Type Name="mint::SharedPtr&lt;*&gt;">
+		<DisplayString>{"$T1"} {_rawPtr, na}</DisplayString>
+		<Expand>
+			<ExpandedItem>_rawPtr</ExpandedItem>
+			<Item Name="Reference Counter">_referenceCounter</Item>
+		</Expand>
+	</Type>
     <Type Name="mint::Vector&lt;*&gt;">
         <DisplayString>{{ size = {_size} capacity = {_capacity} }}</DisplayString>
         <Expand>
