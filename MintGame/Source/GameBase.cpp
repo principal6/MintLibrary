@@ -385,12 +385,11 @@ namespace mint
 
 		void GameBase2D::DrawTextToScreen(const StringA& text, const Int2& position, const ByteColor& color)
 		{
-			Rendering::ShapeRendererContext& shapeRendererContext = _graphicDevice->GetShapeRendererContext();
-			shapeRendererContext.SetTextColor(color);
+			Rendering::ShapeRendererContext& screenSpaceShapeRendererContext = _graphicDevice->GetScreenSpaceShapeRendererContext();
+			screenSpaceShapeRendererContext.SetTextColor(color);
 			StringW textW;
 			StringUtil::ConvertStringAToStringW(text, textW);
-			shapeRendererContext.DrawDynamicText(textW.CString(), Float4(static_cast<float>(position._x), static_cast<float>(position._y), 0, 1), Rendering::FontRenderingOption());
-			shapeRendererContext.Render();
+			screenSpaceShapeRendererContext.DrawDynamicText(textW.CString(), Float4(static_cast<float>(position._x), static_cast<float>(position._y), 0, 1), Rendering::FontRenderingOption());
 		}
 
 		void GameBase2D::EndRendering()
@@ -454,8 +453,6 @@ namespace mint
 			//}
 
 			_physicsWorld.RenderDebug(shapeRendererContext);
-
-			_graphicDevice->SetViewProjectionMatrix(Float4x4::kIdentity, _graphicDevice->GetScreenSpace2DProjectionMatrix());
 		}
 
 		void GameBase2D::LoadTileMap(const StringA& tileMapeFileName)

@@ -303,6 +303,7 @@ namespace mint
 			, _resourcePool{ *this }
 			, _stateManager{ *this }
 			, _shapeRendererContext{ *this }
+			, _screenSpaceShapeRendererContext{ *this }
 			, _needEndRenderingCall{ false }
 		{
 			__noop;
@@ -440,6 +441,7 @@ namespace mint
 			}
 
 			_shapeRendererContext.InitializeFontData(fontLoader.GetFontData());
+			_screenSpaceShapeRendererContext.InitializeFontData(fontLoader.GetFontData());
 
 			return true;
 		}
@@ -596,6 +598,7 @@ namespace mint
 		void GraphicDevice::InitializeShaders()
 		{
 			_shapeRendererContext.InitializeShaders();
+			_screenSpaceShapeRendererContext.InitializeShaders();
 		}
 
 		void GraphicDevice::InitializeSamplerStates()
@@ -690,6 +693,7 @@ namespace mint
 			UseFullScreenViewport();
 
 			MINT_ASSERT(_shapeRendererContext.IsEmpty(), "BeginRendering() 호출 전에 채우면 안 됩니다!");
+			MINT_ASSERT(_screenSpaceShapeRendererContext.IsEmpty(), "BeginRendering() 호출 전에 채우면 안 됩니다!");
 		}
 
 		void GraphicDevice::Draw(const uint32 vertexCount, const uint32 vertexOffset) noexcept
@@ -710,7 +714,15 @@ namespace mint
 				return;
 			}
 
+			if (_screenSpaceShapeRendererContext.IsEmpty() == false)
+			{
+				SetSolidCullNoneRasterizer();
+				SetViewProjectionMatrix(Float4x4::kIdentity, GetScreenSpace2DProjectionMatrix());
+				_screenSpaceShapeRendererContext.Render();
+			}
+			
 			MINT_ASSERT(_shapeRendererContext.IsEmpty(), "EndRendering() 호출 전에 Flush() 해야 합니다!");
+			MINT_ASSERT(_screenSpaceShapeRendererContext.IsEmpty(), "EndRendering() 호출 전에 Flush() 해야 합니다!");
 
 			_swapChain->Present(0, 0);
 
