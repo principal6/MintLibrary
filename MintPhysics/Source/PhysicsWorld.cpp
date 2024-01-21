@@ -34,8 +34,8 @@ namespace mint
 
 #pragma region World
 		World::World()
-			: _worldMin{ -8.0, -8.0f }
-			, _worldMax{ +8.0, +8.0f }
+			: _worldMin{ -128.0, -128.0f }
+			, _worldMax{ +128.0, +128.0f }
 		{
 			_collisionSectorSideCount = kCollisionSectorTessellationPerSide;
 			for (uint32 i = 0; i < _collisionSectorDepth; ++i)
@@ -222,10 +222,10 @@ namespace mint
 					}
 
 					// TODO ...
-					//if (narrowPhaseCollisionInfo._signedDistance < 0.0f)
-					//{
-					//	bodyA->_transform2D._translation += narrowPhaseCollisionInfo._collisionNormal * -narrowPhaseCollisionInfo._signedDistance;
-					//}
+					if (narrowPhaseCollisionInfo._signedDistance < 0.0f)
+					{
+						bodyA->_transform2D._translation += narrowPhaseCollisionInfo._collisionNormal * -narrowPhaseCollisionInfo._signedDistance;
+					}
 				}
 			}
 
