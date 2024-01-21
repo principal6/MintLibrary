@@ -627,5 +627,32 @@ namespace mint
 			shapeRendererContext.DrawCircle(4.0f);
 		}
 #pragma endregion
+
+#pragma region CollisionShape2D - CompositeCollisionShape2D
+		CompositeCollisionShape2D::CompositeCollisionShape2D(const Vector<ShapeInstance>& shapeInstances)
+			: _shapeInstances{ shapeInstances }
+		{
+			__noop;
+		}
+
+		Float2 CompositeCollisionShape2D::ComputeSupportPoint(const Float2& direction) const
+		{
+			MINT_NEVER;
+			return Float2::kZero;
+		}
+
+		void CompositeCollisionShape2D::ComputeSupportEdge(const Float2& direction, Float2& outVertexA, Float2& outVertexB) const
+		{
+			MINT_NEVER;
+		}
+
+		void CompositeCollisionShape2D::DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Transform2D& transform2D) const
+		{
+			for (const ShapeInstance& shapeInstance : _shapeInstances)
+			{
+				shapeInstance._shape->DebugDrawShape(shapeRendererContext, color, transform2D * shapeInstance._transform2D);
+			}
+		}
+#pragma endregion
 	}
 }
