@@ -155,9 +155,9 @@ namespace mint
 				const Body2D& bodyA = GetBody(iter._bodyIDA);
 				const Body2D& bodyB = GetBody(iter._bodyIDB);
 
-				const ConvexCollisionShape2D transformedShapeA{ *bodyA._shape._collisionShape, bodyA._transform2D };
-				const ConvexCollisionShape2D transformedShapeB{ *bodyB._shape._collisionShape, bodyB._transform2D };
-				if (Intersect2D_GJK(transformedShapeA, transformedShapeB, &gjk2DInfo))
+				SharedPtr<CollisionShape2D> transformedShapeA{ CollisionShape2D::MakeTransformed(*bodyA._shape._collisionShape, bodyA._transform2D) };
+				SharedPtr<CollisionShape2D> transformedShapeB{ CollisionShape2D::MakeTransformed(*bodyB._shape._collisionShape, bodyB._transform2D) };
+				if (Intersect2D_GJK(*transformedShapeA, *transformedShapeB, &gjk2DInfo))
 				{
 					const GJK2DSimplex::Point& closestPoint = gjk2DInfo._simplex.GetClosestPoint();
 					NarrowPhaseCollisionInfo narrowPhaseCollisionInfo;
@@ -171,12 +171,12 @@ namespace mint
 
 					Float2 edgeVertex0;
 					Float2 edgeVertex1;
-					transformedShapeB.ComputeSupportEdge(separatingDirection, edgeVertex0, edgeVertex1);
+					transformedShapeB->ComputeSupportEdge(separatingDirection, edgeVertex0, edgeVertex1);
 					Float2 edgeDirection = edgeVertex0 - edgeVertex1;
 					edgeDirection.Normalize();
 					narrowPhaseCollisionInfo._collisionNormal = Float2(-edgeDirection._y, edgeDirection._x);
 
-					const Float2 bodyAPoint = transformedShapeA.ComputeSupportPoint(-narrowPhaseCollisionInfo._collisionNormal);
+					const Float2 bodyAPoint = transformedShapeA->ComputeSupportPoint(-narrowPhaseCollisionInfo._collisionNormal);
 					narrowPhaseCollisionInfo._collisionPosition = bodyAPoint;
 
 					narrowPhaseCollisionInfo._collisionEdgeVertex0 = edgeVertex0;

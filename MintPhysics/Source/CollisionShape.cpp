@@ -10,6 +10,47 @@ namespace mint
 {
 	namespace Physics
 	{
+#pragma region CollisionShape2D
+		SharedPtr<CollisionShape2D> CollisionShape2D::MakeTransformed(const CollisionShape2D& shape, const Transform2D& transform2D)
+		{
+			switch (shape.GetCollisionShapeType())
+			{
+			case mint::Physics::CollisionShapeType::Point:
+			{
+				const PointCollisionShape2D& castedShape = static_cast<const PointCollisionShape2D&>(shape);
+				return MakeShared<PointCollisionShape2D>(PointCollisionShape2D(castedShape._center + transform2D._translation));
+			}
+			case mint::Physics::CollisionShapeType::Circle:
+			{
+				const CircleCollisionShape2D& castedShape = static_cast<const CircleCollisionShape2D&>(shape);
+				return MakeShared<CircleCollisionShape2D>(CircleCollisionShape2D(castedShape._center + transform2D._translation, castedShape._radius));
+			}
+			case mint::Physics::CollisionShapeType::AABB:
+			{
+				const AABBCollisionShape2D& castedShape = static_cast<const AABBCollisionShape2D&>(shape);
+				return MakeShared<AABBCollisionShape2D>(AABBCollisionShape2D(castedShape._center + transform2D._translation, castedShape._halfSize));
+			}
+			case mint::Physics::CollisionShapeType::Box:
+			{
+				const BoxCollisionShape2D& castedShape = static_cast<const BoxCollisionShape2D&>(shape);
+				const Float2x2 rotationMatrix{ Float2x2::RotationMatrix(transform2D._rotation) };
+				const Float2 halfLengthedAxisX = rotationMatrix * castedShape.GetHalfLengthedAxisX();
+				const Float2 halfLengthedAxisY = rotationMatrix * castedShape.GetHalfLengthedAxisY();
+				return MakeShared<BoxCollisionShape2D>(BoxCollisionShape2D(castedShape._center + transform2D._translation, halfLengthedAxisX, halfLengthedAxisY));
+			}
+			case mint::Physics::CollisionShapeType::Convex:
+			{
+				const ConvexCollisionShape2D& castedShape = static_cast<const ConvexCollisionShape2D&>(shape);
+				return MakeShared<ConvexCollisionShape2D>(ConvexCollisionShape2D(shape, transform2D));
+			}
+			default:
+				break;
+			}
+			MINT_NEVER;
+			return SharedPtr<CollisionShape2D>();
+		}
+#pragma endregion
+
 #pragma region CollisionShape2D - PointCollisionShape2D
 		PointCollisionShape2D::PointCollisionShape2D(const Float2& center)
 			: CollisionShape2D()
@@ -238,6 +279,15 @@ namespace mint
 			const Float2& y = rotationMatrix._row[1];
 			_halfLengthedAxisX = x * halfSize._x;
 			_halfLengthedAxisY = y * halfSize._y;
+		}
+
+		BoxCollisionShape2D::BoxCollisionShape2D(const Float2& center, const Float2& halfLengthedAxisX, const Float2& halfLengthedAxisY)
+			: CollisionShape2D()
+			, _center{ center }
+			, _halfLengthedAxisX{ halfLengthedAxisX }
+			, _halfLengthedAxisY{ halfLengthedAxisY }
+		{
+			__noop;
 		}
 
 		void BoxCollisionShape2D::DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Transform2D& transform2D) const

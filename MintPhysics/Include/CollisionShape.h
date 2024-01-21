@@ -6,6 +6,7 @@
 
 
 #include <MintContainer/Include/Vector.h>
+#include <MintContainer/Include/SharedPtr.h>
 #include <MintMath/Include/Float2.h>
 
 
@@ -39,6 +40,9 @@ namespace mint
 
 		class CollisionShape2D
 		{
+		public:
+			static SharedPtr<CollisionShape2D> MakeTransformed(const CollisionShape2D& shape, const Transform2D& transform2D);
+
 		public:
 			CollisionShape2D() = default;
 			virtual ~CollisionShape2D() = default;
@@ -104,6 +108,7 @@ namespace mint
 		{
 		public:
 			BoxCollisionShape2D(const Float2& center, const Float2& halfSize, const float angle);
+			BoxCollisionShape2D(const Float2& center, const Float2& halfLengthedAxisX, const Float2& halfLengthedAxisY);
 
 		public:
 			virtual void DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Transform2D& transform2D) const override final;
