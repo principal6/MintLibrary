@@ -3,6 +3,7 @@
 #include <MintContainer/Include/HashMap.hpp>
 #include <MintContainer/Include/Color.h>
 #include <MintContainer/Include/Algorithm.hpp>
+#include <MintContainer/Include/StringUtil.hpp>
 #include <MintRenderingBase/Include/ShapeRendererContext.h>
 #include <MintPhysics/Include/Intersection.hpp>
 
@@ -163,19 +164,17 @@ namespace mint
 					narrowPhaseCollisionInfo._bodyIDA = iter._bodyIDA;
 					narrowPhaseCollisionInfo._bodyIDB = iter._bodyIDB;
 
-					Float2 separatingDirection = bodyA._transform2D._translation - closestPoint._shapeBPoint;
+					Float2 separatingDirection = closestPoint._shapeAPoint - bodyB._transform2D._translation;
 					separatingDirection.Normalize();
+					//Float2 separatingDirection = bodyA._transform2D._translation - closestPoint._shapeBPoint;
+					//separatingDirection.Normalize();
 
 					Float2 edgeVertex0;
 					Float2 edgeVertex1;
 					transformedShapeB.ComputeSupportEdge(separatingDirection, edgeVertex0, edgeVertex1);
-					Float2 edgeDirection = edgeVertex1 - edgeVertex0;
+					Float2 edgeDirection = edgeVertex0 - edgeVertex1;
 					edgeDirection.Normalize();
 					narrowPhaseCollisionInfo._collisionNormal = Float2(-edgeDirection._y, edgeDirection._x);
-					if (separatingDirection.Dot(narrowPhaseCollisionInfo._collisionNormal) < 0.0f)
-					{
-						narrowPhaseCollisionInfo._collisionNormal = -narrowPhaseCollisionInfo._collisionNormal;
-					}
 
 					const Float2 bodyAPoint = transformedShapeA.ComputeSupportPoint(-narrowPhaseCollisionInfo._collisionNormal);
 					narrowPhaseCollisionInfo._collisionPosition = bodyAPoint;
@@ -223,10 +222,10 @@ namespace mint
 					}
 
 					// TODO ...
-					if (narrowPhaseCollisionInfo._signedDistance < 0.0f)
-					{
-						bodyA->_transform2D._translation += narrowPhaseCollisionInfo._collisionNormal * -narrowPhaseCollisionInfo._signedDistance;
-					}
+					//if (narrowPhaseCollisionInfo._signedDistance < 0.0f)
+					//{
+					//	bodyA->_transform2D._translation += narrowPhaseCollisionInfo._collisionNormal * -narrowPhaseCollisionInfo._signedDistance;
+					//}
 				}
 			}
 
@@ -357,6 +356,7 @@ namespace mint
 
 		void World::RenderDebug(Rendering::ShapeRendererContext& shapeRendererContext) const
 		{
+			StackStringW<256> buffer;
 			const uint32 bodyCount = _bodyPool.GetObjects().Size();
 			for (uint32 i = 0; i < bodyCount; ++i)
 			{
@@ -369,6 +369,9 @@ namespace mint
 				body._bodyAABB->DebugDrawShape(shapeRendererContext, ByteColor(255, 255, 0), Transform2D());
 
 				body._shape._collisionShape->DebugDrawShape(shapeRendererContext, ByteColor(128, 128, 128), body._transform2D);
+
+				FormatString(buffer, L"[%d]", body._bodyID.Value());
+				shapeRendererContext.DrawDynamicText(buffer.CString(), Float4(body._transform2D._translation), Rendering::FontRenderingOption());
 			}
 
 			shapeRendererContext.SetColor(ByteColor(255, 0, 0));
