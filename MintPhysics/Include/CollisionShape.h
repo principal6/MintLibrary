@@ -17,8 +17,13 @@ namespace mint
 
 	namespace Rendering
 	{
-		struct Shape;
 		class ShapeRendererContext;
+		struct Shape;
+	}
+
+	namespace Physics
+	{
+		class ConvexCollisionShape2D;
 	}
 }
 
@@ -26,7 +31,6 @@ namespace mint
 {
 	namespace Physics
 	{
-		class ConvexCollisionShape2D;
 		using mint::Rendering::ShapeRendererContext;
 
 		enum class CollisionShapeType
