@@ -81,21 +81,60 @@ namespace mint
 					}
 					else
 					{
-						MINT_ASSERT(StringUtil::Equals(objectChildNode->GetName(), "polygon"), "Non-polygon objects are not supported!");
-						Vector<StringA> textPoints;
-						StringUtil::Tokenize(StringA(objectChildNode->GetFirstAttribute()->GetValue()), ' ', textPoints);
-						Vector<Float2> points;
-						points.Resize(textPoints.Size());
+						if (StringUtil::Equals(objectChildNode->GetName(), "polygon") == true)
 						{
-							Vector<StringA> coords;
-							for (uint32 i = 0; i < textPoints.Size(); ++i)
+							Vector<StringA> textPoints;
+							StringUtil::Tokenize(StringA(objectChildNode->GetFirstAttribute()->GetValue()), ' ', textPoints);
+							Vector<Float2> points;
+							points.Resize(textPoints.Size());
 							{
-								StringUtil::Tokenize(textPoints[i], ',', coords);
-								points[i]._x = StringUtil::StringToFloat(coords[0]) - halfTileWidth;
-								points[i]._y = -(StringUtil::StringToFloat(coords[1]) - halfTileHeight);
+								Vector<StringA> coords;
+								for (uint32 i = 0; i < textPoints.Size(); ++i)
+								{
+									StringUtil::Tokenize(textPoints[i], ',', coords);
+									points[i]._x = StringUtil::StringToFloat(coords[0]) - halfTileWidth;
+									points[i]._y = -(StringUtil::StringToFloat(coords[1]) - halfTileHeight);
+								}
+							}
+							_tileCollisionShapes[id] = MakeShared<Physics::ConvexCollisionShape2D>(Physics::ConvexCollisionShape2D::MakeFromPoints(points));
+						}
+						else if (StringUtil::Equals(objectChildNode->GetName(), "polyline") == true)
+						{
+							Vector<StringA> textPoints;
+							StringUtil::Tokenize(StringA(objectChildNode->GetFirstAttribute()->GetValue()), ' ', textPoints);
+							Vector<Float2> points;
+							points.Resize(textPoints.Size());
+							{
+								Vector<StringA> coords;
+								for (uint32 i = 0; i < textPoints.Size(); ++i)
+								{
+									StringUtil::Tokenize(textPoints[i], ',', coords);
+									points[i]._x = StringUtil::StringToFloat(coords[0]) - halfTileWidth;
+									points[i]._y = -(StringUtil::StringToFloat(coords[1]) - halfTileHeight);
+								}
+							}
+							MINT_ASSERT(points.Size() >= 2, "Invalid point count!");
+
+							if (points.Size() == 2)
+							{
+								_tileCollisionShapes[id] = MakeShared<Physics::EdgeCollisionShape2D>(Physics::EdgeCollisionShape2D(points[0], points[1]));
+							}
+							else
+							{
+								const uint32 edgeCount = points.Size() - 1;
+								Vector<Physics::CompositeCollisionShape2D::ShapeInstance> shapeInstances;
+								shapeInstances.Resize(edgeCount);
+								for (uint32 i = 0; i < edgeCount; ++i)
+								{
+									shapeInstances[i]._shape = MakeShared<Physics::EdgeCollisionShape2D>(Physics::EdgeCollisionShape2D(points[i], points[i + 1]));
+								}
+								_tileCollisionShapes[id] = MakeShared<Physics::CompositeCollisionShape2D>(Physics::CompositeCollisionShape2D(shapeInstances));
 							}
 						}
-						_tileCollisionShapes[id] = MakeShared<Physics::ConvexCollisionShape2D>(Physics::ConvexCollisionShape2D::MakeFromPoints(points));
+						else
+						{
+							MINT_ASSERT(false, "Not supported!");
+						}
 					}
 				}
 			}

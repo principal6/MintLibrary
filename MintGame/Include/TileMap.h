@@ -43,7 +43,7 @@ namespace mint
 			uint32 GetImageWidth() const { return _imageWidth; }
 			uint32 GetImageHeight() const { return _imageHeight; }
 			Int2 GetTileCoordinates(uint32 tileIndex) const;
-			const Vector<SharedPtr<Physics::ConvexCollisionShape2D>>& GetTileCollisionShapes() const { return _tileCollisionShapes; }
+			const Vector<SharedPtr<Physics::CollisionShape2D>>& GetTileCollisionShapes() const { return _tileCollisionShapes; }
 
 		private:
 			StringA _tileSetFileName;
@@ -54,7 +54,7 @@ namespace mint
 			StringA _imageFileName;
 			uint32 _imageWidth;
 			uint32 _imageHeight;
-			Vector<SharedPtr<Physics::ConvexCollisionShape2D>> _tileCollisionShapes;
+			Vector<SharedPtr<Physics::CollisionShape2D>> _tileCollisionShapes;
 		};
 
 		class TileMap
