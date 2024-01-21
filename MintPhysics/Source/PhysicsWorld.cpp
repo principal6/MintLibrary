@@ -154,12 +154,6 @@ namespace mint
 				const Body2D& bodyA = GetBody(iter._bodyIDA);
 				const Body2D& bodyB = GetBody(iter._bodyIDB);
 
-				const Float2 relativeLinearVelocityAB = bodyA._linearVelocity - bodyB._linearVelocity;
-				if (relativeLinearVelocityAB == Float2::kZero)
-				{
-					continue;
-				}
-
 				const ConvexCollisionShape2D transformedShapeA{ *bodyA._shape._collisionShape, bodyA._transform2D };
 				const ConvexCollisionShape2D transformedShapeB{ *bodyB._shape._collisionShape, bodyB._transform2D };
 				if (Intersect2D_GJK(transformedShapeA, transformedShapeB, &gjk2DInfo))
@@ -169,21 +163,19 @@ namespace mint
 					narrowPhaseCollisionInfo._bodyIDA = iter._bodyIDA;
 					narrowPhaseCollisionInfo._bodyIDB = iter._bodyIDB;
 
-					Float2 separatingDirection = -relativeLinearVelocityAB;
+					Float2 separatingDirection = bodyA._transform2D._translation - closestPoint._shapeBPoint;
 					separatingDirection.Normalize();
 
 					Float2 edgeVertex0;
 					Float2 edgeVertex1;
 					transformedShapeB.ComputeSupportEdge(separatingDirection, edgeVertex0, edgeVertex1);
-					if (edgeVertex0._x > edgeVertex1._x)
-					{
-						Float2 edgeVertexTemp = edgeVertex0;
-						edgeVertex0 = edgeVertex1;
-						edgeVertex1 = edgeVertexTemp;
-					}
 					Float2 edgeDirection = edgeVertex1 - edgeVertex0;
 					edgeDirection.Normalize();
 					narrowPhaseCollisionInfo._collisionNormal = Float2(-edgeDirection._y, edgeDirection._x);
+					if (separatingDirection.Dot(narrowPhaseCollisionInfo._collisionNormal) < 0.0f)
+					{
+						narrowPhaseCollisionInfo._collisionNormal = -narrowPhaseCollisionInfo._collisionNormal;
+					}
 
 					const Float2 bodyAPoint = transformedShapeA.ComputeSupportPoint(-narrowPhaseCollisionInfo._collisionNormal);
 					narrowPhaseCollisionInfo._collisionPosition = bodyAPoint;
@@ -193,6 +185,15 @@ namespace mint
 					narrowPhaseCollisionInfo._signedDistance = narrowPhaseCollisionInfo._collisionNormal.Dot(narrowPhaseCollisionInfo._collisionPosition - edgeVertex0);
 
 					_narrowPhaseCollisionInfos.PushBack(narrowPhaseCollisionInfo);
+					//KeyValuePair found = _narrowPhaseCollisionInfos.Find(narrowPhaseCollisionInfo.GetKey());
+					//if (found.IsValid())
+					//{
+					//	found._value;
+					//}
+					//else
+					//{
+					//	_narrowPhaseCollisionInfos.Insert(narrowPhaseCollisionInfo.GetKey(), narrowPhaseCollisionInfo);
+					//}
 				}
 			}
 		}
@@ -230,17 +231,6 @@ namespace mint
 			}
 
 			// Integrate
-			const uint32 collisionSectorBufferSize = _collisionSectorSideCount * _collisionSectorSideCount;
-			for (uint32 i = 0; i < collisionSectorBufferSize; ++i)
-			{
-				_collisionSectors[i]._bodyIDs.Clear();
-			}
-			const Float2 worldMinPreStepSolve = _worldMin;
-			const Float2 worldMaxPreStepSolve = _worldMax;
-			const Float2 worldSizePreStepSolve = (worldMaxPreStepSolve - worldMinPreStepSolve);
-			const Float2 collisionSectorSize = worldSizePreStepSolve / static_cast<float>(1 + _collisionSectorDepth);
-			Vector<uint32> collisionSectorIndices;
-			collisionSectorIndices.Resize(4);
 			const uint32 bodyCount = _bodyPool.GetObjects().Size();
 			for (uint32 i = 0; i < bodyCount; ++i)
 			{
@@ -260,11 +250,34 @@ namespace mint
 					body._transform2DPrevStep = body._transform2D;
 					body._transform2D._translation += body._linearVelocity * deltaTime;
 					body._transform2D._rotation += body._angularVelocity * deltaTime;
+
+					body._linearVelocity *= (1.0f - body._linearDamping);
 				}
 
 				body._bodyAABB->Set(*body._shape._shapeAABB, body._transform2D);
 
-				ComputeCollisionSectorIndices(*body._bodyAABB, worldMinPreStepSolve, collisionSectorSize, collisionSectorIndices);
+				_worldMin = Float2::Min(_worldMin, body._transform2D._translation);
+				_worldMax = Float2::Max(_worldMax, body._transform2D._translation);
+			}
+			_worldSize = (_worldMax - _worldMin);
+
+			const Float2 collisionSectorSize = _worldSize / static_cast<float>(1 + _collisionSectorDepth);
+			const uint32 collisionSectorBufferSize = _collisionSectorSideCount * _collisionSectorSideCount;
+			for (uint32 i = 0; i < collisionSectorBufferSize; ++i)
+			{
+				_collisionSectors[i]._bodyIDs.Clear();
+			}
+			Vector<uint32> collisionSectorIndices;
+			collisionSectorIndices.Resize(4);
+			for (uint32 i = 0; i < bodyCount; ++i)
+			{
+				Body2D& body = _bodyPool.GetObject_(i);
+				if (body.IsValid() == false)
+				{
+					continue;
+				}
+
+				ComputeCollisionSectorIndices(*body._bodyAABB, _worldMin, collisionSectorSize, collisionSectorIndices);
 				QuickSort(collisionSectorIndices, ComparatorAscending<uint32>());
 				_collisionSectors[collisionSectorIndices[0]]._bodyIDs.PushBack(body._bodyID);
 				for (uint32 j = 1; j < 4; ++j)
@@ -275,12 +288,7 @@ namespace mint
 					}
 					_collisionSectors[collisionSectorIndices[j]]._bodyIDs.PushBack(body._bodyID);
 				}
-
-				_worldMin = Float2::Min(_worldMin, body._transform2D._translation);
-				_worldMax = Float2::Max(_worldMax, body._transform2D._translation);
 			}
-
-			_worldSize = (_worldMax - _worldMin);
 		}
 
 		void World::ComputeCollisionSectorIndices(const Physics::AABBCollisionShape2D& aabb, const Float2& worldMin, const Float2& collisionSectorSize, Vector<uint32>& outIndices) const
@@ -360,9 +368,10 @@ namespace mint
 
 				body._bodyAABB->DebugDrawShape(shapeRendererContext, ByteColor(255, 255, 0), Transform2D());
 
-				body._shape._collisionShape->DebugDrawShape(shapeRendererContext, ByteColor(255, 0, 0), body._transform2D);
+				body._shape._collisionShape->DebugDrawShape(shapeRendererContext, ByteColor(128, 128, 128), body._transform2D);
 			}
 
+			shapeRendererContext.SetColor(ByteColor(255, 0, 0));
 			for (const NarrowPhaseCollisionInfo& narrowPhaseCollisionInfo : _narrowPhaseCollisionInfos)
 			{
 				shapeRendererContext.SetPosition(Float4(narrowPhaseCollisionInfo._collisionEdgeVertex0));

@@ -150,7 +150,9 @@ namespace mint
 		{
 		public:
 			Float2 _position;
+			Float2 _velocity;
 			Float2 _scale = Float2(1, 1);
+			Physics::BodyID _bodyID;
 		};
 
 		class GameBase2D
@@ -179,7 +181,12 @@ namespace mint
 			void SetCharacterCollisionRadius(float radius);
 			const Rendering::SpriteAnimationSet& GetCharacterAnimationSet() const;
 			ActionChart& GetCharacterActionChart();
-			Character2D& GetCharacter();
+			void SetCharacterScale(const Float2& scale);
+			const Float2& GetCharacterScale() const;
+			void SetCharacterVelocity(const Float2& velocity);
+			const Float2& GetCharacterVelocity() const;
+			const Float2& GetCharacterPosition() const;
+			void TeleportCharacterTo(const Float2& position);
 
 		public:
 			void SetTileMapImage(const Image& image);

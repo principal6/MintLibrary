@@ -70,6 +70,7 @@ namespace mint
 			float _mass = 1.0f;
 			Float2 _linearVelocity;
 			Float2 _linearAcceleration;
+			float _linearDamping = 1.0f;
 			float _angularVelocity;
 			float _angularAcceleration;
 		};
@@ -101,6 +102,11 @@ namespace mint
 
 		struct NarrowPhaseCollisionInfo
 		{
+			using Key = uint64;
+			Key GetKey() const
+			{
+				return (static_cast<Key>(_bodyIDA.Value()) << 32) | _bodyIDB.Value();
+			}
 			BodyID _bodyIDA;
 			BodyID _bodyIDB;
 			Float2 _collisionPosition;
@@ -153,6 +159,7 @@ namespace mint
 			uint32 _collisionSectorSideCount = kCollisionSectorTessellationPerSide;
 			Vector<CollisionSector> _collisionSectors;
 			HashMap<BroadPhaseBodyPair::Key, BroadPhaseBodyPair> _broadPhaseBodyPairs;
+			//HashMap<NarrowPhaseCollisionInfo::Key, NarrowPhaseCollisionInfo> _narrowPhaseCollisionInfos;
 			Vector<NarrowPhaseCollisionInfo> _narrowPhaseCollisionInfos;
 		};
 	}
