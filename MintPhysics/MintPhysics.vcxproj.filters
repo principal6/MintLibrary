@@ -57,4 +57,7 @@
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="MintPhysics.natvis" />
+  </ItemGroup>
 </Project>
