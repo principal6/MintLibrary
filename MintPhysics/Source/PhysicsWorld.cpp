@@ -224,7 +224,7 @@ namespace mint
 					// TODO ...
 					if (narrowPhaseCollisionInfo._signedDistance < 0.0f)
 					{
-						bodyA->_transform2D._translation += narrowPhaseCollisionInfo._collisionNormal * -narrowPhaseCollisionInfo._signedDistance;
+						//bodyA->_transform2D._translation += narrowPhaseCollisionInfo._collisionNormal * -narrowPhaseCollisionInfo._signedDistance;
 					}
 				}
 			}
@@ -374,18 +374,19 @@ namespace mint
 				shapeRendererContext.DrawDynamicText(buffer.CString(), Float4(body._transform2D._translation), Rendering::FontRenderingOption());
 			}
 
-			shapeRendererContext.SetColor(ByteColor(255, 0, 0));
 			for (const NarrowPhaseCollisionInfo& narrowPhaseCollisionInfo : _narrowPhaseCollisionInfos)
 			{
+				shapeRendererContext.SetColor(ByteColor(255, 0, 0));
 				shapeRendererContext.SetPosition(Float4(narrowPhaseCollisionInfo._collisionEdgeVertex0));
 				shapeRendererContext.DrawCircle(4.0f);
 				shapeRendererContext.SetPosition(Float4(narrowPhaseCollisionInfo._collisionEdgeVertex1));
 				shapeRendererContext.DrawCircle(4.0f);
 				shapeRendererContext.DrawLine(narrowPhaseCollisionInfo._collisionEdgeVertex0, narrowPhaseCollisionInfo._collisionEdgeVertex1, 2.0f);
 
+				shapeRendererContext.SetColor(ByteColor(128, 0, 255));
 				shapeRendererContext.SetPosition(Float4(narrowPhaseCollisionInfo._collisionPosition));
 				shapeRendererContext.DrawCircle(4.0f);
-				shapeRendererContext.DrawLine(narrowPhaseCollisionInfo._collisionPosition, narrowPhaseCollisionInfo._collisionPosition + narrowPhaseCollisionInfo._collisionNormal * 64.0f, 2.0f);
+				shapeRendererContext.DrawLine(narrowPhaseCollisionInfo._collisionPosition, narrowPhaseCollisionInfo._collisionPosition + narrowPhaseCollisionInfo._collisionNormal * ::abs(narrowPhaseCollisionInfo._signedDistance), 2.0f);
 			}
 
 			shapeRendererContext.Render();
