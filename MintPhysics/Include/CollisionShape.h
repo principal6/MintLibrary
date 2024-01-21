@@ -141,17 +141,17 @@ namespace mint
 		// CCW winding
 		class ConvexCollisionShape2D : public CollisionShape2D
 		{
+		public:
+			static ConvexCollisionShape2D MakeFromPoints(const Vector<Float2>& points);
+			static ConvexCollisionShape2D MakeFromCollisionShape2D(const CollisionShape2D& shape);
+			static ConvexCollisionShape2D MakeFromRenderingShape(const Float2& center, const Rendering::Shape& renderingShape);
+			static ConvexCollisionShape2D MakeMinkowskiDifferenceShape(const CollisionShape2D& a, const CollisionShape2D& b);
+			static ConvexCollisionShape2D MakeMinkowskiDifferenceShape(const ConvexCollisionShape2D& a, const ConvexCollisionShape2D& b);
+
 		private:
 			static ConvexCollisionShape2D MakeFromAABBShape2D(const AABBCollisionShape2D& shape);
 			static ConvexCollisionShape2D MakeFromBoxShape2D(const BoxCollisionShape2D& shape);
 			static ConvexCollisionShape2D MakeFromCircleShape2D(const CircleCollisionShape2D& shape);
-
-		public:
-			static ConvexCollisionShape2D MakeFromPoints(const Vector<Float2>& points);
-			static ConvexCollisionShape2D MakeFromShape2D(const CollisionShape2D& shape);
-			static ConvexCollisionShape2D MakeFromRenderingShape(const Float2& center, const Rendering::Shape& renderingShape);
-			static ConvexCollisionShape2D MakeMinkowskiDifferenceShape(const CollisionShape2D& a, const CollisionShape2D& b);
-			static ConvexCollisionShape2D MakeMinkowskiDifferenceShape(const ConvexCollisionShape2D& a, const ConvexCollisionShape2D& b);
 
 		public:
 			ConvexCollisionShape2D(const Vector<Float2>& vertices);

@@ -368,7 +368,7 @@ namespace mint
 
 		ConvexCollisionShape2D::ConvexCollisionShape2D(const CollisionShape2D& rhs, const Transform2D& transform2D)
 		{
-			*this = MakeFromShape2D(rhs);
+			*this = MakeFromCollisionShape2D(rhs);
 
 			for (Float2& vertex : _vertices)
 			{
@@ -399,43 +399,7 @@ namespace mint
 			return shape;
 		}
 
-		ConvexCollisionShape2D ConvexCollisionShape2D::MakeFromAABBShape2D(const AABBCollisionShape2D& shape)
-		{
-			ConvexCollisionShape2D result;
-			result._vertices.PushBack(shape._center + Float2(-shape._halfSize._x, +shape._halfSize._y));
-			result._vertices.PushBack(shape._center + Float2(-shape._halfSize._x, -shape._halfSize._y));
-			result._vertices.PushBack(shape._center + Float2(+shape._halfSize._x, -shape._halfSize._y));
-			result._vertices.PushBack(shape._center + Float2(+shape._halfSize._x, +shape._halfSize._y));
-			return result;
-		}
-
-		ConvexCollisionShape2D ConvexCollisionShape2D::MakeFromBoxShape2D(const BoxCollisionShape2D& shape)
-		{
-			const Float2& halfX = shape.GetHalfLengthedAxisX();
-			const Float2& halfY = shape.GetHalfLengthedAxisY();
-
-			ConvexCollisionShape2D result;
-			result._vertices.PushBack(shape._center + +halfX + +halfY);
-			result._vertices.PushBack(shape._center + -halfX + +halfY);
-			result._vertices.PushBack(shape._center + -halfX + -halfY);
-			result._vertices.PushBack(shape._center + +halfX + -halfY);
-			return result;
-		}
-
-		ConvexCollisionShape2D ConvexCollisionShape2D::MakeFromCircleShape2D(const CircleCollisionShape2D& shape)
-		{
-			ConvexCollisionShape2D result;
-			for (uint32 i = 0; i <= 32; i++)
-			{
-				float theta = (static_cast<float>(i) / 32.0f) * Math::kTwoPi;
-				const float x = ::cos(theta) * shape._radius;
-				const float y = ::sin(theta) * shape._radius;
-				result._vertices.PushBack(shape._center + Float2(x, y));
-			}
-			return result;
-		}
-
-		ConvexCollisionShape2D ConvexCollisionShape2D::MakeFromShape2D(const CollisionShape2D& shape)
+		ConvexCollisionShape2D ConvexCollisionShape2D::MakeFromCollisionShape2D(const CollisionShape2D& shape)
 		{
 			if (shape.GetCollisionShapeType() == CollisionShapeType::Convex)
 			{
@@ -481,7 +445,7 @@ namespace mint
 
 		ConvexCollisionShape2D ConvexCollisionShape2D::MakeMinkowskiDifferenceShape(const CollisionShape2D& a, const CollisionShape2D& b)
 		{
-			return MakeMinkowskiDifferenceShape(MakeFromShape2D(a), MakeFromShape2D(b));
+			return MakeMinkowskiDifferenceShape(MakeFromCollisionShape2D(a), MakeFromCollisionShape2D(b));
 		}
 
 		ConvexCollisionShape2D ConvexCollisionShape2D::MakeMinkowskiDifferenceShape(const ConvexCollisionShape2D& a, const ConvexCollisionShape2D& b)
@@ -497,6 +461,42 @@ namespace mint
 			}
 			GrahamScan_Convexify(shape._vertices);
 			return shape;
+		}
+
+		ConvexCollisionShape2D ConvexCollisionShape2D::MakeFromAABBShape2D(const AABBCollisionShape2D& shape)
+		{
+			ConvexCollisionShape2D result;
+			result._vertices.PushBack(shape._center + Float2(-shape._halfSize._x, +shape._halfSize._y));
+			result._vertices.PushBack(shape._center + Float2(-shape._halfSize._x, -shape._halfSize._y));
+			result._vertices.PushBack(shape._center + Float2(+shape._halfSize._x, -shape._halfSize._y));
+			result._vertices.PushBack(shape._center + Float2(+shape._halfSize._x, +shape._halfSize._y));
+			return result;
+		}
+
+		ConvexCollisionShape2D ConvexCollisionShape2D::MakeFromBoxShape2D(const BoxCollisionShape2D& shape)
+		{
+			const Float2& halfX = shape.GetHalfLengthedAxisX();
+			const Float2& halfY = shape.GetHalfLengthedAxisY();
+
+			ConvexCollisionShape2D result;
+			result._vertices.PushBack(shape._center + +halfX + +halfY);
+			result._vertices.PushBack(shape._center + -halfX + +halfY);
+			result._vertices.PushBack(shape._center + -halfX + -halfY);
+			result._vertices.PushBack(shape._center + +halfX + -halfY);
+			return result;
+		}
+
+		ConvexCollisionShape2D ConvexCollisionShape2D::MakeFromCircleShape2D(const CircleCollisionShape2D& shape)
+		{
+			ConvexCollisionShape2D result;
+			for (uint32 i = 0; i <= 32; i++)
+			{
+				float theta = (static_cast<float>(i) / 32.0f) * Math::kTwoPi;
+				const float x = ::cos(theta) * shape._radius;
+				const float y = ::sin(theta) * shape._radius;
+				result._vertices.PushBack(shape._center + Float2(x, y));
+			}
+			return result;
 		}
 
 		Float2 ConvexCollisionShape2D::ComputeSupportPoint(const Float2& direction) const
