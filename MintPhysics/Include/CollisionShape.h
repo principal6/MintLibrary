@@ -36,6 +36,7 @@ namespace mint
 		enum class CollisionShapeType
 		{
 			Point,
+			Edge,
 			Circle,
 			AABB,
 			Box,
@@ -77,10 +78,30 @@ namespace mint
 			Float2 _center;
 		};
 
+		class EdgeCollisionShape2D : public CollisionShape2D
+		{
+		public:
+			EdgeCollisionShape2D(const Float2& vertexA, const Float2& vertexB);
+			EdgeCollisionShape2D(const Float2& vertexA, const Float2& vertexB, const Transform2D& transform2D);
+
+		public:
+			virtual Float2 ComputeSupportPoint(const Float2& direction) const override final;
+			virtual void ComputeSupportEdge(const Float2& direction, Float2& outVertexA, Float2& outVertexB) const override final;
+			virtual CollisionShapeType GetCollisionShapeType() const override final { return CollisionShapeType::Edge; }
+
+		public:
+			virtual void DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Transform2D& transform2D) const override final;
+
+		public:
+			Float2 _vertexA;
+			Float2 _vertexB;
+		};
+
 		class CircleCollisionShape2D : public CollisionShape2D
 		{
 		public:
 			CircleCollisionShape2D(const Float2& center, const float radius);
+			CircleCollisionShape2D(const float radius, const Transform2D& transform2D);
 
 		public:
 			virtual Float2 ComputeSupportPoint(const Float2& direction) const override final;
@@ -147,19 +168,18 @@ namespace mint
 		{
 		public:
 			static ConvexCollisionShape2D MakeFromPoints(const Vector<Float2>& points);
-			static ConvexCollisionShape2D MakeFromCollisionShape2D(const CollisionShape2D& shape);
 			static ConvexCollisionShape2D MakeFromRenderingShape(const Float2& center, const Rendering::Shape& renderingShape);
 			static ConvexCollisionShape2D MakeMinkowskiDifferenceShape(const CollisionShape2D& a, const CollisionShape2D& b);
-			static ConvexCollisionShape2D MakeMinkowskiDifferenceShape(const ConvexCollisionShape2D& a, const ConvexCollisionShape2D& b);
 
 		private:
+			static ConvexCollisionShape2D MakeFromCollisionShape2D(const CollisionShape2D& shape);
 			static ConvexCollisionShape2D MakeFromAABBShape2D(const AABBCollisionShape2D& shape);
 			static ConvexCollisionShape2D MakeFromBoxShape2D(const BoxCollisionShape2D& shape);
 			static ConvexCollisionShape2D MakeFromCircleShape2D(const CircleCollisionShape2D& shape);
 
 		public:
 			ConvexCollisionShape2D(const Vector<Float2>& vertices);
-			ConvexCollisionShape2D(const CollisionShape2D& rhs, const Transform2D& transform2D);
+			ConvexCollisionShape2D(const Vector<Float2>& vertices, const Transform2D& transform2D);
 			ConvexCollisionShape2D(const ConvexCollisionShape2D& rhs, const Transform2D& transform2D);
 
 		public:
