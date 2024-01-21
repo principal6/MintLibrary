@@ -479,6 +479,11 @@ namespace mint
 					const uint32 tileID = tileNumber - 1;
 					Physics::Body2DCreationDesc tileBodyCreationDesc;
 					tileBodyCreationDesc._collisionShape2D = tileSet.GetTileCollisionShapes()[tileID];
+					if (tileBodyCreationDesc._collisionShape2D.IsValid() == false)
+					{
+						continue;
+					}
+
 					const Float2 position = _tileMap.ComputeTilePosition(x, y);
 					tileBodyCreationDesc._bodyMotionType = Physics::BodyMotionType::Static;
 					tileBodyCreationDesc._transform2D._translation = position;
