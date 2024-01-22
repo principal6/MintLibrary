@@ -101,7 +101,12 @@ namespace mint
 
 		void World::StepCollide(float deltaTime)
 		{
-			// Broad phase
+			StepCollide_BroadPhase(deltaTime);
+			StepCollide_NarrowPhase(deltaTime);
+		}
+
+		void World::StepCollide_BroadPhase(float deltaTime)
+		{
 			_broadPhaseBodyPairs.Clear();
 			const uint32 collisionSectorCount = _collisionSectors.Size();
 			for (uint32 i = 0; i < collisionSectorCount; ++i)
@@ -146,8 +151,10 @@ namespace mint
 					}
 				}
 			}
+		}
 
-			// Narrow phase
+		void World::StepCollide_NarrowPhase(float deltaTime)
+		{
 			_narrowPhaseCollisionInfos.Clear();
 			GJK2DInfo gjk2DInfo;
 			for (const auto& iter : _broadPhaseBodyPairs)

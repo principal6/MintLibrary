@@ -135,6 +135,8 @@ namespace mint
 
 		private:
 			void StepCollide(float deltaTime);
+			void StepCollide_BroadPhase(float deltaTime);
+			void StepCollide_NarrowPhase(float deltaTime);
 			void StepSolve(float deltaTime);
 
 		private:
