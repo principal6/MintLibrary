@@ -107,6 +107,20 @@ namespace mint
 
 		void World::StepCollide_BroadPhase(float deltaTime)
 		{
+			// Continuous collision detection
+			const uint32 bodyCount = _bodyPool.GetObjects().Size();
+			for (uint32 i = 0; i < bodyCount; ++i)
+			{
+				Body2D& body = _bodyPool.GetObject_(i);
+				if (body.IsValid() == false || body._bodyMotionType != BodyMotionType::Dynamic)
+				{
+					continue;
+				}
+
+				const Float2 displacement = (body._linearVelocity + body._linearAcceleration * deltaTime) * deltaTime;
+				body._bodyAABB->SetExpanded(*body._shape._shapeAABB, body._transform2D, displacement);
+			}
+
 			_broadPhaseBodyPairs.Clear();
 			const uint32 collisionSectorCount = _collisionSectors.Size();
 			for (uint32 i = 0; i < collisionSectorCount; ++i)
@@ -153,55 +167,108 @@ namespace mint
 			}
 		}
 
+		bool World::StepCollide_NarrowPhase_CCD(float deltaTime, const Body2D& bodyA, const Body2D& bodyB, Physics::GJK2DInfo& gjk2DInfo, SharedPtr<CollisionShape2D>& outShapeA, SharedPtr<CollisionShape2D>& outShapeB)
+		{
+			float fraction = 1.0f;
+			float range = 2.0f;
+			Float2 relativeLinearVelocity = bodyA._linearVelocity - bodyB._linearVelocity;
+			Float2 separatingDirection = relativeLinearVelocity;
+			separatingDirection.Normalize();
+			while (true)
+			{
+				float fractionDeltaTime = deltaTime * fraction;
+				Transform2D predictedBodyTransformA = PredictBodyTransform(bodyA, fractionDeltaTime);
+				Transform2D predictedBodyTransformB = PredictBodyTransform(bodyB, fractionDeltaTime);
+
+				outShapeA = CollisionShape2D::MakeTransformed(*bodyA._shape._collisionShape, predictedBodyTransformA);
+				outShapeB = CollisionShape2D::MakeTransformed(*bodyB._shape._collisionShape, predictedBodyTransformB);
+				const bool intersected = Intersect2D_GJK(*outShapeA, *outShapeB, &gjk2DInfo);
+				if (intersected)
+				{
+					const GJK2DSimplex::Point& closestPoint = gjk2DInfo._simplex.GetClosestPoint();
+					const float distance = (closestPoint._shapeAPoint - closestPoint._shapeBPoint).Length();
+					if (distance < 2.0f || range < 0.0625f)
+					{
+						return true;
+					}
+
+					range *= 0.5f;
+					fraction -= range * 0.5f;
+				}
+				else
+				{
+					if (fraction == 1.0f)
+					{
+						return false;
+					}
+
+					range *= 0.5f;
+					fraction += range * 0.5f;
+				}
+			}
+		}
+
 		void World::StepCollide_NarrowPhase(float deltaTime)
 		{
+			const float deltaTimeSq = deltaTime * deltaTime;
+
 			_narrowPhaseCollisionInfos.Clear();
+
 			GJK2DInfo gjk2DInfo;
 			for (const auto& iter : _broadPhaseBodyPairs)
 			{
 				const Body2D& bodyA = GetBody(iter._bodyIDA);
 				const Body2D& bodyB = GetBody(iter._bodyIDB);
 
-				SharedPtr<CollisionShape2D> transformedShapeA{ CollisionShape2D::MakeTransformed(*bodyA._shape._collisionShape, bodyA._transform2D) };
-				SharedPtr<CollisionShape2D> transformedShapeB{ CollisionShape2D::MakeTransformed(*bodyB._shape._collisionShape, bodyB._transform2D) };
-				if (Intersect2D_GJK(*transformedShapeA, *transformedShapeB, &gjk2DInfo))
+				const Float2 relativeLinearVelocity = bodyA._linearVelocity - bodyB._linearVelocity;
+				if (relativeLinearVelocity != Float2::kZero)
 				{
-					const GJK2DSimplex::Point& closestPoint = gjk2DInfo._simplex.GetClosestPoint();
-					NarrowPhaseCollisionInfo narrowPhaseCollisionInfo;
-					narrowPhaseCollisionInfo._bodyIDA = iter._bodyIDA;
-					narrowPhaseCollisionInfo._bodyIDB = iter._bodyIDB;
-
-					Float2 separatingDirection = closestPoint._shapeAPoint - bodyB._transform2D._translation;
-					separatingDirection.Normalize();
-					//Float2 separatingDirection = bodyA._transform2D._translation - closestPoint._shapeBPoint;
-					//separatingDirection.Normalize();
-
-					Float2 edgeVertex0;
-					Float2 edgeVertex1;
-					transformedShapeB->ComputeSupportEdge(separatingDirection, edgeVertex0, edgeVertex1);
-					Float2 edgeDirection = edgeVertex0 - edgeVertex1;
-					edgeDirection.Normalize();
-					narrowPhaseCollisionInfo._collisionNormal = Float2(-edgeDirection._y, edgeDirection._x);
-
-					const Float2 bodyAPoint = transformedShapeA->ComputeSupportPoint(-narrowPhaseCollisionInfo._collisionNormal);
-					narrowPhaseCollisionInfo._collisionPosition = bodyAPoint;
-
-					narrowPhaseCollisionInfo._collisionEdgeVertex0 = edgeVertex0;
-					narrowPhaseCollisionInfo._collisionEdgeVertex1 = edgeVertex1;
-					narrowPhaseCollisionInfo._signedDistance = narrowPhaseCollisionInfo._collisionNormal.Dot(narrowPhaseCollisionInfo._collisionPosition - edgeVertex0);
-
-					_narrowPhaseCollisionInfos.PushBack(narrowPhaseCollisionInfo);
-					//KeyValuePair found = _narrowPhaseCollisionInfos.Find(narrowPhaseCollisionInfo.GetKey());
-					//if (found.IsValid())
-					//{
-					//	found._value;
-					//}
-					//else
-					//{
-					//	_narrowPhaseCollisionInfos.Insert(narrowPhaseCollisionInfo.GetKey(), narrowPhaseCollisionInfo);
-					//}
+					// Continuous collision detection
+					SharedPtr<CollisionShape2D> transformedShapeA;
+					SharedPtr<CollisionShape2D> transformedShapeB;
+					if (StepCollide_NarrowPhase_CCD(deltaTime, bodyA, bodyB, gjk2DInfo, transformedShapeA, transformedShapeB))
+					{
+						StepCollide_NarrowPhase_GenerateCollision(bodyA, *transformedShapeA, bodyB, *transformedShapeB, gjk2DInfo);
+					}
+				}
+				else
+				{
+					// Discrete collision detection
+					SharedPtr<CollisionShape2D> transformedShapeA{ CollisionShape2D::MakeTransformed(*bodyA._shape._collisionShape, bodyA._transform2D) };
+					SharedPtr<CollisionShape2D> transformedShapeB{ CollisionShape2D::MakeTransformed(*bodyB._shape._collisionShape, bodyB._transform2D) };
+					if (Intersect2D_GJK(*transformedShapeA, *transformedShapeB, &gjk2DInfo))
+					{
+						StepCollide_NarrowPhase_GenerateCollision(bodyA, *transformedShapeA, bodyB, *transformedShapeB, gjk2DInfo);
+					}
 				}
 			}
+		}
+
+		void World::StepCollide_NarrowPhase_GenerateCollision(const Body2D& bodyA, const CollisionShape2D& bodyShapeA, const Body2D& bodyB, const CollisionShape2D& bodyShapeB, const Physics::GJK2DInfo& gjk2DInfo)
+		{
+			const GJK2DSimplex::Point& closestPoint = gjk2DInfo._simplex.GetClosestPoint();
+			NarrowPhaseCollisionInfo narrowPhaseCollisionInfo;
+			narrowPhaseCollisionInfo._bodyIDA = bodyA._bodyID;
+			narrowPhaseCollisionInfo._bodyIDB = bodyB._bodyID;
+
+			Float2 separatingDirection = closestPoint._shapeAPoint - bodyB._transform2D._translation;
+			separatingDirection.Normalize();
+
+			Float2 edgeVertex0;
+			Float2 edgeVertex1;
+			bodyShapeB.ComputeSupportEdge(separatingDirection, edgeVertex0, edgeVertex1);
+			Float2 edgeDirection = edgeVertex0 - edgeVertex1;
+			edgeDirection.Normalize();
+			narrowPhaseCollisionInfo._collisionNormal = Float2(-edgeDirection._y, edgeDirection._x);
+
+			const Float2 bodyAPoint = bodyShapeA.ComputeSupportPoint(-narrowPhaseCollisionInfo._collisionNormal);
+			narrowPhaseCollisionInfo._collisionPosition = bodyAPoint;
+
+			narrowPhaseCollisionInfo._collisionEdgeVertex0 = edgeVertex0;
+			narrowPhaseCollisionInfo._collisionEdgeVertex1 = edgeVertex1;
+			narrowPhaseCollisionInfo._signedDistance = narrowPhaseCollisionInfo._collisionNormal.Dot(narrowPhaseCollisionInfo._collisionPosition - edgeVertex0);
+
+			_narrowPhaseCollisionInfos.PushBack(narrowPhaseCollisionInfo);
 		}
 
 		void World::StepSolve(float deltaTime)
@@ -359,6 +426,22 @@ namespace mint
 			outAdjacentCollisionSectors[5] = GetCollisionSector(index2 + Int2(-1, +1));
 			outAdjacentCollisionSectors[6] = GetCollisionSector(index2 + Int2(0, +1));
 			outAdjacentCollisionSectors[7] = GetCollisionSector(index2 + Int2(+1, +1));
+		}
+
+		Transform2D World::PredictBodyTransform(const Body2D& body, float deltaTime) const
+		{
+			return PredictTransform(body._transform2D, body._linearVelocity, body._linearAcceleration, body._angularVelocity, body._angularAcceleration, deltaTime);
+		}
+
+		Transform2D World::PredictTransform(const Transform2D& transform2D, const Float2& linearVelocity, const Float2& linearAcceleration, float angularVelocity, float angularAcceleration, float deltaTime) const
+		{
+			const float deltaTimeSq = deltaTime * deltaTime;
+			Transform2D resultTransform2D = transform2D;
+			resultTransform2D._translation += linearVelocity * deltaTime;
+			resultTransform2D._translation += linearAcceleration * deltaTimeSq;
+			resultTransform2D._rotation = angularVelocity * deltaTime;
+			resultTransform2D._rotation += angularAcceleration * deltaTimeSq;
+			return resultTransform2D;
 		}
 
 		void World::RenderDebug(Rendering::ShapeRendererContext& shapeRendererContext) const

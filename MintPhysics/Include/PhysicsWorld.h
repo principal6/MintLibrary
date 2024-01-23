@@ -20,6 +20,7 @@ namespace mint
 	namespace Physics
 	{
 		class World;
+		struct GJK2DInfo;
 	}
 }
 
@@ -137,6 +138,8 @@ namespace mint
 			void StepCollide(float deltaTime);
 			void StepCollide_BroadPhase(float deltaTime);
 			void StepCollide_NarrowPhase(float deltaTime);
+			bool StepCollide_NarrowPhase_CCD(float deltaTime, const Body2D& bodyA, const Body2D& bodyB, Physics::GJK2DInfo& gjk2DInfo, SharedPtr<CollisionShape2D>& outShapeA, SharedPtr<CollisionShape2D>& outShapeB);
+			void StepCollide_NarrowPhase_GenerateCollision(const Body2D& bodyA, const CollisionShape2D& bodyShapeA, const Body2D& bodyB, const CollisionShape2D& bodyShapeB, const Physics::GJK2DInfo& gjk2DInfo);
 			void StepSolve(float deltaTime);
 
 		private:
@@ -145,6 +148,8 @@ namespace mint
 			uint32 ComputeCollisionSectorIndex(const Int2& collisionSectorIndex2) const;
 			CollisionSector* GetCollisionSector(const Int2& collisionSectorIndex2);
 			void GetAdjacentCollisionSectors(const CollisionSector& collisionSector, CollisionSector* (outAdjacentCollisionSectors)[8]);
+			Transform2D PredictBodyTransform(const Body2D& body, float deltaTime) const;
+			Transform2D PredictTransform(const Transform2D& transform2D, const Float2& linearVelocity, const Float2& linearAcceleration, float angularVelocity, float angularAcceleration, float deltaTime) const;
 
 		public:
 			PhysicsObjectPool<Body2D> _bodyPool;
