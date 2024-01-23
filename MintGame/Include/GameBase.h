@@ -229,6 +229,10 @@ namespace mint
 			OwnPtr<ObjectPool> _objectPool;
 			SharedPtr<Object> _mainCharacterObject;
 			SharedPtr<CameraObject> _mainCameraObject;
+		
+		protected:
+			static constexpr const float kStepDeltaTime = 1.0f / 64.0f;
+			float _deltaTimeRemainder;
 			Physics::World _physicsWorld;
 		};
 	}

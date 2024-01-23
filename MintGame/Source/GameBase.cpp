@@ -296,6 +296,7 @@ namespace mint
 			: _window{ MINT_NEW(Window) }
 			, _imageLoader{ MINT_NEW(Rendering::ImageLoader) }
 			, _characterFloorOffsetFromBottom(0.0f)
+			, _deltaTimeRemainder(0.0f)
 		{
 			WindowCreationDesc windowCreationDesc;
 			windowCreationDesc._size = windowSize;
@@ -363,7 +364,14 @@ namespace mint
 			_characterAnimationSet.SetAnimation(currentAnimationName);
 			_characterAnimationSet.Update(deltaTime);
 
-			_physicsWorld.Step(deltaTime);
+			_deltaTimeRemainder += deltaTime;
+			uint32 stepCount = 0;
+			while (_deltaTimeRemainder > kStepDeltaTime)
+			{
+				++stepCount;
+				_physicsWorld.Step(kStepDeltaTime);
+				_deltaTimeRemainder -= kStepDeltaTime;
+			}
 
 			_character._position = _physicsWorld.GetBody(_character._bodyID)._transform2D._translation;
 
