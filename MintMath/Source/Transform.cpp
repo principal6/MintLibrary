@@ -72,6 +72,11 @@ namespace mint
 		return Float3(Float2x2::RotationMatrix(_rotation).Mul(v.XY()), v._z) + Float3(_translation);
 	}
 
+	bool Transform2D::IsIdentity() const
+	{
+		return _rotation == 0.0f && _translation == Float2::kZero;
+	}
+
 	Float3x3 Transform2D::ToMatrix() const
 	{
 		Float3x3 matrix = Float3x3::RotationMatrixZ(_rotation);

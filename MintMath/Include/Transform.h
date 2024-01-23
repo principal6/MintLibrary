@@ -44,6 +44,7 @@ namespace mint
 		Float3 operator*(const Float3& v) const;
 	
 	public:
+		bool IsIdentity() const;
 		Float3x3 ToMatrix() const;
 		Transform2D GetInverted() const;
 
