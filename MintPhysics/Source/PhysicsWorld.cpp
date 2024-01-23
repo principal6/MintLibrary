@@ -180,8 +180,8 @@ namespace mint
 				Transform2D predictedBodyTransformA = PredictBodyTransform(bodyA, fractionDeltaTime);
 				Transform2D predictedBodyTransformB = PredictBodyTransform(bodyB, fractionDeltaTime);
 
-				outShapeA = CollisionShape2D::MakeTransformed(*bodyA._shape._collisionShape, predictedBodyTransformA);
-				outShapeB = CollisionShape2D::MakeTransformed(*bodyB._shape._collisionShape, predictedBodyTransformB);
+				outShapeA = CollisionShape2D::MakeTransformed(bodyA._shape._collisionShape, predictedBodyTransformA);
+				outShapeB = CollisionShape2D::MakeTransformed(bodyB._shape._collisionShape, predictedBodyTransformB);
 				const bool intersected = Intersect2D_GJK(*outShapeA, *outShapeB, &gjk2DInfo);
 				if (intersected)
 				{
@@ -228,28 +228,31 @@ namespace mint
 					SharedPtr<CollisionShape2D> transformedShapeB;
 					if (StepCollide_NarrowPhase_CCD(deltaTime, bodyA, bodyB, gjk2DInfo, transformedShapeA, transformedShapeB))
 					{
-						StepCollide_NarrowPhase_GenerateCollision(bodyA, *transformedShapeA, bodyB, *transformedShapeB, gjk2DInfo);
+						NarrowPhaseCollisionInfo narrowPhaseCollisionInfo;
+						StepCollide_NarrowPhase_GenerateCollision(bodyA, *transformedShapeA, bodyB, *transformedShapeB, gjk2DInfo, narrowPhaseCollisionInfo);
+						_narrowPhaseCollisionInfos.PushBack(narrowPhaseCollisionInfo);
 					}
 				}
 				else
 				{
 					// Discrete collision detection
-					SharedPtr<CollisionShape2D> transformedShapeA{ CollisionShape2D::MakeTransformed(*bodyA._shape._collisionShape, bodyA._transform2D) };
-					SharedPtr<CollisionShape2D> transformedShapeB{ CollisionShape2D::MakeTransformed(*bodyB._shape._collisionShape, bodyB._transform2D) };
+					SharedPtr<CollisionShape2D> transformedShapeA{ CollisionShape2D::MakeTransformed(bodyA._shape._collisionShape, bodyA._transform2D) };
+					SharedPtr<CollisionShape2D> transformedShapeB{ CollisionShape2D::MakeTransformed(bodyB._shape._collisionShape, bodyB._transform2D) };
 					if (Intersect2D_GJK(*transformedShapeA, *transformedShapeB, &gjk2DInfo))
 					{
-						StepCollide_NarrowPhase_GenerateCollision(bodyA, *transformedShapeA, bodyB, *transformedShapeB, gjk2DInfo);
+						NarrowPhaseCollisionInfo narrowPhaseCollisionInfo;
+						StepCollide_NarrowPhase_GenerateCollision(bodyA, *transformedShapeA, bodyB, *transformedShapeB, gjk2DInfo, narrowPhaseCollisionInfo);
+						_narrowPhaseCollisionInfos.PushBack(narrowPhaseCollisionInfo);
 					}
 				}
 			}
 		}
 
-		void World::StepCollide_NarrowPhase_GenerateCollision(const Body2D& bodyA, const CollisionShape2D& bodyShapeA, const Body2D& bodyB, const CollisionShape2D& bodyShapeB, const Physics::GJK2DInfo& gjk2DInfo)
+		void World::StepCollide_NarrowPhase_GenerateCollision(const Body2D& bodyA, const CollisionShape2D& bodyShapeA, const Body2D& bodyB, const CollisionShape2D& bodyShapeB, const Physics::GJK2DInfo& gjk2DInfo, NarrowPhaseCollisionInfo& outNarrowPhaseCollisionInfo) const
 		{
 			const GJK2DSimplex::Point& closestPoint = gjk2DInfo._simplex.GetClosestPoint();
-			NarrowPhaseCollisionInfo narrowPhaseCollisionInfo;
-			narrowPhaseCollisionInfo._bodyIDA = bodyA._bodyID;
-			narrowPhaseCollisionInfo._bodyIDB = bodyB._bodyID;
+			outNarrowPhaseCollisionInfo._bodyIDA = bodyA._bodyID;
+			outNarrowPhaseCollisionInfo._bodyIDB = bodyB._bodyID;
 
 			Float2 separatingDirection = closestPoint._shapeAPoint - bodyB._transform2D._translation;
 			separatingDirection.Normalize();
@@ -259,16 +262,14 @@ namespace mint
 			bodyShapeB.ComputeSupportEdge(separatingDirection, edgeVertex0, edgeVertex1);
 			Float2 edgeDirection = edgeVertex0 - edgeVertex1;
 			edgeDirection.Normalize();
-			narrowPhaseCollisionInfo._collisionNormal = Float2(-edgeDirection._y, edgeDirection._x);
+			outNarrowPhaseCollisionInfo._collisionNormal = Float2(-edgeDirection._y, edgeDirection._x);
 
-			const Float2 bodyAPoint = bodyShapeA.ComputeSupportPoint(-narrowPhaseCollisionInfo._collisionNormal);
-			narrowPhaseCollisionInfo._collisionPosition = bodyAPoint;
+			const Float2 bodyAPoint = bodyShapeA.ComputeSupportPoint(-outNarrowPhaseCollisionInfo._collisionNormal);
+			outNarrowPhaseCollisionInfo._collisionPosition = bodyAPoint;
 
-			narrowPhaseCollisionInfo._collisionEdgeVertex0 = edgeVertex0;
-			narrowPhaseCollisionInfo._collisionEdgeVertex1 = edgeVertex1;
-			narrowPhaseCollisionInfo._signedDistance = narrowPhaseCollisionInfo._collisionNormal.Dot(narrowPhaseCollisionInfo._collisionPosition - edgeVertex0);
-
-			_narrowPhaseCollisionInfos.PushBack(narrowPhaseCollisionInfo);
+			outNarrowPhaseCollisionInfo._collisionEdgeVertex0 = edgeVertex0;
+			outNarrowPhaseCollisionInfo._collisionEdgeVertex1 = edgeVertex1;
+			outNarrowPhaseCollisionInfo._signedDistance = outNarrowPhaseCollisionInfo._collisionNormal.Dot(outNarrowPhaseCollisionInfo._collisionPosition - edgeVertex0);
 		}
 
 		void World::StepSolve(float deltaTime)
@@ -276,6 +277,7 @@ namespace mint
 			_worldSizePreStepSolve = _worldSize;
 
 			// Resolve Collisions
+			GJK2DInfo gjk2DInfo;
 			for (const NarrowPhaseCollisionInfo& narrowPhaseCollisionInfo : _narrowPhaseCollisionInfos)
 			{
 				Body2D* bodyA = &AccessBody(narrowPhaseCollisionInfo._bodyIDA);
@@ -298,7 +300,17 @@ namespace mint
 					// TODO ...
 					if (narrowPhaseCollisionInfo._signedDistance < 0.0f)
 					{
-						//bodyA->_transform2D._translation += narrowPhaseCollisionInfo._collisionNormal * -narrowPhaseCollisionInfo._signedDistance;
+						const Float2& relativeVelocity = bodyA->_linearVelocity;
+						bodyA->_linearVelocity -= relativeVelocity.Dot(narrowPhaseCollisionInfo._collisionNormal) * narrowPhaseCollisionInfo._collisionNormal;
+
+						SharedPtr<CollisionShape2D> transformedShapeA{ CollisionShape2D::MakeTransformed(bodyA->_shape._collisionShape, bodyA->_transform2D) };
+						SharedPtr<CollisionShape2D> transformedShapeB{ CollisionShape2D::MakeTransformed(bodyB->_shape._collisionShape, bodyB->_transform2D) };
+						if (Intersect2D_GJK(*transformedShapeA, *transformedShapeB, &gjk2DInfo))
+						{
+							NarrowPhaseCollisionInfo newNarrowPhaseCollisionInfo;
+							StepCollide_NarrowPhase_GenerateCollision(*bodyA, *transformedShapeA, *bodyB, *transformedShapeB, gjk2DInfo, newNarrowPhaseCollisionInfo);
+							bodyA->_transform2D._translation += newNarrowPhaseCollisionInfo._collisionNormal * -newNarrowPhaseCollisionInfo._signedDistance;
+						}
 					}
 				}
 			}

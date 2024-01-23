@@ -47,7 +47,7 @@ namespace mint
 		class CollisionShape2D
 		{
 		public:
-			static SharedPtr<CollisionShape2D> MakeTransformed(const CollisionShape2D& shape, const Transform2D& transform2D);
+			static SharedPtr<CollisionShape2D> MakeTransformed(const SharedPtr<CollisionShape2D>& shape, const Transform2D& transform2D);
 
 		public:
 			CollisionShape2D() = default;

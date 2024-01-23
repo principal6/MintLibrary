@@ -11,33 +11,38 @@ namespace mint
 	namespace Physics
 	{
 #pragma region CollisionShape2D
-		SharedPtr<CollisionShape2D> CollisionShape2D::MakeTransformed(const CollisionShape2D& shape, const Transform2D& transform2D)
+		SharedPtr<CollisionShape2D> CollisionShape2D::MakeTransformed(const SharedPtr<CollisionShape2D>& shape, const Transform2D& transform2D)
 		{
-			switch (shape.GetCollisionShapeType())
+			if (transform2D.IsIdentity())
+			{
+				return shape;
+			}
+
+			switch (shape->GetCollisionShapeType())
 			{
 			case mint::Physics::CollisionShapeType::Point:
 			{
-				const PointCollisionShape2D& castedShape = static_cast<const PointCollisionShape2D&>(shape);
+				const PointCollisionShape2D& castedShape = static_cast<const PointCollisionShape2D&>(*shape);
 				return MakeShared<PointCollisionShape2D>(PointCollisionShape2D(castedShape._center + transform2D._translation));
 			}
 			case mint::Physics::CollisionShapeType::Edge:
 			{
-				const EdgeCollisionShape2D& castedShape = static_cast<const EdgeCollisionShape2D&>(shape);
+				const EdgeCollisionShape2D& castedShape = static_cast<const EdgeCollisionShape2D&>(*shape);
 				return MakeShared<EdgeCollisionShape2D>(EdgeCollisionShape2D(castedShape._vertexA, castedShape._vertexB, transform2D));
 			}
 			case mint::Physics::CollisionShapeType::Circle:
 			{
-				const CircleCollisionShape2D& castedShape = static_cast<const CircleCollisionShape2D&>(shape);
+				const CircleCollisionShape2D& castedShape = static_cast<const CircleCollisionShape2D&>(*shape);
 				return MakeShared<CircleCollisionShape2D>(CircleCollisionShape2D(castedShape._center + transform2D._translation, castedShape._radius));
 			}
 			case mint::Physics::CollisionShapeType::AABB:
 			{
-				const AABBCollisionShape2D& castedShape = static_cast<const AABBCollisionShape2D&>(shape);
+				const AABBCollisionShape2D& castedShape = static_cast<const AABBCollisionShape2D&>(*shape);
 				return MakeShared<AABBCollisionShape2D>(AABBCollisionShape2D(castedShape._center + transform2D._translation, castedShape._halfSize));
 			}
 			case mint::Physics::CollisionShapeType::Box:
 			{
-				const BoxCollisionShape2D& castedShape = static_cast<const BoxCollisionShape2D&>(shape);
+				const BoxCollisionShape2D& castedShape = static_cast<const BoxCollisionShape2D&>(*shape);
 				const Float2x2 rotationMatrix{ Float2x2::RotationMatrix(transform2D._rotation) };
 				const Float2 halfLengthedAxisX = rotationMatrix * castedShape.GetHalfLengthedAxisX();
 				const Float2 halfLengthedAxisY = rotationMatrix * castedShape.GetHalfLengthedAxisY();
@@ -45,7 +50,7 @@ namespace mint
 			}
 			case mint::Physics::CollisionShapeType::Convex:
 			{
-				const ConvexCollisionShape2D& castedShape = static_cast<const ConvexCollisionShape2D&>(shape);
+				const ConvexCollisionShape2D& castedShape = static_cast<const ConvexCollisionShape2D&>(*shape);
 				return MakeShared<ConvexCollisionShape2D>(ConvexCollisionShape2D(castedShape, transform2D));
 			}
 			default:

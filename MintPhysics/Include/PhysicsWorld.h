@@ -139,7 +139,7 @@ namespace mint
 			void StepCollide_BroadPhase(float deltaTime);
 			void StepCollide_NarrowPhase(float deltaTime);
 			bool StepCollide_NarrowPhase_CCD(float deltaTime, const Body2D& bodyA, const Body2D& bodyB, Physics::GJK2DInfo& gjk2DInfo, SharedPtr<CollisionShape2D>& outShapeA, SharedPtr<CollisionShape2D>& outShapeB);
-			void StepCollide_NarrowPhase_GenerateCollision(const Body2D& bodyA, const CollisionShape2D& bodyShapeA, const Body2D& bodyB, const CollisionShape2D& bodyShapeB, const Physics::GJK2DInfo& gjk2DInfo);
+			void StepCollide_NarrowPhase_GenerateCollision(const Body2D& bodyA, const CollisionShape2D& bodyShapeA, const Body2D& bodyB, const CollisionShape2D& bodyShapeB, const Physics::GJK2DInfo& gjk2DInfo, NarrowPhaseCollisionInfo& outNarrowPhaseCollisionInfo) const;
 			void StepSolve(float deltaTime);
 
 		private:
