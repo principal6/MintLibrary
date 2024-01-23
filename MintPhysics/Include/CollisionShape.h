@@ -126,6 +126,8 @@ namespace mint
 
 		public:
 			void Set(const AABBCollisionShape2D& aabbCollisionShape2D, const Transform2D& transform2D);
+			void SetExpandedByRadius(const AABBCollisionShape2D& aabbCollisionShape2D, const Transform2D& transform2D, const Float2& displacement);
+			void SetExpandedByRadius(float radius, const Float2& center, const Float2& displacement);
 		
 		public:
 			virtual CollisionShapeType GetCollisionShapeType() const override final { return CollisionShapeType::AABB; }
