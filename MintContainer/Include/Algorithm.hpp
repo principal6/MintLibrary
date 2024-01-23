@@ -14,7 +14,7 @@ namespace mint
 	int32 BinarySearchInternal(const Vector<T>& vec, const ValueType& value, Evaluator evaluator, const int32 indexBegin, const int32 indexEnd);
 
 	template<typename T, typename Comparator>
-	void QuickSortInternal(Vector<T>& vector, const int32 front, const int32 back, Comparator comparator);
+	void QuickSortInternal(T* vector, const int32 front, const int32 back, Comparator comparator);
 
 
 	template <typename T>
@@ -98,11 +98,19 @@ namespace mint
 	{
 		const int32 begin = 0;
 		const int32 end = static_cast<int32>(vector.Size() - 1);
-		QuickSortInternal(vector, begin, end, comparator);
+		QuickSortInternal(vector.Data(), begin, end, comparator);
+	}
+
+	template <typename T, typename Comparator>
+	void QuickSort(T* arrayPointer, uint32 arraySize, Comparator comparator)
+	{
+		const int32 begin = 0;
+		const int32 end = static_cast<int32>(arraySize);
+		QuickSortInternal(arrayPointer, begin, end, comparator);
 	}
 
 	template<typename T, typename Comparator>
-	void QuickSortInternal(Vector<T>& vector, const int32 front, const int32 back, Comparator comparator)
+	void QuickSortInternal(T* vector, const int32 front, const int32 back, Comparator comparator)
 	{
 		if (back <= front)
 		{

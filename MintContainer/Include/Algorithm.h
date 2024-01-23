@@ -27,6 +27,9 @@ namespace mint
 
 	template <typename T, typename Comparator>
 	void QuickSort(Vector<T>& vector, Comparator comparator);
+	
+	template <typename T, typename Comparator>
+	void QuickSort(T* arrayPointer, uint32 arraySize, Comparator comparator);
 }
 
 
