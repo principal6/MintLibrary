@@ -270,6 +270,42 @@ namespace mint
 			_halfSize *= 0.5f;
 		}
 
+		void AABBCollisionShape2D::SetExpanded(const AABBCollisionShape2D& aabbCollisionShape2D, const Transform2D& transform2D, const Float2& displacement)
+		{
+			Set(aabbCollisionShape2D, transform2D);
+
+			const Float2& position0 = aabbCollisionShape2D._center + transform2D._translation;
+			const Float2 position1 = position0 + displacement;
+			Float2 min = _center - _halfSize;
+			Float2 max = _center + _halfSize;
+			if (displacement._x > 0.0f)
+			{
+				max._x += displacement._x;
+			}
+			else
+			{
+				min._x += displacement._x;
+			}
+			if (displacement._y > 0.0f)
+			{
+				max._y += displacement._y;
+			}
+			else
+			{
+				min._y += displacement._y;
+			}
+			_center = (min + max) * 0.5f;
+			_halfSize = (max - min) * 0.5f;
+		}
+
+		void AABBCollisionShape2D::SetExpandedByRadius(const AABBCollisionShape2D& aabbCollisionShape2D, const Transform2D& transform2D, const Float2& displacement)
+		{
+			const float radiusSq = aabbCollisionShape2D._halfSize._x * aabbCollisionShape2D._halfSize._x + aabbCollisionShape2D._halfSize._y * aabbCollisionShape2D._halfSize._y;
+			const float radius = ::sqrt(radiusSq);
+			const Float2 position0 = aabbCollisionShape2D._center + transform2D._translation;
+			SetExpandedByRadius(radius, position0, displacement);
+		}
+
 		void AABBCollisionShape2D::SetExpandedByRadius(float radius, const Float2& center, const Float2& displacement)
 		{
 			const Float2& position0 = center;
@@ -306,14 +342,6 @@ namespace mint
 			_halfSize *= 0.5f;
 			_halfSize._x += radius;
 			_halfSize._y += radius;
-		}
-
-		void AABBCollisionShape2D::SetExpandedByRadius(const AABBCollisionShape2D& aabbCollisionShape2D, const Transform2D& transform2D, const Float2& displacement)
-		{
-			const float radiusSq = aabbCollisionShape2D._halfSize._x * aabbCollisionShape2D._halfSize._x + aabbCollisionShape2D._halfSize._y * aabbCollisionShape2D._halfSize._y;
-			const float radius = ::sqrt(radiusSq);
-			const Float2 position0 = aabbCollisionShape2D._center + transform2D._translation;
-			SetExpandedByRadius(radius, position0, displacement);
 		}
 
 		Float2 AABBCollisionShape2D::ComputeSupportPoint(const Float2& direction) const
