@@ -12,6 +12,7 @@
 
 namespace mint
 {
+	class ByteColor;
 	class Rect;
 	struct Transform2D;
 
