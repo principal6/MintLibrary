@@ -16,21 +16,21 @@ namespace mint
 			__noop;
 		}
 
-		GJK2DSimplex::GJK2DSimplex(const Point& pointA)
+		GJK2DSimplex::GJK2DSimplex(const Float2& pointA)
 			: _validPointCount{ 1 }
 			, _points{ pointA }
 		{
 			__noop;
 		}
 
-		GJK2DSimplex::GJK2DSimplex(const Point& pointB, const Point& pointA)
+		GJK2DSimplex::GJK2DSimplex(const Float2& pointB, const Float2& pointA)
 			: _validPointCount{ 2 }
 			, _points{ pointB, pointA }
 		{
 			__noop;
 		}
 
-		void GJK2DSimplex::AppendPoint(const Point& pointA)
+		void GJK2DSimplex::AppendPoint(const Float2& pointA)
 		{
 			MINT_ASSERT(_validPointCount < 3, "!!!");
 			_points[_validPointCount] = pointA;
@@ -48,43 +48,40 @@ namespace mint
 			const float kLineThickness = 1.0f;
 			shapeRendererContext.SetColor(color);
 
-			for (uint32 i = 0; i < 3; ++i)
+			if (GetValidPointCount() == 1)
 			{
-				if (GetValidPointCount() == 1)
-				{
-					shapeRendererContext.SetPosition(Float4(GetPointA()._positions[i]));
-					shapeRendererContext.DrawCircle(kCircleRadius);
-				}
-				else if (GetValidPointCount() == 2)
-				{
-					shapeRendererContext.SetPosition(Float4(GetPointA()._positions[i]));
-					shapeRendererContext.DrawCircle(kCircleRadius);
-					shapeRendererContext.SetPosition(Float4(GetPointB()._positions[i]));
-					shapeRendererContext.DrawCircle(kCircleRadius);
-					shapeRendererContext.DrawLine(GetPointA()._positions[i], GetPointB()._positions[i], kLineThickness);
-				}
-				else if (GetValidPointCount() == 3)
-				{
-					shapeRendererContext.SetPosition(Float4(GetPointA()._positions[i]));
-					shapeRendererContext.DrawCircle(kCircleRadius);
-					shapeRendererContext.SetPosition(Float4(GetPointB()._positions[i]));
-					shapeRendererContext.DrawCircle(kCircleRadius);
-					shapeRendererContext.SetPosition(Float4(GetPointC()._positions[i]));
-					shapeRendererContext.DrawCircle(kCircleRadius);
+				shapeRendererContext.SetPosition(Float4(GetPointA()));
+				shapeRendererContext.DrawCircle(kCircleRadius);
+			}
+			else if (GetValidPointCount() == 2)
+			{
+				shapeRendererContext.SetPosition(Float4(GetPointA()));
+				shapeRendererContext.DrawCircle(kCircleRadius);
+				shapeRendererContext.SetPosition(Float4(GetPointB()));
+				shapeRendererContext.DrawCircle(kCircleRadius);
+				shapeRendererContext.DrawLine(GetPointA(), GetPointB(), kLineThickness);
+			}
+			else if (GetValidPointCount() == 3)
+			{
+				shapeRendererContext.SetPosition(Float4(GetPointA()));
+				shapeRendererContext.DrawCircle(kCircleRadius);
+				shapeRendererContext.SetPosition(Float4(GetPointB()));
+				shapeRendererContext.DrawCircle(kCircleRadius);
+				shapeRendererContext.SetPosition(Float4(GetPointC()));
+				shapeRendererContext.DrawCircle(kCircleRadius);
 
-					shapeRendererContext.DrawLine(GetPointA()._positions[i], GetPointB()._positions[i], kLineThickness);
-					shapeRendererContext.DrawLine(GetPointA()._positions[i], GetPointC()._positions[i], kLineThickness);
-					shapeRendererContext.DrawLine(GetPointB()._positions[i], GetPointC()._positions[i], kLineThickness);
-				}
+				shapeRendererContext.DrawLine(GetPointA(), GetPointB(), kLineThickness);
+				shapeRendererContext.DrawLine(GetPointA(), GetPointC(), kLineThickness);
+				shapeRendererContext.DrawLine(GetPointB(), GetPointC(), kLineThickness);
 			}
 		}
 
-		const GJK2DSimplex::Point& GJK2DSimplex::GetClosestPoint() const
+		const Float2& GJK2DSimplex::GetClosestPoint() const
 		{
 			if (GetValidPointCount() == 0)
 			{
 				MINT_ASSERT(false, "No valid points exist!");
-				static const GJK2DSimplex::Point kInvalid;
+				static const Float2 kInvalid;
 				return kInvalid;
 			}
 
@@ -92,7 +89,7 @@ namespace mint
 			float minLength = Math::kFloatMax;
 			for (uint32 i = 0; i < _validPointCount; ++i)
 			{
-				float length = _points[i]._position.Length();
+				float length = _points[i].Length();
 				if (length < minLength)
 				{
 					closestPointIndex = i;
@@ -102,13 +99,9 @@ namespace mint
 			return _points[closestPointIndex];
 		}
 
-		MINT_INLINE GJK2DSimplex::Point GJK2D_ComputeMinkowskiDifferencePoint(const CollisionShape2D& shapeA, const CollisionShape2D& shapeB, const Float2& direction)
+		MINT_INLINE Float2 GJK2D_ComputeMinkowskiDifferencePoint(const CollisionShape2D& shapeA, const CollisionShape2D& shapeB, const Float2& direction)
 		{
-			GJK2DSimplex::Point point;
-			point._shapeAPoint = shapeA.ComputeSupportPoint(direction);
-			point._shapeBPoint = shapeB.ComputeSupportPoint(-direction);
-			point._position = point._shapeAPoint - point._shapeBPoint;
-			return point;
+			return shapeA.ComputeSupportPoint(direction) - shapeB.ComputeSupportPoint(-direction);
 		}
 
 		MINT_INLINE Float2 GJK2D_ComputePerpABToAC(const Float2& ab, const Float2& ac)
@@ -121,10 +114,10 @@ namespace mint
 		// returns true whenever it's sure that there's an intersection
 		bool GJK2D_ProcessSimplex(GJK2DSimplex& inoutSimplex, Float2& outDirection)
 		{
-			const GJK2DSimplex::Point& a = inoutSimplex.GetPointA();
-			const GJK2DSimplex::Point& b = inoutSimplex.GetPointB();
-			const Float2 ab = b._position - a._position;
-			const Float2 ao = -a._position;
+			const Float2& a = inoutSimplex.GetPointA();
+			const Float2& b = inoutSimplex.GetPointB();
+			const Float2 ab = b - a;
+			const Float2 ao = -a;
 			const float ab_dot_ao = ab.Dot(ao);
 			if (inoutSimplex.GetValidPointCount() == 2)
 			{
@@ -151,8 +144,8 @@ namespace mint
 			else if (inoutSimplex.GetValidPointCount() == 3)
 			{
 				// 3-simplex (triangle)
-				const GJK2DSimplex::Point& c = inoutSimplex.GetPointC();
-				const Float2 ac = c._position - a._position;
+				const Float2& c = inoutSimplex.GetPointC();
+				const Float2 ac = c - a;
 				if (ab == Float2::kZero)
 				{
 					// EDGE_CASE: ab are colinear!
@@ -222,9 +215,9 @@ namespace mint
 				outGJK2DInfo->_direction = direction;
 			}
 
-			GJK2DSimplex::Point minkowskiDifferencePoint = GJK2D_ComputeMinkowskiDifferencePoint(shapeA, shapeB, direction);
+			Float2 minkowskiDifferencePoint = GJK2D_ComputeMinkowskiDifferencePoint(shapeA, shapeB, direction);
 			GJK2DSimplex simplex{ minkowskiDifferencePoint };
-			if (minkowskiDifferencePoint._position == Float2::kZero)
+			if (minkowskiDifferencePoint == Float2::kZero)
 			{
 				// EDGE_CASE: The origin is included in the Minkowski Sum, thus the two shapes intersect.
 				if (outGJK2DInfo != nullptr)
@@ -235,7 +228,7 @@ namespace mint
 			}
 
 			// minkowskiDifferenceVertex to origin
-			direction = -minkowskiDifferencePoint._position;
+			direction = -minkowskiDifferencePoint;
 			direction.Normalize();
 
 			bool result = false;
@@ -254,7 +247,7 @@ namespace mint
 
 				minkowskiDifferencePoint = GJK2D_ComputeMinkowskiDifferencePoint(shapeA, shapeB, direction);
 
-				const float signedDistance = minkowskiDifferencePoint._position.Dot(direction);
+				const float signedDistance = minkowskiDifferencePoint.Dot(direction);
 				if (signedDistance < 0.0f)
 				{
 					// MinkowskiDifferenceVertex did not pass the origin
@@ -313,12 +306,12 @@ namespace mint
 				return;
 			}
 
-			const GJK2DSimplex::Point& a = gjk2DInfo._simplex.GetPointA();
-			const GJK2DSimplex::Point& b = gjk2DInfo._simplex.GetPointB();
-			const GJK2DSimplex::Point& c = gjk2DInfo._simplex.GetPointC();
-			epa2DInfo._points.PushBack(c._position);
-			epa2DInfo._points.PushBack(b._position);
-			epa2DInfo._points.PushBack(a._position);
+			const Float2& a = gjk2DInfo._simplex.GetPointA();
+			const Float2& b = gjk2DInfo._simplex.GetPointB();
+			const Float2& c = gjk2DInfo._simplex.GetPointC();
+			epa2DInfo._points.PushBack(c);
+			epa2DInfo._points.PushBack(b);
+			epa2DInfo._points.PushBack(a);
 			GrahamScan_Convexify(epa2DInfo._points);
 
 			while (true)
@@ -357,8 +350,8 @@ namespace mint
 				Float2 edgeNormal = closestPoint;
 				edgeNormal.Normalize();
 
-				GJK2DSimplex::Point support = GJK2D_ComputeMinkowskiDifferencePoint(shapeA, shapeB, edgeNormal);
-				const float distance = support._position.Dot(edgeNormal);
+				Float2 support = GJK2D_ComputeMinkowskiDifferencePoint(shapeA, shapeB, edgeNormal);
+				const float distance = support.Dot(edgeNormal);
 				if (::abs(distance - distanceToEdge) < 1.0f)
 				{
 					outNormal = edgeNormal;
@@ -367,7 +360,7 @@ namespace mint
 				}
 				else
 				{
-					epa2DInfo._points.Insert(support._position, indexB);
+					epa2DInfo._points.Insert(support, indexB);
 				}
 			}
 		}

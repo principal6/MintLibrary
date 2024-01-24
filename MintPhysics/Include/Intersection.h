@@ -39,38 +39,23 @@ namespace mint
 		class GJK2DSimplex
 		{
 		public:
-			struct Point
-			{
-				union
-				{
-					struct
-					{
-						Float2 _position;
-						Float2 _shapeAPoint;
-						Float2 _shapeBPoint;
-					};
-					Float2 _positions[3]{};
-				};
-			};
-
-		public:
 			GJK2DSimplex();
-			GJK2DSimplex(const Point& pointA);
-			GJK2DSimplex(const Point& pointB, const Point& pointA);
+			GJK2DSimplex(const Float2& pointA);
+			GJK2DSimplex(const Float2& pointB, const Float2& pointA);
 
 		public:
-			void AppendPoint(const Point& pointA);
+			void AppendPoint(const Float2& pointA);
 
 		public:
 			void DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Transform2D& transform2D) const;
-			const Point& GetClosestPoint() const;
+			const Float2& GetClosestPoint() const;
 			const uint8 GetValidPointCount() const { return _validPointCount; }
-			const Point& GetPointA() const { return _points[_validPointCount - 1]; }
-			const Point& GetPointB() const { return _points[_validPointCount - 2]; }
-			const Point& GetPointC() const { return _points[_validPointCount - 3]; }
+			const Float2& GetPointA() const { return _points[_validPointCount - 1]; }
+			const Float2& GetPointB() const { return _points[_validPointCount - 2]; }
+			const Float2& GetPointC() const { return _points[_validPointCount - 3]; }
 
 		private:
-			Point _points[3];
+			Float2 _points[3];
 			uint8 _validPointCount;
 		};
 

@@ -185,9 +185,11 @@ namespace mint
 				const bool intersected = Intersect2D_GJK(*outShapeA, *outShapeB, &gjk2DInfo);
 				if (intersected)
 				{
-					const GJK2DSimplex::Point& closestPoint = gjk2DInfo._simplex.GetClosestPoint();
-					const float distance = (closestPoint._shapeAPoint - closestPoint._shapeBPoint).Length();
-					if (distance < 2.0f || range < 0.0625f)
+					EPA2DInfo epa2DInfo;
+					Float2 normal;
+					float distance = 0.0f;
+					ComputePenetration_EPA(*outShapeA, *outShapeB, gjk2DInfo, normal, distance, epa2DInfo);
+					if (distance < 1.0f || range < 0.0625f)
 					{
 						return true;
 					}
@@ -250,7 +252,6 @@ namespace mint
 
 		void World::StepCollide_NarrowPhase_GenerateCollision(const Body2D& bodyA, const CollisionShape2D& bodyShapeA, const Body2D& bodyB, const CollisionShape2D& bodyShapeB, const Physics::GJK2DInfo& gjk2DInfo, NarrowPhaseCollisionInfo& outNarrowPhaseCollisionInfo) const
 		{
-			const GJK2DSimplex::Point& closestPoint = gjk2DInfo._simplex.GetClosestPoint();
 			outNarrowPhaseCollisionInfo._bodyIDA = bodyA._bodyID;
 			outNarrowPhaseCollisionInfo._bodyIDB = bodyB._bodyID;
 
