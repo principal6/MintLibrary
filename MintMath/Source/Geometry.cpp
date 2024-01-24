@@ -103,6 +103,11 @@ namespace mint
 			{
 				convexPointIndices.PopBack();
 				--i;
+
+				if (convexPointIndices.Size() == 1)
+				{
+					break;
+				}
 			}
 		}
 
