@@ -254,12 +254,14 @@ namespace mint
 			outNarrowPhaseCollisionInfo._bodyIDA = bodyA._bodyID;
 			outNarrowPhaseCollisionInfo._bodyIDB = bodyB._bodyID;
 
-			Float2 separatingDirection = closestPoint._shapeAPoint - bodyB._transform2D._translation;
-			separatingDirection.Normalize();
+			EPA2DInfo epa2DInfo;
+			Float2 normal;
+			float distance = 0.0f;
+			ComputePenetration_EPA(bodyShapeA, bodyShapeB, gjk2DInfo, normal, distance, epa2DInfo);
 
 			Float2 edgeVertex0;
 			Float2 edgeVertex1;
-			bodyShapeB.ComputeSupportEdge(separatingDirection, edgeVertex0, edgeVertex1);
+			bodyShapeB.ComputeSupportEdge(normal, edgeVertex0, edgeVertex1);
 			Float2 edgeDirection = edgeVertex0 - edgeVertex1;
 			edgeDirection.Normalize();
 			outNarrowPhaseCollisionInfo._collisionNormal = Float2(-edgeDirection._y, edgeDirection._x);
