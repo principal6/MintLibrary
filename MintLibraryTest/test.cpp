@@ -71,6 +71,7 @@ void RunGJKTestWindow()
 	graphicDevice.Initialize();
 
 	GJK2DInfo gjk2DInfo;
+	EPA2DInfo epa2DInfo;
 	ShapeRendererContext& shapeRendererContext = graphicDevice.GetShapeRendererContext();
 	const InputContext& inputContext = InputContext::GetInstance();
 	enum class SelectionMode
@@ -100,6 +101,14 @@ void RunGJKTestWindow()
 			else if (inputContext.IsKeyDown(KeyCode::Q) == true)
 			{
 				--gjk2DInfo._maxLoopCount;
+			}
+			else if (inputContext.IsKeyDown(KeyCode::S) == true)
+			{
+				++epa2DInfo._maxIterationCount;
+			}
+			else if (inputContext.IsKeyDown(KeyCode::A) == true)
+			{
+				--epa2DInfo._maxIterationCount;
 			}
 			else if (inputContext.IsKeyDown(KeyCode::Num1) == true)
 			{
@@ -160,10 +169,10 @@ void RunGJKTestWindow()
 				graphicDevice.SetViewProjectionMatrix(Float4x4::kIdentity, Float4x4::ProjectionMatrix2DNormal(windowSize._x, windowSize._y));
 
 				CircleCollisionShape2D shapeA = CircleCollisionShape2D(64, shapeATransform2D);
-				EdgeCollisionShape2D shapeB = EdgeCollisionShape2D(Float2(-10, 80), Float2(-10, -20), shapeBTransform2D);
-				//ConvexCollisionShape2D shapeB = ConvexCollisionShape2D({ Float2(-10, 80), Float2(-10, -20), Float2(80, -10), Float2(40, 70) }, shapeBTransform2D);
+				//EdgeCollisionShape2D shapeB = EdgeCollisionShape2D(Float2(-10, 80), Float2(-10, -20), shapeBTransform2D);
+				ConvexCollisionShape2D shapeB = ConvexCollisionShape2D({ Float2(-10, 80), Float2(-10, -20), Float2(80, -10), Float2(40, 70) }, shapeBTransform2D);
 				const bool intersects = Intersect2D_GJK(shapeA, shapeB, &gjk2DInfo);
-
+				
 				const ByteColor kShapeAColor(255, 0, 0);
 				const ByteColor kShapeBColor(64, 128, 0);
 				const ByteColor kIntersectedColor(32, 196, 32);
@@ -177,32 +186,45 @@ void RunGJKTestWindow()
 
 				// Simplex
 				gjk2DInfo._simplex.DebugDrawShape(shapeRendererContext, ByteColor(255, 0, 255), Transform2D());
-				const GJK2DSimplex::Point& closestPoint = gjk2DInfo._simplex.GetClosestPoint();
-				shapeRendererContext.SetPosition(Float4(closestPoint._shapeAPoint));
-				shapeRendererContext.DrawCircle(4.0f);
-				shapeRendererContext.SetPosition(Float4(closestPoint._shapeBPoint));
-				shapeRendererContext.DrawCircle(4.0f);
 
 				// Grid
 				shapeRendererContext.SetColor(kShapeMDColor);
 				shapeRendererContext.DrawLine(Float2(0, -800), Float2(0, 800), 1.0f);
 				shapeRendererContext.DrawLine(Float2(-800, 0), Float2(800, 0), 1.0f);
 
-				// Direction
-				shapeRendererContext.DrawArrow(shapeATransform2D._translation, shapeATransform2D._translation + gjk2DInfo._direction * 50.0f, 1.0f, 0.125f, 4.0f);
-				shapeRendererContext.DrawArrow(shapeBTransform2D._translation, shapeBTransform2D._translation - gjk2DInfo._direction * 50.0f, 1.0f, 0.125f, 4.0f);
-				shapeRendererContext.DrawArrow(Float2::kZero, gjk2DInfo._direction * 100.0f, 2.0f, 0.125f, 4.0f);
+				//// Direction
+				//shapeRendererContext.DrawArrow(shapeATransform2D._translation, shapeATransform2D._translation + gjk2DInfo._direction * 50.0f, 1.0f, 0.125f, 4.0f);
+				//shapeRendererContext.DrawArrow(shapeBTransform2D._translation, shapeBTransform2D._translation - gjk2DInfo._direction * 50.0f, 1.0f, 0.125f, 4.0f);
+				//shapeRendererContext.DrawArrow(Float2::kZero, gjk2DInfo._direction * 100.0f, 2.0f, 0.125f, 4.0f);
 
-				// SupportEdge
-				//Float2 directionBToA = shapeATransform2D._translation - shapeBTransform2D._translation;
-				//directionBToA.Normalize();
-				//Float2 edgeVertex0;
-				//Float2 edgeVertex1;
-				//shapeB.ComputeSupportEdge(+directionBToA, edgeVertex0, edgeVertex1);
-				//shapeRendererContext.DrawLine(edgeVertex0, edgeVertex1, 4.0f);
-				//shapeA.ComputeSupportEdge(-directionBToA, edgeVertex0, edgeVertex1);
-				//shapeRendererContext.DrawLine(edgeVertex0, edgeVertex1, 4.0f);
+				if (intersects)
+				{
+					Float2 normal = Float2(0, 1);
+					float distance = 0.0f;
+					ComputePenetration_EPA(shapeA, shapeB, gjk2DInfo, normal, distance, epa2DInfo);
+					//epa2DInfo._simplex.DebugDrawShape(shapeRendererContext, ByteColor(0, 64, 255), Transform2D());
 
+					shapeRendererContext.SetColor(ByteColor(0, 64, 255));
+					shapeRendererContext.SetPosition(Float4(shapeA.ComputeSupportPoint(+normal)));
+					shapeRendererContext.DrawCircle(4.0f);
+					shapeRendererContext.SetPosition(Float4(shapeB.ComputeSupportPoint(-normal)));
+					shapeRendererContext.DrawCircle(4.0f);
+
+					const uint32 pointCount = epa2DInfo._points.Size();
+					for (uint32 i = 1; i < pointCount; ++i)
+					{
+						shapeRendererContext.DrawLine(epa2DInfo._points[i - 1], epa2DInfo._points[i], 2.0f);
+					}
+					if (pointCount > 0)
+					{
+						shapeRendererContext.DrawLine(epa2DInfo._points.Back(), epa2DInfo._points[0], 2.0f);
+					}
+					
+					shapeRendererContext.SetColor(ByteColor(255, 64, 0));
+					shapeRendererContext.SetPosition(Float4(normal * distance));
+					shapeRendererContext.DrawCircle(4.0f);
+				}
+				
 				shapeRendererContext.Render();
 			}
 			{
@@ -210,10 +232,12 @@ void RunGJKTestWindow()
 
 				shapeRendererContext.SetTextColor(Color::kBlack);
 				StackStringW<100> buffer;
-				FormatString(buffer, L"Loop: %d / Max %u (Q/W)", gjk2DInfo._loopCount, gjk2DInfo._maxLoopCount);
+				FormatString(buffer, L"GJK Iteration: %d / Max %u (Q/W)", gjk2DInfo._loopCount, gjk2DInfo._maxLoopCount);
 				shapeRendererContext.DrawDynamicText(buffer.CString(), Float2(10, 10), FontRenderingOption());
-				FormatString(buffer, L"Selected: %s (1: None / 2: A / 3: B)", (selectionMode == SelectionMode::None ? L"None" : (selectionMode == SelectionMode::ShapeA ? L"ShapeA" : L"ShapeB")));
+				FormatString(buffer, L"EPA Iteration: %d / Max %u (A/S)", epa2DInfo._iteration, epa2DInfo._maxIterationCount);
 				shapeRendererContext.DrawDynamicText(buffer.CString(), Float2(10, 30), FontRenderingOption());
+				FormatString(buffer, L"Selected: %s (1: None / 2: A / 3: B)", (selectionMode == SelectionMode::None ? L"None" : (selectionMode == SelectionMode::ShapeA ? L"ShapeA" : L"ShapeB")));
+				shapeRendererContext.DrawDynamicText(buffer.CString(), Float2(10, 50), FontRenderingOption());
 
 				shapeRendererContext.Render();
 			}
