@@ -305,8 +305,6 @@ namespace mint
 			if (gjk2DInfo._simplex.GetValidPointCount() == 1)
 			{
 				// TODO ...
-				//outPointA = simplex.GetPointA()._shapeAPoint;
-				//outPointB = simplex.GetPointA()._shapeBPoint;
 				return;
 			}
 			else if (gjk2DInfo._simplex.GetValidPointCount() == 2)
