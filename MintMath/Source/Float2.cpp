@@ -179,6 +179,11 @@ namespace mint
 		Math::SetNAN(_c);
 	}
 
+	bool Float2::IsZero() const noexcept
+	{
+		return *this == Float2::kZero;
+	}
+
 	bool Float2::IsNAN() const noexcept
 	{
 		return Math::IsNAN(_c);

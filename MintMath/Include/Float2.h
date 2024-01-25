@@ -90,6 +90,7 @@ namespace mint
 		void SetNAN() noexcept;
 
 	public:
+		bool IsZero() const noexcept;
 		bool IsNAN() const noexcept;
 		bool HasNegativeElement() const noexcept;
 
