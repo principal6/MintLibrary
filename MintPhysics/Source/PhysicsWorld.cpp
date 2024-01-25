@@ -214,7 +214,7 @@ namespace mint
 		{
 			const float deltaTimeSq = deltaTime * deltaTime;
 
-			_narrowPhaseCollisionInfos.Clear();
+			_narrowPhaseCollisionInfosMap.Clear();
 
 			GJK2DInfo gjk2DInfo;
 			for (const auto& iter : _broadPhaseBodyPairs)
@@ -222,6 +222,7 @@ namespace mint
 				const Body2D& bodyA = GetBody(iter._bodyIDA);
 				const Body2D& bodyB = GetBody(iter._bodyIDB);
 
+				NarrowPhaseCollisionInfo narrowPhaseCollisionInfo;
 				const Float2 relativeLinearVelocity = bodyA._linearVelocity - bodyB._linearVelocity;
 				if (relativeLinearVelocity != Float2::kZero)
 				{
@@ -230,9 +231,7 @@ namespace mint
 					SharedPtr<CollisionShape2D> transformedShapeB;
 					if (StepCollide_NarrowPhase_CCD(deltaTime, bodyA, bodyB, gjk2DInfo, transformedShapeA, transformedShapeB))
 					{
-						NarrowPhaseCollisionInfo narrowPhaseCollisionInfo;
 						StepCollide_NarrowPhase_GenerateCollision(bodyA, *transformedShapeA, bodyB, *transformedShapeB, gjk2DInfo, narrowPhaseCollisionInfo);
-						_narrowPhaseCollisionInfos.PushBack(narrowPhaseCollisionInfo);
 					}
 				}
 				else
@@ -242,9 +241,20 @@ namespace mint
 					SharedPtr<CollisionShape2D> transformedShapeB{ CollisionShape2D::MakeTransformed(bodyB._shape._collisionShape, bodyB._transform2D) };
 					if (Intersect2D_GJK(*transformedShapeA, *transformedShapeB, &gjk2DInfo))
 					{
-						NarrowPhaseCollisionInfo narrowPhaseCollisionInfo;
 						StepCollide_NarrowPhase_GenerateCollision(bodyA, *transformedShapeA, bodyB, *transformedShapeB, gjk2DInfo, narrowPhaseCollisionInfo);
-						_narrowPhaseCollisionInfos.PushBack(narrowPhaseCollisionInfo);
+					}
+				}
+
+				if (narrowPhaseCollisionInfo.IsValid() == true)
+				{
+					KeyValuePair found = _narrowPhaseCollisionInfosMap.Find(narrowPhaseCollisionInfo.GetKey());
+					if (found.IsValid())
+					{
+						found._value->PushBack(narrowPhaseCollisionInfo);
+					}
+					else
+					{
+						_narrowPhaseCollisionInfosMap.Insert(narrowPhaseCollisionInfo.GetKey(), { narrowPhaseCollisionInfo });
 					}
 				}
 			}
@@ -269,9 +279,6 @@ namespace mint
 
 			const Float2 bodyAPoint = bodyShapeA.ComputeSupportPoint(-outNarrowPhaseCollisionInfo._collisionNormal);
 			outNarrowPhaseCollisionInfo._collisionPosition = bodyAPoint;
-
-			outNarrowPhaseCollisionInfo._collisionEdgeVertex0 = edgeVertex0;
-			outNarrowPhaseCollisionInfo._collisionEdgeVertex1 = edgeVertex1;
 			outNarrowPhaseCollisionInfo._signedDistance = outNarrowPhaseCollisionInfo._collisionNormal.Dot(outNarrowPhaseCollisionInfo._collisionPosition - edgeVertex0);
 		}
 
@@ -281,38 +288,43 @@ namespace mint
 
 			// Resolve Collisions
 			GJK2DInfo gjk2DInfo;
-			for (const NarrowPhaseCollisionInfo& narrowPhaseCollisionInfo : _narrowPhaseCollisionInfos)
+			for (Vector<NarrowPhaseCollisionInfo>& narrowPhaseCollisionInfos : _narrowPhaseCollisionInfosMap)
 			{
-				Body2D* bodyA = &AccessBody(narrowPhaseCollisionInfo._bodyIDA);
-				Body2D* bodyB = &AccessBody(narrowPhaseCollisionInfo._bodyIDB);
-				if (bodyA->_bodyMotionType == BodyMotionType::Dynamic && bodyB->_bodyMotionType == BodyMotionType::Dynamic)
+				QuickSort(narrowPhaseCollisionInfos, NarrowPhaseCollisionInfo::DistanceComparator());
+
+				for (NarrowPhaseCollisionInfo& narrowPhaseCollisionInfo : narrowPhaseCollisionInfos)
 				{
-					// TODO
-					MINT_NEVER;
-				}
-				else
-				{
-					// Make sure bodyA is Dynamic!
-					if (bodyB->_bodyMotionType == BodyMotionType::Dynamic)
+					Body2D* bodyA = &AccessBody(narrowPhaseCollisionInfo._bodyIDA);
+					Body2D* bodyB = &AccessBody(narrowPhaseCollisionInfo._bodyIDB);
+					if (bodyA->_bodyMotionType == BodyMotionType::Dynamic && bodyB->_bodyMotionType == BodyMotionType::Dynamic)
 					{
-						Body2D* bodyTemp = bodyA;
-						bodyA = bodyB;
-						bodyB = bodyTemp;
+						// TODO
+						MINT_NEVER;
 					}
-
-					// TODO ...
-					if (narrowPhaseCollisionInfo._signedDistance < 0.0f)
+					else
 					{
-						const Float2& relativeVelocity = bodyA->_linearVelocity;
-						bodyA->_linearVelocity -= relativeVelocity.Dot(narrowPhaseCollisionInfo._collisionNormal) * narrowPhaseCollisionInfo._collisionNormal;
-
-						SharedPtr<CollisionShape2D> transformedShapeA{ CollisionShape2D::MakeTransformed(bodyA->_shape._collisionShape, bodyA->_transform2D) };
-						SharedPtr<CollisionShape2D> transformedShapeB{ CollisionShape2D::MakeTransformed(bodyB->_shape._collisionShape, bodyB->_transform2D) };
-						if (Intersect2D_GJK(*transformedShapeA, *transformedShapeB, &gjk2DInfo))
+						// Make sure bodyA is Dynamic!
+						if (bodyB->_bodyMotionType == BodyMotionType::Dynamic)
 						{
-							NarrowPhaseCollisionInfo newNarrowPhaseCollisionInfo;
-							StepCollide_NarrowPhase_GenerateCollision(*bodyA, *transformedShapeA, *bodyB, *transformedShapeB, gjk2DInfo, newNarrowPhaseCollisionInfo);
-							bodyA->_transform2D._translation += newNarrowPhaseCollisionInfo._collisionNormal * -newNarrowPhaseCollisionInfo._signedDistance;
+							Body2D* bodyTemp = bodyA;
+							bodyA = bodyB;
+							bodyB = bodyTemp;
+						}
+
+						// TODO ...
+						if (narrowPhaseCollisionInfo._signedDistance < 0.0f)
+						{
+							const Float2& relativeVelocity = bodyA->_linearVelocity;
+							bodyA->_linearVelocity -= relativeVelocity.Dot(narrowPhaseCollisionInfo._collisionNormal) * narrowPhaseCollisionInfo._collisionNormal;
+
+							SharedPtr<CollisionShape2D> transformedShapeA{ CollisionShape2D::MakeTransformed(bodyA->_shape._collisionShape, bodyA->_transform2D) };
+							SharedPtr<CollisionShape2D> transformedShapeB{ CollisionShape2D::MakeTransformed(bodyB->_shape._collisionShape, bodyB->_transform2D) };
+							if (Intersect2D_GJK(*transformedShapeA, *transformedShapeB, &gjk2DInfo))
+							{
+								NarrowPhaseCollisionInfo newNarrowPhaseCollisionInfo;
+								StepCollide_NarrowPhase_GenerateCollision(*bodyA, *transformedShapeA, *bodyB, *transformedShapeB, gjk2DInfo, newNarrowPhaseCollisionInfo);
+								bodyA->_transform2D._translation += newNarrowPhaseCollisionInfo._collisionNormal * -newNarrowPhaseCollisionInfo._signedDistance;
+							}
 						}
 					}
 				}
@@ -479,19 +491,22 @@ namespace mint
 				shapeRendererContext.DrawDynamicText(buffer.CString(), Float4(body._transform2D._translation), Rendering::FontRenderingOption());
 			}
 
-			for (const NarrowPhaseCollisionInfo& narrowPhaseCollisionInfo : _narrowPhaseCollisionInfos)
+			const float kNormalLength = 64.0f;
+			const float kNormalThickness = 2.0f;
+			const float kPositionCircleRadius = 4.0f;
+			for (const Vector<NarrowPhaseCollisionInfo>& narrowPhaseCollisionInfos : _narrowPhaseCollisionInfosMap)
 			{
-				shapeRendererContext.SetColor(ByteColor(255, 0, 0));
-				shapeRendererContext.SetPosition(Float4(narrowPhaseCollisionInfo._collisionEdgeVertex0));
-				shapeRendererContext.DrawCircle(4.0f);
-				shapeRendererContext.SetPosition(Float4(narrowPhaseCollisionInfo._collisionEdgeVertex1));
-				shapeRendererContext.DrawCircle(4.0f);
-				shapeRendererContext.DrawLine(narrowPhaseCollisionInfo._collisionEdgeVertex0, narrowPhaseCollisionInfo._collisionEdgeVertex1, 2.0f);
+				for (const NarrowPhaseCollisionInfo& narrowPhaseCollisionInfo : narrowPhaseCollisionInfos)
+				{
+					shapeRendererContext.SetColor(ByteColor(0, 128, 255));
+					shapeRendererContext.SetPosition(Float4(narrowPhaseCollisionInfo._collisionPosition));
+					shapeRendererContext.DrawCircle(kPositionCircleRadius);
+					shapeRendererContext.DrawLine(narrowPhaseCollisionInfo._collisionPosition, narrowPhaseCollisionInfo._collisionPosition + narrowPhaseCollisionInfo._collisionNormal * kNormalLength, kNormalThickness);
 
-				shapeRendererContext.SetColor(ByteColor(128, 0, 255));
-				shapeRendererContext.SetPosition(Float4(narrowPhaseCollisionInfo._collisionPosition));
-				shapeRendererContext.DrawCircle(4.0f);
-				shapeRendererContext.DrawLine(narrowPhaseCollisionInfo._collisionPosition, narrowPhaseCollisionInfo._collisionPosition + narrowPhaseCollisionInfo._collisionNormal * ::abs(narrowPhaseCollisionInfo._signedDistance), 2.0f);
+					shapeRendererContext.SetColor(ByteColor(128, 0, 255));
+					shapeRendererContext.SetPosition(Float4(narrowPhaseCollisionInfo._collisionPosition + narrowPhaseCollisionInfo._collisionNormal * ::abs(narrowPhaseCollisionInfo._signedDistance)));
+					shapeRendererContext.DrawCircle(kPositionCircleRadius);
+				}
 			}
 
 			shapeRendererContext.Render();

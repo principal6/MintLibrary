@@ -103,17 +103,23 @@ namespace mint
 
 		struct NarrowPhaseCollisionInfo
 		{
+			struct DistanceComparator
+			{
+				bool operator()(const NarrowPhaseCollisionInfo& lhs, const NarrowPhaseCollisionInfo& rhs) const
+				{
+					return lhs._signedDistance < rhs._signedDistance;
+				}
+			};
 			using Key = uint64;
 			Key GetKey() const
 			{
 				return (static_cast<Key>(_bodyIDA.Value()) << 32) | _bodyIDB.Value();
 			}
+			bool IsValid() const { return _collisionNormal != Float2::kZero; }
 			BodyID _bodyIDA;
 			BodyID _bodyIDB;
 			Float2 _collisionPosition;
-			Float2 _collisionNormal;
-			Float2 _collisionEdgeVertex0;
-			Float2 _collisionEdgeVertex1;
+			Float2 _collisionNormal = Float2::kZero;
 			float _signedDistance = 0.0f;
 		};
 
@@ -166,8 +172,7 @@ namespace mint
 			uint32 _collisionSectorSideCount = kCollisionSectorTessellationPerSide;
 			Vector<CollisionSector> _collisionSectors;
 			HashMap<BroadPhaseBodyPair::Key, BroadPhaseBodyPair> _broadPhaseBodyPairs;
-			//HashMap<NarrowPhaseCollisionInfo::Key, NarrowPhaseCollisionInfo> _narrowPhaseCollisionInfos;
-			Vector<NarrowPhaseCollisionInfo> _narrowPhaseCollisionInfos;
+			HashMap<NarrowPhaseCollisionInfo::Key, Vector<NarrowPhaseCollisionInfo>> _narrowPhaseCollisionInfosMap;
 		};
 	}
 }
