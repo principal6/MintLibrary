@@ -68,6 +68,18 @@ namespace mint
 	}
 
 	template<typename T>
+	MINT_INLINE Queue<T>::ConstIterator Queue<T>::begin() const
+	{
+		return ConstIterator(*this, _headAt, false);
+	}
+
+	template<typename T>
+	MINT_INLINE Queue<T>::ConstIterator Queue<T>::end() const
+	{
+		return ConstIterator(*this, kUint32Max, true);
+	}
+
+	template<typename T>
 	MINT_INLINE void Queue<T>::SaveBackup(T*& backUpPointer) noexcept
 	{
 		// Copy data from _rawPointer to copyPointer 
@@ -182,6 +194,17 @@ namespace mint
 	{
 		MINT_ASSERT(_size > 0, "_size 가 0 인 Queue 입니다!!!");
 		return _rawPointer[_headAt];
+	}
+
+	template<typename T>
+	const T& Queue<T>::Get(uint32 index) const noexcept
+	{
+		if (_headAt + index >= _capacity)
+		{
+			const uint32 rawIndex = _headAt + index - _capacity;
+			return _rawPointer[rawIndex];
+		}
+		return _rawPointer[index];
 	}
 }
 
