@@ -136,6 +136,7 @@ namespace mint
 
 		public:
 			void Step(float deltaTime);
+			uint64 GetTotalStepCount() const { return _totalStepCount; }
 
 		public:
 			void RenderDebug(Rendering::ShapeRendererContext& shapeRendererContext) const;
@@ -165,6 +166,7 @@ namespace mint
 			Float2 _worldMax;
 			Float2 _worldSize;
 			Float2 _worldSizePreStepSolve;
+			uint64 _totalStepCount;
 
 		private:
 			static constexpr const uint32 kCollisionSectorTessellationPerSide = 2; // 4 = 2 * 2

@@ -191,6 +191,9 @@ namespace mint
 		public:
 			void SetTileMapImage(const Image& image);
 			void SetBackgroundMusic(const StringReferenceA& audioFileName);
+		
+		public:
+			const Physics::World& GetPhysicsWorld() const;
 
 		protected:
 			void InitializeMainCharacterObject();

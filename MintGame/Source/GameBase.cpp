@@ -405,6 +405,11 @@ namespace mint
 			_graphicDevice->EndRendering();
 		}
 
+		const Physics::World& GameBase2D::GetPhysicsWorld() const
+		{
+			return _physicsWorld;
+		}
+
 		void GameBase2D::InitializeMainCharacterObject()
 		{
 			_mainCharacterObject = _objectPool->CreateObject();

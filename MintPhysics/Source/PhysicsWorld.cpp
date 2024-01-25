@@ -36,6 +36,7 @@ namespace mint
 		World::World()
 			: _worldMin{ -128.0, -128.0f }
 			, _worldMax{ +128.0, +128.0f }
+			, _totalStepCount{ 0 }
 		{
 			_collisionSectorSideCount = kCollisionSectorTessellationPerSide;
 			for (uint32 i = 0; i < _collisionSectorDepth; ++i)
@@ -95,6 +96,8 @@ namespace mint
 
 		void World::Step(float deltaTime)
 		{
+			++_totalStepCount;
+
 			StepCollide(deltaTime);
 			StepSolve(deltaTime);
 		}
