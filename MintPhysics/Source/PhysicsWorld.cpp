@@ -400,7 +400,12 @@ namespace mint
 				}
 			}
 
-			// Integrate
+			StepSolveIntegrate(deltaTime);
+			StepSolveAssignCollisionSectors();
+		}
+
+		void World::StepSolveIntegrate(float deltaTime)
+		{
 			const uint32 bodyCount = _bodyPool.GetObjects().Size();
 			for (uint32 i = 0; i < bodyCount; ++i)
 			{
@@ -429,7 +434,10 @@ namespace mint
 				_worldMax = Float2::Max(_worldMax, body._transform2D._translation);
 			}
 			_worldSize = (_worldMax - _worldMin);
+		}
 
+		void World::StepSolveAssignCollisionSectors()
+		{
 			const Float2 collisionSectorSize = _worldSize / static_cast<float>(1 + _collisionSectorDepth);
 			const uint32 collisionSectorBufferSize = _collisionSectorSideCount * _collisionSectorSideCount;
 			for (uint32 i = 0; i < collisionSectorBufferSize; ++i)
@@ -438,6 +446,7 @@ namespace mint
 			}
 			Vector<uint32> collisionSectorIndices;
 			collisionSectorIndices.Resize(4);
+			const uint32 bodyCount = _bodyPool.GetObjects().Size();
 			for (uint32 i = 0; i < bodyCount; ++i)
 			{
 				Body2D& body = _bodyPool.GetObject_(i);
