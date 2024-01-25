@@ -191,10 +191,18 @@ namespace mint
 		public:
 			void SetTileMapImage(const Image& image);
 			void SetBackgroundMusic(const StringReferenceA& audioFileName);
-		
+
 		public:
 			const Physics::World& GetPhysicsWorld() const;
 			float GetPhysicsStepDeltaTime() const { return kPhysicsStepDeltaTime; }
+
+		public:
+			bool IsRecordingHistory() const { return _isRecordingHistory; }
+			bool BeginHistoryRecording();
+			void EndHistoryRecording();
+			bool IsPlayingHistory() const { return _isPlayingHistory; }
+			void BeginHistoryPlaying();
+			void EndHistoryPlaying();
 
 		protected:
 			void InitializeMainCharacterObject();
@@ -233,11 +241,15 @@ namespace mint
 			OwnPtr<ObjectPool> _objectPool;
 			SharedPtr<Object> _mainCharacterObject;
 			SharedPtr<CameraObject> _mainCameraObject;
-		
+
 		protected:
 			static constexpr const float kPhysicsStepDeltaTime = 1.0f / 64.0f;
 			float _deltaTimeRemainder;
 			Physics::World _physicsWorld;
+
+		protected:
+			bool _isRecordingHistory;
+			bool _isPlayingHistory;
 		};
 	}
 }

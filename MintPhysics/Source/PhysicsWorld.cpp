@@ -1,5 +1,6 @@
 #include <MintPhysics/Include/PhysicsWorld.h>
 #include <MintContainer/Include/Vector.hpp>
+#include <MintContainer/Include/Queue.hpp>
 #include <MintContainer/Include/HashMap.hpp>
 #include <MintContainer/Include/Color.h>
 #include <MintContainer/Include/Algorithm.hpp>
@@ -29,6 +30,51 @@ namespace mint
 		bool Body2D::IsValid() const
 		{
 			return _bodyID.IsValid();
+		}
+#pragma endregion
+
+#pragma region WorldHistory
+		void WorldHistory::BeingPlaying()
+		{
+			_currentSnapshotIndex = 0;
+		}
+
+		void WorldHistory::EndPlaying()
+		{
+			_currentSnapshotIndex = kInvalidIndexUint32;
+		}
+
+		void WorldHistory::StepPlay(bool isForward)
+		{
+			if (IsPlaying() == false)
+			{
+				return;
+			}
+
+			if (isForward)
+			{
+				++_currentSnapshotIndex;
+				if (_currentSnapshotIndex >= _stepSnapshots.Size())
+				{
+					_currentSnapshotIndex = 0;
+				}
+			}
+			else
+			{
+				if (_currentSnapshotIndex > 0)
+				{
+					--_currentSnapshotIndex;
+				}
+				else
+				{
+					_currentSnapshotIndex = _stepSnapshots.Size() - 1;
+				}
+			}
+		}
+
+		const StepSnapshot& WorldHistory::GetStepSnapshot() const
+		{
+			return _stepSnapshots.Get(_currentSnapshotIndex);
 		}
 #pragma endregion
 
@@ -96,10 +142,31 @@ namespace mint
 
 		void World::Step(float deltaTime)
 		{
+			if (_worldHistory.IsPlaying())
+			{
+				_worldHistory.StepPlay((deltaTime >= 0.0f));
+				return;
+			}
+
 			++_totalStepCount;
 
 			StepCollide(deltaTime);
 			StepSolve(deltaTime);
+
+			if (_worldHistory._isRecording == true)
+			{
+				StepRecordSnapshot();
+			}
+		}
+
+		uint64 World::GetCurrentStepIndex() const
+		{
+			if (_worldHistory.IsPlaying())
+			{
+				return _worldHistory.GetStepSnapshot()._stepIndex;
+			}
+
+			return _totalStepCount - 1;
 		}
 
 		void World::StepCollide(float deltaTime)
@@ -250,14 +317,14 @@ namespace mint
 
 				if (collisionManifold2D.IsValid() == true)
 				{
-					KeyValuePair found = _collisionManifold2DsMap.Find(collisionManifold2D.GetKey());
+					KeyValuePair found = _collisionManifold2DsMap.Find(bodyA._bodyID.Value());
 					if (found.IsValid())
 					{
 						found._value->PushBack(collisionManifold2D);
 					}
 					else
 					{
-						_collisionManifold2DsMap.Insert(collisionManifold2D.GetKey(), { collisionManifold2D });
+						_collisionManifold2DsMap.Insert(bodyA._bodyID.Value(), { collisionManifold2D });
 					}
 				}
 			}
@@ -350,7 +417,6 @@ namespace mint
 					body._angularVelocity += body._angularAcceleration * deltaTime;
 
 					// integrate velocity
-					body._transform2DPrevStep = body._transform2D;
 					body._transform2D._translation += body._linearVelocity * deltaTime;
 					body._transform2D._rotation += body._angularVelocity * deltaTime;
 
@@ -392,6 +458,36 @@ namespace mint
 					_collisionSectors[collisionSectorIndices[j]]._bodyIDs.PushBack(body._bodyID);
 				}
 			}
+		}
+
+		void World::StepRecordSnapshot()
+		{
+			while (_worldHistory._stepSnapshots.Size() > kWorldHistoryCapacity)
+			{
+				_worldHistory._stepSnapshots.Pop();
+			}
+
+			StepSnapshot stepSnapshot;
+			stepSnapshot._stepIndex = _totalStepCount - 1;
+			const uint32 bodyCount = _bodyPool.GetObjects().Size();
+			for (uint32 i = 0; i < bodyCount; ++i)
+			{
+				const Body2D& body = _bodyPool.GetObject_(i);
+				if (body.IsValid() == false)
+				{
+					continue;
+				}
+
+				StepSnapshot::BodySnapshot bodySnapshot;
+				bodySnapshot._body = body;
+				KeyValuePair found = _collisionManifold2DsMap.Find(body._bodyID.Value());
+				if (found.IsValid())
+				{
+					bodySnapshot._collisionManifolds = *found._value;
+				}
+				stepSnapshot._bodySnapshots.PushBack(std::move(bodySnapshot));
+			}
+			_worldHistory._stepSnapshots.Push(stepSnapshot);
 		}
 
 		void World::ComputeCollisionSectorIndices(const Physics::AABBCollisionShape2D& aabb, const Float2& worldMin, const Float2& collisionSectorSize, Vector<uint32>& outIndices) const
@@ -476,43 +572,114 @@ namespace mint
 
 		void World::RenderDebug(Rendering::ShapeRendererContext& shapeRendererContext) const
 		{
-			StackStringW<256> buffer;
-			const uint32 bodyCount = _bodyPool.GetObjects().Size();
-			for (uint32 i = 0; i < bodyCount; ++i)
+			if (_worldHistory.IsPlaying() == true)
 			{
-				const Body2D& body = _bodyPool.GetObject_(i);
-				if (body.IsValid() == false)
+				const StepSnapshot& stepSnapshot = _worldHistory.GetStepSnapshot();
+				for (const StepSnapshot::BodySnapshot& bodySnapshot : stepSnapshot._bodySnapshots)
 				{
-					continue;
+					RenderDebugBody(shapeRendererContext, bodySnapshot._body);
+
+					for (const CollisionManifold2D& collisionManifold : bodySnapshot._collisionManifolds)
+					{
+						RenderDebugCollisionManifold(shapeRendererContext, collisionManifold);
+					}
+				}
+			}
+			else
+			{
+				const uint32 bodyCount = _bodyPool.GetObjects().Size();
+				for (uint32 i = 0; i < bodyCount; ++i)
+				{
+					const Body2D& body = _bodyPool.GetObject_(i);
+					if (body.IsValid() == false)
+					{
+						continue;
+					}
+
+					RenderDebugBody(shapeRendererContext, body);
 				}
 
-				body._bodyAABB->DebugDrawShape(shapeRendererContext, ByteColor(255, 255, 0), Transform2D());
-
-				body._shape._collisionShape->DebugDrawShape(shapeRendererContext, ByteColor(128, 128, 128), body._transform2D);
-
-				FormatString(buffer, L"[%d]", body._bodyID.Value());
-				shapeRendererContext.DrawDynamicText(buffer.CString(), Float4(body._transform2D._translation), Rendering::FontRenderingOption());
-			}
-
-			const float kNormalLength = 64.0f;
-			const float kNormalThickness = 2.0f;
-			const float kPositionCircleRadius = 4.0f;
-			for (const Vector<CollisionManifold2D>& collisionManifold2Ds : _collisionManifold2DsMap)
-			{
-				for (const CollisionManifold2D& collisionManifold2D : collisionManifold2Ds)
+				for (const Vector<CollisionManifold2D>& collisionManifold2Ds : _collisionManifold2DsMap)
 				{
-					shapeRendererContext.SetColor(ByteColor(0, 128, 255));
-					shapeRendererContext.SetPosition(Float4(collisionManifold2D._collisionPosition));
-					shapeRendererContext.DrawCircle(kPositionCircleRadius);
-					shapeRendererContext.DrawLine(collisionManifold2D._collisionPosition, collisionManifold2D._collisionPosition + collisionManifold2D._collisionNormal * kNormalLength, kNormalThickness);
-
-					shapeRendererContext.SetColor(ByteColor(128, 0, 255));
-					shapeRendererContext.SetPosition(Float4(collisionManifold2D._collisionPosition + collisionManifold2D._collisionNormal * ::abs(collisionManifold2D._signedDistance)));
-					shapeRendererContext.DrawCircle(kPositionCircleRadius);
+					for (const CollisionManifold2D& collisionManifold2D : collisionManifold2Ds)
+					{
+						RenderDebugCollisionManifold(shapeRendererContext, collisionManifold2D);
+					}
 				}
 			}
 
 			shapeRendererContext.Render();
+		}
+
+		void World::RenderDebugBody(Rendering::ShapeRendererContext& shapeRendererContext, const Body2D& body) const
+		{
+			MINT_ASSERT(body.IsValid() == true, "Caller must guarantee this!");
+
+			body._bodyAABB->DebugDrawShape(shapeRendererContext, ByteColor(255, 255, 0), Transform2D());
+
+			body._shape._collisionShape->DebugDrawShape(shapeRendererContext, ByteColor(128, 128, 128), body._transform2D);
+
+			StackStringW<256> buffer;
+			FormatString(buffer, L"[%d]", body._bodyID.Value());
+			shapeRendererContext.DrawDynamicText(buffer.CString(), Float4(body._transform2D._translation), Rendering::FontRenderingOption());
+		}
+
+		void World::RenderDebugCollisionManifold(Rendering::ShapeRendererContext& shapeRendererContext, const CollisionManifold2D& collisionManifold) const
+		{
+			const float kNormalLength = 64.0f;
+			const float kNormalThickness = 2.0f;
+			const float kPositionCircleRadius = 4.0f;
+
+			shapeRendererContext.SetColor(ByteColor(0, 128, 255));
+			shapeRendererContext.SetPosition(Float4(collisionManifold._collisionPosition));
+			shapeRendererContext.DrawCircle(kPositionCircleRadius);
+			shapeRendererContext.DrawLine(collisionManifold._collisionPosition, collisionManifold._collisionPosition + collisionManifold._collisionNormal * kNormalLength, kNormalThickness);
+
+			shapeRendererContext.SetColor(ByteColor(128, 0, 255));
+			shapeRendererContext.SetPosition(Float4(collisionManifold._collisionPosition + collisionManifold._collisionNormal * ::abs(collisionManifold._signedDistance)));
+			shapeRendererContext.DrawCircle(kPositionCircleRadius);
+		}
+
+		void World::BeginHistoryRecording()
+		{
+			_worldHistory._stepSnapshots.Flush();
+			_worldHistory._isRecording = true;
+		}
+
+		void World::EndHistoryRecording()
+		{
+			_worldHistory._isRecording = false;
+		}
+
+		bool World::BeginHistoryPlaying()
+		{
+			if (_worldHistory._isRecording == true)
+			{
+				return false;
+			}
+
+			if (_worldHistory._stepSnapshots.IsEmpty() == true)
+			{
+				return false;
+			}
+
+			_worldHistory.BeingPlaying();
+			return true;
+		}
+
+		void World::EndHistoryPlaying()
+		{
+			_worldHistory.EndPlaying();
+		}
+
+		uint32 World::GetHistorySize() const
+		{
+			return _worldHistory._stepSnapshots.Size();
+		}
+
+		uint32 World::GetCurrentHistoryIndex() const
+		{
+			return _worldHistory.GetCurrentSnapshotIndex();
 		}
 #pragma endregion
 	}

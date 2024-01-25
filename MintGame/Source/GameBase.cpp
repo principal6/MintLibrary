@@ -297,6 +297,8 @@ namespace mint
 			, _imageLoader{ MINT_NEW(Rendering::ImageLoader) }
 			, _characterFloorOffsetFromBottom(0.0f)
 			, _deltaTimeRemainder(0.0f)
+			, _isRecordingHistory(false)
+			, _isPlayingHistory(false)
 		{
 			WindowCreationDesc windowCreationDesc;
 			windowCreationDesc._size = windowSize;
@@ -337,6 +339,13 @@ namespace mint
 
 		void GameBase2D::Update(float deltaTime)
 		{
+			if (deltaTime < 0.0f)
+			{
+				// Rewinding!
+				_physicsWorld.Step(-kPhysicsStepDeltaTime);
+				return;
+			}
+
 			MINT_ASSERT(_characterActionChart._actions.IsEmpty() == false, "Character Action must not be empty!");
 
 			_mainCharacterObject->GetObjectTransform()._scale._x = _character._scale._x;
@@ -408,6 +417,40 @@ namespace mint
 		const Physics::World& GameBase2D::GetPhysicsWorld() const
 		{
 			return _physicsWorld;
+		}
+
+		bool GameBase2D::BeginHistoryRecording()
+		{
+			if (_isPlayingHistory == true)
+			{
+				return false;
+			}
+
+			_physicsWorld.BeginHistoryRecording();
+			_isRecordingHistory = true;
+			return true;
+		}
+
+		void GameBase2D::EndHistoryRecording()
+		{
+			_isRecordingHistory = false;
+			_physicsWorld.EndHistoryRecording();
+		}
+
+		void GameBase2D::BeginHistoryPlaying()
+		{
+			if (_physicsWorld.BeginHistoryPlaying() == false)
+			{
+				return;
+			}
+
+			_isPlayingHistory = true;
+		}
+
+		void GameBase2D::EndHistoryPlaying()
+		{
+			_isPlayingHistory = false;
+			_physicsWorld.EndHistoryPlaying();
 		}
 
 		void GameBase2D::InitializeMainCharacterObject()
