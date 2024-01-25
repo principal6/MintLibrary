@@ -366,11 +366,11 @@ namespace mint
 
 			_deltaTimeRemainder += deltaTime;
 			uint32 stepCount = 0;
-			while (_deltaTimeRemainder > kStepDeltaTime)
+			while (_deltaTimeRemainder > kPhysicsStepDeltaTime)
 			{
 				++stepCount;
-				_physicsWorld.Step(kStepDeltaTime);
-				_deltaTimeRemainder -= kStepDeltaTime;
+				_physicsWorld.Step(kPhysicsStepDeltaTime);
+				_deltaTimeRemainder -= kPhysicsStepDeltaTime;
 			}
 
 			_character._position = _physicsWorld.GetBody(_character._bodyID)._transform2D._translation;

@@ -194,6 +194,7 @@ namespace mint
 		
 		public:
 			const Physics::World& GetPhysicsWorld() const;
+			float GetPhysicsStepDeltaTime() const { return kPhysicsStepDeltaTime; }
 
 		protected:
 			void InitializeMainCharacterObject();
@@ -234,7 +235,7 @@ namespace mint
 			SharedPtr<CameraObject> _mainCameraObject;
 		
 		protected:
-			static constexpr const float kStepDeltaTime = 1.0f / 64.0f;
+			static constexpr const float kPhysicsStepDeltaTime = 1.0f / 64.0f;
 			float _deltaTimeRemainder;
 			Physics::World _physicsWorld;
 		};
