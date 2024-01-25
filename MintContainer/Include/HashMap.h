@@ -116,16 +116,16 @@ namespace mint
 				_bucketIndex = _hashMap.GetNextValidBucketIndex(_bucketIndex);
 				return *this;
 			}
-			Value& operator*() noexcept
+			Value& operator*() const noexcept
 			{
 				return GetValue();
 			}
-			Key& GetKey() noexcept
+			Key& GetKey() const noexcept
 			{
 				Bucket<Key, Value>& bucket = _hashMap._bucketArray[_bucketIndex];
 				return bucket._key;
 			}			
-			Value& GetValue() noexcept
+			Value& GetValue() const noexcept
 			{
 				Bucket<Key, Value>& bucket = _hashMap._bucketArray[_bucketIndex];
 				return bucket._value;
@@ -136,8 +136,50 @@ namespace mint
 			uint32 _bucketIndex;
 		};
 
+		class ConstIterator
+		{
+		public:
+			ConstIterator(const HashMap<Key, Value>& hashMap, const uint32 bucketIndex) : _hashMap{ hashMap }, _bucketIndex{ bucketIndex } { __noop; }
+
+		public:
+			bool operator==(const ConstIterator& rhs) const noexcept
+			{
+				return &_hashMap == &rhs._hashMap && _bucketIndex == rhs._bucketIndex;
+			}
+			bool operator!=(const ConstIterator& rhs) const noexcept
+			{
+				return !(*this == rhs);
+			}
+			ConstIterator& operator++() noexcept
+			{
+				_bucketIndex = _hashMap.GetNextValidBucketIndex(_bucketIndex);
+				return *this;
+			}
+			const Value& operator*() noexcept
+			{
+				return GetValue();
+			}
+			const Key& GetKey() const noexcept
+			{
+				const Bucket<Key, Value>& bucket = _hashMap._bucketArray[_bucketIndex];
+				return bucket._key;
+			}
+			const Value& GetValue() const noexcept
+			{
+				const Bucket<Key, Value>& bucket = _hashMap._bucketArray[_bucketIndex];
+				return bucket._value;
+			}
+
+		private:
+			const HashMap<Key, Value>& _hashMap;
+			uint32 _bucketIndex;
+		};
+
 		Iterator begin() noexcept;
 		Iterator end() noexcept;
+		
+		ConstIterator begin() const noexcept;
+		ConstIterator end() const noexcept;
 
 	private:
 		bool ContainsInternal(const uint32 startBucketIndex, const Key& key) const noexcept;

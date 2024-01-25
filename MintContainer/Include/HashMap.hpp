@@ -449,6 +449,29 @@ namespace mint
 		const int32 bucketArraySize = static_cast<int32>(_bucketArray.Size());
 		return Iterator(*this, bucketArraySize);
 	}
+
+	template<typename Key, typename Value>
+	MINT_INLINE HashMap<Key, Value>::ConstIterator HashMap<Key, Value>::begin() const noexcept
+	{
+		const int32 bucketArraySize = static_cast<int32>(_bucketArray.Size());
+		int32 firstBucketIndex = bucketArraySize;
+		for (int32 bucketIndex = 0; bucketIndex < bucketArraySize; ++bucketIndex)
+		{
+			if (_bucketArray[bucketIndex]._isUsed == true)
+			{
+				firstBucketIndex = bucketIndex;
+				break;
+			}
+		}
+		return ConstIterator(*this, firstBucketIndex);
+	}
+
+	template<typename Key, typename Value>
+	MINT_INLINE HashMap<Key, Value>::ConstIterator HashMap<Key, Value>::end() const noexcept
+	{
+		const int32 bucketArraySize = static_cast<int32>(_bucketArray.Size());
+		return ConstIterator(*this, bucketArraySize);
+	}
 }
 
 
