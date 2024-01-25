@@ -101,11 +101,11 @@ namespace mint
 			BodyID _bodyIDB;
 		};
 
-		struct NarrowPhaseCollisionInfo
+		struct CollisionManifold2D
 		{
 			struct DistanceComparator
 			{
-				bool operator()(const NarrowPhaseCollisionInfo& lhs, const NarrowPhaseCollisionInfo& rhs) const
+				bool operator()(const CollisionManifold2D& lhs, const CollisionManifold2D& rhs) const
 				{
 					return lhs._signedDistance < rhs._signedDistance;
 				}
@@ -146,7 +146,7 @@ namespace mint
 			void StepCollide_BroadPhase(float deltaTime);
 			void StepCollide_NarrowPhase(float deltaTime);
 			bool StepCollide_NarrowPhase_CCD(float deltaTime, const Body2D& bodyA, const Body2D& bodyB, Physics::GJK2DInfo& gjk2DInfo, SharedPtr<CollisionShape2D>& outShapeA, SharedPtr<CollisionShape2D>& outShapeB);
-			void StepCollide_NarrowPhase_GenerateCollision(const Body2D& bodyA, const CollisionShape2D& bodyShapeA, const Body2D& bodyB, const CollisionShape2D& bodyShapeB, const Physics::GJK2DInfo& gjk2DInfo, NarrowPhaseCollisionInfo& outNarrowPhaseCollisionInfo) const;
+			void StepCollide_NarrowPhase_GenerateCollision(const Body2D& bodyA, const CollisionShape2D& bodyShapeA, const Body2D& bodyB, const CollisionShape2D& bodyShapeB, const Physics::GJK2DInfo& gjk2DInfo, CollisionManifold2D& outCollisionManifold2D) const;
 			void StepSolve(float deltaTime);
 
 		private:
@@ -174,7 +174,7 @@ namespace mint
 			uint32 _collisionSectorSideCount = kCollisionSectorTessellationPerSide;
 			Vector<CollisionSector> _collisionSectors;
 			HashMap<BroadPhaseBodyPair::Key, BroadPhaseBodyPair> _broadPhaseBodyPairs;
-			HashMap<NarrowPhaseCollisionInfo::Key, Vector<NarrowPhaseCollisionInfo>> _narrowPhaseCollisionInfosMap;
+			HashMap<CollisionManifold2D::Key, Vector<CollisionManifold2D>> _collisionManifold2DsMap;
 		};
 	}
 }
