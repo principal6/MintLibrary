@@ -356,11 +356,18 @@ namespace mint
 		{
 			_worldSizePreStepSolve = _worldSize;
 
+			StepSolveResolveCollisions(deltaTime);
+			StepSolveIntegrate(deltaTime);
+			StepSolveAssignCollisionSectors();
+		}
+
+		void World::StepSolveResolveCollisions(float deltaTime)
+		{
 			// Resolve Collisions
 			GJK2DInfo gjk2DInfo;
 			for (Vector<CollisionManifold2D>& collisionManifold2Ds : _collisionManifold2DsMap)
 			{
-				QuickSort(collisionManifold2Ds, CollisionManifold2D::DistanceComparator());
+				QuickSort(collisionManifold2Ds, CollisionManifold2D::AbsoluteDistanceComparator());
 
 				for (CollisionManifold2D& collisionManifold2D : collisionManifold2Ds)
 				{
@@ -381,12 +388,9 @@ namespace mint
 							bodyB = bodyTemp;
 						}
 
-						// TODO ...
+						// TODO: Resolve Penetration!
 						if (collisionManifold2D._signedDistance < 0.0f)
 						{
-							const Float2& relativeVelocity = bodyA->_linearVelocity;
-							bodyA->_linearVelocity -= relativeVelocity.Dot(collisionManifold2D._collisionNormal) * collisionManifold2D._collisionNormal;
-
 							SharedPtr<CollisionShape2D> transformedShapeA{ CollisionShape2D::MakeTransformed(bodyA->_shape._collisionShape, bodyA->_transform2D) };
 							SharedPtr<CollisionShape2D> transformedShapeB{ CollisionShape2D::MakeTransformed(bodyB->_shape._collisionShape, bodyB->_transform2D) };
 							if (Intersect2D_GJK(*transformedShapeA, *transformedShapeB, &gjk2DInfo))
@@ -394,14 +398,14 @@ namespace mint
 								CollisionManifold2D newCollisionManifold2D;
 								StepCollide_NarrowPhase_GenerateCollision(*bodyA, *transformedShapeA, *bodyB, *transformedShapeB, gjk2DInfo, newCollisionManifold2D);
 								bodyA->_transform2D._translation += newCollisionManifold2D._collisionNormal * -newCollisionManifold2D._signedDistance;
+
+								//const Float2& relativeVelocity = bodyA->_linearVelocity;
+								//bodyA->_linearVelocity -= relativeVelocity.Dot(collisionManifold2D._collisionNormal) * collisionManifold2D._collisionNormal;
 							}
 						}
 					}
 				}
 			}
-
-			StepSolveIntegrate(deltaTime);
-			StepSolveAssignCollisionSectors();
 		}
 
 		void World::StepSolveIntegrate(float deltaTime)
