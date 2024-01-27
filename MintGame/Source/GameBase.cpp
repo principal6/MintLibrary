@@ -3,6 +3,7 @@
 #include <MintPlatform/Include/Window.h>
 #include <MintRenderingBase/Include/GraphicDevice.h>
 #include <MintRenderingBase/Include/ImageLoader.h>
+#include <MintRenderingBase/Include/SpriteAnimation.h>
 #include <MintRendering/Include/ImageRenderer.h>
 #include <MintAudio/Include/AudioSystem.h>
 #include <MintPlatform/Include/InputContext.h>
@@ -330,6 +331,7 @@ namespace mint
 			_characterRenderer.Assign(MINT_NEW(Rendering::ImageRenderer, *_graphicDevice, kCharacterTextureSlot));
 			_mapRenderer.Assign(MINT_NEW(Rendering::ImageRenderer, *_graphicDevice, kTileMapTextureSlot));
 			_objectRenderer.Assign(MINT_NEW(Rendering::ImageRenderer, *_graphicDevice, kObjectTextureSlot));
+			_effectRenderer.Assign(MINT_NEW(Rendering::ImageRenderer, *_graphicDevice, kEffectTextureSlot));
 
 			_audioSystem.Assign(MINT_NEW(AudioSystem));
 
@@ -337,6 +339,17 @@ namespace mint
 
 			InitializeMainCharacterObject();
 			InitializeMainCameraOject();
+
+
+			_effectImage = LoadImageFile("Assets/Effect_PuffAndStars_1_120x109.png");
+			_effectImage._imageRenderer = _effectRenderer.Get();
+			GetGraphicDevice().GetResourcePool().BindToShader(_effectImage.GetGraphicObjectID(), Rendering::GraphicShaderType::PixelShader, kEffectTextureSlot);
+			{
+				const float kTimePerFrame = 0.25f;
+				const Float2 kSizeInTexture{ 120.0f, 109.0f };
+				const Float2 kTextureSize{ 840, 654 };
+				_effectAnimation.Assign(MINT_NEW(Rendering::SpriteAnimation, kTextureSize, kTimePerFrame, Float2::kZero, kSizeInTexture, 30));
+			}
 		}
 
 		GameBase2D::~GameBase2D()
@@ -432,6 +445,16 @@ namespace mint
 				cameraPosition._x = Max(cameraPosition._x, windowSize._x * 0.5f);
 				cameraPosition._y = Max(cameraPosition._y, windowSize._y * 0.5f);
 			}
+
+			for (int32 i = _effects.Size() - 1; i >= 0; --i)
+			{
+				Effect2D& effect = _effects[i];
+				effect._elapsedTime += deltaTime;
+				if (effect._elapsedTime >= effect._lifeTime)
+				{
+					_effects.Erase(i);
+				}
+			}
 		}
 
 		void GameBase2D::BeginRendering()
@@ -471,6 +494,16 @@ namespace mint
 			StringW textW;
 			StringUtil::ConvertStringAToStringW(text, textW);
 			screenSpaceShapeRendererContext.DrawDynamicText(textW.CString(), Float4(static_cast<float>(position._x), static_cast<float>(position._y), 0, 1), Rendering::FontRenderingOption());
+		}
+
+		void GameBase2D::DrawEffects()
+		{
+			for (const Effect2D& effect : _effects)
+			{
+				_effectAnimation->SetCurrentFrameByRatio(effect._elapsedTime / effect._lifeTime);
+				_effectRenderer->DrawImage(effect._spawnPosition, effect._size, _effectAnimation->GetCurrentFrameUV0(), _effectAnimation->GetCurrentFrameUV1());
+			}
+			_effectRenderer->Render();
 		}
 
 		void GameBase2D::EndRendering()
@@ -753,6 +786,14 @@ namespace mint
 			_backgroundMusic.Assign(MINT_NEW(AudioObject));
 			_audioSystem->LoadAudioMP3(audioFileName.CString(), *_backgroundMusic);
 			_backgroundMusic->Play();
+		}
+
+		void GameBase2D::SpawnEffect(const Float2& position)
+		{
+			// TODO
+			Effect2D effect;
+			effect._spawnPosition = position;
+			_effects.PushBack(effect);
 		}
 #pragma endregion
 	}

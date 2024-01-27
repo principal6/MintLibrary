@@ -164,6 +164,15 @@ namespace mint
 			Physics::BodyID _bodyID;
 		};
 
+		class Effect2D
+		{
+		public:
+			Float2 _spawnPosition = Float2::kZero;
+			Float2 _size = Float2(128, 128);
+			float _elapsedTime = 0.0f;
+			float _lifeTime = 1.0f;
+		};
+
 		enum class CharacterControlMode
 		{
 			Default,
@@ -189,6 +198,7 @@ namespace mint
 			void BeginRendering();
 			void DrawMap();
 			void DrawCharacter();
+			void DrawEffects();
 			void DrawCircle(const Float2& position, float radius, const ByteColor& color);
 			void DrawGrid();
 			void DrawTextToScreen(const StringA& text, const Int2& position, const ByteColor& color);
@@ -217,6 +227,9 @@ namespace mint
 		public:
 			void SetTileMapImage(const Image& image);
 			void SetBackgroundMusic(const StringReferenceA& audioFileName);
+
+		public:
+			void SpawnEffect(const Float2& position);
 
 		public:
 			Rendering::GraphicDevice& GetGraphicDevice();
@@ -256,9 +269,11 @@ namespace mint
 			static constexpr const uint32 kCharacterTextureSlot = 1;
 			static constexpr const uint32 kTileMapTextureSlot = 2;
 			static constexpr const uint32 kObjectTextureSlot = 3;
+			static constexpr const uint32 kEffectTextureSlot = 4;
 			OwnPtr<Rendering::ImageRenderer> _characterRenderer;
 			OwnPtr<Rendering::ImageRenderer> _mapRenderer;
 			OwnPtr<Rendering::ImageRenderer> _objectRenderer;
+			OwnPtr<Rendering::ImageRenderer> _effectRenderer;
 
 		protected:
 			OwnPtr<AudioSystem> _audioSystem;
@@ -266,6 +281,11 @@ namespace mint
 
 		protected:
 			OwnPtr<ObjectPool> _objectPool;
+
+			// TODO: make this object!
+			OwnPtr<Rendering::SpriteAnimation> _effectAnimation;
+			Image _effectImage;
+			Vector<Effect2D> _effects;
 
 		protected:
 			CharacterControlMode _characterControlMode;
