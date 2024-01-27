@@ -169,10 +169,11 @@ void RunGJKTestWindow()
 				graphicDevice.SetViewProjectionMatrix(Float4x4::kIdentity, Float4x4::ProjectionMatrix2DNormal(windowSize._x, windowSize._y));
 
 				CircleCollisionShape2D shapeA = CircleCollisionShape2D(64, shapeATransform2D);
-				EdgeCollisionShape2D shapeB = EdgeCollisionShape2D(Float2(-64, 0), Float2(64, 0), shapeBTransform2D);
+				//EdgeCollisionShape2D shapeB = EdgeCollisionShape2D(Float2(-64, 0), Float2(64, 0), shapeBTransform2D);
+				BoxCollisionShape2D shapeB = BoxCollisionShape2D(Float2(64, 64), shapeBTransform2D);
 				//ConvexCollisionShape2D shapeB = ConvexCollisionShape2D({ Float2(-10, 80), Float2(-10, -20), Float2(80, -10), Float2(40, 70) }, shapeBTransform2D);
 				const bool intersects = Intersect2D_GJK(shapeA, shapeB, &gjk2DInfo);
-				
+
 				const ByteColor kShapeAColor(255, 0, 0);
 				const ByteColor kShapeBColor(64, 128, 0);
 				const ByteColor kIntersectedColor(32, 196, 32);
@@ -219,12 +220,12 @@ void RunGJKTestWindow()
 					{
 						shapeRendererContext.DrawLine(epa2DInfo._points.Back(), epa2DInfo._points[0], 2.0f);
 					}
-					
+
 					shapeRendererContext.SetColor(ByteColor(255, 64, 0));
 					shapeRendererContext.SetPosition(Float4(normal * distance));
 					shapeRendererContext.DrawCircle(4.0f);
 				}
-				
+
 				shapeRendererContext.Render();
 			}
 			{

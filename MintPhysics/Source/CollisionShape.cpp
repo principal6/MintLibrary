@@ -406,13 +406,13 @@ namespace mint
 #pragma endregion
 
 #pragma region CollisionShape2D - BoxCollisionShape2D
-		BoxCollisionShape2D::BoxCollisionShape2D(const Float2& center, const Float2& halfSize, const float angle)
+		BoxCollisionShape2D::BoxCollisionShape2D(const Float2& halfSize, const Transform2D& transform2D)
 			: CollisionShape2D()
-			, _center{ center }
+			, _center{ transform2D._translation }
 			, _halfLengthedAxisX{ Float2::kZero }
 			, _halfLengthedAxisY{ Float2::kZero }
 		{
-			const Float2x2 rotationMatrix = Float2x2::RotationMatrix(angle);
+			const Float2x2 rotationMatrix = Float2x2::RotationMatrix(transform2D._rotation);
 			const Float2& x = rotationMatrix._row[0];
 			const Float2& y = rotationMatrix._row[1];
 			_halfLengthedAxisX = x * halfSize._x;

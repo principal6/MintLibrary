@@ -146,7 +146,7 @@ namespace mint
 		class BoxCollisionShape2D : public CollisionShape2D
 		{
 		public:
-			BoxCollisionShape2D(const Float2& center, const Float2& halfSize, const float angle);
+			BoxCollisionShape2D(const Float2& halfSize, const Transform2D& transform2D);
 			BoxCollisionShape2D(const Float2& center, const Float2& halfLengthedAxisX, const Float2& halfLengthedAxisY);
 
 		public:

@@ -20,21 +20,21 @@ namespace mint
 				Physics::CircleCollisionShape2D b = Physics::CircleCollisionShape2D(Float2(64, 64), 16);
 				MINT_ASSURE(Physics::Intersect2D_GJK(a, b) == true);
 			}
-			
+
 			{
 				Physics::PointCollisionShape2D a = Physics::PointCollisionShape2D(Float2(80, 64));
 				Physics::CircleCollisionShape2D b = Physics::CircleCollisionShape2D(Float2(64, 64), 16);
 				MINT_ASSURE(Physics::Intersect2D_GJK(a, b) == true);
 			}
-			
+
 			{
-				Physics::BoxCollisionShape2D a = Physics::BoxCollisionShape2D(Float2(112, 76), Float2(32, 16), 0.0f);
+				Physics::BoxCollisionShape2D a = Physics::BoxCollisionShape2D(Float2(32, 16), Transform2D(0.0f, Float2(112, 76)));
 				Physics::CircleCollisionShape2D b = Physics::CircleCollisionShape2D(Float2(64, 64), 16);
 				MINT_ASSURE(Physics::Intersect2D_GJK(a, b) == true);
 			}
-			
+
 			{
-				Physics::BoxCollisionShape2D a = Physics::BoxCollisionShape2D(Float2(0, 0), Float2(16, 16), 0.0f);
+				Physics::BoxCollisionShape2D a = Physics::BoxCollisionShape2D(Float2(16, 16), Transform2D());
 				Physics::CircleCollisionShape2D b = Physics::CircleCollisionShape2D(Float2(0, 0), 1);
 				MINT_ASSURE(Physics::Intersect2D_GJK(a, b) == true);
 			}
