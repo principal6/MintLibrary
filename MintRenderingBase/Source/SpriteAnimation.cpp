@@ -31,6 +31,18 @@ namespace mint
 			AddFrames(offsetInTexture, sizeInTexture, rowIndex, rowCount, column);
 		}
 
+		SpriteAnimation::SpriteAnimation(const Float2& textureSize, float timePerFrame, const Float2& offsetInTexture, const Float2& sizeInTexture, uint32 frameCount)
+			: SpriteAnimation(textureSize, timePerFrame)
+		{
+			const uint32 columnCount = static_cast<uint32>(textureSize._x / sizeInTexture._x);
+			for (uint32 i = 0; i < frameCount; ++i)
+			{
+				uint32 row = i / columnCount;
+				uint32 column = i % columnCount;
+				AddFrame(offsetInTexture, sizeInTexture, row, column);
+			}
+		}
+
 		void SpriteAnimation::AddFrames(const Float2& offsetInTexture, const Float2& sizeInTexture, uint32 rowIndex, uint32 rowCount, uint32 column)
 		{
 			for (uint32 row = rowIndex; row < rowIndex + rowCount; ++row)
@@ -41,7 +53,7 @@ namespace mint
 
 		void SpriteAnimation::AddFrame(const Float2& offsetInTexture, const Float2& sizeInTexture, uint32 row, uint32 column)
 		{
-			AddFrame(offsetInTexture + Float2(sizeInTexture._x * row, sizeInTexture._y * column), sizeInTexture);
+			AddFrame(offsetInTexture + Float2(sizeInTexture._x * column, sizeInTexture._y * row), sizeInTexture);
 		}
 
 		void SpriteAnimation::AddFrame(const Float2& positionInTexrue, const Float2& sizeInTexture)
@@ -64,6 +76,13 @@ namespace mint
 		void SpriteAnimation::SetCurrentFrame(const uint32 frameIndex)
 		{
 			_elapsedTime = _timePerFrame * frameIndex;
+		}
+
+		void SpriteAnimation::SetCurrentFrameByRatio(float ratio)
+		{
+			MINT_ASSERT(ratio >= 0.0f && ratio <= 1.0f, "Caller must guarantee this!");
+
+			_elapsedTime = _totalTime * ratio;
 		}
 
 		void SpriteAnimation::SetLoops(bool loops)

@@ -27,6 +27,7 @@ namespace mint
 		public:
 			SpriteAnimation(const Float2& textureSize, float timePerFrame);
 			SpriteAnimation(const Float2& textureSize, float timePerFrame, const Float2& offsetInTexture, const Float2& sizeInTexture, uint32 rowIndex, uint32 rowCount, uint32 column);
+			SpriteAnimation(const Float2& textureSize, float timePerFrame, const Float2& offsetInTexture, const Float2& sizeInTexture, uint32 frameCount);
 			~SpriteAnimation() = default;
 
 		public:
@@ -37,6 +38,7 @@ namespace mint
 		public:
 			void Update(float deltaTime);
 			void SetCurrentFrame(const uint32 frameIndex);
+			void SetCurrentFrameByRatio(float ratio);
 			void SetLoops(bool loops);
 
 		public:
