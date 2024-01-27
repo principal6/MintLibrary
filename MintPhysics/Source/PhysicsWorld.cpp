@@ -397,10 +397,10 @@ namespace mint
 							{
 								CollisionManifold2D newCollisionManifold2D;
 								StepCollide_NarrowPhase_GenerateCollision(*bodyA, *transformedShapeA, *bodyB, *transformedShapeB, gjk2DInfo, newCollisionManifold2D);
-								bodyA->_transform2D._translation += newCollisionManifold2D._collisionNormal * -newCollisionManifold2D._signedDistance;
+								const Float2 separatingVector = newCollisionManifold2D._collisionNormal * -newCollisionManifold2D._signedDistance;
+								bodyA->_transform2D._translation += separatingVector;
 
-								//const Float2& relativeVelocity = bodyA->_linearVelocity;
-								//bodyA->_linearVelocity -= relativeVelocity.Dot(collisionManifold2D._collisionNormal) * collisionManifold2D._collisionNormal;
+								//bodyA->_linearVelocity += separatingVector / deltaTime;
 							}
 						}
 					}
