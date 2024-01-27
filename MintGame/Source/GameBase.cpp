@@ -339,13 +339,6 @@ namespace mint
 
 		void GameBase2D::Update(float deltaTime)
 		{
-			if (deltaTime < 0.0f)
-			{
-				// Rewinding!
-				_physicsWorld.Step(-kPhysicsStepDeltaTime);
-				return;
-			}
-
 			MINT_ASSERT(_characterActionChart._actions.IsEmpty() == false, "Character Action must not be empty!");
 
 			_mainCharacterObject->GetObjectTransform()._scale._x = _character._scale._x;
@@ -371,15 +364,26 @@ namespace mint
 
 			const StringA& currentAnimationName = _characterActionChart.GetCurrentAction()._animationName;
 			_characterAnimationSet.SetAnimation(currentAnimationName);
-			_characterAnimationSet.Update(deltaTime);
-
-			_deltaTimeRemainder += deltaTime;
-			uint32 stepCount = 0;
-			while (_deltaTimeRemainder > kPhysicsStepDeltaTime)
+			if (deltaTime > 0.0f)
 			{
-				++stepCount;
-				_physicsWorld.Step(kPhysicsStepDeltaTime);
-				_deltaTimeRemainder -= kPhysicsStepDeltaTime;
+				_characterAnimationSet.Update(deltaTime);
+			}
+
+			if (deltaTime < 0.0f)
+			{
+				// TODO
+				_physicsWorld.Step(-kPhysicsStepDeltaTime);
+			}
+			else
+			{
+				_deltaTimeRemainder += deltaTime;
+				uint32 stepCount = 0;
+				while (_deltaTimeRemainder > kPhysicsStepDeltaTime)
+				{
+					++stepCount;
+					_physicsWorld.Step(kPhysicsStepDeltaTime);
+					_deltaTimeRemainder -= kPhysicsStepDeltaTime;
+				}
 			}
 
 			_character._position = _physicsWorld.GetBody(_character._bodyID)._transform2D._translation;

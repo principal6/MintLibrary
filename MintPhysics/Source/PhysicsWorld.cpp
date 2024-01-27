@@ -145,6 +145,11 @@ namespace mint
 			if (_worldHistory.IsPlaying())
 			{
 				_worldHistory.StepPlay((deltaTime >= 0.0f));
+
+				for (const StepSnapshot::BodySnapshot& bodySnapshot : _worldHistory.GetStepSnapshot()._bodySnapshots)
+				{
+					AccessBody(bodySnapshot._body._bodyID) = bodySnapshot._body;
+				}
 				return;
 			}
 
