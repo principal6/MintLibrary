@@ -276,6 +276,14 @@ namespace mint
 			return result;
 		}
 
+		Float2 ComputeEdgeNormal(const Float2& edgeVertex0, const Float2& edgeVertex1)
+		{
+			// V1 => V0 is CCW
+			Float2 normal = edgeVertex0 - edgeVertex1;
+			normal.Normalize();
+			return Float2(-normal._y, normal._x);
+		}
+
 		Float2 ComputeClosestPointOnEdge(const Float2& point, const Float2& edgeVertex0, const Float2& edgeVertex1)
 		{
 			Float2 tangent = edgeVertex0 - edgeVertex1;
@@ -302,16 +310,23 @@ namespace mint
 			}
 			else if (gjk2DInfo._simplex.GetValidPointCount() == 2)
 			{
-				// TODO ...
-				return;
+				const Float2& a = gjk2DInfo._simplex.GetPointA();
+				const Float2& b = gjk2DInfo._simplex.GetPointB();
+				Float2 edgeNormal = ComputeEdgeNormal(a, b);
+				epa2DInfo._points.PushBack(b);
+				epa2DInfo._points.PushBack(a);
+				Float2 newA = GJK2D_ComputeMinkowskiDifferencePoint(shapeA, shapeB, edgeNormal);
+				epa2DInfo._points.PushBack(newA);
 			}
-
-			const Float2& a = gjk2DInfo._simplex.GetPointA();
-			const Float2& b = gjk2DInfo._simplex.GetPointB();
-			const Float2& c = gjk2DInfo._simplex.GetPointC();
-			epa2DInfo._points.PushBack(c);
-			epa2DInfo._points.PushBack(b);
-			epa2DInfo._points.PushBack(a);
+			else
+			{
+				const Float2& a = gjk2DInfo._simplex.GetPointA();
+				const Float2& b = gjk2DInfo._simplex.GetPointB();
+				const Float2& c = gjk2DInfo._simplex.GetPointC();
+				epa2DInfo._points.PushBack(c);
+				epa2DInfo._points.PushBack(b);
+				epa2DInfo._points.PushBack(a);
+			}
 			GrahamScan_Convexify(epa2DInfo._points);
 
 			while (true)
@@ -322,8 +337,7 @@ namespace mint
 				++epa2DInfo._iteration;
 
 				// a => b is CW
-				Float2 closestEdgeA;
-				Float2 closestEdgeB;
+				Float2 closestEdgeNormal;
 				Float2 closestPoint;
 				uint32 indexB = 0;
 				float distanceToEdge = Math::kFloatMax;
@@ -331,30 +345,26 @@ namespace mint
 					const uint32 pointCount = epa2DInfo._points.Size();
 					for (uint32 i = 0; i < pointCount; ++i)
 					{
-						// a => b is CW
-						const Float2& a = epa2DInfo._points[(i == 0 ? pointCount - 1 : i - 1)];
-						const Float2& b = epa2DInfo._points[i];
-						const Float2 p = ComputeClosestPointOnEdge(Float2::kZero, b, a);
+						// v1 => v0 is CCW
+						const Float2& v0 = epa2DInfo._points[(i == 0 ? pointCount - 1 : i - 1)];
+						const Float2& v1 = epa2DInfo._points[i];
+						const Float2 p = ComputeClosestPointOnEdge(Float2::kZero, v1, v0);
 						const float distance = p.Length();
 						if (distance < distanceToEdge)
 						{
 							indexB = i;
-							closestEdgeA = a;
-							closestEdgeB = b;
 							closestPoint = p;
+							closestEdgeNormal = ComputeEdgeNormal(v0, v1);
 							distanceToEdge = distance;
 						}
 					}
 				}
 
-				Float2 edgeNormal = closestPoint;
-				edgeNormal.Normalize();
-
-				Float2 support = GJK2D_ComputeMinkowskiDifferencePoint(shapeA, shapeB, edgeNormal);
-				const float distance = support.Dot(edgeNormal);
+				Float2 support = GJK2D_ComputeMinkowskiDifferencePoint(shapeA, shapeB, closestEdgeNormal);
+				const float distance = support.Dot(closestEdgeNormal);
 				if (::abs(distance - distanceToEdge) < 1.0f)
 				{
-					outNormal = edgeNormal;
+					outNormal = closestEdgeNormal;
 					outDistance = distance;
 					return;
 				}

@@ -81,8 +81,8 @@ void RunGJKTestWindow()
 		ShapeB
 	};
 	SelectionMode selectionMode{ SelectionMode::None };
-	Transform2D shapeATransform2D{ Float2(128, 128) };
-	Transform2D shapeBTransform2D{ Float2(196, 128) };
+	Transform2D shapeATransform2D{ Float2(128, 128 + 64) };
+	Transform2D shapeBTransform2D{ Float2(128 + 64, 128) };
 	while (window.IsRunning() == true)
 	{
 		const float deltaTime = Game::DeltaTimer::GetInstance().ComputeDeltaTimeSec();
@@ -169,8 +169,8 @@ void RunGJKTestWindow()
 				graphicDevice.SetViewProjectionMatrix(Float4x4::kIdentity, Float4x4::ProjectionMatrix2DNormal(windowSize._x, windowSize._y));
 
 				CircleCollisionShape2D shapeA = CircleCollisionShape2D(64, shapeATransform2D);
-				//EdgeCollisionShape2D shapeB = EdgeCollisionShape2D(Float2(-10, 80), Float2(-10, -20), shapeBTransform2D);
-				ConvexCollisionShape2D shapeB = ConvexCollisionShape2D({ Float2(-10, 80), Float2(-10, -20), Float2(80, -10), Float2(40, 70) }, shapeBTransform2D);
+				EdgeCollisionShape2D shapeB = EdgeCollisionShape2D(Float2(-64, 0), Float2(64, 0), shapeBTransform2D);
+				//ConvexCollisionShape2D shapeB = ConvexCollisionShape2D({ Float2(-10, 80), Float2(-10, -20), Float2(80, -10), Float2(40, 70) }, shapeBTransform2D);
 				const bool intersects = Intersect2D_GJK(shapeA, shapeB, &gjk2DInfo);
 				
 				const ByteColor kShapeAColor(255, 0, 0);

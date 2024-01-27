@@ -72,10 +72,11 @@ namespace mint
 		bool Intersect2D_AABB_AABB(const AABBCollisionShape2D& shapeA, const AABBCollisionShape2D& shapeB);
 		bool Intersect2D_GJK(const CollisionShape2D& shapeA, const CollisionShape2D& shapeB, GJK2DInfo* const outGJK2DInfo = nullptr);
 
+		Float2 ComputeEdgeNormal(const Float2& edgeVertex0, const Float2& edgeVertex1);
 		Float2 ComputeClosestPointOnEdge(const Float2& point, const Float2& edgeVertex0, const Float2& edgeVertex1);
 		struct EPA2DInfo
 		{
-			uint32 _maxIterationCount = kUint32Max;
+			uint32 _maxIterationCount = 1;
 			uint32 _iteration = 0;
 			Vector<Float2> _points;
 		};
