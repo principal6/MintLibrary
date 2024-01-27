@@ -389,7 +389,7 @@ namespace mint
 			const uint32 indexOffset = _lowLevelRenderer->GetIndexCount();
 			const uint32 transformIndex = _sbTransformData.Size();
 
-			ShapeGenerator::GenerateCircle(radius, 16, _defaultColor, _lowLevelRenderer->Vertices(), _lowLevelRenderer->Indices(), Transform2D());
+			ShapeGenerator::GenerateCircle(radius, 32, _defaultColor, _lowLevelRenderer->Vertices(), _lowLevelRenderer->Indices(), Transform2D());
 
 			const uint32 deltaVertexCount = _lowLevelRenderer->GetVertexCount() - vertexOffset;
 			for (uint32 i = 0; i < deltaVertexCount; i++)
