@@ -199,12 +199,12 @@ namespace mint
 	template<typename T>
 	const T& Queue<T>::Get(uint32 index) const noexcept
 	{
-		if (_headAt + index >= _capacity)
+		uint32 rawIndex = _headAt + index;
+		if (rawIndex >= _capacity)
 		{
-			const uint32 rawIndex = _headAt + index - _capacity;
-			return _rawPointer[rawIndex];
+			rawIndex -= _capacity;
 		}
-		return _rawPointer[index];
+		return _rawPointer[rawIndex];
 	}
 }
 
