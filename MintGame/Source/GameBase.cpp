@@ -565,7 +565,12 @@ namespace mint
 		Image GameBase2D::LoadImageFile(const StringA& imageFileName)
 		{
 			Rendering::ByteColorImage image;
-			_imageLoader->LoadImage_(imageFileName, image);
+			if (_imageLoader->LoadImage_(imageFileName, image) == false)
+			{
+				MINT_ASSERT(false, "Failed to load image! (%s)", imageFileName.CString());
+				return Image();
+			}
+
 			Rendering::GraphicResourcePool& resourcePool = _graphicDevice->GetResourcePool();
 			return Image(resourcePool.AddTexture2D(image));
 		}
