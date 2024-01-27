@@ -80,8 +80,8 @@ namespace mint
 
 #pragma region World
 		World::World()
-			: _worldMin{ -128.0, -128.0f }
-			, _worldMax{ +128.0, +128.0f }
+			: _worldMin{ -2048.0, -2048.0f }
+			, _worldMax{ +2048.0, +2048.0f }
 			, _totalStepCount{ 0 }
 		{
 			_collisionSectorSideCount = kCollisionSectorTessellationPerSide;

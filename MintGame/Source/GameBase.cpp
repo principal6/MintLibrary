@@ -5,6 +5,7 @@
 #include <MintRenderingBase/Include/ImageLoader.h>
 #include <MintRendering/Include/ImageRenderer.h>
 #include <MintAudio/Include/AudioSystem.h>
+#include <MintPlatform/Include/InputContext.h>
 #include <MintGame/Include/DeltaTimer.h>
 #include <MintGame/Include/TileMap.h>
 #include <MintGame/Include/ObjectPool.hpp>
@@ -295,7 +296,9 @@ namespace mint
 		GameBase2D::GameBase2D(const StringA& title, const Int2& windowSize)
 			: _window{ MINT_NEW(Window) }
 			, _imageLoader{ MINT_NEW(Rendering::ImageLoader) }
-			, _characterFloorOffsetFromBottom(0.0f)
+			, _characterFloorOffset(0.0f)
+			, _characterControlMode(CharacterControlMode::Default)
+			, _gameCameraMode(GameCameraMode::FixedToWorld)
 			, _deltaTimeRemainder(0.0f)
 			, _isDebugMode(false)
 			, _isRecordingHistory(false)
@@ -340,6 +343,28 @@ namespace mint
 
 		void GameBase2D::Update(float deltaTime)
 		{
+			if (_characterControlMode == CharacterControlMode::Default)
+			{
+				InputContext& inputContext = InputContext::GetInstance();
+				const float moveDelta = _character._moveSpeed * deltaTime;
+				if (inputContext.GetKeyState(KeyCode::Right) == KeyState::Down)
+				{
+					TeleportCharacterBy(Float2(moveDelta, 0.0f));
+				}
+				if (inputContext.GetKeyState(KeyCode::Left) == KeyState::Down)
+				{
+					TeleportCharacterBy(Float2(-moveDelta, 0.0f));
+				}
+				if (inputContext.GetKeyState(KeyCode::Up) == KeyState::Down)
+				{
+					TeleportCharacterBy(Float2(0.0f, moveDelta));
+				}
+				if (inputContext.GetKeyState(KeyCode::Down) == KeyState::Down)
+				{
+					TeleportCharacterBy(Float2(0.0f, -moveDelta));
+				}
+			}
+
 			_mainCharacterObject->GetObjectTransform()._scale._x = _character._scale._x;
 			_mainCharacterObject->GetObjectTransform()._scale._y = _character._scale._y;
 			_mainCharacterObject->GetObjectTransform()._translation._x = _character._position._x;
@@ -392,10 +417,13 @@ namespace mint
 			_character._position = _physicsWorld.GetBody(_character._bodyID)._transform2D._translation;
 
 			const Float2 windowSize{ _graphicDevice->GetWindowSize() };
-			Float3& cameraPosition = _mainCameraObject->GetObjectTransform()._translation;
-			cameraPosition = _mainCharacterObject->GetObjectTransform()._translation;
-			cameraPosition._x = Max(cameraPosition._x, windowSize._x * 0.5f);
-			cameraPosition._y = Max(cameraPosition._y, windowSize._y * 0.5f);
+			if (_gameCameraMode == GameCameraMode::FollowCharacter)
+			{
+				Float3& cameraPosition = _mainCameraObject->GetObjectTransform()._translation;
+				cameraPosition = _mainCharacterObject->GetObjectTransform()._translation;
+				cameraPosition._x = Max(cameraPosition._x, windowSize._x * 0.5f);
+				cameraPosition._y = Max(cameraPosition._y, windowSize._y * 0.5f);
+			}
 		}
 
 		void GameBase2D::BeginRendering()
@@ -469,17 +497,7 @@ namespace mint
 		{
 			_mainCharacterObject = _objectPool->CreateObject();
 
-			{
-				Collision2DComponent* collision2DComponent = _objectPool->CreateCollision2DComponent();
-				const float radius = 32.0f;
-				collision2DComponent->SetCollisionShape2D(MakeShared<Physics::CircleCollisionShape2D>(Physics::CircleCollisionShape2D(Float2(0.0f, radius), 32.0f)));
-				_mainCharacterObject->AttachComponent(collision2DComponent);
-
-				Physics::Body2DCreationDesc bodyCreationDesc;
-				bodyCreationDesc._collisionShape2D = collision2DComponent->GetCollisionShape2D();
-				bodyCreationDesc._bodyMotionType = Physics::BodyMotionType::Dynamic;
-				_character._bodyID = _physicsWorld.CreateBody(bodyCreationDesc);
-			}
+			SetCharacterCollision(Float2(0, 0), 32.0f);
 		}
 
 		void GameBase2D::InitializeMainCameraOject()
@@ -502,17 +520,9 @@ namespace mint
 			Rendering::ShapeRendererContext& shapeRendererContext = _graphicDevice->GetShapeRendererContext();
 			_mapRenderer->Render();
 
-			if (_isDebugMode == true)
-			{
-				//_tileMap.DrawCollisions(shapeRendererContext);
-				//shapeRendererContext.Render();
-
-				_physicsWorld.RenderDebug(shapeRendererContext);
-			}
-
 			const Float2 scaledCharacterSize = _characterSize * _character._scale;
-			const float scaledFloorOffset = _characterFloorOffsetFromBottom * _character._scale._y;
-			const Float2 characterDrawPosition = _mainCharacterObject->GetObjectTransform()._translation.XY() + Float2(0.0f, scaledCharacterSize._y * 0.5f - scaledFloorOffset);
+			const float scaledFloorOffset = _characterFloorOffset * _character._scale._y;
+			const Float2 characterDrawPosition = _mainCharacterObject->GetObjectTransform()._translation.XY() + Float2(0.0f, scaledFloorOffset);
 			if (_characterAnimationSet.IsValid() == true)
 			{
 				const Rendering::SpriteAnimation& characterCurrentAnimation = _characterAnimationSet.GetCurrentAnimation();
@@ -523,6 +533,14 @@ namespace mint
 				_characterRenderer->DrawImage(characterDrawPosition, scaledCharacterSize, Float2::kZero, Float2::kOne);
 			}
 			_characterRenderer->Render();
+
+			if (_isDebugMode == true)
+			{
+				//_tileMap.DrawCollisions(shapeRendererContext);
+				//shapeRendererContext.Render();
+
+				_physicsWorld.RenderDebug(shapeRendererContext);
+			}
 		}
 
 		void GameBase2D::LoadTileMap(const StringA& tileMapeFileName)
@@ -575,13 +593,18 @@ namespace mint
 			return Image(resourcePool.AddTexture2D(image));
 		}
 
-		void GameBase2D::SetCharacterImage(const Image& image, const Int2& characterSize, uint32 floorOffsetFromBottom)
+		void GameBase2D::SetCharacterImage(const Image& image, const Int2& characterSize, int32 floorOffset)
 		{
 			Rendering::GraphicResourcePool& resourcePool = _graphicDevice->GetResourcePool();
 			resourcePool.GetResource(image._graphicObjectID).BindToShader(Rendering::GraphicShaderType::PixelShader, _characterTextureSlot);
 
 			_characterSize = Float2(characterSize);
-			_characterFloorOffsetFromBottom = static_cast<float>(floorOffsetFromBottom);
+			_characterFloorOffset = -static_cast<float>(floorOffset);
+
+			const Float2 scaledCharacterSize = _characterSize * _character._scale;
+			const float radius = scaledCharacterSize.GetMaxElement() * 0.5f;
+			const float scaledFloorOffset = _characterFloorOffset * _character._scale._y;
+			SetCharacterCollision(Float2(0.0f, scaledFloorOffset), radius);
 		}
 
 		void GameBase2D::SetCharacterAnimationSet(const Rendering::SpriteAnimationSet& spriteAnimationSet)
@@ -594,10 +617,37 @@ namespace mint
 			return _characterActionChart.Load(fileName);
 		}
 
-		void GameBase2D::SetCharacterCollisionRadius(float radius)
+		void GameBase2D::SetCharacterCollision(const Float2& centerOffset, float radius)
 		{
-			Collision2DComponent* const mainCharacterCollision2DComponent = static_cast<Collision2DComponent*>(_mainCharacterObject->GetComponent(ObjectComponentType::Collision2DComponent));
-			mainCharacterCollision2DComponent->SetCollisionShape2D(MakeShared<Physics::CircleCollisionShape2D>(Physics::CircleCollisionShape2D(Float2(0.0f, _characterFloorOffsetFromBottom + radius * 0.5f), radius)));
+			MINT_ASSERT(_mainCharacterObject.IsValid() == true, "Caller must guarantee this!");
+
+			Collision2DComponent* collision2DComponent = static_cast<Collision2DComponent*>(_mainCharacterObject->GetComponent(ObjectComponentType::Collision2DComponent));
+			if (collision2DComponent == nullptr)
+			{
+				collision2DComponent = _objectPool->CreateCollision2DComponent();
+				_mainCharacterObject->AttachComponent(collision2DComponent);
+			}
+			collision2DComponent->SetCollisionShape2D(MakeShared<Physics::CircleCollisionShape2D>(Physics::CircleCollisionShape2D(centerOffset, radius)));
+
+			if (_character._bodyID.IsValid())
+			{
+				// TODO
+				Physics::Body2D& characterBody = _physicsWorld.AccessBody(_character._bodyID);
+				characterBody._shape._collisionShape = collision2DComponent->GetCollisionShape2D();
+				characterBody._shape._shapeAABB = MakeShared<Physics::AABBCollisionShape2D>(Physics::AABBCollisionShape2D(*characterBody._shape._collisionShape));
+			}
+			else
+			{
+				Physics::Body2DCreationDesc bodyCreationDesc;
+				bodyCreationDesc._collisionShape2D = collision2DComponent->GetCollisionShape2D();
+				bodyCreationDesc._bodyMotionType = Physics::BodyMotionType::Dynamic;
+				_character._bodyID = _physicsWorld.CreateBody(bodyCreationDesc);
+			}
+		}
+
+		void GameBase2D::SetCharacterMoveSpeed(float moveSpeed)
+		{
+			_character._moveSpeed = moveSpeed;
 		}
 
 		const Rendering::SpriteAnimationSet& GameBase2D::GetCharacterAnimationSet() const
@@ -613,6 +663,11 @@ namespace mint
 		void GameBase2D::SetCharacterScale(const Float2& scale)
 		{
 			_character._scale = scale;
+
+			const Float2 scaledCharacterSize = _characterSize * _character._scale;
+			const float radius = scaledCharacterSize.GetMaxElement() * 0.5f;
+			const float scaledFloorOffset = _characterFloorOffset * _character._scale._y;
+			SetCharacterCollision(Float2(0.0f, scaledFloorOffset), radius);
 		}
 
 		const Float2& GameBase2D::GetCharacterScale() const
@@ -637,8 +692,16 @@ namespace mint
 
 		void GameBase2D::TeleportCharacterTo(const Float2& position)
 		{
-			_physicsWorld.AccessBody(_character._bodyID)._transform2D._translation = position;
-			_character._position = position;
+			Physics::Body2D& characerBody = _physicsWorld.AccessBody(_character._bodyID);
+			characerBody._transform2D._translation = position;
+			_character._position = characerBody._transform2D._translation;
+		}
+
+		void GameBase2D::TeleportCharacterBy(const Float2& delta)
+		{
+			Physics::Body2D& characerBody = _physicsWorld.AccessBody(_character._bodyID);
+			characerBody._transform2D._translation += delta;
+			_character._position = characerBody._transform2D._translation;
 		}
 
 		void GameBase2D::SetTileMapImage(const Image& image)

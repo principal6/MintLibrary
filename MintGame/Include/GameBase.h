@@ -150,9 +150,21 @@ namespace mint
 		{
 		public:
 			Float2 _position;
+			float _moveSpeed = 1.0f;
 			Float2 _velocity;
 			Float2 _scale = Float2(1, 1);
 			Physics::BodyID _bodyID;
+		};
+
+		enum class CharacterControlMode
+		{
+			Default,
+			Custom
+		};
+		enum class GameCameraMode
+		{
+			FixedToWorld,
+			FollowCharacter
 		};
 
 		class GameBase2D
@@ -175,10 +187,11 @@ namespace mint
 			Image LoadImageFile(const StringA& imageFileName);
 
 		public:
-			void SetCharacterImage(const Image& image, const Int2& characterSize, uint32 floorOffsetFromBottom);
+			void SetCharacterImage(const Image& image, const Int2& characterSize, int32 floorOffset);
 			void SetCharacterAnimationSet(const Rendering::SpriteAnimationSet& spriteAnimationSet);
 			bool SetCharacterActionChart(const StringA& fileName);
-			void SetCharacterCollisionRadius(float radius);
+			void SetCharacterCollision(const Float2& centerOffset, float radius);
+			void SetCharacterMoveSpeed(float moveSpeed);
 			const Rendering::SpriteAnimationSet& GetCharacterAnimationSet() const;
 			ActionChart& GetCharacterActionChart();
 			void SetCharacterScale(const Float2& scale);
@@ -187,6 +200,7 @@ namespace mint
 			const Float2& GetCharacterVelocity() const;
 			const Float2& GetCharacterPosition() const;
 			void TeleportCharacterTo(const Float2& position);
+			void TeleportCharacterBy(const Float2& delta);
 
 		public:
 			void SetTileMapImage(const Image& image);
@@ -225,7 +239,7 @@ namespace mint
 			Rendering::SpriteAnimationSet _characterAnimationSet;
 			ActionChart _characterActionChart;
 			Float2 _characterSize;
-			float _characterFloorOffsetFromBottom;
+			float _characterFloorOffset;
 			Character2D _character;
 
 		protected:
@@ -240,8 +254,14 @@ namespace mint
 
 		protected:
 			OwnPtr<ObjectPool> _objectPool;
+
+		protected:
+			CharacterControlMode _characterControlMode;
 			SharedPtr<Object> _mainCharacterObject;
+		
+		protected:
 			SharedPtr<CameraObject> _mainCameraObject;
+			GameCameraMode _gameCameraMode;
 
 		protected:
 			static constexpr const float kPhysicsStepDeltaTime = 1.0f / 64.0f;
