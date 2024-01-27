@@ -82,6 +82,7 @@ namespace mint
 			void Update(float deltaTime);
 
 		public:
+			bool IsValid() const;
 			const SpriteAnimation& GetCurrentAnimation() const;
 			const StringA& GetCurrentAnimationName() const;
 

@@ -210,6 +210,11 @@ namespace mint
 		void TileMap::Draw(ImageRenderer& imageRenderer) const
 		{
 			const Vector<uint32>& tiles = GetTiles();
+			if (tiles.IsEmpty() == true)
+			{
+				return;
+			}
+
 			const uint32 mapWidth = GetWidth();
 			const uint32 mapHeight = tiles.Size() / mapWidth;
 			const TileSet& tileSet = GetTileSet();

@@ -197,6 +197,7 @@ namespace mint
 			float GetPhysicsStepDeltaTime() const { return kPhysicsStepDeltaTime; }
 
 		public:
+			void SetDebugMode(bool isDebugMode);
 			bool IsRecordingHistory() const { return _isRecordingHistory; }
 			bool BeginHistoryRecording();
 			void EndHistoryRecording();
@@ -248,6 +249,7 @@ namespace mint
 			Physics::World _physicsWorld;
 
 		protected:
+			bool _isDebugMode;
 			bool _isRecordingHistory;
 			bool _isPlayingHistory;
 		};

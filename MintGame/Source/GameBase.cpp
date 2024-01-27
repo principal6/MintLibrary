@@ -297,6 +297,7 @@ namespace mint
 			, _imageLoader{ MINT_NEW(Rendering::ImageLoader) }
 			, _characterFloorOffsetFromBottom(0.0f)
 			, _deltaTimeRemainder(0.0f)
+			, _isDebugMode(false)
 			, _isRecordingHistory(false)
 			, _isPlayingHistory(false)
 		{
@@ -339,32 +340,34 @@ namespace mint
 
 		void GameBase2D::Update(float deltaTime)
 		{
-			MINT_ASSERT(_characterActionChart._actions.IsEmpty() == false, "Character Action must not be empty!");
-
 			_mainCharacterObject->GetObjectTransform()._scale._x = _character._scale._x;
 			_mainCharacterObject->GetObjectTransform()._scale._y = _character._scale._y;
 			_mainCharacterObject->GetObjectTransform()._translation._x = _character._position._x;
 			_mainCharacterObject->GetObjectTransform()._translation._y = _character._position._y;
 
-			for (const Action::Transition& transition : _characterActionChart.GetCurrentAction()._transitions)
+			if (_characterActionChart._actions.IsEmpty() == false)
 			{
-				const uint32 conditionCount = transition._conditions.Size();
-				bool meetsAllConditions = true;
-				for (uint32 i = 0; i < conditionCount; ++i)
+				for (const Action::Transition& transition : _characterActionChart.GetCurrentAction()._transitions)
 				{
-					meetsAllConditions &= transition._conditions[i].Evaluate();
+					const uint32 conditionCount = transition._conditions.Size();
+					bool meetsAllConditions = true;
+					for (uint32 i = 0; i < conditionCount; ++i)
+					{
+						meetsAllConditions &= transition._conditions[i].Evaluate();
+					}
+
+					if (meetsAllConditions)
+					{
+						const uint32 nextActionIndex = _characterActionChart.GetActionIndex(transition._actionName);
+						_characterActionChart._currentActionIndex = nextActionIndex;
+					}
 				}
 
-				if (meetsAllConditions)
-				{
-					const uint32 nextActionIndex = _characterActionChart.GetActionIndex(transition._actionName);
-					_characterActionChart._currentActionIndex = nextActionIndex;
-				}
+				const StringA& currentAnimationName = _characterActionChart.GetCurrentAction()._animationName;
+				_characterAnimationSet.SetAnimation(currentAnimationName);
 			}
 
-			const StringA& currentAnimationName = _characterActionChart.GetCurrentAction()._animationName;
-			_characterAnimationSet.SetAnimation(currentAnimationName);
-			if (deltaTime > 0.0f)
+			if (deltaTime > 0.0f && _characterAnimationSet.IsValid() == true)
 			{
 				_characterAnimationSet.Update(deltaTime);
 			}
@@ -421,6 +424,11 @@ namespace mint
 		const Physics::World& GameBase2D::GetPhysicsWorld() const
 		{
 			return _physicsWorld;
+		}
+
+		void GameBase2D::SetDebugMode(bool isDebugMode)
+		{
+			_isDebugMode = isDebugMode;
 		}
 
 		bool GameBase2D::BeginHistoryRecording()
@@ -494,25 +502,27 @@ namespace mint
 			Rendering::ShapeRendererContext& shapeRendererContext = _graphicDevice->GetShapeRendererContext();
 			_mapRenderer->Render();
 
-			//_tileMap.DrawCollisions(shapeRendererContext);
-			//shapeRendererContext.Render();
+			if (_isDebugMode == true)
+			{
+				//_tileMap.DrawCollisions(shapeRendererContext);
+				//shapeRendererContext.Render();
 
-			const Rendering::SpriteAnimation& characterCurrentAnimation = _characterAnimationSet.GetCurrentAnimation();
+				_physicsWorld.RenderDebug(shapeRendererContext);
+			}
 
 			const Float2 scaledCharacterSize = _characterSize * _character._scale;
 			const float scaledFloorOffset = _characterFloorOffsetFromBottom * _character._scale._y;
 			const Float2 characterDrawPosition = _mainCharacterObject->GetObjectTransform()._translation.XY() + Float2(0.0f, scaledCharacterSize._y * 0.5f - scaledFloorOffset);
-			_characterRenderer->DrawImage(characterDrawPosition, scaledCharacterSize, characterCurrentAnimation.GetCurrentFrameUV0(), characterCurrentAnimation.GetCurrentFrameUV1());
+			if (_characterAnimationSet.IsValid() == true)
+			{
+				const Rendering::SpriteAnimation& characterCurrentAnimation = _characterAnimationSet.GetCurrentAnimation();
+				_characterRenderer->DrawImage(characterDrawPosition, scaledCharacterSize, characterCurrentAnimation.GetCurrentFrameUV0(), characterCurrentAnimation.GetCurrentFrameUV1());
+			}
+			else
+			{
+				_characterRenderer->DrawImage(characterDrawPosition, scaledCharacterSize, Float2::kZero, Float2::kOne);
+			}
 			_characterRenderer->Render();
-
-			//const Collision2DComponent* const mainCharacterCollision2DComponent = static_cast<Collision2DComponent*>(_mainCharacterObject->GetComponent(ObjectComponentType::Collision2DComponent));
-			//if (mainCharacterCollision2DComponent != nullptr)
-			//{
-			//	mainCharacterCollision2DComponent->GetCollisionShape2D()->DebugDrawShape(shapeRendererContext, ByteColor(0, 0, 255), _mainCharacterObject->GetObjectTransform()._translation.XY());
-			//	shapeRendererContext.Render();
-			//}
-
-			_physicsWorld.RenderDebug(shapeRendererContext);
 		}
 
 		void GameBase2D::LoadTileMap(const StringA& tileMapeFileName)

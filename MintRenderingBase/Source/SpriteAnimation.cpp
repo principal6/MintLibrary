@@ -181,6 +181,11 @@ namespace mint
 			GetCurrentNamedSpriteAnimation()._spriteAnimation.Update(deltaTime);
 		}
 
+		bool SpriteAnimationSet::IsValid() const
+		{
+			return _spriteAnimations.IsEmpty() == false;
+		}
+
 		const SpriteAnimation& SpriteAnimationSet::GetCurrentAnimation() const
 		{
 			MINT_ASSERT(_spriteAnimations.IsEmpty() == false, "No animation was added!");
