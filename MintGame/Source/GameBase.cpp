@@ -15,6 +15,13 @@ namespace mint
 {
 	namespace Game
 	{
+		void Image::Draw(const Float2& centerPosition, const Float2& size)
+		{
+			// TEMP
+			_imageRenderer->DrawImage(centerPosition, size, Float2::kZero, Float2::kOne);
+			_imageRenderer->Render();
+		}
+
 #pragma region Condition
 		bool Action::Condition::Evaluate() const
 		{
@@ -320,8 +327,9 @@ namespace mint
 				MINT_NEVER;
 			}
 
-			_characterRenderer.Assign(MINT_NEW(Rendering::ImageRenderer, *_graphicDevice, 1));
-			_mapRenderer.Assign(MINT_NEW(Rendering::ImageRenderer, *_graphicDevice, 2));
+			_characterRenderer.Assign(MINT_NEW(Rendering::ImageRenderer, *_graphicDevice, kCharacterTextureSlot));
+			_mapRenderer.Assign(MINT_NEW(Rendering::ImageRenderer, *_graphicDevice, kTileMapTextureSlot));
+			_objectRenderer.Assign(MINT_NEW(Rendering::ImageRenderer, *_graphicDevice, kObjectTextureSlot));
 
 			_audioSystem.Assign(MINT_NEW(AudioSystem));
 
@@ -432,7 +440,28 @@ namespace mint
 
 			_graphicDevice->SetSolidCullNoneRasterizer();
 
-			Render();
+			if (_window->IsResized())
+			{
+				_objectPool->UpdateScreenSize(Float2(_window->GetSize()));
+			}
+
+			_graphicDevice->SetViewProjectionMatrix(_mainCameraObject->GetViewMatrix(), _mainCameraObject->GetProjectionMatrix());
+		}
+
+		void GameBase2D::DrawCircle(const Float2& position, float radius, const ByteColor& color)
+		{
+			Rendering::ShapeRendererContext& shapeRendererContext = _graphicDevice->GetShapeRendererContext();
+			shapeRendererContext.SetColor(color);
+			shapeRendererContext.SetPosition(Float4(position));
+			shapeRendererContext.DrawCircle(radius);
+		}
+
+		void GameBase2D::DrawGrid()
+		{
+			Rendering::ShapeRendererContext& shapeRendererContext = _graphicDevice->GetShapeRendererContext();
+			shapeRendererContext.SetColor(ByteColor(16, 16, 16));
+			shapeRendererContext.DrawLine(Float2(-2048, 0), Float2(2048, 0), 2.0f);
+			shapeRendererContext.DrawLine(Float2(0, -2048), Float2(0, 2048), 2.0f);
 		}
 
 		void GameBase2D::DrawTextToScreen(const StringA& text, const Int2& position, const ByteColor& color)
@@ -446,7 +475,15 @@ namespace mint
 
 		void GameBase2D::EndRendering()
 		{
+			Rendering::ShapeRendererContext& shapeRendererContext = _graphicDevice->GetShapeRendererContext();
+			shapeRendererContext.Render();
+
 			_graphicDevice->EndRendering();
+		}
+
+		Rendering::GraphicDevice& GameBase2D::GetGraphicDevice()
+		{
+			return *_graphicDevice;
 		}
 
 		const Physics::World& GameBase2D::GetPhysicsWorld() const
@@ -507,19 +544,16 @@ namespace mint
 			_mainCameraObject->SetOrthographic2DCamera(windowSize);
 		}
 
-		void GameBase2D::Render()
+		void GameBase2D::DrawMap()
 		{
-			if (_window->IsResized())
-			{
-				_objectPool->UpdateScreenSize(Float2(_window->GetSize()));
-			}
-
-			_graphicDevice->SetViewProjectionMatrix(_mainCameraObject->GetViewMatrix(), _mainCameraObject->GetProjectionMatrix());
-
 			_tileMap.Draw(*_mapRenderer);
+
 			Rendering::ShapeRendererContext& shapeRendererContext = _graphicDevice->GetShapeRendererContext();
 			_mapRenderer->Render();
+		}
 
+		void GameBase2D::DrawCharacter()
+		{
 			const Float2 scaledCharacterSize = _characterSize * _character._scale;
 			const float scaledFloorOffset = _characterFloorOffset * _character._scale._y;
 			const Float2 characterDrawPosition = _mainCharacterObject->GetObjectTransform()._translation.XY() + Float2(0.0f, scaledFloorOffset);
@@ -536,6 +570,7 @@ namespace mint
 
 			if (_isDebugMode == true)
 			{
+				Rendering::ShapeRendererContext& shapeRendererContext = _graphicDevice->GetShapeRendererContext();
 				//_tileMap.DrawCollisions(shapeRendererContext);
 				//shapeRendererContext.Render();
 
@@ -582,21 +617,24 @@ namespace mint
 
 		Image GameBase2D::LoadImageFile(const StringA& imageFileName)
 		{
-			Rendering::ByteColorImage image;
-			if (_imageLoader->LoadImage_(imageFileName, image) == false)
+			Rendering::ByteColorImage byteColorImage;
+			if (_imageLoader->LoadImage_(imageFileName, byteColorImage) == false)
 			{
 				MINT_ASSERT(false, "Failed to load image! (%s)", imageFileName.CString());
 				return Image();
 			}
 
 			Rendering::GraphicResourcePool& resourcePool = _graphicDevice->GetResourcePool();
-			return Image(resourcePool.AddTexture2D(image));
+			Image image(resourcePool.AddTexture2D(byteColorImage));
+			image._imageRenderer = _objectRenderer.Get();
+			GetGraphicDevice().GetResourcePool().BindToShader(image.GetGraphicObjectID(), Rendering::GraphicShaderType::PixelShader, kObjectTextureSlot);
+			return image;
 		}
 
 		void GameBase2D::SetCharacterImage(const Image& image, const Int2& characterSize, int32 floorOffset)
 		{
 			Rendering::GraphicResourcePool& resourcePool = _graphicDevice->GetResourcePool();
-			resourcePool.GetResource(image._graphicObjectID).BindToShader(Rendering::GraphicShaderType::PixelShader, _characterTextureSlot);
+			resourcePool.GetResource(image._graphicObjectID).BindToShader(Rendering::GraphicShaderType::PixelShader, kCharacterTextureSlot);
 
 			_characterSize = Float2(characterSize);
 			_characterFloorOffset = -static_cast<float>(floorOffset);
@@ -707,7 +745,7 @@ namespace mint
 		void GameBase2D::SetTileMapImage(const Image& image)
 		{
 			Rendering::GraphicResourcePool& resourcePool = _graphicDevice->GetResourcePool();
-			resourcePool.GetResource(image._graphicObjectID).BindToShader(Rendering::GraphicShaderType::PixelShader, _tileMapTextureSlot);
+			resourcePool.GetResource(image._graphicObjectID).BindToShader(Rendering::GraphicShaderType::PixelShader, kTileMapTextureSlot);
 		}
 
 		void GameBase2D::SetBackgroundMusic(const StringReferenceA& audioFileName)

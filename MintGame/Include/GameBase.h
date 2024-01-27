@@ -53,8 +53,16 @@ namespace mint
 			Image(Rendering::GraphicObjectID graphicObjectID) : _graphicObjectID{ graphicObjectID } { __noop; }
 			~Image() = default;
 
+		public:
+			// TEMP
+			void Draw(const Float2& centerPosition, const Float2& size);
+			const Rendering::GraphicObjectID& GetGraphicObjectID() const { return _graphicObjectID; }
+
 		private:
 			Rendering::GraphicObjectID _graphicObjectID;
+
+			// TEMP
+			Rendering::ImageRenderer* _imageRenderer;
 		};
 
 		class Value abstract
@@ -179,6 +187,10 @@ namespace mint
 
 		public:
 			void BeginRendering();
+			void DrawMap();
+			void DrawCharacter();
+			void DrawCircle(const Float2& position, float radius, const ByteColor& color);
+			void DrawGrid();
 			void DrawTextToScreen(const StringA& text, const Int2& position, const ByteColor& color);
 			void EndRendering();
 
@@ -207,6 +219,7 @@ namespace mint
 			void SetBackgroundMusic(const StringReferenceA& audioFileName);
 
 		public:
+			Rendering::GraphicDevice& GetGraphicDevice();
 			const Physics::World& GetPhysicsWorld() const;
 			float GetPhysicsStepDeltaTime() const { return kPhysicsStepDeltaTime; }
 
@@ -222,9 +235,6 @@ namespace mint
 		protected:
 			void InitializeMainCharacterObject();
 			void InitializeMainCameraOject();
-
-		private:
-			void Render();
 
 		protected:
 			OwnPtr<Window> _window;
@@ -243,10 +253,12 @@ namespace mint
 			Character2D _character;
 
 		protected:
-			static constexpr const uint32 _characterTextureSlot = 1;
-			static constexpr const uint32 _tileMapTextureSlot = 2;
+			static constexpr const uint32 kCharacterTextureSlot = 1;
+			static constexpr const uint32 kTileMapTextureSlot = 2;
+			static constexpr const uint32 kObjectTextureSlot = 3;
 			OwnPtr<Rendering::ImageRenderer> _characterRenderer;
 			OwnPtr<Rendering::ImageRenderer> _mapRenderer;
+			OwnPtr<Rendering::ImageRenderer> _objectRenderer;
 
 		protected:
 			OwnPtr<AudioSystem> _audioSystem;

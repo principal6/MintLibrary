@@ -633,13 +633,15 @@ namespace mint
 		{
 			MINT_ASSERT(body.IsValid() == true, "Caller must guarantee this!");
 
-			body._bodyAABB->DebugDrawShape(shapeRendererContext, ByteColor(255, 255, 0), Transform2D());
+			// TEMP
+			//body._bodyAABB->DebugDrawShape(shapeRendererContext, ByteColor(255, 255, 0), Transform2D());
 
 			body._shape._collisionShape->DebugDrawShape(shapeRendererContext, ByteColor(128, 128, 128), body._transform2D);
 
-			StackStringW<256> buffer;
-			FormatString(buffer, L"[%d]", body._bodyID.Value());
-			shapeRendererContext.DrawDynamicText(buffer.CString(), Float4(body._transform2D._translation), Rendering::FontRenderingOption());
+			// TEMP
+			//StackStringW<256> buffer;
+			//FormatString(buffer, L"[%d]", body._bodyID.Value());
+			//shapeRendererContext.DrawDynamicText(buffer.CString(), Float4(body._transform2D._translation), Rendering::FontRenderingOption());
 		}
 
 		void World::RenderDebugCollisionManifold(Rendering::ShapeRendererContext& shapeRendererContext, const CollisionManifold2D& collisionManifold) const
