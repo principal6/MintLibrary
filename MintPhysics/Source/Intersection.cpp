@@ -305,18 +305,25 @@ namespace mint
 
 			if (gjk2DInfo._simplex.GetValidPointCount() == 1)
 			{
-				// TODO ...
-				return;
+				const Float2& c = gjk2DInfo._simplex.GetPointA();
+				Float2 direction = (c == Float2::kZero ? Float2(1, 1) : -c);
+				direction.Normalize();
+				const Float2 b = GJK2D_ComputeMinkowskiDifferencePoint(shapeA, shapeB, direction);
+				Float2 edgeNormal = ComputeEdgeNormal(b, c);
+				epa2DInfo._points.PushBack(c);
+				epa2DInfo._points.PushBack(b);
+				Float2 a = GJK2D_ComputeMinkowskiDifferencePoint(shapeA, shapeB, edgeNormal);
+				epa2DInfo._points.PushBack(a);
 			}
 			else if (gjk2DInfo._simplex.GetValidPointCount() == 2)
 			{
-				const Float2& a = gjk2DInfo._simplex.GetPointA();
-				const Float2& b = gjk2DInfo._simplex.GetPointB();
-				Float2 edgeNormal = ComputeEdgeNormal(a, b);
+				const Float2& b = gjk2DInfo._simplex.GetPointA();
+				const Float2& c = gjk2DInfo._simplex.GetPointB();
+				Float2 edgeNormal = ComputeEdgeNormal(b, c);
+				epa2DInfo._points.PushBack(c);
 				epa2DInfo._points.PushBack(b);
+				Float2 a = GJK2D_ComputeMinkowskiDifferencePoint(shapeA, shapeB, edgeNormal);
 				epa2DInfo._points.PushBack(a);
-				Float2 newA = GJK2D_ComputeMinkowskiDifferencePoint(shapeA, shapeB, edgeNormal);
-				epa2DInfo._points.PushBack(newA);
 			}
 			else
 			{
