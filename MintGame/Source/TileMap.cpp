@@ -179,17 +179,26 @@ namespace mint
 				return false;
 			}
 
-			XML::Node* const layerNode = tileSetNode->GetNextSiblingNode();
-			XML::Node* const layerDataNode = layerNode->GetFirstChildNode();
-			StringA layerData = layerDataNode->GetText();
-			StringUtil::Trim(layerData);
-			Vector<StringA> tileStrings;
-			StringUtil::Tokenize(layerData, ',', tileStrings);
-
-			_tiles.Resize(tileStrings.Size());
-			for (uint32 i = 0; i < _tiles.Size(); i++)
+			for (const XML::Node* layerNode = tileSetNode->GetNextSiblingNode(); layerNode != nullptr; layerNode = layerNode->GetNextSiblingNode())
 			{
-				_tiles[i] = StringUtil::StringToUint32(tileStrings[i]);
+				const XML::Node* const layerDataNode = layerNode->GetFirstChildNode();
+				if (layerDataNode == nullptr)
+				{
+					continue;
+				}
+
+				MINT_ASSERT(_tiles.IsEmpty() == true, "Multiple layeres are not supported yet!");
+
+				StringA layerData = layerDataNode->GetText();
+				StringUtil::Trim(layerData);
+				Vector<StringA> tileStrings;
+				StringUtil::Tokenize(layerData, ',', tileStrings);
+
+				_tiles.Resize(tileStrings.Size());
+				for (uint32 i = 0; i < _tiles.Size(); i++)
+				{
+					_tiles[i] = StringUtil::StringToUint32(tileStrings[i]);
+				}
 			}
 
 			MINT_ASSERT(_width * _height == _tiles.Size(), "Wrong width or tile count!");
