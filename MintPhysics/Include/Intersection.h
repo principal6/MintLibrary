@@ -76,7 +76,7 @@ namespace mint
 		Float2 ComputeClosestPointOnEdge(const Float2& point, const Float2& edgeVertex0, const Float2& edgeVertex1);
 		struct EPA2DInfo
 		{
-			uint32 _maxIterationCount = 1;
+			uint32 _maxIterationCount = kUint32Max;
 			uint32 _iteration = 0;
 			Vector<Float2> _points;
 		};

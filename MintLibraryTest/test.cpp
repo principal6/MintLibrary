@@ -82,7 +82,7 @@ void RunGJKTestWindow()
 	};
 	SelectionMode selectionMode{ SelectionMode::None };
 	Transform2D shapeATransform2D{ Float2(128, 128 + 64) };
-	Transform2D shapeBTransform2D{ Float2(128 + 64, 128) };
+	Transform2D shapeBTransform2D{ Float2(128 + 128, 128) };
 	while (window.IsRunning() == true)
 	{
 		const float deltaTime = Game::DeltaTimer::GetInstance().ComputeDeltaTimeSec();
