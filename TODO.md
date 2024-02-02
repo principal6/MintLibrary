@@ -1,7 +1,12 @@
 ﻿# TODO
-## PhysicsComponent 추가, 간단한 중력 및 충돌 Simulation 추가.
-
 ## World Font / Sceen Font 렌더링 구분
+
+## Euler's method error evaluation (with graph)
+ => Physics integrator 관련!
+
+## 간단한 Constraint 구현 (원 Constraint)
+## 간단한 충돌 구현 #1 (2D, 원 끼리 충돌)
+## 간단한 충돌 구현 #2 (2D, 다각형 충돌)
 
 ## GUI 렌더링!!
 
