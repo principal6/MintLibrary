@@ -28,6 +28,24 @@ namespace mint
 #define MINT_WINDOW_RETURN_FAIL(error) _windowCreationError = error; return false
 
 
+#pragma region WindowCreationDesc
+	WindowCreationDesc::WindowCreationDesc()
+		: WindowCreationDesc(L"MintLibrary", Int2(800, 600))
+	{
+		__noop;
+	}
+
+	WindowCreationDesc::WindowCreationDesc(const wchar_t* const title, const Int2& size)
+		: _title{ title }
+		, _size{ size }
+		, _position{ kInt32Min, kInt32Min }
+		, _style{ WindowStyle::Default }
+		, _backgroundColor{ 1.0f, 1.0f, 1.0f }
+	{
+		__noop;
+	}
+#pragma endregion
+
 #pragma region WindowPool
 	WindowPool& WindowPool::GetInstance()
 	{

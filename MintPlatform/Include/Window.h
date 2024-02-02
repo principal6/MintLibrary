@@ -61,11 +61,13 @@ namespace mint
 
 	struct WindowCreationDesc
 	{
-		Int2 _size{ 800, 600 };
-		Int2 _position{ kInt32Min, kInt32Min };
-		const wchar_t* _title{ L"MintLibrary" };
-		WindowStyle _style{ WindowStyle::Default };
-		Color _backgroundColor{ 1.0f, 1.0f, 1.0f };
+		WindowCreationDesc();
+		WindowCreationDesc(const wchar_t* const title, const Int2& size);
+		const wchar_t* _title;
+		Int2 _size;
+		Int2 _position;
+		WindowStyle _style;
+		Color _backgroundColor;
 	};
 
 	enum class WindowCreationError

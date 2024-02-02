@@ -714,6 +714,11 @@ namespace mint
 				return;
 			}
 
+			if (_shapeRendererContext.IsEmpty() == false)
+			{
+				_shapeRendererContext.Render();
+			}
+
 			if (_screenSpaceShapeRendererContext.IsEmpty() == false)
 			{
 				SetSolidCullNoneRasterizer();
