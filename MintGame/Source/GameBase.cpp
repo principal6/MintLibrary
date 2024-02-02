@@ -493,7 +493,7 @@ namespace mint
 			screenSpaceShapeRendererContext.SetTextColor(color);
 			StringW textW;
 			StringUtil::ConvertStringAToStringW(text, textW);
-			screenSpaceShapeRendererContext.DrawDynamicText(textW.CString(), Float4(static_cast<float>(position._x), static_cast<float>(position._y), 0, 1), Rendering::FontRenderingOption());
+			screenSpaceShapeRendererContext.DrawDynamicText(textW.CString(), Float3(static_cast<float>(position._x), static_cast<float>(position._y), 0), Rendering::FontRenderingOption());
 		}
 
 		void GameBase2D::DrawEffects()

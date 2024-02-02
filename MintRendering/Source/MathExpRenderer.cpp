@@ -230,7 +230,7 @@ namespace mint
 			{
 				ShapeRendererContext& rendererContext = _shapeRendererContexts[modifierTypeIndex];
 
-				rendererContext.DrawDynamicTextBitFlagged(mathExpression.GetPlainString(), Float4(screenPosition._x, screenPosition._y, 0.0f, 1.0f),
+				rendererContext.DrawDynamicTextBitFlagged(mathExpression.GetPlainString(), Float3(screenPosition._x, screenPosition._y, 0.0f),
 					FontRenderingOption(TextRenderDirectionHorz::Rightward, TextRenderDirectionVert::Downward), _bitFlagsArray[modifierTypeIndex]);
 			}
 		}

@@ -182,7 +182,7 @@ namespace mint
 		void Plotter::DrawLabels(const Float4& frameCenterPosition) noexcept
 		{
 			const float paddingY = 10.0f;
-			Float4 labelPosition = Float4(frameCenterPosition._x, frameCenterPosition._y + _size._y * 0.5f + paddingY, 0.0f, 1.0f);
+			Float3 labelPosition = Float3(frameCenterPosition._x, frameCenterPosition._y + _size._y * 0.5f + paddingY, 0.0f);
 			FontRenderingOption labelRenderingOption;
 			labelRenderingOption._directionHorz = TextRenderDirectionHorz::Centered;
 			_shapeRendererContext->SetTextColor(Color::kBlack);
@@ -190,7 +190,7 @@ namespace mint
 
 			const float paddingX = -2.0f;
 			const float textWidth = _shapeRendererContext->GetFontData().ComputeTextWidth(_yLabel.c_str(), static_cast<uint32>(_yLabel.length()));
-			labelPosition = Float4(frameCenterPosition._x - _size._x * 0.5f - paddingX, frameCenterPosition._y + textWidth * 0.5f, 0.0f, 1.0f);
+			labelPosition = Float3(frameCenterPosition._x - _size._x * 0.5f - paddingX, frameCenterPosition._y + textWidth * 0.5f, 0.0f);
 			labelRenderingOption._transformMatrix = Float4x4::RotationMatrixZ(-Math::kPiOverTwo);
 			_shapeRendererContext->DrawDynamicText(_yLabel.c_str(), static_cast<uint32>(_yLabel.length()), labelPosition, labelRenderingOption);
 		}

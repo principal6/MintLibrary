@@ -404,21 +404,21 @@ namespace mint
 
 		void ShapeRendererContext::DrawDynamicText(const wchar_t* const wideText, const Float2& position, const FontRenderingOption& fontRenderingOption)
 		{
-			DrawDynamicText(wideText, Float4(position._x, position._y, 0.0f, 1.0f), fontRenderingOption);
+			DrawDynamicText(wideText, Float3(position._x, position._y, 0.0f), fontRenderingOption);
 		}
 
-		void ShapeRendererContext::DrawDynamicText(const wchar_t* const wideText, const Float4& position, const FontRenderingOption& fontRenderingOption)
+		void ShapeRendererContext::DrawDynamicText(const wchar_t* const wideText, const Float3& position, const FontRenderingOption& fontRenderingOption)
 		{
 			const uint32 textLength = StringUtil::Length(wideText);
 			DrawDynamicText(wideText, textLength, position, fontRenderingOption);
 		}
 
-		void ShapeRendererContext::DrawDynamicText(const wchar_t* const wideText, const uint32 textLength, const Float4& position, const FontRenderingOption& fontRenderingOption)
+		void ShapeRendererContext::DrawDynamicText(const wchar_t* const wideText, const uint32 textLength, const Float3& position, const FontRenderingOption& fontRenderingOption)
 		{
 			const float scaledTextWidth = _fontData.ComputeTextWidth(wideText, textLength) * fontRenderingOption._scale;
 			const float scaledFontSize = _fontData._fontSize * fontRenderingOption._scale;
 
-			Float4 postTranslation;
+			Float3 postTranslation;
 			if (fontRenderingOption._directionHorz != TextRenderDirectionHorz::Rightward)
 			{
 				postTranslation._x -= (fontRenderingOption._directionHorz == TextRenderDirectionHorz::Centered) ? scaledTextWidth * 0.5f : scaledTextWidth;
@@ -441,22 +441,22 @@ namespace mint
 			const uint32 indexCount = _lowLevelRenderer->GetIndexCount() - indexOffset;
 			_lowLevelRenderer->PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, indexCount, _clipRect);
 
-			const Float4& preTranslation = position;
+			const Float3& preTranslation = position;
 			PushFontTransformToBuffer(preTranslation, fontRenderingOption._transformMatrix, postTranslation);
 		}
 
-		void ShapeRendererContext::DrawDynamicTextBitFlagged(const wchar_t* const wideText, const Float4& position, const FontRenderingOption& fontRenderingOption, const BitVector& bitFlags)
+		void ShapeRendererContext::DrawDynamicTextBitFlagged(const wchar_t* const wideText, const Float3& position, const FontRenderingOption& fontRenderingOption, const BitVector& bitFlags)
 		{
 			const uint32 textLength = StringUtil::Length(wideText);
 			DrawDynamicTextBitFlagged(wideText, textLength, position, fontRenderingOption, bitFlags);
 		}
 
-		void ShapeRendererContext::DrawDynamicTextBitFlagged(const wchar_t* const wideText, const uint32 textLength, const Float4& position, const FontRenderingOption& fontRenderingOption, const BitVector& bitFlags)
+		void ShapeRendererContext::DrawDynamicTextBitFlagged(const wchar_t* const wideText, const uint32 textLength, const Float3& position, const FontRenderingOption& fontRenderingOption, const BitVector& bitFlags)
 		{
 			const float scaledTextWidth = _fontData.ComputeTextWidth(wideText, textLength) * fontRenderingOption._scale;
 			const float scaledFontSize = _fontData._fontSize * fontRenderingOption._scale;
 
-			Float4 postTranslation;
+			Float3 postTranslation;
 			if (fontRenderingOption._directionHorz != TextRenderDirectionHorz::Rightward)
 			{
 				postTranslation._x -= (fontRenderingOption._directionHorz == TextRenderDirectionHorz::Centered) ? scaledTextWidth * 0.5f : scaledTextWidth;
@@ -479,7 +479,7 @@ namespace mint
 			const uint32 indexCount = _lowLevelRenderer->GetIndexCount() - indexOffset;
 			_lowLevelRenderer->PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, indexCount, _clipRect);
 
-			const Float4& preTranslation = position;
+			const Float3& preTranslation = position;
 			PushFontTransformToBuffer(preTranslation, fontRenderingOption._transformMatrix, postTranslation);
 		}
 
@@ -564,11 +564,11 @@ namespace mint
 			_sbTransformData.PushBack(transform);
 		}
 
-		void ShapeRendererContext::PushFontTransformToBuffer(const Float4& preTranslation, Float4x4 transformMatrix, const Float4& postTranslation)
+		void ShapeRendererContext::PushFontTransformToBuffer(const Float3& preTranslation, Float4x4 transformMatrix, const Float3& postTranslation)
 		{
 			SB_Transform transform;
-			transform._transformMatrix.PreTranslate(preTranslation.GetXYZ());
-			transform._transformMatrix.PostTranslate(postTranslation.GetXYZ());
+			transform._transformMatrix.PreTranslate(preTranslation);
+			transform._transformMatrix.PostTranslate(postTranslation);
 			transform._transformMatrix *= transformMatrix;
 			_sbTransformData.PushBack(transform);
 		}
