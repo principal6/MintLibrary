@@ -281,7 +281,7 @@ bool Run2DTestWindow()
 	ObjectPool objectPool;
 	SharedPtr<Object> object0 = objectPool.CreateObject();
 	{
-		Mesh2DComponent* mesh2DComponent = objectPool.CreateMesh2DComponent();
+		Mesh2DComponent* mesh2DComponent = objectPool.CreateObjectComponent<Mesh2DComponent>();
 		Shape shape;
 		ShapeGenerator::GenerateCircle(1.0f, 16, ByteColor(0, 0, 255), shape);
 		mesh2DComponent->SetShape(std::move(shape));
@@ -289,14 +289,14 @@ bool Run2DTestWindow()
 	}
 	{
 		const Shape& shape = ((Mesh2DComponent*)(object0->GetComponent(ObjectComponentType::Mesh2DComponent)))->GetShape();
-		Collision2DComponent* collision2DComponent = objectPool.CreateCollision2DComponent();
+		Collision2DComponent* collision2DComponent = objectPool.CreateObjectComponent<Collision2DComponent>();
 		ConvexCollisionShape2D collisionShape2D = ConvexCollisionShape2D::MakeFromRenderingShape(Float2::kZero, shape);
 		collision2DComponent->SetCollisionShape2D(MakeShared<CollisionShape2D>(collisionShape2D));
 		object0->AttachComponent(collision2DComponent);
 	}
 	SharedPtr<Object> object1 = objectPool.CreateObject();
 	{
-		Mesh2DComponent* mesh2DComponent = objectPool.CreateMesh2DComponent();
+		Mesh2DComponent* mesh2DComponent = objectPool.CreateObjectComponent<Mesh2DComponent>();
 		Shape shape;
 		Vector<Float2> points;
 		points.PushBack(Float2(1, 1));
@@ -308,7 +308,7 @@ bool Run2DTestWindow()
 	}
 	{
 		const Shape& shape = ((Mesh2DComponent*)(object1->GetComponent(ObjectComponentType::Mesh2DComponent)))->GetShape();
-		Collision2DComponent* collision2DComponent = objectPool.CreateCollision2DComponent();
+		Collision2DComponent* collision2DComponent = objectPool.CreateObjectComponent<Collision2DComponent>();
 		ConvexCollisionShape2D collisionShape2D = ConvexCollisionShape2D::MakeFromRenderingShape(Float2::kZero, shape);
 		collision2DComponent->SetCollisionShape2D(MakeShared<CollisionShape2D>(collisionShape2D));
 		object1->AttachComponent(collision2DComponent);
@@ -431,7 +431,7 @@ bool Run3DTestWindow()
 	testCameraObject->RotatePitch(0.125f);
 	SharedPtr<Object> testObject = objectPool.CreateObject();
 	{
-		testObject->AttachComponent(objectPool.CreateMeshComponent());
+		testObject->AttachComponent(objectPool.CreateObjectComponent<MeshComponent>());
 
 		Transform& transform = testObject->GetObjectTransform();
 		transform._translation._z = -1.0f;

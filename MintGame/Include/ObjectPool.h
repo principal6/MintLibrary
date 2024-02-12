@@ -44,9 +44,8 @@ namespace mint
 			SharedPtr<Object> CreateObjectInternal(SharedPtr<Object>&& object);
 
 		public:
-			MeshComponent* CreateMeshComponent();
-			Mesh2DComponent* CreateMesh2DComponent();
-			Collision2DComponent* CreateCollision2DComponent();
+			template<typename ComponentType>
+			ComponentType* CreateObjectComponent();
 
 		public:
 			void DestroyObjectComponents(Object& object);

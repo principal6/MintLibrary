@@ -58,23 +58,20 @@ namespace mint
 			return _objects.Back();
 		}
 
-		MINT_INLINE MeshComponent* ObjectPool::CreateMeshComponent()
+		template<typename ComponentType>
+		MINT_INLINE ComponentType* ObjectPool::CreateObjectComponent()
 		{
-			MeshComponent* result = MINT_NEW(MeshComponent);
-			_meshComponents.PushBack(std::move(result));
-			return _meshComponents.Back();
-		}
-		
-		MINT_INLINE Mesh2DComponent* ObjectPool::CreateMesh2DComponent()
-		{
-			Mesh2DComponent* result = MINT_NEW(Mesh2DComponent);
-			_mesh2DComponents.PushBack(std::move(result));
-			return _mesh2DComponents.Back();
-		}
-
-		MINT_INLINE Collision2DComponent* ObjectPool::CreateCollision2DComponent()
-		{
-			return MINT_NEW(Collision2DComponent);
+			ComponentType* component = MINT_NEW(ComponentType);
+			const ObjectComponentType type = component->GetType();
+			if (type == ObjectComponentType::MeshComponent)
+			{
+				_meshComponents.PushBack(reinterpret_cast<MeshComponent*>(component));
+			}
+			else if (type == ObjectComponentType::Mesh2DComponent)
+			{
+				_mesh2DComponents.PushBack(reinterpret_cast<Mesh2DComponent*>(component));
+			}
+			return component;
 		}
 
 		MINT_INLINE void ObjectPool::DestroyObjectComponents(Object& object)

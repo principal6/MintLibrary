@@ -695,7 +695,7 @@ namespace mint
 			Collision2DComponent* collision2DComponent = static_cast<Collision2DComponent*>(_mainCharacterObject->GetComponent(ObjectComponentType::Collision2DComponent));
 			if (collision2DComponent == nullptr)
 			{
-				collision2DComponent = _objectPool->CreateCollision2DComponent();
+				collision2DComponent = _objectPool->CreateObjectComponent<Collision2DComponent>();
 				_mainCharacterObject->AttachComponent(collision2DComponent);
 			}
 			collision2DComponent->SetCollisionShape2D(MakeShared<Physics::CircleCollisionShape2D>(Physics::CircleCollisionShape2D(centerOffset, radius)));
