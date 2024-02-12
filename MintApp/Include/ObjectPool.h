@@ -28,22 +28,9 @@ namespace mint
 		SharedPtr<Object> CreateObject();
 		SharedPtr<CameraObject> CreateCameraObject();
 
-	private:
-		void DestroyObjects();
-
-	private:
-		SharedPtr<Object> CreateObjectInternal(SharedPtr<Object>&& object);
-
 	public:
 		template<typename ComponentType>
 		ComponentType* CreateObjectComponent();
-
-	public:
-		void DestroyObjectComponents(Object& object);
-
-	public:
-		void RegisterMeshComponent(ObjectComponent* const meshComponent);
-		void DeregisterMeshComponent(ObjectComponent* const meshComponent);
 
 	public:
 		void ComputeDeltaTime() const noexcept;
@@ -56,6 +43,12 @@ namespace mint
 	public:
 		uint32 GetObjectCount() const noexcept;
 		float GetDeltaTimeSec() const noexcept;
+
+	private:
+		SharedPtr<Object> CreateObjectInternal(SharedPtr<Object>&& object);
+		void DestroyObjects();
+		void DestroyObjectComponents(Object& object);
+		void DeregisterComponent(Vector<ObjectComponent*>& components, ObjectComponent* const component);
 
 	private:
 		Vector<SharedPtr<Object>> _objects;

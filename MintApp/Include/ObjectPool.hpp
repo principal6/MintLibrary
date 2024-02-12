@@ -82,58 +82,45 @@ namespace mint
 				const ObjectComponentType componentType = component->GetType();
 				if (componentType == ObjectComponentType::MeshComponent)
 				{
-					DeregisterMeshComponent(component);
+					DeregisterComponent(_meshComponents, component);
+				}
+				else if (componentType == ObjectComponentType::Mesh2DComponent)
+				{
+					DeregisterComponent(_mesh2DComponents, component);
 				}
 
 				MINT_DELETE(component);
 			}
 		}
+
+		object._componentArray.Clear();
 	}
 
-	MINT_INLINE void ObjectPool::RegisterMeshComponent(ObjectComponent* const meshComponent)
+	MINT_INLINE void ObjectPool::DeregisterComponent(Vector<ObjectComponent*>& components, ObjectComponent* const component)
 	{
-		if (meshComponent == nullptr)
-		{
-			return;
-		}
-
-		const uint32 meshComponentCount = static_cast<uint32>(_meshComponents.Size());
-		for (uint32 meshComponentIndex = 0; meshComponentIndex < meshComponentCount; ++meshComponentIndex)
-		{
-			if (_meshComponents[meshComponentIndex]->GetID() == meshComponent->GetID())
-			{
-				return;
-			}
-		}
-
-		_meshComponents.PushBack(meshComponent);
-	}
-
-	MINT_INLINE void ObjectPool::DeregisterMeshComponent(ObjectComponent* const meshComponent)
-	{
-		if (meshComponent == nullptr)
+		if (component == nullptr)
 		{
 			return;
 		}
 
 		int32 foundIndex = -1;
-		const int32 meshComponentCount = static_cast<int32>(_meshComponents.Size());
-		for (int32 meshComponentIndex = 0; meshComponentIndex < meshComponentCount; ++meshComponentIndex)
+		const int32 componentCount = static_cast<int32>(components.Size());
+		for (int32 i = 0; i < componentCount; ++i)
 		{
-			if (_meshComponents[meshComponentIndex]->GetID() == meshComponent->GetID())
+			if (components[i]->GetID() == component->GetID())
 			{
-				foundIndex = meshComponentIndex;
+				foundIndex = i;
 				break;
 			}
 		}
 
 		if (foundIndex >= 0)
 		{
-			if (foundIndex < meshComponentCount)
+			if (foundIndex < componentCount)
 			{
-				std::swap(_meshComponents[foundIndex], _meshComponents.Back());
+				std::swap(components[foundIndex], components.Back());
 			}
-			_meshComponents.PopBack();
+			components.PopBack();
 		}
 	}
 
