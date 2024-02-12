@@ -11,6 +11,7 @@ robocopy MintPhysics/ Out/Natvis *.natvis /xd Out
 robocopy MintPlatform/ Out/Natvis *.natvis /xd Out
 
 : Include Directory
+robocopy MintApp/Include Out/Include/MintApp/Include /S
 robocopy MintAudio/Include Out/Include/MintAudio/Include /S
 robocopy MintCommon/Include Out/Include/MintCommon/Include /S
 robocopy MintContainer/Include Out/Include/MintContainer/Include /S
@@ -26,6 +27,7 @@ robocopy MintRendering/Include Out/Include/MintRendering/Include /S
 robocopy MintRenderingBase/Include Out/Include/MintRenderingBase/Include /S
 
 : Lib Directory (DEBUG)
+robocopy _output/Debug Out/Lib/Debug MintApp.lib
 robocopy _output/Debug Out/Lib/Debug MintAudio.lib
 robocopy _output/Debug Out/Lib/Debug MintCommon.lib
 robocopy _output/Debug Out/Lib/Debug MintContainer.lib
@@ -41,6 +43,7 @@ robocopy _output/Debug Out/Lib/Debug MintRendering.lib
 robocopy _output/Debug Out/Lib/Debug MintRenderingBase.lib
 
 : Lib Directory (RELEASE)
+robocopy _output/Release Out/Lib/Release MintApp.lib
 robocopy _output/Release Out/Lib/Release MintAudio.lib
 robocopy _output/Release Out/Lib/Release MintCommon.lib
 robocopy _output/Release Out/Lib/Release MintContainer.lib

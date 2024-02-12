@@ -21,6 +21,10 @@ namespace mint
 	class AudioObject;
 	class AudioSystem;
 
+	class ObjectPool;
+	class Object;
+	class CameraObject;
+
 	namespace Rendering
 	{
 		class GraphicDevice;
@@ -32,9 +36,6 @@ namespace mint
 	namespace Game
 	{
 		class GameBase2D;
-		class ObjectPool;
-		class Object;
-		class CameraObject;
 	}
 }
 

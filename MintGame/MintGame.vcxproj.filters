@@ -21,36 +21,6 @@
     <ClInclude Include="Include\Animation\AnimationCore.h">
       <Filter>Include\Animation</Filter>
     </ClInclude>
-    <ClInclude Include="Include\MeshComponent.h">
-      <Filter>Include</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Object.h">
-      <Filter>Include</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\ObjectComponent.h">
-      <Filter>Include</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\ObjectPool.h">
-      <Filter>Include</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\ObjectPool.hpp">
-      <Filter>Include</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\TransformComponent.h">
-      <Filter>Include</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\AllHpps.h">
-      <Filter>Include</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\CameraObject.h">
-      <Filter>Include</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\ObjectRenderer.h">
-      <Filter>Include</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\DeltaTimer.h">
-      <Filter>Include</Filter>
-    </ClInclude>
     <ClInclude Include="Include\CollisionComponent.h">
       <Filter>Include</Filter>
     </ClInclude>
@@ -68,24 +38,6 @@
     <ClCompile Include="Source\_UnityBuild.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Source\CameraObject.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\MeshComponent.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Object.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\ObjectComponent.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\ObjectRenderer.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\DeltaTimer.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="Source\CollisionComponent.cpp">
       <Filter>Source</Filter>
     </ClCompile>
@@ -95,10 +47,5 @@
     <ClCompile Include="Source\GameBase.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Include\Object.inl">
-      <Filter>Include</Filter>
-    </None>
   </ItemGroup>
 </Project>

@@ -7,9 +7,9 @@
 #include <MintRendering/Include/ImageRenderer.h>
 #include <MintAudio/Include/AudioSystem.h>
 #include <MintPlatform/Include/InputContext.h>
-#include <MintGame/Include/DeltaTimer.h>
+#include <MintApp/Include/DeltaTimer.h>
+#include <MintApp/Include/ObjectPool.hpp>
 #include <MintGame/Include/TileMap.h>
-#include <MintGame/Include/ObjectPool.hpp>
 
 
 namespace mint

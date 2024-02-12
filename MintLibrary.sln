@@ -40,6 +40,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MintAudio", "MintAudio\Mint
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MintGUI", "MintGUI\MintGUI.vcxproj", "{39ABE905-EBB8-469E-998E-54DCE995BA4F}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MintApp", "MintApp\MintApp.vcxproj", "{9C51049C-21C0-481C-87E9-AA5E3633C6EF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -160,6 +162,14 @@ Global
 		{39ABE905-EBB8-469E-998E-54DCE995BA4F}.Release|x64.Build.0 = Release|x64
 		{39ABE905-EBB8-469E-998E-54DCE995BA4F}.Release|x86.ActiveCfg = Release|Win32
 		{39ABE905-EBB8-469E-998E-54DCE995BA4F}.Release|x86.Build.0 = Release|Win32
+		{9C51049C-21C0-481C-87E9-AA5E3633C6EF}.Debug|x64.ActiveCfg = Debug|x64
+		{9C51049C-21C0-481C-87E9-AA5E3633C6EF}.Debug|x64.Build.0 = Debug|x64
+		{9C51049C-21C0-481C-87E9-AA5E3633C6EF}.Debug|x86.ActiveCfg = Debug|Win32
+		{9C51049C-21C0-481C-87E9-AA5E3633C6EF}.Debug|x86.Build.0 = Debug|Win32
+		{9C51049C-21C0-481C-87E9-AA5E3633C6EF}.Release|x64.ActiveCfg = Release|x64
+		{9C51049C-21C0-481C-87E9-AA5E3633C6EF}.Release|x64.Build.0 = Release|x64
+		{9C51049C-21C0-481C-87E9-AA5E3633C6EF}.Release|x86.ActiveCfg = Release|Win32
+		{9C51049C-21C0-481C-87E9-AA5E3633C6EF}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
