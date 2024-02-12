@@ -48,4 +48,9 @@ namespace mint
 	{
 		return *_graphicDevice;
 	}
+
+	ObjectPool& App::GetObjectPool()
+	{
+		return *_objectPool;
+	}
 }

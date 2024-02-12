@@ -30,6 +30,7 @@ namespace mint
 	public:
 		Window& GetWindow();
 		Rendering::GraphicDevice& GetGraphicDevice();
+		ObjectPool& GetObjectPool();
 
 	protected:
 		OwnPtr<Window> _window;

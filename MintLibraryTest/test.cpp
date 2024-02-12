@@ -263,7 +263,7 @@ bool Run2DTestWindow()
 	GraphicResourcePool& resourcePool = graphicDevice.GetResourcePool();
 	const GraphicObjectID corgiSpriteSheetTextureID = resourcePool.AddTexture2D(corgiSpriteSheet);
 
-	ObjectPool objectPool;
+	ObjectPool& objectPool = app.GetObjectPool();
 	SharedPtr<Object> object0 = objectPool.CreateObject();
 	{
 		Mesh2DComponent* mesh2DComponent = objectPool.CreateObjectComponent<Mesh2DComponent>();
@@ -400,7 +400,7 @@ bool Run3DTestWindow()
 	InstantRenderer instantRenderer{ graphicDevice };
 	const InputContext& inputContext = InputContext::GetInstance();
 
-	ObjectPool objectPool;
+	ObjectPool& objectPool = app.GetObjectPool();
 	SharedPtr<CameraObject> testCameraObject = objectPool.CreateCameraObject();
 	Float2 windowSize{ graphicDevice.GetWindowSize() };
 	testCameraObject->SetPerspectiveCamera(Math::ToRadian(60.0f), 0.01f, 100.0f, windowSize._x / windowSize._y);
