@@ -58,6 +58,62 @@ namespace mint
 		class GraphicDevice final
 		{
 		public:
+			class StateManager;
+			friend SafeResourceMapper;
+
+		public:
+			static GraphicDevice& GetInvalidInstance();
+
+		public:
+			GraphicDevice(Window& window, bool usesMSAA);
+			~GraphicDevice() = default;
+
+		public:
+			bool Initialize();
+			void UpdateScreenSize();
+
+		private:
+			void CreateDxDevice();
+			bool LoadFontData();
+
+		private:
+			bool CreateSwapChain(const Int2& windowSize, const HWND windowHandle);
+			bool InitializeBackBuffer();
+			bool InitializeDepthStencilBufferAndView(const Int2& windowSize);
+			bool InitializeDepthStencilStates();
+			void InitializeDxShaderHeaderMemory();
+			void InitializeShaders();
+			void InitializeSamplerStates();
+			void InitializeBlendStates();
+			void InitializeFullScreenData(const Int2& windowSize);
+			void SetDefaultRenderTargetsAndDepthStencil();
+
+		public:
+			void BeginRendering();
+			void Draw(const uint32 vertexCount, const uint32 vertexOffset) noexcept;
+			void DrawIndexed(const uint32 indexCount, const uint32 indexOffset, const uint32 vertexOffset) noexcept;
+			void EndRendering();
+
+		public:
+			void UseScissorRectangles() noexcept;
+			void UseFullScreenViewport() noexcept;
+			void UseWireFrameNoCullingRasterizer() noexcept;
+			void UseWireFrameCullBackRasterizer() noexcept;
+			void UseSolidCullBackRasterizer() noexcept;
+			void SetSolidCullBackRasterizer() noexcept;
+			void SetSolidCullFrontRasterizer() noexcept;
+			void SetSolidCullNoneRasterizer() noexcept;
+			const Rect& GetFullScreenClipRect() const noexcept;
+
+		public:
+			ShaderPool& GetShaderPool() noexcept;
+			GraphicResourcePool& GetResourcePool() noexcept;
+			ShapeRendererContext& GetShapeRendererContext() noexcept;
+			ShapeRendererContext& GetScreenSpaceShapeRendererContext() noexcept;
+			const Language::CppHlsl::Interpreter& GetCppHlslSteamData() const noexcept;
+			const Language::CppHlsl::Interpreter& GetCppHlslConstantBuffers() const noexcept;
+
+		public:
 			class StateManager
 			{
 			public:
@@ -111,61 +167,6 @@ namespace mint
 				Vector<GraphicObjectID> _gsConstantBufferIDs;
 				Vector<GraphicObjectID> _psConstantBufferIDs;
 			};
-
-			friend SafeResourceMapper;
-			friend StateManager;
-
-		public:
-			static GraphicDevice& GetInvalidInstance();
-
-		public:
-			GraphicDevice(Window& window, bool usesMSAA);
-			~GraphicDevice() = default;
-
-		public:
-			bool Initialize();
-			void UpdateScreenSize();
-
-		private:
-			void CreateDxDevice();
-			bool LoadFontData();
-
-		private:
-			bool CreateSwapChain(const Int2& windowSize, const HWND windowHandle);
-			bool InitializeBackBuffer();
-			bool InitializeDepthStencilBufferAndView(const Int2& windowSize);
-			bool InitializeDepthStencilStates();
-			void InitializeDxShaderHeaderMemory();
-			void InitializeShaders();
-			void InitializeSamplerStates();
-			void InitializeBlendStates();
-			void InitializeFullScreenData(const Int2& windowSize);
-			void SetDefaultRenderTargetsAndDepthStencil();
-
-		public:
-			void BeginRendering();
-			void Draw(const uint32 vertexCount, const uint32 vertexOffset) noexcept;
-			void DrawIndexed(const uint32 indexCount, const uint32 indexOffset, const uint32 vertexOffset) noexcept;
-			void EndRendering();
-
-		public:
-			void UseScissorRectangles() noexcept;
-			void UseFullScreenViewport() noexcept;
-			void UseWireFrameNoCullingRasterizer() noexcept;
-			void UseWireFrameCullBackRasterizer() noexcept;
-			void UseSolidCullBackRasterizer() noexcept;
-			void SetSolidCullBackRasterizer() noexcept;
-			void SetSolidCullFrontRasterizer() noexcept;
-			void SetSolidCullNoneRasterizer() noexcept;
-			const Rect& GetFullScreenClipRect() const noexcept;
-
-		public:
-			ShaderPool& GetShaderPool() noexcept;
-			GraphicResourcePool& GetResourcePool() noexcept;
-			ShapeRendererContext& GetShapeRendererContext() noexcept;
-			ShapeRendererContext& GetScreenSpaceShapeRendererContext() noexcept;
-			const Language::CppHlsl::Interpreter& GetCppHlslSteamData() const noexcept;
-			const Language::CppHlsl::Interpreter& GetCppHlslConstantBuffers() const noexcept;
 			StateManager& GetStateManager() noexcept;
 
 		public: // Common buffers
