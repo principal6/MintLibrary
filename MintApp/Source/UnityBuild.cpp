@@ -4,3 +4,4 @@
 #include <MintApp/Source/ObjectComponent.cpp>
 #include <MintApp/Source/MeshComponent.cpp>
 #include <MintApp/Source/ObjectRenderer.cpp>
+#include <MintApp/Source/App.cpp>

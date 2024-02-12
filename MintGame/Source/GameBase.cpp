@@ -463,11 +463,6 @@ namespace mint
 
 			_graphicDevice->SetSolidCullNoneRasterizer();
 
-			if (_window->IsResized())
-			{
-				_objectPool->UpdateScreenSize(Float2(_window->GetSize()));
-			}
-
 			_graphicDevice->SetViewProjectionMatrix(_mainCameraObject->GetViewMatrix(), _mainCameraObject->GetProjectionMatrix());
 		}
 

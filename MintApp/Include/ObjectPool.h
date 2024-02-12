@@ -11,8 +11,9 @@
 
 namespace mint
 {
-	class Object;
 	class CameraObject;
+	class Object;
+	class ObjectComponent;
 }
 
 namespace mint

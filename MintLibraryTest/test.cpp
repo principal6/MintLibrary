@@ -53,25 +53,17 @@ void RunGJKTestWindow()
 	using namespace Physics;
 
 	mint::Library::Initialize();
-
 	WindowCreationDesc windowCreationDesc;
 	windowCreationDesc._position.Set(200, 100);
 	windowCreationDesc._size.Set(1024, 768);
 	windowCreationDesc._title = L"GJK Test";
 	windowCreationDesc._backgroundColor = ByteColor(224, 224, 224);
 
-	Window window;
-	if (window.Create(windowCreationDesc) == false)
-	{
-		WindowCreationError windowCreationError = window.GetWindowCreationError();
-		return;
-	}
-
-	GraphicDevice graphicDevice{ window, true };
-	graphicDevice.Initialize();
+	mint::App app{ windowCreationDesc , true };
 
 	GJK2DInfo gjk2DInfo;
 	EPA2DInfo epa2DInfo;
+	GraphicDevice& graphicDevice = app.GetGraphicDevice();
 	ShapeRendererContext& shapeRendererContext = graphicDevice.GetShapeRendererContext();
 	const InputContext& inputContext = InputContext::GetInstance();
 	enum class SelectionMode
@@ -83,7 +75,7 @@ void RunGJKTestWindow()
 	SelectionMode selectionMode{ SelectionMode::None };
 	Transform2D shapeATransform2D{ Float2(128, 128) };
 	Transform2D shapeBTransform2D{ Float2(128 + 64 + 32, 128 - 32) };
-	while (window.IsRunning() == true)
+	while (app.IsRunning() == true)
 	{
 		const float deltaTime = DeltaTimer::GetInstance().ComputeDeltaTimeSec();
 
@@ -161,7 +153,7 @@ void RunGJKTestWindow()
 			}
 		}
 
-		const Float2 windowSize{ window.GetSize() };
+		const Float2 windowSize{ app.GetWindow().GetSize() };
 		graphicDevice.BeginRendering();
 		{
 			graphicDevice.SetSolidCullNoneRasterizer();
@@ -262,19 +254,12 @@ bool Run2DTestWindow()
 	windowCreationDesc._title = L"HI";
 	windowCreationDesc._backgroundColor = ByteColor(224, 224, 224);
 
-	Window window;
-	if (window.Create(windowCreationDesc) == false)
-	{
-		WindowCreationError windowCreationError = window.GetWindowCreationError();
-		return false;
-	}
-
-	GraphicDevice graphicDevice{ window, true };
-	graphicDevice.Initialize();
+	mint::App app{ windowCreationDesc , true };
 
 	ByteColorImage corgiSpriteSheet;
 	ImageLoader imageLoader;
 	imageLoader.LoadImage_("Assets/corgi-asset_Miniyeti.png", corgiSpriteSheet);
+	GraphicDevice& graphicDevice = app.GetGraphicDevice();
 	GraphicResourcePool& resourcePool = graphicDevice.GetResourcePool();
 	const GraphicObjectID corgiSpriteSheetTextureID = resourcePool.AddTexture2D(corgiSpriteSheet);
 
@@ -341,7 +326,7 @@ bool Run2DTestWindow()
 	//InstantRenderer instantRenderer{ graphicDevice };
 	ImageRenderer imageRenderer{ graphicDevice, 1 };
 	const InputContext& inputContext = InputContext::GetInstance();
-	while (window.IsRunning() == true)
+	while (app.IsRunning() == true)
 	{
 		objectPool.ComputeDeltaTime();
 
@@ -408,17 +393,9 @@ bool Run3DTestWindow()
 	windowCreationDesc._title = L"HI";
 	windowCreationDesc._backgroundColor = ByteColor(224, 224, 224);
 
-	Window window;
-	if (window.Create(windowCreationDesc) == false)
-	{
-		WindowCreationError windowCreationError = window.GetWindowCreationError();
-		return false;
-	}
+	mint::App app{ windowCreationDesc , true };
 
-	GraphicDevice graphicDevice{ window, true };
-	graphicDevice.Initialize();
-
-
+	GraphicDevice& graphicDevice = app.GetGraphicDevice();
 	ObjectRenderer objectRenderer{ graphicDevice };
 	InstantRenderer instantRenderer{ graphicDevice };
 	const InputContext& inputContext = InputContext::GetInstance();
@@ -461,7 +438,7 @@ bool Run3DTestWindow()
 	GUIControl& buttonControl = guiSystem.AccessControl(buttonControlID);
 	buttonControl.SetPosition(Float2(100, 100));
 
-	while (window.IsRunning() == true)
+	while (app.IsRunning() == true)
 	{
 		objectPool.ComputeDeltaTime();
 
@@ -518,11 +495,6 @@ bool Run3DTestWindow()
 			{
 				testCameraObject->DecreaseMoveSpeed();
 			}
-		}
-
-		if (window.IsResized())
-		{
-			objectPool.UpdateScreenSize(Float2(graphicDevice.GetWindowSize()));
 		}
 
 		testCameraObject->SteerDefault(inputContext, true);

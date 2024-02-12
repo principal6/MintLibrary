@@ -11,6 +11,7 @@
 #include <MintApp/Include/CameraObject.h>
 #include <MintApp/Include/MeshComponent.h>
 #include <MintApp/Include/ObjectRenderer.h>
+#include <MintApp/Include/App.h>
 
 
 #endif // !#define _MINT_APP_ALL_HEADERS_H_

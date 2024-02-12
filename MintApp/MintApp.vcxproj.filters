@@ -41,6 +41,9 @@
     <ClInclude Include="Include\AllHpps.h">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="Include\App.h">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Include\Object.inl">
@@ -67,6 +70,9 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\UnityBuild.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\App.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
