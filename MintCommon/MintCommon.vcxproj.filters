@@ -32,5 +32,6 @@
     </None>
     <None Include="..\TODO.md" />
     <None Include="..\CodingConvention.md" />
+    <None Include="LibraryStructure.md" />
   </ItemGroup>
 </Project>

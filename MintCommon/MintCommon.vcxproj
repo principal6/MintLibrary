@@ -166,6 +166,7 @@
     <None Include="..\CodingConvention.md" />
     <None Include="..\TODO.md" />
     <None Include="Include\ScopedCPUProfiler.inl" />
+    <None Include="LibraryStructure.md" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
