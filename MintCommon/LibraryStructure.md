@@ -8,6 +8,9 @@ classDiagram
     MintContainer <|-- MintPlatform
     MintContainer <|-- MintRenderingBase
     MintContainer <|-- MintReflection
+    MintContainer <|-- MintLanguage
+
+    MintLanguage <|-- MintRenderingBase
 
     MintRenderingBase <|-- MintRendering
 
@@ -23,6 +26,8 @@ classDiagram
     MintGUI <|-- MintApp
 
     MintApp <|-- MintGame
+
+    MintGame <|-- MintLibrary
 
     class MintCommon{
         IntegerTypes

@@ -39,14 +39,8 @@
     <ClCompile Include="Source\_UnityBuild.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MintAudio\MintAudio.vcxproj">
-      <Project>{53a46c4e-836f-4c83-af5a-bf2036bb8cfd}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\MintGame\MintGame.vcxproj">
       <Project>{4d507120-3ff8-4f58-bcd9-db6f72cd014d}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\MintGUI\MintGUI.vcxproj">
-      <Project>{39abe905-ebb8-469e-998e-54dce995ba4f}</Project>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup Label="Globals">

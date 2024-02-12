@@ -324,6 +324,9 @@
     <ProjectReference Include="..\MintContainer\MintContainer.vcxproj">
       <Project>{0152168d-27a5-4c7d-be25-1310b5c023c9}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\MintLanguage\MintLanguage.vcxproj">
+      <Project>{2386002c-4036-4df9-8e17-31bb497ec3a4}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
