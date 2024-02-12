@@ -9,8 +9,7 @@
 #include <MintRenderingBase/Include/LowLevelRenderer.hpp>
 
 #include <MintGame/Include/DeltaTimer.h>
-#include <MintGame/Include/MeshComponent.h>
-#include <MintGame/Include/CollisionComponent.h>
+#include <MintGame/Include/TransformComponent.h>
 #include <MintGame/Include/CameraObject.h>
 
 
@@ -65,11 +64,11 @@ namespace mint
 			const ObjectComponentType type = component->GetType();
 			if (type == ObjectComponentType::MeshComponent)
 			{
-				_meshComponents.PushBack(reinterpret_cast<MeshComponent*>(component));
+				_meshComponents.PushBack(component);
 			}
 			else if (type == ObjectComponentType::Mesh2DComponent)
 			{
-				_mesh2DComponents.PushBack(reinterpret_cast<Mesh2DComponent*>(component));
+				_mesh2DComponents.PushBack(component);
 			}
 			return component;
 		}
@@ -85,7 +84,7 @@ namespace mint
 					const ObjectComponentType componentType = component->GetType();
 					if (componentType == ObjectComponentType::MeshComponent)
 					{
-						DeregisterMeshComponent(static_cast<MeshComponent*>(component));
+						DeregisterMeshComponent(component);
 					}
 
 					MINT_DELETE(component);
@@ -93,7 +92,7 @@ namespace mint
 			}
 		}
 
-		MINT_INLINE void ObjectPool::RegisterMeshComponent(MeshComponent* const meshComponent)
+		MINT_INLINE void ObjectPool::RegisterMeshComponent(ObjectComponent* const meshComponent)
 		{
 			if (meshComponent == nullptr)
 			{
@@ -112,7 +111,7 @@ namespace mint
 			_meshComponents.PushBack(meshComponent);
 		}
 
-		MINT_INLINE void ObjectPool::DeregisterMeshComponent(MeshComponent* const meshComponent)
+		MINT_INLINE void ObjectPool::DeregisterMeshComponent(ObjectComponent* const meshComponent)
 		{
 			if (meshComponent == nullptr)
 			{
@@ -159,12 +158,12 @@ namespace mint
 			}
 		}
 
-		MINT_INLINE const Vector<MeshComponent*>& ObjectPool::GetMeshComponents() const noexcept
+		MINT_INLINE const Vector<ObjectComponent*>& ObjectPool::GetMeshComponents() const noexcept
 		{
 			return _meshComponents;
 		}
 		
-		MINT_INLINE const Vector<Mesh2DComponent*>& ObjectPool::GetMesh2DComponents() const noexcept
+		MINT_INLINE const Vector<ObjectComponent*>& ObjectPool::GetMesh2DComponents() const noexcept
 		{
 			return _mesh2DComponents;
 		}

@@ -32,7 +32,7 @@ namespace mint
 
 			ShaderPool& shaderPool = _graphicDevice.GetShaderPool();
 			GraphicResourcePool& resourcePool = _graphicDevice.GetResourcePool();
-			const Vector<MeshComponent*>& meshComponents = objectPool.GetMeshComponents();
+			const Vector<ObjectComponent*>& meshComponents = objectPool.GetMeshComponents();
 			if (meshComponents.IsEmpty() == false)
 			{
 				shaderPool.BindInputLayoutIfNot(_inputLayoutDefaultID);
@@ -49,7 +49,7 @@ namespace mint
 				const uint32 meshComponentCount = meshComponents.Size();
 				for (uint32 i = 0; i < meshComponentCount; ++i)
 				{
-					const MeshComponent* const meshComponent = meshComponents[i];
+					const MeshComponent* const meshComponent = static_cast<MeshComponent*>(meshComponents[i]);
 
 					_cbTransformData._cbWorldMatrix = meshComponent->GetOwnerObject()->GetObjectTransformMatrix();
 					cbTransform.UpdateBuffer(&_cbTransformData, 1);
@@ -88,14 +88,14 @@ namespace mint
 				sbMaterial.UnbindFromShader();
 			}
 
-			const Vector<Mesh2DComponent*>& mesh2DComponents = objectPool.GetMesh2DComponents();
+			const Vector<ObjectComponent*>& mesh2DComponents = objectPool.GetMesh2DComponents();
 			if (mesh2DComponents.IsEmpty() == false)
 			{
 				ShapeRendererContext& shapeRendererContext = _graphicDevice.GetShapeRendererContext();
 				const uint32 mesh2DComponentCount = mesh2DComponents.Size();
 				for (uint32 i = 0; i < mesh2DComponentCount; ++i)
 				{
-					const Mesh2DComponent* const mesh2DComponent = mesh2DComponents[i];
+					const Mesh2DComponent* const mesh2DComponent = static_cast<Mesh2DComponent*>(mesh2DComponents[i]);
 					Object* const object = mesh2DComponent->GetOwnerObject();
 					shapeRendererContext.SetPosition(Float4(object->GetObjectTransform()._translation));
 					shapeRendererContext.AddShape(mesh2DComponent->GetShape());

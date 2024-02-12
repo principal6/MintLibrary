@@ -15,11 +15,6 @@ namespace mint
 	namespace Game
 	{
 		class CameraObject;
-		class TransformComponent;
-		class MeshComponent;
-		class Mesh2DComponent;
-		class Collision2DComponent;
-		class DeltaTimer;
 	}
 }
 
@@ -51,16 +46,16 @@ namespace mint
 			void DestroyObjectComponents(Object& object);
 
 		public:
-			void RegisterMeshComponent(MeshComponent* const meshComponent);
-			void DeregisterMeshComponent(MeshComponent* const meshComponent);
+			void RegisterMeshComponent(ObjectComponent* const meshComponent);
+			void DeregisterMeshComponent(ObjectComponent* const meshComponent);
 
 		public:
 			void ComputeDeltaTime() const noexcept;
 			void UpdateScreenSize(const Float2& screenSize);
 
 		public:
-			const Vector<MeshComponent*>& GetMeshComponents() const noexcept;
-			const Vector<Mesh2DComponent*>& GetMesh2DComponents() const noexcept;
+			const Vector<ObjectComponent*>& GetMeshComponents() const noexcept;
+			const Vector<ObjectComponent*>& GetMesh2DComponents() const noexcept;
 
 		public:
 			uint32 GetObjectCount() const noexcept;
@@ -70,8 +65,8 @@ namespace mint
 			Vector<SharedPtr<Object>> _objects;
 
 		private:
-			Vector<MeshComponent*> _meshComponents;
-			Vector<Mesh2DComponent*> _mesh2DComponents;
+			Vector<ObjectComponent*> _meshComponents;
+			Vector<ObjectComponent*> _mesh2DComponents;
 		};
 	}
 }
