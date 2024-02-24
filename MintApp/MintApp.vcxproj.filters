@@ -11,9 +11,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Include\CameraObject.h">
-      <Filter>Include</Filter>
-    </ClInclude>
     <ClInclude Include="Include\DeltaTimer.h">
       <Filter>Include</Filter>
     </ClInclude>
@@ -46,14 +43,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Include\Object.inl">
-      <Filter>Include</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="Source\CameraObject.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="Source\DeltaTimer.cpp">
       <Filter>Source</Filter>
     </ClCompile>

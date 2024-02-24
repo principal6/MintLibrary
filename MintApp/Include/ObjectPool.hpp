@@ -10,7 +10,6 @@
 
 #include <MintApp/Include/DeltaTimer.h>
 #include <MintApp/Include/Object.h>
-#include <MintApp/Include/CameraObject.h>
 
 
 namespace mint
@@ -28,11 +27,6 @@ namespace mint
 	MINT_INLINE SharedPtr<Object> ObjectPool::CreateObject()
 	{
 		return CreateObjectInternal(MakeShared<Object>(Object(this)));
-	}
-
-	MINT_INLINE SharedPtr<CameraObject> ObjectPool::CreateCameraObject()
-	{
-		return CreateObjectInternal(MakeShared<CameraObject>(CameraObject(this)));
 	}
 
 	MINT_INLINE void ObjectPool::DestroyObjects()
@@ -135,10 +129,10 @@ namespace mint
 		for (uint32 objectIndex = 0; objectIndex < objectCount; ++objectIndex)
 		{
 			SharedPtr<Object>& object = _objects[objectIndex];
-			if (object->IsTypeOf(ObjectType::CameraObject) == true)
+			CameraComponent* const cameraComponent = static_cast<CameraComponent*>(object->GetComponent(ObjectComponentType::CameraComponent));
+			if (cameraComponent != nullptr)
 			{
-				CameraObject* const cameraObject = static_cast<CameraObject*>(object.Get());
-				cameraObject->UpdateScreenSize(screenSize);
+				cameraComponent->UpdateScreenSize(screenSize);
 			}
 		}
 	}

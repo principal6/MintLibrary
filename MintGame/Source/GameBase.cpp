@@ -463,7 +463,8 @@ namespace mint
 
 			_graphicDevice->SetSolidCullNoneRasterizer();
 
-			_graphicDevice->SetViewProjectionMatrix(_mainCameraObject->GetViewMatrix(), _mainCameraObject->GetProjectionMatrix());
+			CameraComponent* const cameraComponent = static_cast<CameraComponent*>(_mainCameraObject->GetComponent(ObjectComponentType::CameraComponent));
+			_graphicDevice->SetViewProjectionMatrix(cameraComponent->GetViewMatrix(), cameraComponent->GetProjectionMatrix());
 		}
 
 		void GameBase2D::DrawCircle(const Float2& position, float radius, const ByteColor& color)
@@ -567,9 +568,11 @@ namespace mint
 
 		void GameBase2D::InitializeMainCameraOject()
 		{
-			_mainCameraObject = _objectPool->CreateCameraObject();
+			_mainCameraObject = _objectPool->CreateObject();
+			CameraComponent* cameraComponent = _objectPool->CreateObjectComponent<CameraComponent>();
 			Float2 windowSize{ _graphicDevice->GetWindowSize() };
-			_mainCameraObject->SetOrthographic2DCamera(windowSize);
+			cameraComponent->SetOrthographic2DCamera(windowSize);
+			_mainCameraObject->AttachComponent(cameraComponent);
 		}
 
 		void GameBase2D::DrawMap()

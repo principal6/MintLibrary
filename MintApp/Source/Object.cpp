@@ -9,14 +9,7 @@
 namespace mint
 {
 	Object::Object(const ObjectPool* const objectPool)
-		: Object(objectPool, ObjectType::Object)
-	{
-		__noop;
-	}
-
-	Object::Object(const ObjectPool* const objectPool, const ObjectType objectType)
 		: _objectPool{ objectPool }
-		, _objectType{ objectType }
 	{
 		__noop;
 	}

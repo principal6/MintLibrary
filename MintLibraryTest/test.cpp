@@ -39,9 +39,9 @@ int main()
 	audioObject0.Play();
 #endif
 
-	RunGJKTestWindow();
+	//RunGJKTestWindow();
 	//Run2DTestWindow();
-	//Run3DTestWindow();
+	Run3DTestWindow();
 	return 0;
 }
 
@@ -299,11 +299,15 @@ bool Run2DTestWindow()
 		object1->AttachComponent(collision2DComponent);
 	}
 
-	SharedPtr<CameraObject> testCameraObject = objectPool.CreateCameraObject();
-	Float2 windowSize{ graphicDevice.GetWindowSize() };
-	testCameraObject->SetPerspectiveCamera(Math::ToRadian(60.0f), 1.0f, 100.0f, windowSize._x / windowSize._y);
-	testCameraObject->GetObjectTransform()._translation._z = 5.0f;
-
+	SharedPtr<Object> testCameraObject = objectPool.CreateObject();
+	CameraComponent* testCameraComponent = objectPool.CreateObjectComponent<CameraComponent>();
+	{
+		Float2 windowSize{ graphicDevice.GetWindowSize() };
+		testCameraComponent->SetPerspectiveCamera(Math::ToRadian(60.0f), 1.0f, 100.0f, windowSize._x / windowSize._y);
+		testCameraObject->GetObjectTransform()._translation._z = 5.0f;
+		testCameraObject->AttachComponent(testCameraComponent);
+	}
+	
 	SpriteAnimationSet corgiAnimationSet;
 	{
 		const float kTimePerFrame = 0.125f;
@@ -342,12 +346,12 @@ bool Run2DTestWindow()
 			}
 		}
 
-		testCameraObject->SteerDefault(inputContext, false);
+		testCameraComponent->SteerDefault(objectPool.GetDeltaTimeSec(), inputContext, false);
 
 		// Rendering
 		graphicDevice.BeginRendering();
 		{
-			graphicDevice.SetViewProjectionMatrix(testCameraObject->GetViewMatrix(), testCameraObject->GetProjectionMatrix());
+			graphicDevice.SetViewProjectionMatrix(testCameraComponent->GetViewMatrix(), testCameraComponent->GetProjectionMatrix());
 			objectRenderer.Render(objectPool);
 
 			//instantRenderer.DrawTriangle({ Float3(0, 1, 0), Float3(-1, 0, 0), Float3(1, 0, 0) }, { Float2(0.5, 0), Float2(0, 1), Float2(1, 1) }, Color::kYellow);
@@ -401,11 +405,16 @@ bool Run3DTestWindow()
 	const InputContext& inputContext = InputContext::GetInstance();
 
 	ObjectPool& objectPool = app.GetObjectPool();
-	SharedPtr<CameraObject> testCameraObject = objectPool.CreateCameraObject();
-	Float2 windowSize{ graphicDevice.GetWindowSize() };
-	testCameraObject->SetPerspectiveCamera(Math::ToRadian(60.0f), 0.01f, 100.0f, windowSize._x / windowSize._y);
-	testCameraObject->GetObjectTransform()._translation._z = 5.0f;
-	testCameraObject->RotatePitch(0.125f);
+	SharedPtr<Object> testCameraObject = objectPool.CreateObject();
+	CameraComponent* testCameraComponent = objectPool.CreateObjectComponent<CameraComponent>();
+	{
+		Float2 windowSize{ graphicDevice.GetWindowSize() };
+		testCameraComponent->SetPerspectiveCamera(Math::ToRadian(60.0f), 0.01f, 100.0f, windowSize._x / windowSize._y);
+		testCameraComponent->RotatePitch(0.125f);
+		testCameraObject->GetObjectTransform()._translation._z = 5.0f;
+		testCameraObject->AttachComponent(testCameraComponent);
+	}
+
 	SharedPtr<Object> testObject = objectPool.CreateObject();
 	{
 		testObject->AttachComponent(objectPool.CreateObjectComponent<MeshComponent>());
@@ -474,14 +483,14 @@ bool Run3DTestWindow()
 			}
 			else if (inputContext.IsKeyDown(KeyCode::Shift) == true)
 			{
-				testCameraObject->SetBoostMode(true);
+				testCameraComponent->SetBoostMode(true);
 			}
 		}
 		else if (inputContext.IsKeyReleased())
 		{
 			if (inputContext.IsKeyUp(KeyCode::Shift) == true)
 			{
-				testCameraObject->SetBoostMode(false);
+				testCameraComponent->SetBoostMode(false);
 			}
 		}
 		else if (inputContext.IsMouseWheelScrolled())
@@ -489,21 +498,21 @@ bool Run3DTestWindow()
 			const float mouseWheelScroll = inputContext.GetMouseWheelScroll();
 			if (mouseWheelScroll > 0.0f)
 			{
-				testCameraObject->IncreaseMoveSpeed();
+				testCameraComponent->IncreaseMoveSpeed();
 			}
 			else
 			{
-				testCameraObject->DecreaseMoveSpeed();
+				testCameraComponent->DecreaseMoveSpeed();
 			}
 		}
 
-		testCameraObject->SteerDefault(inputContext, true);
+		testCameraComponent->SteerDefault(objectPool.GetDeltaTimeSec(), inputContext, true);
 
 		// Rendering
 		{
 			graphicDevice.BeginRendering();
 
-			graphicDevice.SetViewProjectionMatrix(testCameraObject->GetViewMatrix(), testCameraObject->GetProjectionMatrix());
+			graphicDevice.SetViewProjectionMatrix(testCameraComponent->GetViewMatrix(), testCameraComponent->GetProjectionMatrix());
 
 			objectRenderer.Render(objectPool);
 
@@ -518,7 +527,7 @@ bool Run3DTestWindow()
 			//ShapeGenerator::GenerateRectangle(Float2(32, 32), ByteColor(0,255,255), testShapeSet);
 			//shapeRendererContext.AddShape(testShapeSet);
 			graphicDevice.SetSolidCullFrontRasterizer();
-			graphicDevice.SetViewProjectionMatrix(testCameraObject->GetViewMatrix(), graphicDevice.GetScreenSpace2DProjectionMatrix());
+			graphicDevice.SetViewProjectionMatrix(testCameraComponent->GetViewMatrix(), graphicDevice.GetScreenSpace2DProjectionMatrix());
 			{
 				StackStringW<100> fpsString;
 				FormatString(fpsString, L"FPS: %d", Profiler::FPSCounter::GetFPS());

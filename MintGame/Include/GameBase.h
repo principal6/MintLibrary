@@ -23,7 +23,6 @@ namespace mint
 
 	class ObjectPool;
 	class Object;
-	class CameraObject;
 
 	namespace Rendering
 	{
@@ -293,7 +292,7 @@ namespace mint
 			SharedPtr<Object> _mainCharacterObject;
 		
 		protected:
-			SharedPtr<CameraObject> _mainCameraObject;
+			SharedPtr<Object> _mainCameraObject;
 			GameCameraMode _gameCameraMode;
 
 		protected:

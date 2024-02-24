@@ -11,7 +11,6 @@
 
 namespace mint
 {
-	class CameraObject;
 	class Object;
 	class ObjectComponent;
 }
@@ -26,7 +25,6 @@ namespace mint
 
 	public:
 		SharedPtr<Object> CreateObject();
-		SharedPtr<CameraObject> CreateCameraObject();
 
 	public:
 		template<typename ComponentType>

@@ -25,13 +25,6 @@ namespace mint
 
 namespace mint
 {
-	enum class ObjectType
-	{
-		INVALID,
-		Object,
-		CameraObject
-	};
-
 	class Object
 	{
 		friend ObjectPool;
@@ -42,16 +35,11 @@ namespace mint
 	private:
 		Object(const ObjectPool* const objectPool);
 
-	protected:
-		Object(const ObjectPool* const objectPool, const ObjectType objectType);
-
 	public:
 		void AttachComponent(ObjectComponent* const objectComponent);
 		void DetachComponent(ObjectComponent* const objectComponent);
 
 	public:
-		ObjectType GetType() const noexcept;
-		bool IsTypeOf(const ObjectType objectType) const noexcept;
 		uint32 GetComponentCount() const noexcept;
 		ObjectComponent* GetComponent(const ObjectComponentType type) const noexcept;
 
@@ -66,15 +54,11 @@ namespace mint
 
 	protected:
 		const ObjectPool* const _objectPool;
-		const ObjectType _objectType;
 
 	protected:
 		Vector<ObjectComponent*> _componentArray;
 	};
 }
-
-
-#include <MintApp/Include/Object.inl>
 
 
 #endif // !_MINT_GAME_OBJECT_H_
