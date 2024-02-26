@@ -192,7 +192,7 @@ namespace mint
 			const GUIControlID& hoveredControlID = _controlManager.GetHoveredControlID();
 			const GUIControlID& pressedControlID = _controlManager.GetPressedControlID();
 
-			_graphicDevice.SetSolidCullFrontRasterizer();
+			_graphicDevice.SetSolidCullNoneRasterizer();
 			_graphicDevice.SetViewProjectionMatrix(Float4x4::kIdentity, _graphicDevice.GetScreenSpace2DProjectionMatrix());
 
 			Rendering::ShapeRendererContext& shapeRendererContext = _graphicDevice.GetShapeRendererContext();

@@ -490,15 +490,23 @@ namespace mint
 			const GlyphInfo& glyphInfo = _fontData._glyphInfoArray[glyphIndex];
 			if (leaveOnlySpace == false)
 			{
-				const float scaledFontHeight = static_cast<float>(_fontData._fontSize) * scale;
-
 				Rect glyphRect;
 				glyphRect.Left(glyphPosition._x + static_cast<float>(glyphInfo._horiBearingX) * scale);
 				glyphRect.Right(glyphRect.Left() + static_cast<float>(glyphInfo._width) * scale);
-				glyphRect.Top(glyphPosition._y + scaledFontHeight - static_cast<float>(glyphInfo._horiBearingY) * scale);
-				glyphRect.Bottom(glyphRect.Top() + static_cast<float>(glyphInfo._height) * scale);
-				if (glyphRect.Right() >= 0.0f && glyphRect.Left() <= _graphicDevice.GetWindowSize()._x
-					&& glyphRect.Bottom() >= 0.0f && glyphRect.Top() <= _graphicDevice.GetWindowSize()._y) // 화면을 벗어나면 렌더링 할 필요가 없으므로
+
+				const bool shouldFlipY = _graphicDevice.GetProjectionMatrix()._22 < 0.0f;
+				if (shouldFlipY)
+				{
+					const float scaledFontHeight = static_cast<float>(_fontData._fontSize) * scale;
+					glyphRect.Top(glyphPosition._y + scaledFontHeight - static_cast<float>(glyphInfo._horiBearingY) * scale);
+					glyphRect.Bottom(glyphRect.Top() + static_cast<float>(glyphInfo._height) * scale);
+				}
+				else
+				{
+					glyphRect.Top(glyphPosition._y + (static_cast<float>(glyphInfo._horiBearingY) * scale));
+					glyphRect.Bottom(glyphRect.Top() - static_cast<float>(glyphInfo._height) * scale);
+				}
+
 				{
 					Vector<VS_INPUT_SHAPE>& vertices = _lowLevelRenderer->Vertices();
 
@@ -536,12 +544,12 @@ namespace mint
 						Vector<IndexElementType>& indices = _lowLevelRenderer->Indices();
 						const uint32 currentTotalTriangleVertexCount = static_cast<uint32>(vertices.Size());
 						indices.PushBack((currentTotalTriangleVertexCount - 4) + 0);
-						indices.PushBack((currentTotalTriangleVertexCount - 4) + 2);
 						indices.PushBack((currentTotalTriangleVertexCount - 4) + 1);
+						indices.PushBack((currentTotalTriangleVertexCount - 4) + 2);
 
 						indices.PushBack((currentTotalTriangleVertexCount - 4) + 0);
-						indices.PushBack((currentTotalTriangleVertexCount - 4) + 3);
 						indices.PushBack((currentTotalTriangleVertexCount - 4) + 2);
+						indices.PushBack((currentTotalTriangleVertexCount - 4) + 3);
 					}
 				}
 			}

@@ -156,7 +156,6 @@ void RunGJKTestWindow()
 		const Float2 windowSize{ app.GetWindow().GetSize() };
 		graphicDevice.BeginRendering();
 		{
-			graphicDevice.SetSolidCullNoneRasterizer();
 			{
 				graphicDevice.SetViewProjectionMatrix(Float4x4::kIdentity, Float4x4::ProjectionMatrix2DNormal(windowSize._x, windowSize._y));
 
@@ -365,7 +364,6 @@ bool Run2DTestWindow()
 			imageRenderer.DrawImageScreenSpace(Float2(64, 64), Float2(128, 128), corgiCurrentAnimation.GetCurrentFrameUV0(), corgiCurrentAnimation.GetCurrentFrameUV1());
 			imageRenderer.Render();
 
-			graphicDevice.SetSolidCullFrontRasterizer();
 			ShapeRendererContext& shapeRendererContext = graphicDevice.GetShapeRendererContext();
 			{
 				StackStringW<100> fpsString;
@@ -526,7 +524,6 @@ bool Run3DTestWindow()
 			//Shape testShapeSet;
 			//ShapeGenerator::GenerateRectangle(Float2(32, 32), ByteColor(0,255,255), testShapeSet);
 			//shapeRendererContext.AddShape(testShapeSet);
-			graphicDevice.SetSolidCullFrontRasterizer();
 			graphicDevice.SetViewProjectionMatrix(Float4x4::kIdentity, graphicDevice.GetScreenSpace2DProjectionMatrix());
 			{
 				StackStringW<100> fpsString;
