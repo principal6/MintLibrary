@@ -527,7 +527,7 @@ bool Run3DTestWindow()
 			//ShapeGenerator::GenerateRectangle(Float2(32, 32), ByteColor(0,255,255), testShapeSet);
 			//shapeRendererContext.AddShape(testShapeSet);
 			graphicDevice.SetSolidCullFrontRasterizer();
-			graphicDevice.SetViewProjectionMatrix(testCameraComponent->GetViewMatrix(), graphicDevice.GetScreenSpace2DProjectionMatrix());
+			graphicDevice.SetViewProjectionMatrix(Float4x4::kIdentity, graphicDevice.GetScreenSpace2DProjectionMatrix());
 			{
 				StackStringW<100> fpsString;
 				FormatString(fpsString, L"FPS: %d", Profiler::FPSCounter::GetFPS());
