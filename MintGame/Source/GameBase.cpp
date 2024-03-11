@@ -485,11 +485,11 @@ namespace mint
 
 		void GameBase2D::DrawTextToScreen(const StringA& text, const Int2& position, const ByteColor& color)
 		{
-			Rendering::ShapeRendererContext& screenSpaceShapeRendererContext = _graphicDevice->GetScreenSpaceShapeRendererContext();
-			screenSpaceShapeRendererContext.SetTextColor(color);
+			Rendering::ShapeRendererContext& shapeRendererContext = _graphicDevice->GetShapeRendererContext();
+			shapeRendererContext.SetTextColor(color);
 			StringW textW;
 			StringUtil::ConvertStringAToStringW(text, textW);
-			screenSpaceShapeRendererContext.DrawDynamicText(textW.CString(), Float3(static_cast<float>(position._x), static_cast<float>(position._y), 0), Rendering::FontRenderingOption());
+			shapeRendererContext.DrawDynamicText(textW.CString(), Float3(static_cast<float>(position._x), static_cast<float>(position._y), 0), Rendering::FontRenderingOption());
 		}
 
 		void GameBase2D::DrawEffects()

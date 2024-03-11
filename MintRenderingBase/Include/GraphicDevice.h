@@ -109,7 +109,6 @@ namespace mint
 			ShaderPool& GetShaderPool() noexcept;
 			GraphicResourcePool& GetResourcePool() noexcept;
 			ShapeRendererContext& GetShapeRendererContext() noexcept;
-			ShapeRendererContext& GetScreenSpaceShapeRendererContext() noexcept;
 			const Language::CppHlsl::Interpreter& GetCppHlslSteamData() const noexcept;
 			const Language::CppHlsl::Interpreter& GetCppHlslConstantBuffers() const noexcept;
 
@@ -248,7 +247,6 @@ namespace mint
 
 		private:
 			ShapeRendererContext _shapeRendererContext;
-			ShapeRendererContext _screenSpaceShapeRendererContext;
 			bool _needEndRenderingCall;
 		};
 	}

@@ -31,11 +31,6 @@ namespace mint
 			return _shapeRendererContext;
 		}
 		
-		MINT_INLINE ShapeRendererContext& GraphicDevice::GetScreenSpaceShapeRendererContext() noexcept
-		{
-			return _screenSpaceShapeRendererContext;
-		}
-
 		MINT_INLINE const Language::CppHlsl::Interpreter& GraphicDevice::GetCppHlslSteamData() const noexcept
 		{
 			return _cppHlslStreamData;
