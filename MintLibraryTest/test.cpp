@@ -23,6 +23,8 @@ bool Run3DTestWindow();
 
 int main()
 {
+	mint::Library::Initialize();
+
 #if defined MINT_DEBUG
 	//mint::Logger::SetOutputFileName("LOG.txt");
 	mint::TestContainers::Test();
@@ -52,7 +54,6 @@ void RunGJKTestWindow()
 	using namespace Rendering;
 	using namespace Physics;
 
-	mint::Library::Initialize();
 	WindowCreationDesc windowCreationDesc;
 	windowCreationDesc._position.Set(200, 100);
 	windowCreationDesc._size.Set(1024, 768);
@@ -154,7 +155,7 @@ void RunGJKTestWindow()
 		}
 
 		const Float2 windowSize{ app.GetWindow().GetSize() };
-		graphicDevice.BeginRendering();
+		app.BeginRendering();
 		{
 			{
 				graphicDevice.SetViewProjectionMatrix(Float4x4::kIdentity, Float4x4::ProjectionMatrix2DNormal(windowSize._x, windowSize._y));
@@ -234,7 +235,7 @@ void RunGJKTestWindow()
 				shapeRendererContext.Render();
 			}
 		}
-		graphicDevice.EndRendering();
+		app.EndRendering();
 	}
 }
 
@@ -244,8 +245,6 @@ bool Run2DTestWindow()
 	using namespace Rendering;
 	using namespace Physics;
 	using namespace Game;
-
-	mint::Library::Initialize();
 
 	WindowCreationDesc windowCreationDesc;
 	windowCreationDesc._position.Set(200, 100);
@@ -301,7 +300,7 @@ bool Run2DTestWindow()
 	SharedPtr<Object> testCameraObject = objectPool.CreateObject();
 	CameraComponent* testCameraComponent = objectPool.CreateObjectComponent<CameraComponent>();
 	{
-		Float2 windowSize{ graphicDevice.GetWindowSize() };
+		Float2 windowSize{ app.GetWindow().GetSize() };
 		testCameraComponent->SetPerspectiveCamera(Math::ToRadian(60.0f), 1.0f, 100.0f, windowSize._x / windowSize._y);
 		testCameraObject->GetObjectTransform()._translation._z = 5.0f;
 		testCameraObject->AttachComponent(testCameraComponent);
@@ -325,14 +324,10 @@ bool Run2DTestWindow()
 	}
 
 
-	ObjectRenderer objectRenderer{ graphicDevice };
-	//InstantRenderer instantRenderer{ graphicDevice };
 	ImageRenderer imageRenderer{ graphicDevice, 1 };
 	const InputContext& inputContext = InputContext::GetInstance();
 	while (app.IsRunning() == true)
 	{
-		objectPool.ComputeDeltaTime();
-
 		if (inputContext.IsKeyPressed())
 		{
 			if (inputContext.IsKeyDown(KeyCode::Enter) == true)
@@ -348,13 +343,9 @@ bool Run2DTestWindow()
 		testCameraComponent->SteerDefault(objectPool.GetDeltaTimeSec(), inputContext, false);
 
 		// Rendering
-		graphicDevice.BeginRendering();
+		app.BeginRendering();
 		{
 			graphicDevice.SetViewProjectionMatrix(testCameraComponent->GetViewMatrix(), testCameraComponent->GetProjectionMatrix());
-			objectRenderer.Render(objectPool);
-
-			//instantRenderer.DrawTriangle({ Float3(0, 1, 0), Float3(-1, 0, 0), Float3(1, 0, 0) }, { Float2(0.5, 0), Float2(0, 1), Float2(1, 1) }, Color::kYellow);
-			//instantRenderer.Render();
 
 			graphicDevice.SetViewProjectionMatrix(Float4x4::kIdentity, graphicDevice.GetScreenSpace2DProjectionMatrix());
 			resourcePool.GetResource(corgiSpriteSheetTextureID).BindToShader(GraphicShaderType::PixelShader, 1);
@@ -373,7 +364,7 @@ bool Run2DTestWindow()
 			}
 			shapeRendererContext.Render();
 		}
-		graphicDevice.EndRendering();
+		app.EndRendering();
 
 		Profiler::FPSCounter::Count();
 	}
@@ -387,8 +378,6 @@ bool Run3DTestWindow()
 	using namespace GUI;
 	using namespace Game;
 
-	mint::Library::Initialize();
-
 	WindowCreationDesc windowCreationDesc;
 	windowCreationDesc._position.Set(200, 100);
 	windowCreationDesc._size.Set(1024, 768);
@@ -397,16 +386,12 @@ bool Run3DTestWindow()
 
 	mint::App app{ windowCreationDesc , true };
 
-	GraphicDevice& graphicDevice = app.GetGraphicDevice();
-	ObjectRenderer objectRenderer{ graphicDevice };
-	InstantRenderer instantRenderer{ graphicDevice };
-	const InputContext& inputContext = InputContext::GetInstance();
 
 	ObjectPool& objectPool = app.GetObjectPool();
 	SharedPtr<Object> testCameraObject = objectPool.CreateObject();
 	CameraComponent* testCameraComponent = objectPool.CreateObjectComponent<CameraComponent>();
 	{
-		Float2 windowSize{ graphicDevice.GetWindowSize() };
+		Float2 windowSize{ app.GetWindow().GetSize() };
 		testCameraComponent->SetPerspectiveCamera(Math::ToRadian(60.0f), 0.01f, 100.0f, windowSize._x / windowSize._y);
 		testCameraComponent->RotatePitch(0.125f);
 		testCameraObject->GetObjectTransform()._translation._z = 5.0f;
@@ -421,7 +406,7 @@ bool Run3DTestWindow()
 		transform._translation._z = -1.0f;
 	}
 
-	GUISystem guiSystem{ graphicDevice };
+	GUISystem& guiSystem = app.GetGUISystem();
 	GUIControlTemplateID roundButton0TemplateID;
 	{
 		GUIControlTemplate controlTemplate;
@@ -445,12 +430,10 @@ bool Run3DTestWindow()
 	GUIControl& buttonControl = guiSystem.AccessControl(buttonControlID);
 	buttonControl.SetPosition(Float2(100, 100));
 
+	GraphicDevice& graphicDevice = app.GetGraphicDevice();
+	const InputContext& inputContext = InputContext::GetInstance();
 	while (app.IsRunning() == true)
 	{
-		objectPool.ComputeDeltaTime();
-
-		guiSystem.Update();
-
 		if (inputContext.IsKeyPressed())
 		{
 			if (inputContext.IsKeyDown(KeyCode::Enter) == true)
@@ -507,17 +490,8 @@ bool Run3DTestWindow()
 		testCameraComponent->SteerDefault(objectPool.GetDeltaTimeSec(), inputContext, true);
 
 		// Rendering
+		app.BeginRendering();
 		{
-			graphicDevice.BeginRendering();
-
-			graphicDevice.SetViewProjectionMatrix(testCameraComponent->GetViewMatrix(), testCameraComponent->GetProjectionMatrix());
-
-			objectRenderer.Render(objectPool);
-
-			instantRenderer.Render();
-
-			guiSystem.Render();
-
 			ShapeRendererContext& shapeRendererContext = graphicDevice.GetShapeRendererContext();
 			// # ShapeRendererContext 테스트
 			//shapeRendererContext.TestDraw(Float2(200, 100));
@@ -533,8 +507,9 @@ bool Run3DTestWindow()
 			}
 			shapeRendererContext.Render();
 
-			graphicDevice.EndRendering();
+			graphicDevice.SetViewProjectionMatrix(testCameraComponent->GetViewMatrix(), testCameraComponent->GetProjectionMatrix());
 		}
+		app.EndRendering();
 
 		Profiler::FPSCounter::Count();
 	}

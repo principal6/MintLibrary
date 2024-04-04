@@ -2,7 +2,9 @@
 
 #include <MintPlatform/Include/Window.h>
 #include <MintRenderingBase/Include/GraphicDevice.h>
+#include <MintGUI/Include/GUISystem.h>
 #include <MintApp/Include/ObjectPool.hpp>
+#include <MintApp/Include/ObjectRenderer.h>
 
 
 namespace mint
@@ -23,6 +25,9 @@ namespace mint
 			MINT_NEVER;
 			return;
 		}
+
+		_objectRenderer.Assign(MINT_NEW(ObjectRenderer, *_graphicDevice));
+		_guiSystem.Assign(MINT_NEW(GUI::GUISystem, *_graphicDevice));
 	}
 
 	App::~App()
@@ -36,7 +41,27 @@ namespace mint
 			_objectPool->UpdateScreenSize(Float2(_window->GetSize()));
 		}
 
-		return _window->IsRunning();
+		if (_window->IsRunning())
+		{
+			_objectPool->ComputeDeltaTime();
+			_guiSystem->Update();
+			return true;
+		}
+		return false;
+	}
+	
+	void App::BeginRendering()
+	{
+		_graphicDevice->BeginRendering();
+	}
+
+	void App::EndRendering()
+	{
+		_objectRenderer->Render(*_objectPool);
+		
+		_guiSystem->Render();
+
+		_graphicDevice->EndRendering();
 	}
 
 	Window& App::GetWindow()
@@ -52,5 +77,10 @@ namespace mint
 	ObjectPool& App::GetObjectPool()
 	{
 		return *_objectPool;
+	}
+
+	GUI::GUISystem& App::GetGUISystem()
+	{
+		return *_guiSystem;
 	}
 }
