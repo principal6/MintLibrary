@@ -1,6 +1,5 @@
 ﻿# TODO
-## World Font / Sceen Font 렌더링 구분
-
+## Camera 클래스 만들자! (Object, Component 래핑용도...?)
 ## 기본 그래프 그리면서 확대,축소 카메라까지 쉽게 테스트할 수 있는 시스템 만들기!!!
 
 ## Euler's method error evaluation (with graph)
