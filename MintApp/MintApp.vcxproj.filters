@@ -58,7 +58,7 @@
     <ClCompile Include="Source\ObjectRenderer.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Source\UnityBuild.cpp">
+    <ClCompile Include="Source\_UnityBuild.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\App.cpp">

@@ -1,4 +1,5 @@
 #include <MintGame/Include/CollisionComponent.h>
+#include <MintContainer/Include/SharedPtr.hpp>
 
 
 namespace mint

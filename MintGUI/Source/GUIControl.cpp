@@ -1,4 +1,5 @@
 #include <MintGUI/Include/GUIControl.h>
+#include <MintContainer/Include/SharedPtr.hpp>
 #include <MintContainer/Include/String.hpp>
 #include <MintRenderingBase/Include/GraphicsDevice.h>
 #include <MintPhysics/Include/Intersection.hpp>
@@ -49,6 +50,11 @@ namespace mint
 #pragma endregion
 
 #pragma region GUIControl
+		GUIControl::~GUIControl()
+		{
+			__noop;
+		}
+
 		void GUIControl::Render(Rendering::ShapeRendererContext& shapeRendererContext, const GUIControlInteractionState& controlInteractionState) const
 		{
 			for (const SharedPtr<GUIControlComponent>& component : _components)

@@ -1,5 +1,6 @@
 #include <MintPhysics/Include/CollisionShape.h>
 #include <MintContainer/Include/Vector.hpp>
+#include <MintContainer/Include/SharedPtr.hpp>
 #include <MintMath/Include/Float2x2.h>
 #include <MintMath/Include/Geometry.h>
 #include <MintMath/Include/Transform.h>

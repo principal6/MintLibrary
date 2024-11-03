@@ -92,7 +92,7 @@ namespace mint
 			};
 		public:
 			GUIControl() = default;
-			virtual ~GUIControl() = default;
+			virtual ~GUIControl();
 			void SetPosition(const Float2& position) { _position = position; }
 			void Render(Rendering::ShapeRendererContext& shapeRendererContext, const GUIControlInteractionState& controlInteractionState) const;
 			uint32 GetComponentCount() const { return _components.Size(); }

@@ -177,23 +177,7 @@ namespace mint
 			_referenceCounter->IncreaseStrongReferenceCount();
 		}
 
-		void DecreaseReferenceCount()
-		{
-			if (_referenceCounter != nullptr)
-			{
-				_referenceCounter->DecreaseStrongReferenceCount();
-
-				if (_referenceCounter->GetStrongReferenceCount() == 0)
-				{
-					MINT_DELETE(_rawPtr);
-
-					if (_referenceCounter->GetWeakReferenceCount() == 0)
-					{
-						MINT_DELETE(_referenceCounter);
-					}
-				}
-			}
-		}
+		void DecreaseReferenceCount();
 
 	private:
 		ReferenceCounter* _referenceCounter = nullptr;
