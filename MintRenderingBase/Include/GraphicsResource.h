@@ -14,6 +14,9 @@
 
 namespace mint
 {
+	template<typename T>
+	class OwnPtr;
+
 	namespace Rendering
 	{
 		class GraphicsResourcePool;
@@ -153,7 +156,7 @@ namespace mint
 			GraphicsResource& GetResource(const GraphicsObjectID& objectID);
 
 		private:
-			Vector<GraphicsResource> _resourceArray;
+			Vector<OwnPtr<GraphicsObject>> _resourceArray;
 		};
 	}
 }

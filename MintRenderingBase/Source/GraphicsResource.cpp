@@ -1,5 +1,6 @@
 ﻿#include <MintRenderingBase/Include/GraphicsResource.h>
 
+#include <MintContainer/Include/OwnPtr.h>
 #include <MintContainer/Include/Vector.hpp>
 #include <MintContainer/Include/Algorithm.hpp>
 
@@ -375,7 +376,7 @@ namespace mint
 
 				_boundSlots[i] = kUint32Max;
 			}
-		
+
 			_needToBind = true;
 		}
 
@@ -396,7 +397,7 @@ namespace mint
 				resource._registerIndex = registerIndex;
 
 				const GraphicsObjectID graphicsObjectID = resource.GetID();
-				_resourceArray.PushBack(std::move(resource));
+				_resourceArray.PushBack(static_cast<GraphicsObject*>(MINT_NEW(GraphicsResource, std::move(resource))));
 				QuickSort(_resourceArray, GraphicsObject::AscendingComparator());
 				return graphicsObjectID;
 			}
@@ -413,7 +414,7 @@ namespace mint
 				resource.AssignIDXXX();
 
 				const GraphicsObjectID graphicsObjectID = resource.GetID();
-				_resourceArray.PushBack(std::move(resource));
+				_resourceArray.PushBack(static_cast<GraphicsObject*>(MINT_NEW(GraphicsResource, std::move(resource))));
 				QuickSort(_resourceArray, GraphicsObject::AscendingComparator());
 				return graphicsObjectID;
 			}
@@ -431,7 +432,7 @@ namespace mint
 				resource.AssignIDXXX();
 
 				const GraphicsObjectID graphicsObjectID = resource.GetID();
-				_resourceArray.PushBack(std::move(resource));
+				_resourceArray.PushBack(static_cast<GraphicsObject*>(MINT_NEW(GraphicsResource, std::move(resource))));
 				QuickSort(_resourceArray, GraphicsObject::AscendingComparator());
 				return graphicsObjectID;
 			}
@@ -450,7 +451,7 @@ namespace mint
 				resource._registerIndex = registerIndex;
 
 				const GraphicsObjectID graphicsObjectID = resource.GetID();
-				_resourceArray.PushBack(std::move(resource));
+				_resourceArray.PushBack(static_cast<GraphicsObject*>(MINT_NEW(GraphicsResource, std::move(resource))));
 				QuickSort(_resourceArray, GraphicsObject::AscendingComparator());
 				return graphicsObjectID;
 			}
@@ -473,7 +474,7 @@ namespace mint
 				resource.AssignIDXXX();
 
 				const GraphicsObjectID graphicsObjectID = resource.GetID();
-				_resourceArray.PushBack(std::move(resource));
+				_resourceArray.PushBack(static_cast<GraphicsObject*>(MINT_NEW(GraphicsResource, std::move(resource))));
 				QuickSort(_resourceArray, GraphicsObject::AscendingComparator());
 				return graphicsObjectID;
 			}
@@ -510,7 +511,7 @@ namespace mint
 				MINT_ASSERT(false, "Resource 를 찾지 못했습니다!!!");
 				return GraphicsResource::s_invalidInstance;
 			}
-			return _resourceArray[index];
+			return static_cast<GraphicsResource&>(*_resourceArray[index].Get());
 		}
 	}
 }

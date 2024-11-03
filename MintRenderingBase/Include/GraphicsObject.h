@@ -9,15 +9,22 @@
 
 #include <MintRenderingBase/Include/RenderingBaseCommon.h>
 
+namespace mint
+{
+	template<typename T>
+	class OwnPtr;
+
+	namespace Rendering
+	{
+		class GraphicsDevice;
+		class GraphicsObject;
+	}
+}
 
 namespace mint
 {
 	namespace Rendering
 	{
-		class GraphicsDevice;
-		class GraphicsObject;
-
-
 		enum class GraphicsShaderType
 		{
 			VertexShader,
@@ -151,18 +158,14 @@ namespace mint
 		public:
 			struct Evaluator
 			{
-				const GraphicsObjectID& operator()(const GraphicsObject& rhs) const noexcept
-				{
-					return rhs._objectID;
-				}
+				const GraphicsObjectID& operator()(const GraphicsObject& rhs) const noexcept;
+				const GraphicsObjectID& operator()(const OwnPtr<GraphicsObject>& rhs) const noexcept;
 			};
 
 			struct AscendingComparator
 			{
-				bool operator()(const GraphicsObject& lhs, const GraphicsObject& rhs) const noexcept
-				{
-					return lhs._objectID < rhs._objectID;
-				}
+				bool operator()(const GraphicsObject& lhs, const GraphicsObject& rhs) const noexcept;
+				bool operator()(const OwnPtr<GraphicsObject>& lhs, const OwnPtr<GraphicsObject>& rhs) const noexcept;
 			};
 
 			MINT_INLINE bool operator==(const GraphicsObjectID& objectID) const noexcept
