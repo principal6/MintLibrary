@@ -6,7 +6,7 @@
 #include <MintContainer/Include/Vector.hpp>
 #include <MintContainer/Include/Algorithm.hpp>
 
-#include <MintRenderingBase/Include/GraphicDevice.h>
+#include <MintRenderingBase/Include/GraphicsDevice.h>
 #include <MintRenderingBase/Include/MeshData.h>
 
 
@@ -15,8 +15,8 @@ namespace mint
 	namespace Rendering
 	{
 		template <typename T>
-		inline LowLevelRenderer<T>::LowLevelRenderer(GraphicDevice& graphicDevice)
-			: _graphicDevice{ graphicDevice }
+		inline LowLevelRenderer<T>::LowLevelRenderer(GraphicsDevice& graphicsDevice)
+			: _graphicsDevice{ graphicsDevice }
 			, _vertexStride{ sizeof(T) }
 			, _vertexBufferID{}
 			, _indexBase{ 0 }
@@ -128,24 +128,24 @@ namespace mint
 
 			PrepareBuffers();
 
-			GraphicResourcePool& resourcePool = _graphicDevice.GetResourcePool();
-			GraphicResource& vertexBuffer = resourcePool.GetResource(_vertexBufferID);
-			GraphicResource& indexBuffer = resourcePool.GetResource(_indexBufferID);
+			GraphicsResourcePool& resourcePool = _graphicsDevice.GetResourcePool();
+			GraphicsResource& vertexBuffer = resourcePool.GetResource(_vertexBufferID);
+			GraphicsResource& indexBuffer = resourcePool.GetResource(_indexBufferID);
 			vertexBuffer.BindAsInput();
 			indexBuffer.BindAsInput();
 
 			const uint32 vertexCount = static_cast<uint32>(_vertices.Size());
 			const uint32 indexCount = static_cast<uint32>(_indices.Size());
 
-			_graphicDevice.GetStateManager().SetIARenderingPrimitive(renderingPrimitive);
+			_graphicsDevice.GetStateManager().SetIARenderingPrimitive(renderingPrimitive);
 
 			switch (renderingPrimitive)
 			{
 			case RenderingPrimitive::LineList:
-				_graphicDevice.Draw(vertexCount, 0);
+				_graphicsDevice.Draw(vertexCount, 0);
 				break;
 			case RenderingPrimitive::TriangleList:
-				_graphicDevice.DrawIndexed(indexCount, 0, 0);
+				_graphicsDevice.DrawIndexed(indexCount, 0, 0);
 
 				break;
 			default:
@@ -231,9 +231,9 @@ namespace mint
 
 			PrepareBuffers();
 
-			GraphicResourcePool& resourcePool = _graphicDevice.GetResourcePool();
-			GraphicResource& vertexBuffer = resourcePool.GetResource(_vertexBufferID);
-			GraphicResource& indexBuffer = resourcePool.GetResource(_indexBufferID);
+			GraphicsResourcePool& resourcePool = _graphicsDevice.GetResourcePool();
+			GraphicsResource& vertexBuffer = resourcePool.GetResource(_vertexBufferID);
+			GraphicsResource& indexBuffer = resourcePool.GetResource(_indexBufferID);
 			vertexBuffer.BindAsInput();
 			indexBuffer.BindAsInput();
 
@@ -319,7 +319,7 @@ namespace mint
 		template <typename T>
 		inline void LowLevelRenderer<T>::PrepareBuffers() noexcept
 		{
-			GraphicResourcePool& resourcePool = _graphicDevice.GetResourcePool();
+			GraphicsResourcePool& resourcePool = _graphicsDevice.GetResourcePool();
 
 			const uint32 vertexCount = static_cast<uint32>(_vertices.Size());
 			if (_vertexBufferID.IsValid() == false && vertexCount > 0)
@@ -329,7 +329,7 @@ namespace mint
 
 			if (_vertexBufferID.IsValid())
 			{
-				GraphicResource& vertexBuffer = resourcePool.GetResource(_vertexBufferID);
+				GraphicsResource& vertexBuffer = resourcePool.GetResource(_vertexBufferID);
 				vertexBuffer.UpdateBuffer(&_vertices[0], vertexCount);
 			}
 
@@ -341,7 +341,7 @@ namespace mint
 
 			if (_indexBufferID.IsValid())
 			{
-				GraphicResource& indexBuffer = resourcePool.GetResource(_indexBufferID);
+				GraphicsResource& indexBuffer = resourcePool.GetResource(_indexBufferID);
 				indexBuffer.UpdateBuffer(&_indices[0], indexCount);
 			}
 		}
@@ -350,17 +350,17 @@ namespace mint
 		inline void LowLevelRenderer<T>::ExecuteRenderCommands_Draw(const RenderCommand& renderCommand) const noexcept
 		{
 			D3D11_RECT scissorRect = RectToD3dRect(renderCommand._clipRect);
-			_graphicDevice.GetStateManager().SetRSScissorRectangle(scissorRect);
+			_graphicsDevice.GetStateManager().SetRSScissorRectangle(scissorRect);
 
-			_graphicDevice.GetStateManager().SetIARenderingPrimitive(renderCommand._primitive);
+			_graphicsDevice.GetStateManager().SetIARenderingPrimitive(renderCommand._primitive);
 
 			switch (renderCommand._primitive)
 			{
 			case RenderingPrimitive::LineList:
-				_graphicDevice.Draw(renderCommand._vertexCount, renderCommand._vertexOffset);
+				_graphicsDevice.Draw(renderCommand._vertexCount, renderCommand._vertexOffset);
 				break;
 			case RenderingPrimitive::TriangleList:
-				_graphicDevice.DrawIndexed(renderCommand._indexCount, renderCommand._indexOffset, renderCommand._vertexOffset);
+				_graphicsDevice.DrawIndexed(renderCommand._indexCount, renderCommand._indexOffset, renderCommand._vertexOffset);
 				break;
 			default:
 				break;

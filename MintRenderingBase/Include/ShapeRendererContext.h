@@ -67,7 +67,7 @@ namespace mint
 			};
 
 		public:
-			ShapeRendererContext(GraphicDevice& graphicDevice);
+			ShapeRendererContext(GraphicsDevice& graphicsDevice);
 			virtual ~ShapeRendererContext();
 
 		public:
@@ -125,10 +125,10 @@ namespace mint
 			void PushFontTransformToBuffer(const Float3& preTranslation, Float4x4 transformMatrix, const Float3& postTranslation);
 
 		protected:
-			GraphicObjectID _inputLayoutID;
-			GraphicObjectID _vertexShaderID;
-			GraphicObjectID _geometryShaderID;
-			GraphicObjectID _pixelShaderID;
+			GraphicsObjectID _inputLayoutID;
+			GraphicsObjectID _vertexShaderID;
+			GraphicsObjectID _geometryShaderID;
+			GraphicsObjectID _pixelShaderID;
 
 			Color _textColor;
 			FontData _fontData;

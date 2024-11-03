@@ -17,7 +17,7 @@ namespace mint
 {
 	namespace Rendering
 	{
-		class GraphicDevice;
+		class GraphicsDevice;
 		class MathExpressionRenderer;
 		class LatexLexer;
 		struct LatexParser;
@@ -76,7 +76,7 @@ namespace mint
 		class MathExpressionRenderer
 		{
 		public:
-			MathExpressionRenderer(GraphicDevice& graphicDevice);
+			MathExpressionRenderer(GraphicsDevice& graphicsDevice);
 			~MathExpressionRenderer();
 
 		public:

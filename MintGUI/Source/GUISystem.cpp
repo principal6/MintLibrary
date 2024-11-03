@@ -2,7 +2,7 @@
 #include <MintContainer/Include/HashMap.hpp>
 #include <MintContainer/Include/StringReference.hpp>
 #include <MintContainer/Include/Algorithm.hpp>
-#include <MintRenderingBase/Include/GraphicDevice.h>
+#include <MintRenderingBase/Include/GraphicsDevice.h>
 #include <MintRenderingBase/Include/ShapeRendererContext.h>
 #include <MintPlatform/Include/InputContext.h>
 #include <MintPhysics/Include/CollisionShape.h>
@@ -131,8 +131,8 @@ namespace mint
 
 
 #pragma region GUISystem
-		GUISystem::GUISystem(Rendering::GraphicDevice& graphicDevice)
-			: _graphicDevice{ graphicDevice }
+		GUISystem::GUISystem(Rendering::GraphicsDevice& graphicsDevice)
+			: _graphicsDevice{ graphicsDevice }
 			, _isUpdated{ false }
 		{
 			__noop;
@@ -192,10 +192,10 @@ namespace mint
 			const GUIControlID& hoveredControlID = _controlManager.GetHoveredControlID();
 			const GUIControlID& pressedControlID = _controlManager.GetPressedControlID();
 
-			_graphicDevice.SetSolidCullNoneRasterizer();
-			_graphicDevice.SetViewProjectionMatrix(Float4x4::kIdentity, _graphicDevice.GetScreenSpace2DProjectionMatrix());
+			_graphicsDevice.SetSolidCullNoneRasterizer();
+			_graphicsDevice.SetViewProjectionMatrix(Float4x4::kIdentity, _graphicsDevice.GetScreenSpace2DProjectionMatrix());
 
-			Rendering::ShapeRendererContext& shapeRendererContext = _graphicDevice.GetShapeRendererContext();
+			Rendering::ShapeRendererContext& shapeRendererContext = _graphicsDevice.GetShapeRendererContext();
 			Vector<SharedPtr<GUIControl>>& controlInstances = _controlManager.AccessControlInstances();
 			for (const SharedPtr<GUIControl>& control : controlInstances)
 			{

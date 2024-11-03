@@ -4,7 +4,7 @@
 #include <MintContainer/Include/Algorithm.hpp>
 #include <MintPlatform/Include/FileUtil.hpp>
 #include <MintPlatform/Include/BinaryFile.hpp>
-#include <MintRenderingBase/Include/GraphicDevice.h>
+#include <MintRenderingBase/Include/GraphicsDevice.h>
 #include <MintRenderingBase/Include/ImageLoader.h>
 
 #include <ft2build.h>
@@ -168,7 +168,7 @@ namespace mint
 			}
 		}
 
-		bool FontLoader::LoadFont(const char* const fontFileNameRaw, GraphicDevice& graphicDevice)
+		bool FontLoader::LoadFont(const char* const fontFileNameRaw, GraphicsDevice& graphicsDevice)
 		{
 			const StringA fontFileName = GetFontFileNameWithExtension(fontFileNameRaw);
 			if (FileUtil::Exists(fontFileName.CString()) == false)
@@ -237,7 +237,7 @@ namespace mint
 			}
 #endif
 
-			GraphicResourcePool& resourcePool = graphicDevice.GetResourcePool();
+			GraphicsResourcePool& resourcePool = graphicsDevice.GetResourcePool();
 			_fontData._fontTextureID = resourcePool.AddTexture2D(TextureFormat::R8_UNORM, &_fontImageData._imageData[0], _fontImageData._width, _fontImageData._height);
 			return true;
 		}

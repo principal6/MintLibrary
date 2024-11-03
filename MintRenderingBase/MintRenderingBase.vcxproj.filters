@@ -21,7 +21,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Include\GraphicResource.h">
+    <ClInclude Include="Include\GraphicsResource.h">
       <Filter>Include</Filter>
     </ClInclude>
     <ClInclude Include="Include\Shader.h">
@@ -30,10 +30,10 @@
     <ClInclude Include="Include\DxShaderHeaderMemory.h">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="Include\GraphicDevice.h">
+    <ClInclude Include="Include\GraphicsDevice.h">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="Include\GraphicObject.h">
+    <ClInclude Include="Include\GraphicsObject.h">
       <Filter>Include</Filter>
     </ClInclude>
     <ClInclude Include="Include\IRendererContext.h">
@@ -95,7 +95,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Include\GraphicDevice.inl">
+    <None Include="Include\GraphicsDevice.inl">
       <Filter>Include</Filter>
     </None>
     <None Include="Include\IRendererContext.inl">
@@ -106,7 +106,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\GraphicResource.cpp">
+    <ClCompile Include="Source\GraphicsResource.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\Shader.cpp">
@@ -115,10 +115,10 @@
     <ClCompile Include="Source\DxShaderHeaderMemory.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Source\GraphicDevice.cpp">
+    <ClCompile Include="Source\GraphicsDevice.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Source\GraphicObject.cpp">
+    <ClCompile Include="Source\GraphicsObject.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\ShapeRendererContext.cpp">

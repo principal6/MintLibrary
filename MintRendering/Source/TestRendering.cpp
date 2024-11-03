@@ -8,7 +8,7 @@ namespace mint
 {
 	namespace TestRendering
 	{
-		bool Test_SplineGenerator(Rendering::GraphicDevice& graphicDevice)
+		bool Test_SplineGenerator(Rendering::GraphicsDevice& graphicsDevice)
 		{
 			using namespace Rendering;
 
@@ -52,7 +52,7 @@ namespace mint
 			splineGenerator.GenerateBezierCurve(bezierControlPointSet2, bezierLinePointSet2);
 			splineGenerator.GenerateBezierCurve(bezierControlPointSet3, bezierLinePointSet3);
 
-			ShapeRendererContext& shapeRendererContext = graphicDevice.GetShapeRendererContext();
+			ShapeRendererContext& shapeRendererContext = graphicsDevice.GetShapeRendererContext();
 			shapeRendererContext.SetColor(Color::kRed);
 			shapeRendererContext.DrawLineStrip(bezierLinePointSet0, 1.0f);
 			shapeRendererContext.SetColor(Color::kGreen);

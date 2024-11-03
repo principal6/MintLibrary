@@ -18,7 +18,7 @@
 #include <MintMath/Include/Int2.h>
 #include <MintMath/Include/Rect.h>
 
-#include <MintRenderingBase/Include/GraphicObject.h>
+#include <MintRenderingBase/Include/GraphicsObject.h>
 
 #include <Assets/Include/CppHlsl/CppHlslStructuredBuffers.h>
 
@@ -27,14 +27,14 @@ namespace mint
 {
 	namespace Rendering
 	{
-		class GraphicDevice;
+		class GraphicsDevice;
 
 
 		class IRendererContext abstract
 		{
 		public:
-			IRendererContext(GraphicDevice& graphicDevice);
-			IRendererContext(GraphicDevice& graphicDevice, LowLevelRenderer<VS_INPUT_SHAPE>* const nonOwnedLowLevelRenderer);
+			IRendererContext(GraphicsDevice& graphicsDevice);
+			IRendererContext(GraphicsDevice& graphicsDevice, LowLevelRenderer<VS_INPUT_SHAPE>* const nonOwnedLowLevelRenderer);
 			IRendererContext(const IRendererContext& rhs);
 			virtual ~IRendererContext();
 
@@ -69,7 +69,7 @@ namespace mint
 			LowLevelRenderer<VS_INPUT_SHAPE>& AccessLowLevelRenderer() noexcept;
 
 		protected:
-			GraphicDevice& _graphicDevice;
+			GraphicsDevice& _graphicsDevice;
 			LowLevelRenderer<VS_INPUT_SHAPE>* const _lowLevelRenderer;
 
 		private:

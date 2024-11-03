@@ -1,5 +1,5 @@
 ﻿#include <MintRendering/Include/ImageRenderer.h>
-#include <MintRenderingBase/Include/GraphicDevice.h>
+#include <MintRenderingBase/Include/GraphicsDevice.h>
 #include <MintContainer/Include/StringUtil.hpp>
 
 
@@ -7,14 +7,14 @@ namespace mint
 {
 	namespace Rendering
 	{
-		ImageRenderer::ImageRenderer(GraphicDevice& graphicDevice, const uint32 psTextureSlot)
-			: ImageRenderer(graphicDevice, psTextureSlot, ByteColor(0, 0, 0, 0))
+		ImageRenderer::ImageRenderer(GraphicsDevice& graphicsDevice, const uint32 psTextureSlot)
+			: ImageRenderer(graphicsDevice, psTextureSlot, ByteColor(0, 0, 0, 0))
 		{
 			__noop;
 		}
 
-		ImageRenderer::ImageRenderer(GraphicDevice& graphicDevice, const uint32 psTextureSlot, const ByteColor& transparentColor)
-			: ShapeRendererContext(graphicDevice)
+		ImageRenderer::ImageRenderer(GraphicsDevice& graphicsDevice, const uint32 psTextureSlot, const ByteColor& transparentColor)
+			: ShapeRendererContext(graphicsDevice)
 			, _psTextureSlot{ psTextureSlot }
 			, _transparentColor{ transparentColor }
 		{
@@ -23,22 +23,22 @@ namespace mint
 
 		void ImageRenderer::InitializeShaders() noexcept
 		{
-			_clipRect = _graphicDevice.GetFullScreenClipRect();
+			_clipRect = _graphicsDevice.GetFullScreenClipRect();
 
-			ShaderPool& shaderPool = _graphicDevice.GetShaderPool();
+			ShaderPool& shaderPool = _graphicsDevice.GetShaderPool();
 			{
 				if (_vertexShaderID.IsValid())
 				{
 					shaderPool.RemoveShader(_vertexShaderID);
 				}
-				_vertexShaderID = shaderPool.AddShaderFromMemory("ImageRendererVS", GetDefaultVertexShaderString(), "main_shape", GraphicShaderType::VertexShader);
+				_vertexShaderID = shaderPool.AddShaderFromMemory("ImageRendererVS", GetDefaultVertexShaderString(), "main_shape", GraphicsShaderType::VertexShader);
 
 				if (_inputLayoutID.IsValid())
 				{
 					shaderPool.RemoveInputLayout(_inputLayoutID);
 				}
 				using namespace Language;
-				const TypeMetaData<CppHlsl::TypeCustomData>& typeMetaData = _graphicDevice.GetCppHlslSteamData().GetTypeMetaData(typeid(VS_INPUT_SHAPE));
+				const TypeMetaData<CppHlsl::TypeCustomData>& typeMetaData = _graphicsDevice.GetCppHlslSteamData().GetTypeMetaData(typeid(VS_INPUT_SHAPE));
 				_inputLayoutID = shaderPool.AddInputLayout(_vertexShaderID, typeMetaData);
 			}
 
@@ -47,7 +47,7 @@ namespace mint
 				{
 					shaderPool.RemoveShader(_geometryShaderID);
 				}
-				_geometryShaderID = shaderPool.AddShaderFromMemory("ImageRendererGS", GetDefaultGeometryShaderString(), "main_shape", GraphicShaderType::GeometryShader);
+				_geometryShaderID = shaderPool.AddShaderFromMemory("ImageRendererGS", GetDefaultGeometryShaderString(), "main_shape", GraphicsShaderType::GeometryShader);
 			}
 
 			{
@@ -96,7 +96,7 @@ namespace mint
 				{
 					shaderPool.RemoveShader(_pixelShaderID);
 				}
-				_pixelShaderID = shaderPool.AddShaderFromMemory("ImageRendererPS", shaderString.CString(), "main_image", GraphicShaderType::PixelShader);
+				_pixelShaderID = shaderPool.AddShaderFromMemory("ImageRendererPS", shaderString.CString(), "main_image", GraphicsShaderType::PixelShader);
 			}
 		}
 

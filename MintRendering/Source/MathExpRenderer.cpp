@@ -171,8 +171,8 @@ namespace mint
 		}
 
 
-		MathExpressionRenderer::MathExpressionRenderer(GraphicDevice& graphicDevice)
-			: _shapeRendererContexts{ graphicDevice, graphicDevice, graphicDevice, graphicDevice }
+		MathExpressionRenderer::MathExpressionRenderer(GraphicsDevice& graphicsDevice)
+			: _shapeRendererContexts{ graphicsDevice, graphicsDevice, graphicsDevice, graphicsDevice }
 		{
 			const char* const kFontFileNames[MathExpression::GetModifierTypeCount()] =
 			{ Path::MakeAssetPath("cmu_s_italic"), Path::MakeAssetPath("cmu_s_bold"), Path::MakeAssetPath("cmu_s_bold_italic"), Path::MakeAssetPath("cmu_s_roman") };
@@ -187,7 +187,7 @@ namespace mint
 					fontLoader.PushGlyphRange(GlyphRange(0, 0x33DD));
 					fontLoader.BakeFontData(kFontFileName, 32, kFontFileName, 2048, 1, 1);
 				}
-				fontLoader.LoadFont(kFontFileName, graphicDevice);
+				fontLoader.LoadFont(kFontFileName, graphicsDevice);
 
 				rendererContext.InitializeFontData(fontLoader.GetFontData());
 				rendererContext.InitializeShaders();

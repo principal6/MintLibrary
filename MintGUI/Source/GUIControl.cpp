@@ -1,6 +1,6 @@
 #include <MintGUI/Include/GUIControl.h>
 #include <MintContainer/Include/String.hpp>
-#include <MintRenderingBase/Include/GraphicDevice.h>
+#include <MintRenderingBase/Include/GraphicsDevice.h>
 #include <MintPhysics/Include/Intersection.hpp>
 
 

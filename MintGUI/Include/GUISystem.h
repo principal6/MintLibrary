@@ -17,7 +17,7 @@ namespace mint
 {
 	namespace Rendering
 	{
-		class GraphicDevice;
+		class GraphicsDevice;
 	}
 
 	namespace GUI
@@ -25,7 +25,7 @@ namespace mint
 		class GUISystem
 		{
 		public:
-			GUISystem(Rendering::GraphicDevice& graphicDevice);
+			GUISystem(Rendering::GraphicsDevice& graphicsDevice);
 			~GUISystem();
 
 		public:
@@ -42,7 +42,7 @@ namespace mint
 			void Render();
 
 		private:
-			Rendering::GraphicDevice& _graphicDevice;
+			Rendering::GraphicsDevice& _graphicsDevice;
 
 		private:
 			bool _isUpdated;

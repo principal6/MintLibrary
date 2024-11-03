@@ -20,14 +20,14 @@ namespace mint
 
 	namespace Rendering
 	{
-		class GraphicDevice;
+		class GraphicsDevice;
 		struct SB_Material;
 
 
 		class InstantRenderer final
 		{
 		public:
-			InstantRenderer(GraphicDevice& graphicDevice);
+			InstantRenderer(GraphicsDevice& graphicsDevice);
 			~InstantRenderer();
 
 		public:
@@ -52,7 +52,7 @@ namespace mint
 			void Render() noexcept;
 
 		private:
-			GraphicDevice& _graphicDevice;
+			GraphicsDevice& _graphicsDevice;
 
 		private:
 			LowLevelRenderer<VS_INPUT> _lowLevelRendererLine;
@@ -61,10 +61,10 @@ namespace mint
 		private:
 			CB_Transform _cbTransformData;
 			Vector<SB_Material> _sbMaterialDatas;
-			GraphicObjectID _inputLayoutDefaultID;
-			GraphicObjectID _vsDefaultID;
-			GraphicObjectID _psDefaultID;
-			GraphicObjectID _psColorID;
+			GraphicsObjectID _inputLayoutDefaultID;
+			GraphicsObjectID _vsDefaultID;
+			GraphicsObjectID _psDefaultID;
+			GraphicsObjectID _psColorID;
 		};
 	}
 }

@@ -24,7 +24,7 @@ namespace mint
 	namespace Rendering
 	{
 		struct FontData;
-		class GraphicDevice;
+		class GraphicsDevice;
 		class FontLoader;
 		class ShapeRendererContext;
 
@@ -78,7 +78,7 @@ namespace mint
 			uint32 ComputeIndexFromPositionInText(const wchar_t* const wideText, const uint32 textLength, const float positionInText) const noexcept;
 
 			Vector<GlyphInfo> _glyphInfoArray;
-			GraphicObjectID _fontTextureID;
+			GraphicsObjectID _fontTextureID;
 			int16 _fontSize = 0;
 
 		private:
@@ -107,7 +107,7 @@ namespace mint
 			void PushGlyphRange(const GlyphRange& glyphRange) noexcept;
 
 		public:
-			bool LoadFont(const char* const fontFileNameRaw, GraphicDevice& graphicDevice);
+			bool LoadFont(const char* const fontFileNameRaw, GraphicsDevice& graphicsDevice);
 
 		public:
 			bool BakeFontData(const char* const fontFaceFileName, const int16 fontSize, const char* const outputFileName, const int16 textureWidth, const int16 spaceLeft, const int16 spaceTop);

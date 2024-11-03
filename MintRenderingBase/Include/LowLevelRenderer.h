@@ -11,7 +11,7 @@
 
 #include <Assets/Include/CppHlsl/CppHlslStreamData.h>
 
-#include <MintRenderingBase/Include/GraphicObject.h>
+#include <MintRenderingBase/Include/GraphicsObject.h>
 
 #include <MintMath/Include/Rect.h>
 
@@ -20,7 +20,7 @@ namespace mint
 {
 	namespace Rendering
 	{
-		class GraphicDevice;
+		class GraphicsDevice;
 		struct MeshData;
 		struct Shape;
 	}
@@ -94,7 +94,7 @@ namespace mint
 			};
 
 		public:
-			LowLevelRenderer(GraphicDevice& graphicDevice);
+			LowLevelRenderer(GraphicsDevice& graphicsDevice);
 			~LowLevelRenderer() = default;
 
 		public:
@@ -129,17 +129,17 @@ namespace mint
 			void ExecuteRenderCommands_Draw(const RenderCommand& renderCommand) const noexcept;
 
 		private:
-			GraphicDevice& _graphicDevice;
+			GraphicsDevice& _graphicsDevice;
 			const uint32 _vertexStride;
 
 		private:
 			Vector<T> _vertices;
-			GraphicObjectID _vertexBufferID;
+			GraphicsObjectID _vertexBufferID;
 
 		private:
 			Vector<IndexElementType> _indices;
 			IndexElementType _indexBase;
-			GraphicObjectID _indexBufferID;
+			GraphicsObjectID _indexBufferID;
 
 		private:
 			bool _isOrdinalMode = false;

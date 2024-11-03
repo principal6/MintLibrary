@@ -2,7 +2,7 @@
 
 #include <MintContainer/Include/Vector.hpp>
 
-#include <MintRenderingBase/Include/GraphicDevice.h>
+#include <MintRenderingBase/Include/GraphicsDevice.h>
 #include <MintRenderingBase/Include/LowLevelRenderer.hpp>
 
 
@@ -10,19 +10,19 @@ namespace mint
 {
 	namespace Rendering
 	{
-		IRendererContext::IRendererContext(GraphicDevice& graphicDevice)
-			: _graphicDevice{ graphicDevice }
+		IRendererContext::IRendererContext(GraphicsDevice& graphicsDevice)
+			: _graphicsDevice{ graphicsDevice }
 			, _lowLevelRenderer{ nullptr }
 			, _ownsLowLevelRenderer{ true }
 			, _defaultColor{ Color::kWhite }
 			, _useMultipleViewports{ false }
 		{
 			LowLevelRenderer<VS_INPUT_SHAPE>*& lowLevelRendererCasted = const_cast<LowLevelRenderer<VS_INPUT_SHAPE>*&>(_lowLevelRenderer);
-			lowLevelRendererCasted = MINT_NEW(LowLevelRenderer<VS_INPUT_SHAPE>, _graphicDevice);
+			lowLevelRendererCasted = MINT_NEW(LowLevelRenderer<VS_INPUT_SHAPE>, _graphicsDevice);
 		}
 
-		IRendererContext::IRendererContext(GraphicDevice& graphicDevice, LowLevelRenderer<VS_INPUT_SHAPE>* const nonOwnedLowLevelRenderer)
-			: _graphicDevice{ graphicDevice }
+		IRendererContext::IRendererContext(GraphicsDevice& graphicsDevice, LowLevelRenderer<VS_INPUT_SHAPE>* const nonOwnedLowLevelRenderer)
+			: _graphicsDevice{ graphicsDevice }
 			, _lowLevelRenderer{ nonOwnedLowLevelRenderer }
 			, _ownsLowLevelRenderer{ false }
 			, _defaultColor{ Color::kWhite }
@@ -32,14 +32,14 @@ namespace mint
 		}
 
 		IRendererContext::IRendererContext(const IRendererContext& rhs)
-			: _graphicDevice{ rhs._graphicDevice }
+			: _graphicsDevice{ rhs._graphicsDevice }
 			, _lowLevelRenderer{ nullptr }
 			, _ownsLowLevelRenderer{ true }
 			, _defaultColor{ Color::kWhite }
 			, _useMultipleViewports{ false }
 		{
 			LowLevelRenderer<VS_INPUT_SHAPE>*& lowLevelRendererCasted = const_cast<LowLevelRenderer<VS_INPUT_SHAPE>*&>(_lowLevelRenderer);
-			lowLevelRendererCasted = MINT_NEW(LowLevelRenderer<VS_INPUT_SHAPE>, _graphicDevice);
+			lowLevelRendererCasted = MINT_NEW(LowLevelRenderer<VS_INPUT_SHAPE>, _graphicsDevice);
 		}
 
 		inline IRendererContext::~IRendererContext()
@@ -63,8 +63,8 @@ namespace mint
 				return;
 			}
 
-			GraphicResourcePool& resourcePool = _graphicDevice.GetResourcePool();
-			GraphicResource& sbTransform = resourcePool.GetResource(_graphicDevice.GetCommonSBTransformID());
+			GraphicsResourcePool& resourcePool = _graphicsDevice.GetResourcePool();
+			GraphicsResource& sbTransform = resourcePool.GetResource(_graphicsDevice.GetCommonSBTransformID());
 			sbTransform.UpdateBuffer(&_sbTransformData[0], _sbTransformData.Size());
 		}
 	}

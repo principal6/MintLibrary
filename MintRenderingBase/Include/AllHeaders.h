@@ -6,11 +6,11 @@
 
 
 #include <MintRenderingBase/Include/RenderingBaseCommon.h>
-#include <MintRenderingBase/Include/GraphicResource.h>
+#include <MintRenderingBase/Include/GraphicsResource.h>
 #include <MintRenderingBase/Include/Shader.h>
 #include <MintRenderingBase/Include/DxShaderHeaderMemory.h>
-#include <MintRenderingBase/Include/GraphicDevice.h>
-#include <MintRenderingBase/Include/GraphicObject.h>
+#include <MintRenderingBase/Include/GraphicsDevice.h>
+#include <MintRenderingBase/Include/GraphicsObject.h>
 #include <MintRenderingBase/Include/IRendererContext.h>
 #include <MintRenderingBase/Include/ShapeGenerator.h>
 #include <MintRenderingBase/Include/ShapeRendererContext.h>

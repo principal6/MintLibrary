@@ -10,7 +10,7 @@
 #include <MintPlatform/Include/TextFile.h>
 #include <MintPlatform/Include/FileUtil.hpp>
 
-#include <MintRenderingBase/Include/GraphicDevice.h>
+#include <MintRenderingBase/Include/GraphicsDevice.h>
 #include <MintRenderingBase/Include/DxShaderHeaderMemory.h>
 
 #include <MintRenderingBase/Include/CppHlsl/Parser.h>
@@ -25,19 +25,19 @@ namespace mint
 	{
 #pragma region Static function definitions
 		template<uint32 BufferSize>
-		static void makeShaderVersion(StackStringA<BufferSize>& out, const GraphicShaderType shaderType, const ShaderVersion shaderVersion)
+		static void makeShaderVersion(StackStringA<BufferSize>& out, const GraphicsShaderType shaderType, const ShaderVersion shaderVersion)
 		{
 			out.Clear();
 
-			if (shaderType == GraphicShaderType::VertexShader)
+			if (shaderType == GraphicsShaderType::VertexShader)
 			{
 				out.Append("vs_");
 			}
-			else if (shaderType == GraphicShaderType::GeometryShader)
+			else if (shaderType == GraphicsShaderType::GeometryShader)
 			{
 				out.Append("gs_");
 			}
-			else if (shaderType == GraphicShaderType::PixelShader)
+			else if (shaderType == GraphicsShaderType::PixelShader)
 			{
 				out.Append("ps_");
 			}
@@ -54,114 +54,114 @@ namespace mint
 #pragma endregion
 
 
-#pragma region GraphicInputLayout
-		const GraphicInputLayout GraphicInputLayout::kNullInstance{ GraphicDevice::GetInvalidInstance() };
-		GraphicInputLayout::GraphicInputLayout(GraphicDevice& graphicDevice)
-			: GraphicObject(graphicDevice, GraphicObjectType::InputLayout)
+#pragma region GraphicsInputLayout
+		const GraphicsInputLayout GraphicsInputLayout::kNullInstance{ GraphicsDevice::GetInvalidInstance() };
+		GraphicsInputLayout::GraphicsInputLayout(GraphicsDevice& graphicsDevice)
+			: GraphicsObject(graphicsDevice, GraphicsObjectType::InputLayout)
 		{
 			__noop;
 		}
 
-		void GraphicInputLayout::Bind() const
+		void GraphicsInputLayout::Bind() const
 		{
-			_graphicDevice.GetStateManager().SetIAInputLayout(_inputLayout.Get());
+			_graphicsDevice.GetStateManager().SetIAInputLayout(_inputLayout.Get());
 		}
 
-		void GraphicInputLayout::Unbind() const
+		void GraphicsInputLayout::Unbind() const
 		{
-			_graphicDevice.GetStateManager().SetIAInputLayout(nullptr);
+			_graphicsDevice.GetStateManager().SetIAInputLayout(nullptr);
 		}
 #pragma endregion
 
 
 #pragma region Shader
-		const Shader Shader::kNullInstance{ GraphicDevice::GetInvalidInstance(), GraphicShaderType::VertexShader };
-		Shader::Shader(GraphicDevice& graphicDevice, const GraphicShaderType shaderType)
-			: GraphicObject(graphicDevice, GraphicObjectType::Shader), _shaderType{ shaderType }
+		const Shader Shader::kNullInstance{ GraphicsDevice::GetInvalidInstance(), GraphicsShaderType::VertexShader };
+		Shader::Shader(GraphicsDevice& graphicsDevice, const GraphicsShaderType shaderType)
+			: GraphicsObject(graphicsDevice, GraphicsObjectType::Shader), _shaderType{ shaderType }
 		{
 			__noop;
 		}
 
 		void Shader::Bind() const noexcept
 		{
-			if (_shaderType == GraphicShaderType::VertexShader)
+			if (_shaderType == GraphicsShaderType::VertexShader)
 			{
-				_graphicDevice.GetStateManager().SetVSShader(static_cast<ID3D11VertexShader*>(_shader.Get()));
+				_graphicsDevice.GetStateManager().SetVSShader(static_cast<ID3D11VertexShader*>(_shader.Get()));
 			}
-			else if (_shaderType == GraphicShaderType::GeometryShader)
+			else if (_shaderType == GraphicsShaderType::GeometryShader)
 			{
-				_graphicDevice.GetStateManager().SetGSShader(static_cast<ID3D11GeometryShader*>(_shader.Get()));
+				_graphicsDevice.GetStateManager().SetGSShader(static_cast<ID3D11GeometryShader*>(_shader.Get()));
 			}
-			else if (_shaderType == GraphicShaderType::PixelShader)
+			else if (_shaderType == GraphicsShaderType::PixelShader)
 			{
-				_graphicDevice.GetStateManager().SetPSShader(static_cast<ID3D11PixelShader*>(_shader.Get()));
+				_graphicsDevice.GetStateManager().SetPSShader(static_cast<ID3D11PixelShader*>(_shader.Get()));
 			}
 		}
 
 		void Shader::Unbind() const noexcept
 		{
-			if (_shaderType == GraphicShaderType::VertexShader)
+			if (_shaderType == GraphicsShaderType::VertexShader)
 			{
-				_graphicDevice.GetStateManager().SetVSShader(nullptr);
+				_graphicsDevice.GetStateManager().SetVSShader(nullptr);
 			}
-			else if (_shaderType == GraphicShaderType::GeometryShader)
+			else if (_shaderType == GraphicsShaderType::GeometryShader)
 			{
-				_graphicDevice.GetStateManager().SetGSShader(nullptr);
+				_graphicsDevice.GetStateManager().SetGSShader(nullptr);
 			}
-			else if (_shaderType == GraphicShaderType::PixelShader)
+			else if (_shaderType == GraphicsShaderType::PixelShader)
 			{
-				_graphicDevice.GetStateManager().SetPSShader(nullptr);
+				_graphicsDevice.GetStateManager().SetPSShader(nullptr);
 			}
 		}
 #pragma endregion
 
 
-		ShaderPool::ShaderPool(GraphicDevice& graphicDevice, DxShaderHeaderMemory* const shaderHeaderMemory, const ShaderVersion shaderVersion)
-			: GraphicObject(graphicDevice, GraphicObjectType::Pool)
+		ShaderPool::ShaderPool(GraphicsDevice& graphicsDevice, DxShaderHeaderMemory* const shaderHeaderMemory, const ShaderVersion shaderVersion)
+			: GraphicsObject(graphicsDevice, GraphicsObjectType::Pool)
 			, _shaderHeaderMemory{ shaderHeaderMemory }
 			, _shaderVersion{ shaderVersion }
 		{
 			__noop;
 		}
 
-		GraphicObjectID ShaderPool::AddShaderFromMemory(const char* const shaderIdentifier, const char* const textContent, const char* const entryPoint, const GraphicShaderType shaderType)
+		GraphicsObjectID ShaderPool::AddShaderFromMemory(const char* const shaderIdentifier, const char* const textContent, const char* const entryPoint, const GraphicsShaderType shaderType)
 		{
-			Shader shader(_graphicDevice, shaderType);
+			Shader shader(_graphicsDevice, shaderType);
 			ShaderCompileParam compileParam;
 			compileParam._shaderIdentifier = shaderIdentifier;
 			compileParam._shaderTextContent = textContent;
 			if (CompileShaderInternalXXX(shaderType, compileParam, entryPoint, shader._shaderBlob.ReleaseAndGetAddressOf()) == false)
 			{
-				return GraphicObjectID::kInvalidGraphicObjectID;
+				return GraphicsObjectID::kInvalidGraphicsObjectID;
 			}
 			shader._hlslFileName = shaderIdentifier;
 
 			return AddShaderInternal(shaderType, shader);
 		}
 
-		GraphicObjectID ShaderPool::AddShader(const char* const inputDirectory, const char* const inputShaderFileName, const char* const entryPoint, const GraphicShaderType shaderType, const char* const outputDirectory)
+		GraphicsObjectID ShaderPool::AddShader(const char* const inputDirectory, const char* const inputShaderFileName, const char* const entryPoint, const GraphicsShaderType shaderType, const char* const outputDirectory)
 		{
-			Shader shader(_graphicDevice, shaderType);
+			Shader shader(_graphicsDevice, shaderType);
 			if (CompileShaderFromFile(inputDirectory, inputShaderFileName, entryPoint, outputDirectory, shaderType, false, shader) == false)
 			{
-				return GraphicObjectID::kInvalidGraphicObjectID;
+				return GraphicsObjectID::kInvalidGraphicsObjectID;
 			}
 			return AddShaderInternal(shaderType, shader);
 		}
 
-		GraphicObjectID ShaderPool::AddInputLayout(const GraphicObjectID& vertexShaderID, const TypeMetaData<TypeCustomData>& inputElementTypeMetaData)
+		GraphicsObjectID ShaderPool::AddInputLayout(const GraphicsObjectID& vertexShaderID, const TypeMetaData<TypeCustomData>& inputElementTypeMetaData)
 		{
-			const int32 vertexShaderIndex = GetShaderIndex(GraphicShaderType::VertexShader, vertexShaderID);
+			const int32 vertexShaderIndex = GetShaderIndex(GraphicsShaderType::VertexShader, vertexShaderID);
 			if (IsValidIndex(vertexShaderIndex) == false)
 			{
-				return GraphicObjectID::kInvalidGraphicObjectID;
+				return GraphicsObjectID::kInvalidGraphicsObjectID;
 			}
 
-			const Shader& vertexShader = AccessShaders(GraphicShaderType::VertexShader)[vertexShaderIndex];
+			const Shader& vertexShader = AccessShaders(GraphicsShaderType::VertexShader)[vertexShaderIndex];
 			return AddInputLayoutInternal(vertexShader, inputElementTypeMetaData);
 		}
 		
-		void ShaderPool::RemoveShader(const GraphicObjectID& shaderID)
+		void ShaderPool::RemoveShader(const GraphicsObjectID& shaderID)
 		{
 			if (shaderID.IsValid() == false)
 			{
@@ -183,7 +183,7 @@ namespace mint
 			}
 		}
 		
-		void ShaderPool::RemoveInputLayout(const GraphicObjectID& shaderID)
+		void ShaderPool::RemoveInputLayout(const GraphicsObjectID& shaderID)
 		{
 			if (shaderID.IsValid() == false)
 			{
@@ -202,64 +202,64 @@ namespace mint
 			}
 		}
 
-		GraphicObjectID ShaderPool::AddShaderInternal(const GraphicShaderType shaderType, Shader& shader)
+		GraphicsObjectID ShaderPool::AddShaderInternal(const GraphicsShaderType shaderType, Shader& shader)
 		{
 			if (CreateShaderInternal(shaderType, shader) == false)
 			{
-				return GraphicObjectID::kInvalidGraphicObjectID;
+				return GraphicsObjectID::kInvalidGraphicsObjectID;
 			}
 
 			shader.AssignIDXXX();
-			const GraphicObjectID graphicObjectID = shader.GetID();
+			const GraphicsObjectID graphicsObjectID = shader.GetID();
 			AccessShaders(shaderType).PushBack(std::move(shader));
-			QuickSort(AccessShaders(shaderType), GraphicObject::AscendingComparator());
-			return graphicObjectID;
+			QuickSort(AccessShaders(shaderType), GraphicsObject::AscendingComparator());
+			return graphicsObjectID;
 		}
 
-		GraphicObjectID ShaderPool::AddInputLayoutInternal(const Shader& vertexShader, const TypeMetaData<TypeCustomData>& inputElementTypeMetaData)
+		GraphicsObjectID ShaderPool::AddInputLayoutInternal(const Shader& vertexShader, const TypeMetaData<TypeCustomData>& inputElementTypeMetaData)
 		{
-			GraphicInputLayout inputLayout(_graphicDevice);
+			GraphicsInputLayout inputLayout(_graphicsDevice);
 			if (CreateInputLayoutInternal(vertexShader, inputElementTypeMetaData, inputLayout) == false)
 			{
-				return GraphicObjectID::kInvalidGraphicObjectID;
+				return GraphicsObjectID::kInvalidGraphicsObjectID;
 			}
 
 			inputLayout.AssignIDXXX();
-			const GraphicObjectID graphicObjectID = inputLayout.GetID();
+			const GraphicsObjectID graphicsObjectID = inputLayout.GetID();
 			_inputLayouts.PushBack(std::move(inputLayout));
-			QuickSort(_inputLayouts, GraphicObject::AscendingComparator());
-			return graphicObjectID;
+			QuickSort(_inputLayouts, GraphicsObject::AscendingComparator());
+			return graphicsObjectID;
 		}
 
-		bool ShaderPool::CreateShaderInternal(const GraphicShaderType shaderType, Shader& shader)
+		bool ShaderPool::CreateShaderInternal(const GraphicsShaderType shaderType, Shader& shader)
 		{
 			switch (shaderType)
 			{
-			case GraphicShaderType::VertexShader:
+			case GraphicsShaderType::VertexShader:
 			{
-				if (FAILED(_graphicDevice.GetDxDevice()->CreateVertexShader(shader._shaderBlob->GetBufferPointer(), shader._shaderBlob->GetBufferSize(), nullptr, reinterpret_cast<ID3D11VertexShader**>(shader._shader.ReleaseAndGetAddressOf()))))
+				if (FAILED(_graphicsDevice.GetDxDevice()->CreateVertexShader(shader._shaderBlob->GetBufferPointer(), shader._shaderBlob->GetBufferSize(), nullptr, reinterpret_cast<ID3D11VertexShader**>(shader._shader.ReleaseAndGetAddressOf()))))
 				{
 					return false;
 				}
 				return true;
 			}
-			case GraphicShaderType::GeometryShader:
+			case GraphicsShaderType::GeometryShader:
 			{
-				if (FAILED(_graphicDevice.GetDxDevice()->CreateGeometryShader(shader._shaderBlob->GetBufferPointer(), shader._shaderBlob->GetBufferSize(), nullptr, reinterpret_cast<ID3D11GeometryShader**>(shader._shader.ReleaseAndGetAddressOf()))))
+				if (FAILED(_graphicsDevice.GetDxDevice()->CreateGeometryShader(shader._shaderBlob->GetBufferPointer(), shader._shaderBlob->GetBufferSize(), nullptr, reinterpret_cast<ID3D11GeometryShader**>(shader._shader.ReleaseAndGetAddressOf()))))
 				{
 					return false;
 				}
 				return true;
 			}
-			case GraphicShaderType::PixelShader:
+			case GraphicsShaderType::PixelShader:
 			{
-				if (FAILED(_graphicDevice.GetDxDevice()->CreatePixelShader(shader._shaderBlob->GetBufferPointer(), shader._shaderBlob->GetBufferSize(), nullptr, reinterpret_cast<ID3D11PixelShader**>(shader._shader.ReleaseAndGetAddressOf()))))
+				if (FAILED(_graphicsDevice.GetDxDevice()->CreatePixelShader(shader._shaderBlob->GetBufferPointer(), shader._shaderBlob->GetBufferSize(), nullptr, reinterpret_cast<ID3D11PixelShader**>(shader._shader.ReleaseAndGetAddressOf()))))
 				{
 					return false;
 				}
 				return true;
 			}
-			case GraphicShaderType::COUNT:
+			case GraphicsShaderType::COUNT:
 				break;
 			default:
 				break;
@@ -267,7 +267,7 @@ namespace mint
 			return false;
 		}
 
-		bool ShaderPool::CreateInputLayoutInternal(const Shader& vertexShader, const TypeMetaData<TypeCustomData>& inputElementTypeMetaData, GraphicInputLayout& outInputLayout)
+		bool ShaderPool::CreateInputLayoutInternal(const Shader& vertexShader, const TypeMetaData<TypeCustomData>& inputElementTypeMetaData, GraphicsInputLayout& outInputLayout)
 		{
 			outInputLayout._inputElementSet._semanticNameArray.Clear();
 			outInputLayout._inputElementSet._inputElementDescriptorArray.Clear();
@@ -293,7 +293,7 @@ namespace mint
 				}
 			}
 
-			if (FAILED(_graphicDevice.GetDxDevice()->CreateInputLayout(outInputLayout._inputElementSet._inputElementDescriptorArray.Data(), static_cast<UINT>(outInputLayout._inputElementSet._inputElementDescriptorArray.Size()),
+			if (FAILED(_graphicsDevice.GetDxDevice()->CreateInputLayout(outInputLayout._inputElementSet._inputElementDescriptorArray.Data(), static_cast<UINT>(outInputLayout._inputElementSet._inputElementDescriptorArray.Size()),
 				vertexShader._shaderBlob->GetBufferPointer(), vertexShader._shaderBlob->GetBufferSize(), outInputLayout._inputLayout.ReleaseAndGetAddressOf())))
 			{
 				MINT_LOG_ERROR("VertexShader [[%s]] 의 InputLayout 생성에 실패했습니다. Input 자료형 으로 [[%s]] 을 쓰는게 맞는지 확인해 주세요.", vertexShader._hlslFileName.CString(), inputElementTypeMetaData.GetTypeName().CString());
@@ -322,7 +322,7 @@ namespace mint
 			inputElementSet._inputElementDescriptorArray.PushBack(inputElementDescriptor);
 		}
 
-		bool ShaderPool::CompileShaderFromFile(const char* const inputDirectory, const char* const inputShaderFileName, const char* const entryPoint, const char* const outputDirectory, const GraphicShaderType shaderType, const bool forceCompilation, Shader& inoutShader)
+		bool ShaderPool::CompileShaderFromFile(const char* const inputDirectory, const char* const inputShaderFileName, const char* const entryPoint, const char* const outputDirectory, const GraphicsShaderType shaderType, const bool forceCompilation, Shader& inoutShader)
 		{
 			StringA inputShaderFilePath{ inputDirectory };
 			inputShaderFilePath += inputShaderFileName;
@@ -352,7 +352,7 @@ namespace mint
 			return CompileShaderFromFile(inputShaderFilePath.CString(), entryPoint, outputShaderFilePath.CString(), shaderType, forceCompilation, inoutShader);
 		}
 
-		bool ShaderPool::CompileShaderFromFile(const char* const inputShaderFilePath, const char* const entryPoint, const char* const outputShaderFilePath, const GraphicShaderType shaderType, const bool forceCompilation, Shader& inoutShader)
+		bool ShaderPool::CompileShaderFromFile(const char* const inputShaderFilePath, const char* const entryPoint, const char* const outputShaderFilePath, const GraphicsShaderType shaderType, const bool forceCompilation, Shader& inoutShader)
 		{
 			if (StringUtil::Contains(inputShaderFilePath, ".hlsl") == false)
 			{
@@ -385,7 +385,7 @@ namespace mint
 			return true;
 		}
 
-		bool ShaderPool::CompileShaderInternalXXX(const GraphicShaderType shaderType, const ShaderCompileParam& compileParam, const char* const entryPoint, ID3D10Blob** outBlob)
+		bool ShaderPool::CompileShaderInternalXXX(const GraphicsShaderType shaderType, const ShaderCompileParam& compileParam, const char* const entryPoint, ID3D10Blob** outBlob)
 		{
 			StackStringA<20> version;
 			makeShaderVersion(version, shaderType, _shaderVersion);
@@ -434,11 +434,11 @@ namespace mint
 
 		void ShaderPool::RecompileAllShaders()
 		{
-			const uint32 shaderTypeCount = static_cast<uint32>(GraphicShaderType::COUNT);
+			const uint32 shaderTypeCount = static_cast<uint32>(GraphicsShaderType::COUNT);
 			for (uint32 shaderTypeIndex = 0; shaderTypeIndex < shaderTypeCount; ++shaderTypeIndex)
 			{
-				const GraphicShaderType shaderType = static_cast<GraphicShaderType>(shaderTypeIndex);
-				const GraphicObjectID& boundShaderID = AccessBoundShaderID(shaderType);
+				const GraphicsShaderType shaderType = static_cast<GraphicsShaderType>(shaderTypeIndex);
+				const GraphicsObjectID& boundShaderID = AccessBoundShaderID(shaderType);
 				if (boundShaderID.IsValid())
 				{
 					const int32 boundShaderIndex = GetShaderIndex(shaderType, boundShaderID);
@@ -456,8 +456,8 @@ namespace mint
 
 			for (uint32 shaderTypeIndex = 0; shaderTypeIndex < shaderTypeCount; ++shaderTypeIndex)
 			{
-				const GraphicShaderType shaderType = static_cast<GraphicShaderType>(shaderTypeIndex);
-				const GraphicObjectID& boundShaderID = AccessBoundShaderID(shaderType);
+				const GraphicsShaderType shaderType = static_cast<GraphicsShaderType>(shaderTypeIndex);
+				const GraphicsObjectID& boundShaderID = AccessBoundShaderID(shaderType);
 				if (boundShaderID.IsValid())
 				{
 					const int32 boundShaderIndex = GetShaderIndex(shaderType, boundShaderID);
@@ -477,9 +477,9 @@ namespace mint
 			MINT_LOG_ERROR("Shader Compile Error\n\n%s", errorMessages.CString());
 		}
 
-		void ShaderPool::BindShaderIfNot(const GraphicShaderType shaderType, const GraphicObjectID& objectID)
+		void ShaderPool::BindShaderIfNot(const GraphicsShaderType shaderType, const GraphicsObjectID& objectID)
 		{
-			GraphicObjectID& boundShaderID = AccessBoundShaderID(shaderType);
+			GraphicsObjectID& boundShaderID = AccessBoundShaderID(shaderType);
 			if (boundShaderID == objectID)
 			{
 				return;
@@ -495,7 +495,7 @@ namespace mint
 			AccessShaders(shaderType)[shaderIndex].Bind();
 		}
 
-		void ShaderPool::BindInputLayoutIfNot(const GraphicObjectID& objectID)
+		void ShaderPool::BindInputLayoutIfNot(const GraphicsObjectID& objectID)
 		{
 			if (_boundInputLayoutID == objectID)
 			{
@@ -512,14 +512,14 @@ namespace mint
 			_boundInputLayoutID = objectID;
 		}
 
-		void ShaderPool::UnbindShader(const GraphicShaderType shaderType)
+		void ShaderPool::UnbindShader(const GraphicsShaderType shaderType)
 		{
-			if (shaderType == GraphicShaderType::COUNT)
+			if (shaderType == GraphicsShaderType::COUNT)
 			{
 				return;
 			}
 
-			GraphicObjectID& boundShaderID = AccessBoundShaderID(shaderType);
+			GraphicsObjectID& boundShaderID = AccessBoundShaderID(shaderType);
 			if (boundShaderID.IsValid() == false)
 			{
 				return;
@@ -536,40 +536,40 @@ namespace mint
 			AccessShaders(shaderType)[shaderIndex].Unbind();
 		}
 
-		int32 ShaderPool::GetShaderIndex(const GraphicShaderType shaderType, const GraphicObjectID& objectID) const
+		int32 ShaderPool::GetShaderIndex(const GraphicsShaderType shaderType, const GraphicsObjectID& objectID) const
 		{
-			MINT_ASSERT(shaderType != GraphicShaderType::COUNT, "Invalid parameter - check ShaderType");
-			MINT_ASSERT(objectID.IsObjectType(GraphicObjectType::Shader) == true, "Invalid parameter - check ObjectType");
-			return BinarySearch(GetShaders(shaderType), objectID, GraphicObject::Evaluator());
+			MINT_ASSERT(shaderType != GraphicsShaderType::COUNT, "Invalid parameter - check ShaderType");
+			MINT_ASSERT(objectID.IsObjectType(GraphicsObjectType::Shader) == true, "Invalid parameter - check ObjectType");
+			return BinarySearch(GetShaders(shaderType), objectID, GraphicsObject::Evaluator());
 		}
 
-		int32 ShaderPool::GetInputLayoutIndex(const GraphicObjectID& objectID) const
+		int32 ShaderPool::GetInputLayoutIndex(const GraphicsObjectID& objectID) const
 		{
-			MINT_ASSERT(objectID.IsObjectType(GraphicObjectType::InputLayout) == true, "Invalid parameter - check ObjectType");
-			return BinarySearch(_inputLayouts, objectID, GraphicObject::Evaluator());
+			MINT_ASSERT(objectID.IsObjectType(GraphicsObjectType::InputLayout) == true, "Invalid parameter - check ObjectType");
+			return BinarySearch(_inputLayouts, objectID, GraphicsObject::Evaluator());
 		}
 
-		uint32 ShaderPool::GetShaderCount(const GraphicShaderType shaderType) const
+		uint32 ShaderPool::GetShaderCount(const GraphicsShaderType shaderType) const
 		{
-			MINT_ASSERT(shaderType != GraphicShaderType::COUNT, "Invalid parameter - check ShaderType");
+			MINT_ASSERT(shaderType != GraphicsShaderType::COUNT, "Invalid parameter - check ShaderType");
 			return GetShaders(shaderType).Size();
 		}
 
-		GraphicObjectID& ShaderPool::AccessBoundShaderID(const GraphicShaderType shaderType)
+		GraphicsObjectID& ShaderPool::AccessBoundShaderID(const GraphicsShaderType shaderType)
 		{
-			MINT_ASSERT(shaderType != GraphicShaderType::COUNT, "Invalid parameter - check ShaderType");
+			MINT_ASSERT(shaderType != GraphicsShaderType::COUNT, "Invalid parameter - check ShaderType");
 			const uint32 shaderTypeIndex = static_cast<uint32>(shaderType);
 			return _boundShaderIDPerType[shaderTypeIndex];
 		}
 
-		const Vector<Shader>& ShaderPool::GetShaders(const GraphicShaderType shaderType) const
+		const Vector<Shader>& ShaderPool::GetShaders(const GraphicsShaderType shaderType) const
 		{
-			MINT_ASSERT(shaderType != GraphicShaderType::COUNT, "Invalid parameter - check ShaderType");
+			MINT_ASSERT(shaderType != GraphicsShaderType::COUNT, "Invalid parameter - check ShaderType");
 			const uint32 shaderTypeIndex = static_cast<uint32>(shaderType);
 			return _shadersPerType[shaderTypeIndex];
 		}
 
-		Vector<Shader>& ShaderPool::AccessShaders(const GraphicShaderType shaderType)
+		Vector<Shader>& ShaderPool::AccessShaders(const GraphicsShaderType shaderType)
 		{
 			return const_cast<Vector<Shader>&>(GetShaders(shaderType));
 		}

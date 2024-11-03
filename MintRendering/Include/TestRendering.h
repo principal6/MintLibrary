@@ -9,7 +9,7 @@ namespace mint
 {
 	namespace Rendering
 	{
-		class GraphicDevice;
+		class GraphicsDevice;
 		class Plotter;
 		class MathExpressionRenderer;
 	}
@@ -17,7 +17,7 @@ namespace mint
 
 	namespace TestRendering
 	{
-		bool Test_SplineGenerator(Rendering::GraphicDevice& graphicDevice);
+		bool Test_SplineGenerator(Rendering::GraphicsDevice& graphicsDevice);
 		bool Test_Plotter(Rendering::Plotter& plotter);
 		bool Test_MathExpressionRenderer(Rendering::MathExpressionRenderer& mathExpressionRenderer);
 	}

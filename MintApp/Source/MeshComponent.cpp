@@ -2,7 +2,7 @@
 
 #include <MintContainer/Include/Vector.hpp>
 
-#include <MintRenderingBase/Include/GraphicResource.h>
+#include <MintRenderingBase/Include/GraphicsResource.h>
 
 
 namespace mint

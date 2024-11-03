@@ -8,7 +8,7 @@
 #include <MintContainer/Include/OwnPtr.h>
 #include <MintContainer/Include/SharedPtr.h>
 #include <MintContainer/Include/String.h>
-#include <MintRenderingBase/Include/GraphicObject.h>
+#include <MintRenderingBase/Include/GraphicsObject.h>
 #include <MintRenderingBase/Include/SpriteAnimation.h>
 #include <MintPlatform/Include/XML.h>
 #include <MintPhysics/Include/Intersection.h>
@@ -26,8 +26,8 @@ namespace mint
 
 	namespace Rendering
 	{
-		class GraphicDevice;
-		class GraphicObjectID;
+		class GraphicsDevice;
+		class GraphicsObjectID;
 		class ImageLoader;
 		class ImageRenderer;
 	}
@@ -50,16 +50,16 @@ namespace mint
 
 		public:
 			Image() = default;
-			Image(Rendering::GraphicObjectID graphicObjectID) : _graphicObjectID{ graphicObjectID } { __noop; }
+			Image(Rendering::GraphicsObjectID graphicsObjectID) : _graphicsObjectID{ graphicsObjectID } { __noop; }
 			~Image() = default;
 
 		public:
 			// TEMP
 			void Draw(const Float2& centerPosition, const Float2& size);
-			const Rendering::GraphicObjectID& GetGraphicObjectID() const { return _graphicObjectID; }
+			const Rendering::GraphicsObjectID& GetGraphicsObjectID() const { return _graphicsObjectID; }
 
 		private:
-			Rendering::GraphicObjectID _graphicObjectID;
+			Rendering::GraphicsObjectID _graphicsObjectID;
 
 			// TEMP
 			Rendering::ImageRenderer* _imageRenderer;
@@ -232,7 +232,7 @@ namespace mint
 			void SpawnEffect(const Float2& position);
 
 		public:
-			Rendering::GraphicDevice& GetGraphicDevice();
+			Rendering::GraphicsDevice& GetGraphicsDevice();
 			const Physics::World& GetPhysicsWorld() const;
 			float GetPhysicsStepDeltaTime() const { return kPhysicsStepDeltaTime; }
 
@@ -251,7 +251,7 @@ namespace mint
 
 		protected:
 			OwnPtr<Window> _window;
-			OwnPtr<Rendering::GraphicDevice> _graphicDevice;
+			OwnPtr<Rendering::GraphicsDevice> _graphicsDevice;
 			OwnPtr<Rendering::ImageLoader> _imageLoader;
 
 		protected:

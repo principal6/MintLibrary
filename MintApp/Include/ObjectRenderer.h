@@ -19,7 +19,7 @@ namespace mint
 
 	namespace Rendering
 	{
-		class GraphicDevice;
+		class GraphicsDevice;
 		struct SB_Material;
 	}
 }
@@ -29,7 +29,7 @@ namespace mint
 	class ObjectRenderer final
 	{
 	public:
-		ObjectRenderer(Rendering::GraphicDevice& graphicDevice);
+		ObjectRenderer(Rendering::GraphicsDevice& graphicsDevice);
 		~ObjectRenderer();
 
 	public:
@@ -39,7 +39,7 @@ namespace mint
 		void Initialize() noexcept;
 
 	private:
-		Rendering::GraphicDevice& _graphicDevice;
+		Rendering::GraphicsDevice& _graphicsDevice;
 
 	private:
 		Rendering::LowLevelRenderer<Rendering::VS_INPUT> _lowLevelRenderer;
@@ -47,12 +47,12 @@ namespace mint
 		Vector<Rendering::SB_Material> _sbMaterialDatas;
 
 	private:
-		Rendering::GraphicObjectID _inputLayoutDefaultID;
-		Rendering::GraphicObjectID _vsDefaultID;
-		Rendering::GraphicObjectID _gsNormalID;
-		Rendering::GraphicObjectID _gsTriangleEdgeID;
-		Rendering::GraphicObjectID _psDefaultID;
-		Rendering::GraphicObjectID _psTexCoordAsColorID;
+		Rendering::GraphicsObjectID _inputLayoutDefaultID;
+		Rendering::GraphicsObjectID _vsDefaultID;
+		Rendering::GraphicsObjectID _gsNormalID;
+		Rendering::GraphicsObjectID _gsTriangleEdgeID;
+		Rendering::GraphicsObjectID _psDefaultID;
+		Rendering::GraphicsObjectID _psTexCoordAsColorID;
 	};
 }
 

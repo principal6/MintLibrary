@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 
-#ifndef _MINT_RENDERING_BASE_GRAPHIC_DEVICE_H_
-#define _MINT_RENDERING_BASE_GRAPHIC_DEVICE_H_
+#ifndef _MINT_RENDERING_BASE_GRAPHICS_DEVICE_H_
+#define _MINT_RENDERING_BASE_GRAPHICS_DEVICE_H_
 
 
 #include <MintCommon/Include/CommonDefinitions.h>
@@ -12,7 +12,7 @@
 
 #include <MintRenderingBase/Include/DxShaderHeaderMemory.h>
 #include <MintRenderingBase/Include/Shader.h>
-#include <MintRenderingBase/Include/GraphicResource.h>
+#include <MintRenderingBase/Include/GraphicsResource.h>
 #include <MintRenderingBase/Include/LowLevelRenderer.h>
 #include <MintRenderingBase/Include/ShapeRendererContext.h>
 
@@ -40,7 +40,7 @@ namespace mint
 		class SafeResourceMapper
 		{
 		public:
-			SafeResourceMapper(GraphicDevice& graphicDevice, ID3D11Resource* const resource, const uint32 subresource);
+			SafeResourceMapper(GraphicsDevice& graphicsDevice, ID3D11Resource* const resource, const uint32 subresource);
 			~SafeResourceMapper();
 
 		public:
@@ -48,25 +48,25 @@ namespace mint
 			void Set(const void* const data, const uint32 size) noexcept;
 
 		private:
-			GraphicDevice& _graphicDevice;
+			GraphicsDevice& _graphicsDevice;
 			ID3D11Resource* const _resource;
 			const uint32 _subresource;
 			D3D11_MAPPED_SUBRESOURCE _mappedSubresource;
 		};
 
 
-		class GraphicDevice final
+		class GraphicsDevice final
 		{
 		public:
 			class StateManager;
 			friend SafeResourceMapper;
 
 		public:
-			static GraphicDevice& GetInvalidInstance();
+			static GraphicsDevice& GetInvalidInstance();
 
 		public:
-			GraphicDevice(Window& window, bool usesMSAA);
-			~GraphicDevice() = default;
+			GraphicsDevice(Window& window, bool usesMSAA);
+			~GraphicsDevice() = default;
 
 		public:
 			bool Initialize();
@@ -107,7 +107,7 @@ namespace mint
 
 		public:
 			ShaderPool& GetShaderPool() noexcept;
-			GraphicResourcePool& GetResourcePool() noexcept;
+			GraphicsResourcePool& GetResourcePool() noexcept;
 			ShapeRendererContext& GetShapeRendererContext() noexcept;
 			const Language::CppHlsl::Interpreter& GetCppHlslSteamData() const noexcept;
 			const Language::CppHlsl::Interpreter& GetCppHlslConstantBuffers() const noexcept;
@@ -116,7 +116,7 @@ namespace mint
 			class StateManager
 			{
 			public:
-				StateManager(GraphicDevice& graphicDevice);
+				StateManager(GraphicsDevice& graphicsDevice);
 				~StateManager() = default;
 
 			public: // IA
@@ -136,11 +136,11 @@ namespace mint
 				void SetPSShader(ID3D11PixelShader* const shader) noexcept;
 
 			public: // Resources
-				void SetShaderResources(GraphicShaderType graphicShaderType, const GraphicResource* resource, uint32 bindingSlot) noexcept;
-				void SetConstantBuffers(GraphicShaderType graphicShaderType, const GraphicResource* constantBuffer, uint32 bindingSlot);
+				void SetShaderResources(GraphicsShaderType graphicsShaderType, const GraphicsResource* resource, uint32 bindingSlot) noexcept;
+				void SetConstantBuffers(GraphicsShaderType graphicsShaderType, const GraphicsResource* constantBuffer, uint32 bindingSlot);
 
 			private:
-				GraphicDevice& _graphicDevice;
+				GraphicsDevice& _graphicsDevice;
 
 			private: // IA
 				RenderingPrimitive _iaRenderingPrimitive;
@@ -157,21 +157,21 @@ namespace mint
 				ID3D11PixelShader* _psShader;
 
 			private: // Resources
-				Vector<GraphicObjectID> _vsShaderResourceIDs;
-				Vector<GraphicObjectID> _gsShaderResourceIDs;
-				Vector<GraphicObjectID> _psShaderResourceIDs;
+				Vector<GraphicsObjectID> _vsShaderResourceIDs;
+				Vector<GraphicsObjectID> _gsShaderResourceIDs;
+				Vector<GraphicsObjectID> _psShaderResourceIDs;
 
 			private: // Constant Buffers
-				Vector<GraphicObjectID> _vsConstantBufferIDs;
-				Vector<GraphicObjectID> _gsConstantBufferIDs;
-				Vector<GraphicObjectID> _psConstantBufferIDs;
+				Vector<GraphicsObjectID> _vsConstantBufferIDs;
+				Vector<GraphicsObjectID> _gsConstantBufferIDs;
+				Vector<GraphicsObjectID> _psConstantBufferIDs;
 			};
 			StateManager& GetStateManager() noexcept;
 
 		public: // Common buffers
-			GraphicObjectID GetCommonCBTransformID() const noexcept;
-			GraphicObjectID GetCommonSBTransformID() const noexcept;
-			GraphicObjectID GetCommonSBMaterialID() const noexcept;
+			GraphicsObjectID GetCommonCBTransformID() const noexcept;
+			GraphicsObjectID GetCommonSBTransformID() const noexcept;
+			GraphicsObjectID GetCommonSBMaterialID() const noexcept;
 
 		public:
 			void SetViewProjectionMatrix(const Float4x4& viewMatrix, const Float4x4& projectionMatrix) noexcept;
@@ -220,16 +220,16 @@ namespace mint
 		private:
 			DxShaderHeaderMemory _shaderHeaderMemory;
 			ShaderPool _shaderPool;
-			GraphicResourcePool _resourcePool;
+			GraphicsResourcePool _resourcePool;
 
 		private:
 			CB_View _cbViewData;
-			GraphicObjectID _cbViewID;
+			GraphicsObjectID _cbViewID;
 
 		private: // Common buffers
-			GraphicObjectID _cbTransformID;
-			GraphicObjectID _sbTransformID;
-			GraphicObjectID _sbMaterialID;
+			GraphicsObjectID _cbTransformID;
+			GraphicsObjectID _sbTransformID;
+			GraphicsObjectID _sbMaterialID;
 
 		private:
 			ComPtr<ID3D11SamplerState> _pointSamplerState;
@@ -253,7 +253,7 @@ namespace mint
 }
 
 
-#include <MintRenderingBase/Include/GraphicDevice.inl>
+#include <MintRenderingBase/Include/GraphicsDevice.inl>
 
 
-#endif // !_MINT_RENDERING_BASE_GRAPHIC_DEVICE_H_
+#endif // !_MINT_RENDERING_BASE_GRAPHICS_DEVICE_H_

@@ -2,7 +2,7 @@
 
 #include <MintContainer/Include/Vector.hpp>
 
-#include <MintRenderingBase/Include/GraphicDevice.h>
+#include <MintRenderingBase/Include/GraphicsDevice.h>
 #include <MintRenderingBase/Include/LowLevelRenderer.hpp>
 
 #include <MintApp/Include/Object.h>
@@ -12,9 +12,9 @@
 
 namespace mint
 {
-	ObjectRenderer::ObjectRenderer(Rendering::GraphicDevice& graphicDevice)
-		: _graphicDevice{ graphicDevice }
-		, _lowLevelRenderer{ graphicDevice }
+	ObjectRenderer::ObjectRenderer(Rendering::GraphicsDevice& graphicsDevice)
+		: _graphicsDevice{ graphicsDevice }
+		, _lowLevelRenderer{ graphicsDevice }
 	{
 		Initialize();
 	}
@@ -28,20 +28,20 @@ namespace mint
 	{
 		using namespace Rendering;
 
-		ShaderPool& shaderPool = _graphicDevice.GetShaderPool();
-		GraphicResourcePool& resourcePool = _graphicDevice.GetResourcePool();
+		ShaderPool& shaderPool = _graphicsDevice.GetShaderPool();
+		GraphicsResourcePool& resourcePool = _graphicsDevice.GetResourcePool();
 		const Vector<ObjectComponent*>& meshComponents = objectPool.GetMeshComponents();
 		if (meshComponents.IsEmpty() == false)
 		{
 			shaderPool.BindInputLayoutIfNot(_inputLayoutDefaultID);
-			shaderPool.BindShaderIfNot(GraphicShaderType::VertexShader, _vsDefaultID);
+			shaderPool.BindShaderIfNot(GraphicsShaderType::VertexShader, _vsDefaultID);
 
-			GraphicResource& cbTransform = resourcePool.GetResource(_graphicDevice.GetCommonCBTransformID());
-			cbTransform.BindToShader(GraphicShaderType::VertexShader, cbTransform.GetRegisterIndex());
-			cbTransform.BindToShader(GraphicShaderType::GeometryShader, cbTransform.GetRegisterIndex());
+			GraphicsResource& cbTransform = resourcePool.GetResource(_graphicsDevice.GetCommonCBTransformID());
+			cbTransform.BindToShader(GraphicsShaderType::VertexShader, cbTransform.GetRegisterIndex());
+			cbTransform.BindToShader(GraphicsShaderType::GeometryShader, cbTransform.GetRegisterIndex());
 
-			GraphicResource& sbMaterial = resourcePool.GetResource(_graphicDevice.GetCommonSBMaterialID());
-			sbMaterial.BindToShader(GraphicShaderType::PixelShader, sbMaterial.GetRegisterIndex());
+			GraphicsResource& sbMaterial = resourcePool.GetResource(_graphicsDevice.GetCommonSBMaterialID());
+			sbMaterial.BindToShader(GraphicsShaderType::PixelShader, sbMaterial.GetRegisterIndex());
 
 			SB_Material sbMaterialData;
 			const uint32 meshComponentCount = meshComponents.Size();
@@ -57,30 +57,30 @@ namespace mint
 				sbMaterialData._diffuseColor = Color::kBlue;
 				sbMaterial.UpdateBuffer(&sbMaterialData, 1);
 
-				shaderPool.BindShaderIfNot(GraphicShaderType::PixelShader, _psDefaultID);
-				shaderPool.UnbindShader(GraphicShaderType::GeometryShader);
+				shaderPool.BindShaderIfNot(GraphicsShaderType::PixelShader, _psDefaultID);
+				shaderPool.UnbindShader(GraphicsShaderType::GeometryShader);
 				_lowLevelRenderer.Render(RenderingPrimitive::TriangleList);
 
 				if (meshComponent->ShouldDrawNormals() == true)
 				{
-					shaderPool.BindShaderIfNot(GraphicShaderType::GeometryShader, _gsNormalID);
-					shaderPool.BindShaderIfNot(GraphicShaderType::PixelShader, _psTexCoordAsColorID);
+					shaderPool.BindShaderIfNot(GraphicsShaderType::GeometryShader, _gsNormalID);
+					shaderPool.BindShaderIfNot(GraphicsShaderType::PixelShader, _psTexCoordAsColorID);
 					_lowLevelRenderer.Render(RenderingPrimitive::LineList);
 				}
 
 				if (meshComponent->ShouldDrawEdges() == true)
 				{
-					shaderPool.BindShaderIfNot(GraphicShaderType::GeometryShader, _gsTriangleEdgeID);
-					shaderPool.BindShaderIfNot(GraphicShaderType::PixelShader, _psTexCoordAsColorID);
+					shaderPool.BindShaderIfNot(GraphicsShaderType::GeometryShader, _gsTriangleEdgeID);
+					shaderPool.BindShaderIfNot(GraphicsShaderType::PixelShader, _psTexCoordAsColorID);
 					_lowLevelRenderer.Render(RenderingPrimitive::TriangleList);
 				}
 
 				_lowLevelRenderer.Flush();
 			}
 
-			shaderPool.UnbindShader(GraphicShaderType::VertexShader);
-			shaderPool.UnbindShader(GraphicShaderType::GeometryShader);
-			shaderPool.UnbindShader(GraphicShaderType::PixelShader);
+			shaderPool.UnbindShader(GraphicsShaderType::VertexShader);
+			shaderPool.UnbindShader(GraphicsShaderType::GeometryShader);
+			shaderPool.UnbindShader(GraphicsShaderType::PixelShader);
 
 			cbTransform.UnbindFromShader();
 			sbMaterial.UnbindFromShader();
@@ -89,7 +89,7 @@ namespace mint
 		const Vector<ObjectComponent*>& mesh2DComponents = objectPool.GetMesh2DComponents();
 		if (mesh2DComponents.IsEmpty() == false)
 		{
-			ShapeRendererContext& shapeRendererContext = _graphicDevice.GetShapeRendererContext();
+			ShapeRendererContext& shapeRendererContext = _graphicsDevice.GetShapeRendererContext();
 			const uint32 mesh2DComponentCount = mesh2DComponents.Size();
 			for (uint32 i = 0; i < mesh2DComponentCount; ++i)
 			{
@@ -107,17 +107,17 @@ namespace mint
 		using namespace Rendering;
 		using namespace Language;
 
-		ShaderPool& shaderPool = _graphicDevice.GetShaderPool();
-		_vsDefaultID = shaderPool.AddShader(Path::MakeIncludeAssetPath("Hlsl/"), "VsDefault.hlsl", "main", GraphicShaderType::VertexShader, Path::MakeIncludeAssetPath("HlslBinary/"));
+		ShaderPool& shaderPool = _graphicsDevice.GetShaderPool();
+		_vsDefaultID = shaderPool.AddShader(Path::MakeIncludeAssetPath("Hlsl/"), "VsDefault.hlsl", "main", GraphicsShaderType::VertexShader, Path::MakeIncludeAssetPath("HlslBinary/"));
 
-		const CppHlsl::Interpreter& interpreter = _graphicDevice.GetCppHlslSteamData();
+		const CppHlsl::Interpreter& interpreter = _graphicsDevice.GetCppHlslSteamData();
 		const TypeMetaData<CppHlsl::TypeCustomData>& vsInputTypeMetaData = interpreter.GetTypeMetaData(typeid(VS_INPUT));
 		_inputLayoutDefaultID = shaderPool.AddInputLayout(_vsDefaultID, vsInputTypeMetaData);
 
-		_psDefaultID = shaderPool.AddShader(Path::MakeIncludeAssetPath("Hlsl/"), "PsDefault.hlsl", "main", GraphicShaderType::PixelShader, Path::MakeIncludeAssetPath("HlslBinary/"));
+		_psDefaultID = shaderPool.AddShader(Path::MakeIncludeAssetPath("Hlsl/"), "PsDefault.hlsl", "main", GraphicsShaderType::PixelShader, Path::MakeIncludeAssetPath("HlslBinary/"));
 
-		_gsNormalID = shaderPool.AddShader(Path::MakeIncludeAssetPath("Hlsl/"), "GsNormal.hlsl", "main", GraphicShaderType::GeometryShader, Path::MakeIncludeAssetPath("HlslBinary/"));
-		_gsTriangleEdgeID = shaderPool.AddShader(Path::MakeIncludeAssetPath("Hlsl/"), "GsTriangleEdge.hlsl", "main", GraphicShaderType::GeometryShader, Path::MakeIncludeAssetPath("HlslBinary/"));
-		_psTexCoordAsColorID = shaderPool.AddShader(Path::MakeIncludeAssetPath("Hlsl/"), "PsTexCoordAsColor.hlsl", "main", GraphicShaderType::PixelShader, Path::MakeIncludeAssetPath("HlslBinary/"));
+		_gsNormalID = shaderPool.AddShader(Path::MakeIncludeAssetPath("Hlsl/"), "GsNormal.hlsl", "main", GraphicsShaderType::GeometryShader, Path::MakeIncludeAssetPath("HlslBinary/"));
+		_gsTriangleEdgeID = shaderPool.AddShader(Path::MakeIncludeAssetPath("Hlsl/"), "GsTriangleEdge.hlsl", "main", GraphicsShaderType::GeometryShader, Path::MakeIncludeAssetPath("HlslBinary/"));
+		_psTexCoordAsColorID = shaderPool.AddShader(Path::MakeIncludeAssetPath("Hlsl/"), "PsTexCoordAsColor.hlsl", "main", GraphicsShaderType::PixelShader, Path::MakeIncludeAssetPath("HlslBinary/"));
 	}
 }

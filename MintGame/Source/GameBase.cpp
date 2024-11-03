@@ -1,7 +1,7 @@
 #include <MintGame/Include/GameBase.h>
 #include <MintContainer/Include/StringUtil.hpp>
 #include <MintPlatform/Include/Window.h>
-#include <MintRenderingBase/Include/GraphicDevice.h>
+#include <MintRenderingBase/Include/GraphicsDevice.h>
 #include <MintRenderingBase/Include/ImageLoader.h>
 #include <MintRenderingBase/Include/SpriteAnimation.h>
 #include <MintRendering/Include/ImageRenderer.h>
@@ -322,16 +322,16 @@ namespace mint
 				MINT_NEVER;
 			}
 
-			_graphicDevice.Assign(MINT_NEW(Rendering::GraphicDevice, *_window, true));
-			if (_graphicDevice->Initialize() == false)
+			_graphicsDevice.Assign(MINT_NEW(Rendering::GraphicsDevice, *_window, true));
+			if (_graphicsDevice->Initialize() == false)
 			{
 				MINT_NEVER;
 			}
 
-			_characterRenderer.Assign(MINT_NEW(Rendering::ImageRenderer, *_graphicDevice, kCharacterTextureSlot));
-			_mapRenderer.Assign(MINT_NEW(Rendering::ImageRenderer, *_graphicDevice, kTileMapTextureSlot));
-			_objectRenderer.Assign(MINT_NEW(Rendering::ImageRenderer, *_graphicDevice, kObjectTextureSlot));
-			_effectRenderer.Assign(MINT_NEW(Rendering::ImageRenderer, *_graphicDevice, kEffectTextureSlot));
+			_characterRenderer.Assign(MINT_NEW(Rendering::ImageRenderer, *_graphicsDevice, kCharacterTextureSlot));
+			_mapRenderer.Assign(MINT_NEW(Rendering::ImageRenderer, *_graphicsDevice, kTileMapTextureSlot));
+			_objectRenderer.Assign(MINT_NEW(Rendering::ImageRenderer, *_graphicsDevice, kObjectTextureSlot));
+			_effectRenderer.Assign(MINT_NEW(Rendering::ImageRenderer, *_graphicsDevice, kEffectTextureSlot));
 
 			_audioSystem.Assign(MINT_NEW(AudioSystem));
 
@@ -343,7 +343,7 @@ namespace mint
 
 			_effectImage = LoadImageFile("Assets/Effect_PuffAndStars_1_120x109.png");
 			_effectImage._imageRenderer = _effectRenderer.Get();
-			GetGraphicDevice().GetResourcePool().BindToShader(_effectImage.GetGraphicObjectID(), Rendering::GraphicShaderType::PixelShader, kEffectTextureSlot);
+			GetGraphicsDevice().GetResourcePool().BindToShader(_effectImage.GetGraphicsObjectID(), Rendering::GraphicsShaderType::PixelShader, kEffectTextureSlot);
 			{
 				const float kTimePerFrame = 0.25f;
 				const Float2 kSizeInTexture{ 120.0f, 109.0f };
@@ -437,7 +437,7 @@ namespace mint
 
 			_character._position = _physicsWorld.GetBody(_character._bodyID)._transform2D._translation;
 
-			const Float2 windowSize{ _graphicDevice->GetWindowSize() };
+			const Float2 windowSize{ _graphicsDevice->GetWindowSize() };
 			if (_gameCameraMode == GameCameraMode::FollowCharacter)
 			{
 				Float3& cameraPosition = _mainCameraObject->GetObjectTransform()._translation;
@@ -459,17 +459,17 @@ namespace mint
 
 		void GameBase2D::BeginRendering()
 		{
-			_graphicDevice->BeginRendering();
+			_graphicsDevice->BeginRendering();
 
-			_graphicDevice->SetSolidCullNoneRasterizer();
+			_graphicsDevice->SetSolidCullNoneRasterizer();
 
 			CameraComponent* const cameraComponent = static_cast<CameraComponent*>(_mainCameraObject->GetComponent(ObjectComponentType::CameraComponent));
-			_graphicDevice->SetViewProjectionMatrix(cameraComponent->GetViewMatrix(), cameraComponent->GetProjectionMatrix());
+			_graphicsDevice->SetViewProjectionMatrix(cameraComponent->GetViewMatrix(), cameraComponent->GetProjectionMatrix());
 		}
 
 		void GameBase2D::DrawCircle(const Float2& position, float radius, const ByteColor& color)
 		{
-			Rendering::ShapeRendererContext& shapeRendererContext = _graphicDevice->GetShapeRendererContext();
+			Rendering::ShapeRendererContext& shapeRendererContext = _graphicsDevice->GetShapeRendererContext();
 			shapeRendererContext.SetColor(color);
 			shapeRendererContext.SetPosition(Float4(position));
 			shapeRendererContext.DrawCircle(radius);
@@ -477,7 +477,7 @@ namespace mint
 
 		void GameBase2D::DrawGrid()
 		{
-			Rendering::ShapeRendererContext& shapeRendererContext = _graphicDevice->GetShapeRendererContext();
+			Rendering::ShapeRendererContext& shapeRendererContext = _graphicsDevice->GetShapeRendererContext();
 			shapeRendererContext.SetColor(ByteColor(16, 16, 16));
 			shapeRendererContext.DrawLine(Float2(-2048, 0), Float2(2048, 0), 2.0f);
 			shapeRendererContext.DrawLine(Float2(0, -2048), Float2(0, 2048), 2.0f);
@@ -485,7 +485,7 @@ namespace mint
 
 		void GameBase2D::DrawTextToScreen(const StringA& text, const Int2& position, const ByteColor& color)
 		{
-			Rendering::ShapeRendererContext& shapeRendererContext = _graphicDevice->GetShapeRendererContext();
+			Rendering::ShapeRendererContext& shapeRendererContext = _graphicsDevice->GetShapeRendererContext();
 			shapeRendererContext.SetTextColor(color);
 			StringW textW;
 			StringUtil::ConvertStringAToStringW(text, textW);
@@ -504,15 +504,15 @@ namespace mint
 
 		void GameBase2D::EndRendering()
 		{
-			Rendering::ShapeRendererContext& shapeRendererContext = _graphicDevice->GetShapeRendererContext();
+			Rendering::ShapeRendererContext& shapeRendererContext = _graphicsDevice->GetShapeRendererContext();
 			shapeRendererContext.Render();
 
-			_graphicDevice->EndRendering();
+			_graphicsDevice->EndRendering();
 		}
 
-		Rendering::GraphicDevice& GameBase2D::GetGraphicDevice()
+		Rendering::GraphicsDevice& GameBase2D::GetGraphicsDevice()
 		{
-			return *_graphicDevice;
+			return *_graphicsDevice;
 		}
 
 		const Physics::World& GameBase2D::GetPhysicsWorld() const
@@ -570,7 +570,7 @@ namespace mint
 		{
 			_mainCameraObject = _objectPool->CreateObject();
 			CameraComponent* cameraComponent = _objectPool->CreateObjectComponent<CameraComponent>();
-			Float2 windowSize{ _graphicDevice->GetWindowSize() };
+			Float2 windowSize{ _graphicsDevice->GetWindowSize() };
 			cameraComponent->SetOrthographic2DCamera(windowSize);
 			_mainCameraObject->AttachComponent(cameraComponent);
 		}
@@ -579,7 +579,7 @@ namespace mint
 		{
 			_tileMap.Draw(*_mapRenderer);
 
-			Rendering::ShapeRendererContext& shapeRendererContext = _graphicDevice->GetShapeRendererContext();
+			Rendering::ShapeRendererContext& shapeRendererContext = _graphicsDevice->GetShapeRendererContext();
 			_mapRenderer->Render();
 		}
 
@@ -601,7 +601,7 @@ namespace mint
 
 			if (_isDebugMode == true)
 			{
-				Rendering::ShapeRendererContext& shapeRendererContext = _graphicDevice->GetShapeRendererContext();
+				Rendering::ShapeRendererContext& shapeRendererContext = _graphicsDevice->GetShapeRendererContext();
 				//_tileMap.DrawCollisions(shapeRendererContext);
 				//shapeRendererContext.Render();
 
@@ -655,17 +655,17 @@ namespace mint
 				return Image();
 			}
 
-			Rendering::GraphicResourcePool& resourcePool = _graphicDevice->GetResourcePool();
+			Rendering::GraphicsResourcePool& resourcePool = _graphicsDevice->GetResourcePool();
 			Image image(resourcePool.AddTexture2D(byteColorImage));
 			image._imageRenderer = _objectRenderer.Get();
-			GetGraphicDevice().GetResourcePool().BindToShader(image.GetGraphicObjectID(), Rendering::GraphicShaderType::PixelShader, kObjectTextureSlot);
+			GetGraphicsDevice().GetResourcePool().BindToShader(image.GetGraphicsObjectID(), Rendering::GraphicsShaderType::PixelShader, kObjectTextureSlot);
 			return image;
 		}
 
 		void GameBase2D::SetCharacterImage(const Image& image, const Int2& characterSize, int32 floorOffset)
 		{
-			Rendering::GraphicResourcePool& resourcePool = _graphicDevice->GetResourcePool();
-			resourcePool.GetResource(image._graphicObjectID).BindToShader(Rendering::GraphicShaderType::PixelShader, kCharacterTextureSlot);
+			Rendering::GraphicsResourcePool& resourcePool = _graphicsDevice->GetResourcePool();
+			resourcePool.GetResource(image._graphicsObjectID).BindToShader(Rendering::GraphicsShaderType::PixelShader, kCharacterTextureSlot);
 
 			_characterSize = Float2(characterSize);
 			_characterFloorOffset = -static_cast<float>(floorOffset);
@@ -775,8 +775,8 @@ namespace mint
 
 		void GameBase2D::SetTileMapImage(const Image& image)
 		{
-			Rendering::GraphicResourcePool& resourcePool = _graphicDevice->GetResourcePool();
-			resourcePool.GetResource(image._graphicObjectID).BindToShader(Rendering::GraphicShaderType::PixelShader, kTileMapTextureSlot);
+			Rendering::GraphicsResourcePool& resourcePool = _graphicsDevice->GetResourcePool();
+			resourcePool.GetResource(image._graphicsObjectID).BindToShader(Rendering::GraphicsShaderType::PixelShader, kTileMapTextureSlot);
 		}
 
 		void GameBase2D::SetBackgroundMusic(const StringReferenceA& audioFileName)

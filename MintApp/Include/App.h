@@ -13,7 +13,7 @@ namespace mint
 
 	namespace Rendering
 	{
-		class GraphicDevice;
+		class GraphicsDevice;
 	}
 
 	namespace GUI
@@ -37,13 +37,13 @@ namespace mint
 
 	public:
 		Window& GetWindow();
-		Rendering::GraphicDevice& GetGraphicDevice();
+		Rendering::GraphicsDevice& GetGraphicsDevice();
 		ObjectPool& GetObjectPool();
 		GUI::GUISystem& GetGUISystem();
 
 	protected:
 		OwnPtr<Window> _window;
-		OwnPtr<Rendering::GraphicDevice> _graphicDevice;
+		OwnPtr<Rendering::GraphicsDevice> _graphicsDevice;
 		OwnPtr<ObjectPool> _objectPool;
 		OwnPtr<ObjectRenderer> _objectRenderer;
 		OwnPtr<GUI::GUISystem> _guiSystem;

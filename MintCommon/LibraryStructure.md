@@ -55,7 +55,7 @@ classDiagram
         ...
     }
     class MintRenderingBase{
-        GraphicDevice
+        GraphicsDevice
         RendererContext
         ShapeGenerator
         ImageLoader

@@ -5,7 +5,7 @@
 
 #include <MintContainer/Include/Vector.hpp>
 
-#include <MintRenderingBase/Include/GraphicDevice.h>
+#include <MintRenderingBase/Include/GraphicsDevice.h>
 #include <MintRenderingBase/Include/LowLevelRenderer.hpp>
 
 #include <MintApp/Include/DeltaTimer.h>

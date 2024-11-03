@@ -5,7 +5,7 @@
 #include <MintContainer/Include/StackVector.hpp>
 #include <MintContainer/Include/StringUtil.hpp>
 
-#include <MintRenderingBase/Include/GraphicDevice.h>
+#include <MintRenderingBase/Include/GraphicsDevice.h>
 #include <MintRenderingBase/Include/LowLevelRenderer.hpp>
 #include <MintRenderingBase/Include/ShapeGenerator.h>
 
@@ -17,8 +17,8 @@ namespace mint
 {
 	namespace Rendering
 	{
-		ShapeRendererContext::ShapeRendererContext(GraphicDevice& graphicDevice)
-			: IRendererContext(graphicDevice)
+		ShapeRendererContext::ShapeRendererContext(GraphicsDevice& graphicsDevice)
+			: IRendererContext(graphicsDevice)
 		{
 			__noop;
 		}
@@ -126,23 +126,23 @@ namespace mint
 
 		void ShapeRendererContext::InitializeShaders() noexcept
 		{
-			_clipRect = _graphicDevice.GetFullScreenClipRect();
+			_clipRect = _graphicsDevice.GetFullScreenClipRect();
 
-			ShaderPool& shaderPool = _graphicDevice.GetShaderPool();
+			ShaderPool& shaderPool = _graphicsDevice.GetShaderPool();
 
 			{
 				if (_vertexShaderID.IsValid())
 				{
 					shaderPool.RemoveShader(_vertexShaderID);
 				}
-				_vertexShaderID = shaderPool.AddShaderFromMemory("ShapeRendererVS", GetDefaultVertexShaderString(), "main_shape", GraphicShaderType::VertexShader);
+				_vertexShaderID = shaderPool.AddShaderFromMemory("ShapeRendererVS", GetDefaultVertexShaderString(), "main_shape", GraphicsShaderType::VertexShader);
 
 				if (_inputLayoutID.IsValid())
 				{
 					shaderPool.RemoveInputLayout(_inputLayoutID);
 				}
 				using namespace Language;
-				const TypeMetaData<CppHlsl::TypeCustomData>& typeMetaData = _graphicDevice.GetCppHlslSteamData().GetTypeMetaData(typeid(VS_INPUT_SHAPE));
+				const TypeMetaData<CppHlsl::TypeCustomData>& typeMetaData = _graphicsDevice.GetCppHlslSteamData().GetTypeMetaData(typeid(VS_INPUT_SHAPE));
 				_inputLayoutID = shaderPool.AddInputLayout(_vertexShaderID, typeMetaData);
 			}
 
@@ -151,7 +151,7 @@ namespace mint
 				{
 					shaderPool.RemoveShader(_geometryShaderID);
 				}
-				_geometryShaderID = shaderPool.AddShaderFromMemory("ShapeRendererGS", GetDefaultGeometryShaderString(), "main_shape", GraphicShaderType::GeometryShader);
+				_geometryShaderID = shaderPool.AddShaderFromMemory("ShapeRendererGS", GetDefaultGeometryShaderString(), "main_shape", GraphicsShaderType::GeometryShader);
 			}
 
 			{
@@ -159,7 +159,7 @@ namespace mint
 				{
 					shaderPool.RemoveShader(_pixelShaderID);
 				}
-				_pixelShaderID = shaderPool.AddShaderFromMemory("ShapeRendererPS", GetDefaultPixelShaderString(), "main_shape", GraphicShaderType::PixelShader);
+				_pixelShaderID = shaderPool.AddShaderFromMemory("ShapeRendererPS", GetDefaultPixelShaderString(), "main_shape", GraphicsShaderType::PixelShader);
 			}
 		}
 
@@ -187,29 +187,29 @@ namespace mint
 			// TODO : Slot 처리...
 			if (_fontData._fontTextureID.IsValid())
 			{
-				_graphicDevice.GetResourcePool().BindToShader(_fontData._fontTextureID, GraphicShaderType::PixelShader, 0);
+				_graphicsDevice.GetResourcePool().BindToShader(_fontData._fontTextureID, GraphicsShaderType::PixelShader, 0);
 			}
 
-			ShaderPool& shaderPool = _graphicDevice.GetShaderPool();
+			ShaderPool& shaderPool = _graphicsDevice.GetShaderPool();
 			shaderPool.BindInputLayoutIfNot(_inputLayoutID);
-			shaderPool.BindShaderIfNot(GraphicShaderType::VertexShader, _vertexShaderID);
+			shaderPool.BindShaderIfNot(GraphicsShaderType::VertexShader, _vertexShaderID);
 
 			if (IsUsingMultipleViewports())
 			{
-				shaderPool.BindShaderIfNot(GraphicShaderType::GeometryShader, _geometryShaderID);
+				shaderPool.BindShaderIfNot(GraphicsShaderType::GeometryShader, _geometryShaderID);
 			}
 
-			shaderPool.BindShaderIfNot(GraphicShaderType::PixelShader, _pixelShaderID);
+			shaderPool.BindShaderIfNot(GraphicsShaderType::PixelShader, _pixelShaderID);
 
-			GraphicResourcePool& resourcePool = _graphicDevice.GetResourcePool();
-			GraphicResource& sbTransformBuffer = resourcePool.GetResource(_graphicDevice.GetCommonSBTransformID());
-			sbTransformBuffer.BindToShader(GraphicShaderType::VertexShader, sbTransformBuffer.GetRegisterIndex());
+			GraphicsResourcePool& resourcePool = _graphicsDevice.GetResourcePool();
+			GraphicsResource& sbTransformBuffer = resourcePool.GetResource(_graphicsDevice.GetCommonSBTransformID());
+			sbTransformBuffer.BindToShader(GraphicsShaderType::VertexShader, sbTransformBuffer.GetRegisterIndex());
 
 			_lowLevelRenderer->ExecuteRenderCommands();
 
 			if (IsUsingMultipleViewports())
 			{
-				shaderPool.UnbindShader(GraphicShaderType::GeometryShader);
+				shaderPool.UnbindShader(GraphicsShaderType::GeometryShader);
 			}
 
 			Flush();
@@ -494,7 +494,7 @@ namespace mint
 				glyphRect.Left(glyphPosition._x + static_cast<float>(glyphInfo._horiBearingX) * scale);
 				glyphRect.Right(glyphRect.Left() + static_cast<float>(glyphInfo._width) * scale);
 
-				const bool shouldFlipY = _graphicDevice.GetProjectionMatrix()._22 < 0.0f;
+				const bool shouldFlipY = _graphicsDevice.GetProjectionMatrix()._22 < 0.0f;
 				if (shouldFlipY)
 				{
 					const float scaledFontHeight = static_cast<float>(_fontData._fontSize) * scale;

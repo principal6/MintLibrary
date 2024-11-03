@@ -1,7 +1,7 @@
 ﻿#include <MintRendering/Include/InstantRenderer.h>
 
 #include <MintMath/Include/Transform.h>
-#include <MintRenderingBase/Include/GraphicDevice.h>
+#include <MintRenderingBase/Include/GraphicsDevice.h>
 #include <MintRenderingBase/Include/LowLevelRenderer.hpp>
 #include <MintRenderingBase/Include/MeshData.h>
 #include <MintRendering/Include/MeshGenerator.h>
@@ -13,10 +13,10 @@ namespace mint
 {
 	namespace Rendering
 	{
-		InstantRenderer::InstantRenderer(GraphicDevice& graphicDevice)
-			: _graphicDevice{ graphicDevice }
-			, _lowLevelRendererLine{ graphicDevice }
-			, _lowLevelRendererMesh{ graphicDevice }
+		InstantRenderer::InstantRenderer(GraphicsDevice& graphicsDevice)
+			: _graphicsDevice{ graphicsDevice }
+			, _lowLevelRendererLine{ graphicsDevice }
+			, _lowLevelRendererMesh{ graphicsDevice }
 		{
 			Initialize();
 		}
@@ -166,15 +166,15 @@ namespace mint
 		{
 			using namespace Language;
 
-			ShaderPool& shaderPool = _graphicDevice.GetShaderPool();
-			_vsDefaultID = shaderPool.AddShader(Path::MakeIncludeAssetPath("Hlsl/"), "VsDefault.hlsl", "main", GraphicShaderType::VertexShader, Path::MakeIncludeAssetPath("HlslBinary/"));
+			ShaderPool& shaderPool = _graphicsDevice.GetShaderPool();
+			_vsDefaultID = shaderPool.AddShader(Path::MakeIncludeAssetPath("Hlsl/"), "VsDefault.hlsl", "main", GraphicsShaderType::VertexShader, Path::MakeIncludeAssetPath("HlslBinary/"));
 
-			const CppHlsl::Interpreter& interpreter = _graphicDevice.GetCppHlslSteamData();
+			const CppHlsl::Interpreter& interpreter = _graphicsDevice.GetCppHlslSteamData();
 			const TypeMetaData<CppHlsl::TypeCustomData>& vsInputTypeMetaData = interpreter.GetTypeMetaData(typeid(VS_INPUT));
 			_inputLayoutDefaultID = shaderPool.AddInputLayout(_vsDefaultID, vsInputTypeMetaData);
 
-			_psDefaultID = shaderPool.AddShader(Path::MakeIncludeAssetPath("Hlsl/"), "PsDefault.hlsl", "main", GraphicShaderType::PixelShader, Path::MakeIncludeAssetPath("HlslBinary/"));
-			_psColorID = shaderPool.AddShader(Path::MakeIncludeAssetPath("Hlsl/"), "PsColor.hlsl", "main", GraphicShaderType::PixelShader, Path::MakeIncludeAssetPath("HlslBinary/"));
+			_psDefaultID = shaderPool.AddShader(Path::MakeIncludeAssetPath("Hlsl/"), "PsDefault.hlsl", "main", GraphicsShaderType::PixelShader, Path::MakeIncludeAssetPath("HlslBinary/"));
+			_psColorID = shaderPool.AddShader(Path::MakeIncludeAssetPath("Hlsl/"), "PsColor.hlsl", "main", GraphicsShaderType::PixelShader, Path::MakeIncludeAssetPath("HlslBinary/"));
 		}
 
 		void InstantRenderer::PushMeshWithMaterial(MeshData& meshData, const Color& diffuseColor) noexcept
@@ -191,16 +191,16 @@ namespace mint
 
 		void InstantRenderer::Render() noexcept
 		{
-			ShaderPool& shaderPool = _graphicDevice.GetShaderPool();
+			ShaderPool& shaderPool = _graphicsDevice.GetShaderPool();
 			shaderPool.BindInputLayoutIfNot(_inputLayoutDefaultID);
-			shaderPool.BindShaderIfNot(GraphicShaderType::VertexShader, _vsDefaultID);
-			shaderPool.UnbindShader(GraphicShaderType::GeometryShader);
+			shaderPool.BindShaderIfNot(GraphicsShaderType::VertexShader, _vsDefaultID);
+			shaderPool.UnbindShader(GraphicsShaderType::GeometryShader);
 
-			GraphicResourcePool& resourcePool = _graphicDevice.GetResourcePool();
-			GraphicResource& cbTransform = resourcePool.GetResource(_graphicDevice.GetCommonCBTransformID());
+			GraphicsResourcePool& resourcePool = _graphicsDevice.GetResourcePool();
+			GraphicsResource& cbTransform = resourcePool.GetResource(_graphicsDevice.GetCommonCBTransformID());
 			{
-				cbTransform.BindToShader(GraphicShaderType::VertexShader, cbTransform.GetRegisterIndex());
-				cbTransform.BindToShader(GraphicShaderType::GeometryShader, cbTransform.GetRegisterIndex());
+				cbTransform.BindToShader(GraphicsShaderType::VertexShader, cbTransform.GetRegisterIndex());
+				cbTransform.BindToShader(GraphicsShaderType::GeometryShader, cbTransform.GetRegisterIndex());
 
 				_cbTransformData._cbWorldMatrix.SetIdentity();
 				cbTransform.UpdateBuffer(&_cbTransformData, 1);
@@ -208,16 +208,16 @@ namespace mint
 
 			if (_sbMaterialDatas.Size() > 0)
 			{
-				GraphicResource& sbMaterial = resourcePool.GetResource(_graphicDevice.GetCommonSBMaterialID());
-				sbMaterial.BindToShader(GraphicShaderType::PixelShader, sbMaterial.GetRegisterIndex());
+				GraphicsResource& sbMaterial = resourcePool.GetResource(_graphicsDevice.GetCommonSBMaterialID());
+				sbMaterial.BindToShader(GraphicsShaderType::PixelShader, sbMaterial.GetRegisterIndex());
 				sbMaterial.UpdateBuffer(&_sbMaterialDatas[0], _sbMaterialDatas.Size());
 			}
 
-			shaderPool.BindShaderIfNot(GraphicShaderType::PixelShader, _psColorID);
+			shaderPool.BindShaderIfNot(GraphicsShaderType::PixelShader, _psColorID);
 			_lowLevelRendererLine.Render(RenderingPrimitive::LineList);
 			_lowLevelRendererLine.Flush();
 
-			shaderPool.BindShaderIfNot(GraphicShaderType::PixelShader, _psDefaultID);
+			shaderPool.BindShaderIfNot(GraphicsShaderType::PixelShader, _psDefaultID);
 			_lowLevelRendererMesh.Render(RenderingPrimitive::TriangleList);
 			_lowLevelRendererMesh.Flush();
 

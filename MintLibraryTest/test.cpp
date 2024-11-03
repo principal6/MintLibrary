@@ -64,8 +64,8 @@ void RunGJKTestWindow()
 
 	GJK2DInfo gjk2DInfo;
 	EPA2DInfo epa2DInfo;
-	GraphicDevice& graphicDevice = app.GetGraphicDevice();
-	ShapeRendererContext& shapeRendererContext = graphicDevice.GetShapeRendererContext();
+	GraphicsDevice& graphicsDevice = app.GetGraphicsDevice();
+	ShapeRendererContext& shapeRendererContext = graphicsDevice.GetShapeRendererContext();
 	const InputContext& inputContext = InputContext::GetInstance();
 	enum class SelectionMode
 	{
@@ -158,7 +158,7 @@ void RunGJKTestWindow()
 		app.BeginRendering();
 		{
 			{
-				graphicDevice.SetViewProjectionMatrix(Float4x4::kIdentity, Float4x4::ProjectionMatrix2DNormal(windowSize._x, windowSize._y));
+				graphicsDevice.SetViewProjectionMatrix(Float4x4::kIdentity, Float4x4::ProjectionMatrix2DNormal(windowSize._x, windowSize._y));
 
 				CircleCollisionShape2D shapeA = CircleCollisionShape2D(64, shapeATransform2D);
 				//EdgeCollisionShape2D shapeB = EdgeCollisionShape2D(Float2(-64, 0), Float2(64, 0), shapeBTransform2D);
@@ -221,7 +221,7 @@ void RunGJKTestWindow()
 				shapeRendererContext.Render();
 			}
 			{
-				graphicDevice.SetViewProjectionMatrix(Float4x4::kIdentity, Float4x4::ProjectionMatrix2DFromTopLeft(windowSize._x, windowSize._y));
+				graphicsDevice.SetViewProjectionMatrix(Float4x4::kIdentity, Float4x4::ProjectionMatrix2DFromTopLeft(windowSize._x, windowSize._y));
 
 				shapeRendererContext.SetTextColor(Color::kBlack);
 				StackStringW<100> buffer;
@@ -257,9 +257,9 @@ bool Run2DTestWindow()
 	ByteColorImage corgiSpriteSheet;
 	ImageLoader imageLoader;
 	imageLoader.LoadImage_("Assets/corgi-asset_Miniyeti.png", corgiSpriteSheet);
-	GraphicDevice& graphicDevice = app.GetGraphicDevice();
-	GraphicResourcePool& resourcePool = graphicDevice.GetResourcePool();
-	const GraphicObjectID corgiSpriteSheetTextureID = resourcePool.AddTexture2D(corgiSpriteSheet);
+	GraphicsDevice& graphicsDevice = app.GetGraphicsDevice();
+	GraphicsResourcePool& resourcePool = graphicsDevice.GetResourcePool();
+	const GraphicsObjectID corgiSpriteSheetTextureID = resourcePool.AddTexture2D(corgiSpriteSheet);
 
 	ObjectPool& objectPool = app.GetObjectPool();
 	SharedPtr<Object> object0 = objectPool.CreateObject();
@@ -324,7 +324,7 @@ bool Run2DTestWindow()
 	}
 
 
-	ImageRenderer imageRenderer{ graphicDevice, 1 };
+	ImageRenderer imageRenderer{ graphicsDevice, 1 };
 	const InputContext& inputContext = InputContext::GetInstance();
 	while (app.IsRunning() == true)
 	{
@@ -332,7 +332,7 @@ bool Run2DTestWindow()
 		{
 			if (inputContext.IsKeyDown(KeyCode::Enter) == true)
 			{
-				graphicDevice.GetShaderPool().RecompileAllShaders();
+				graphicsDevice.GetShaderPool().RecompileAllShaders();
 			}
 			else if (inputContext.IsKeyDown(KeyCode::Num1) == true)
 			{
@@ -345,17 +345,17 @@ bool Run2DTestWindow()
 		// Rendering
 		app.BeginRendering();
 		{
-			graphicDevice.SetViewProjectionMatrix(testCameraComponent->GetViewMatrix(), testCameraComponent->GetProjectionMatrix());
+			graphicsDevice.SetViewProjectionMatrix(testCameraComponent->GetViewMatrix(), testCameraComponent->GetProjectionMatrix());
 
-			graphicDevice.SetViewProjectionMatrix(Float4x4::kIdentity, graphicDevice.GetScreenSpace2DProjectionMatrix());
-			resourcePool.GetResource(corgiSpriteSheetTextureID).BindToShader(GraphicShaderType::PixelShader, 1);
+			graphicsDevice.SetViewProjectionMatrix(Float4x4::kIdentity, graphicsDevice.GetScreenSpace2DProjectionMatrix());
+			resourcePool.GetResource(corgiSpriteSheetTextureID).BindToShader(GraphicsShaderType::PixelShader, 1);
 			//imageRenderer.DrawImageScreenSpace(Float2(0, 0), Float2(800, 512), Float2(0, 0), Float2(1, 1));
 			corgiAnimationSet.Update(objectPool.GetDeltaTimeSec());
 			const SpriteAnimation& corgiCurrentAnimation = corgiAnimationSet.GetCurrentAnimation();
 			imageRenderer.DrawImageScreenSpace(Float2(64, 64), Float2(128, 128), corgiCurrentAnimation.GetCurrentFrameUV0(), corgiCurrentAnimation.GetCurrentFrameUV1());
 			imageRenderer.Render();
 
-			ShapeRendererContext& shapeRendererContext = graphicDevice.GetShapeRendererContext();
+			ShapeRendererContext& shapeRendererContext = graphicsDevice.GetShapeRendererContext();
 			{
 				StackStringW<100> fpsString;
 				FormatString(fpsString, L"FPS: %d", Profiler::FPSCounter::GetFPS());
@@ -430,7 +430,7 @@ bool Run3DTestWindow()
 	GUIControl& buttonControl = guiSystem.AccessControl(buttonControlID);
 	buttonControl.SetPosition(Float2(100, 100));
 
-	GraphicDevice& graphicDevice = app.GetGraphicDevice();
+	GraphicsDevice& graphicsDevice = app.GetGraphicsDevice();
 	const InputContext& inputContext = InputContext::GetInstance();
 	while (app.IsRunning() == true)
 	{
@@ -438,19 +438,19 @@ bool Run3DTestWindow()
 		{
 			if (inputContext.IsKeyDown(KeyCode::Enter) == true)
 			{
-				graphicDevice.GetShaderPool().RecompileAllShaders();
+				graphicsDevice.GetShaderPool().RecompileAllShaders();
 			}
 			else if (inputContext.IsKeyDown(KeyCode::Num1) == true)
 			{
-				graphicDevice.UseSolidCullBackRasterizer();
+				graphicsDevice.UseSolidCullBackRasterizer();
 			}
 			else if (inputContext.IsKeyDown(KeyCode::Num2) == true)
 			{
-				graphicDevice.UseWireFrameCullBackRasterizer();
+				graphicsDevice.UseWireFrameCullBackRasterizer();
 			}
 			else if (inputContext.IsKeyDown(KeyCode::Num3) == true)
 			{
-				graphicDevice.UseWireFrameNoCullingRasterizer();
+				graphicsDevice.UseWireFrameNoCullingRasterizer();
 			}
 			else if (inputContext.IsKeyDown(KeyCode::Num4) == true)
 			{
@@ -492,13 +492,13 @@ bool Run3DTestWindow()
 		// Rendering
 		app.BeginRendering();
 		{
-			ShapeRendererContext& shapeRendererContext = graphicDevice.GetShapeRendererContext();
+			ShapeRendererContext& shapeRendererContext = graphicsDevice.GetShapeRendererContext();
 			// # ShapeRendererContext 테스트
 			//shapeRendererContext.TestDraw(Float2(200, 100));
 			//Shape testShapeSet;
 			//ShapeGenerator::GenerateRectangle(Float2(32, 32), ByteColor(0,255,255), testShapeSet);
 			//shapeRendererContext.AddShape(testShapeSet);
-			graphicDevice.SetViewProjectionMatrix(Float4x4::kIdentity, graphicDevice.GetScreenSpace2DProjectionMatrix());
+			graphicsDevice.SetViewProjectionMatrix(Float4x4::kIdentity, graphicsDevice.GetScreenSpace2DProjectionMatrix());
 			{
 				StackStringW<100> fpsString;
 				FormatString(fpsString, L"FPS: %d", Profiler::FPSCounter::GetFPS());
@@ -507,7 +507,7 @@ bool Run3DTestWindow()
 			}
 			shapeRendererContext.Render();
 
-			graphicDevice.SetViewProjectionMatrix(testCameraComponent->GetViewMatrix(), testCameraComponent->GetProjectionMatrix());
+			graphicsDevice.SetViewProjectionMatrix(testCameraComponent->GetViewMatrix(), testCameraComponent->GetProjectionMatrix());
 		}
 		app.EndRendering();
 

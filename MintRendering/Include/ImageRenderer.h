@@ -15,8 +15,8 @@ namespace mint
 		class ImageRenderer : protected ShapeRendererContext
 		{
 		public:
-			ImageRenderer(GraphicDevice& graphicDevice, const uint32 psTextureSlot);
-			ImageRenderer(GraphicDevice& graphicDevice, const uint32 psTextureSlot, const ByteColor& transparentColor);
+			ImageRenderer(GraphicsDevice& graphicsDevice, const uint32 psTextureSlot);
+			ImageRenderer(GraphicsDevice& graphicsDevice, const uint32 psTextureSlot, const ByteColor& transparentColor);
 			virtual ~ImageRenderer() = default;
 
 		public:

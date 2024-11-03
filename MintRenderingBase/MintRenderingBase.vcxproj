@@ -199,12 +199,12 @@
     <ClInclude Include="Include\CppHlsl\Lexer.h" />
     <ClInclude Include="Include\CppHlsl\Parser.h" />
     <ClInclude Include="Include\CppHlsl\CppHlslTypes.h" />
-    <ClInclude Include="Include\GraphicResource.h" />
+    <ClInclude Include="Include\GraphicsResource.h" />
     <ClInclude Include="Include\Shader.h" />
     <ClInclude Include="Include\DxShaderHeaderMemory.h" />
     <ClInclude Include="Include\FontLoader.h" />
-    <ClInclude Include="Include\GraphicDevice.h" />
-    <ClInclude Include="Include\GraphicObject.h" />
+    <ClInclude Include="Include\GraphicsDevice.h" />
+    <ClInclude Include="Include\GraphicsObject.h" />
     <ClInclude Include="Include\ImageLoader.h" />
     <ClInclude Include="Include\IRendererContext.h" />
     <ClInclude Include="Include\MeshData.h" />
@@ -218,7 +218,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Include\CppHlsl\Parser.inl" />
-    <None Include="Include\GraphicDevice.inl" />
+    <None Include="Include\GraphicsDevice.inl" />
     <None Include="Include\IRendererContext.inl" />
   </ItemGroup>
   <ItemGroup>
@@ -240,7 +240,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="Source\GraphicResource.cpp">
+    <ClCompile Include="Source\GraphicsResource.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
@@ -264,13 +264,13 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="Source\GraphicDevice.cpp">
+    <ClCompile Include="Source\GraphicsDevice.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="Source\GraphicObject.cpp">
+    <ClCompile Include="Source\GraphicsObject.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>

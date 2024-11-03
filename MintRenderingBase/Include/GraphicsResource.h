@@ -1,13 +1,13 @@
 ﻿#pragma once
 
 
-#ifndef _MINT_RENDERING_BASE_GRAPHIC_RESOURCE_H_
-#define _MINT_RENDERING_BASE_GRAPHIC_RESOURCE_H_
+#ifndef _MINT_RENDERING_BASE_GRAPHICS_RESOURCE_H_
+#define _MINT_RENDERING_BASE_GRAPHICS_RESOURCE_H_
 
 
 #include <MintCommon/Include/CommonDefinitions.h>
 
-#include <MintRenderingBase/Include/GraphicObject.h>
+#include <MintRenderingBase/Include/GraphicsObject.h>
 
 #include <MintContainer/Include/Vector.h>
 
@@ -16,7 +16,7 @@ namespace mint
 {
 	namespace Rendering
 	{
-		class GraphicResourcePool;
+		class GraphicsResourcePool;
 
 		using Microsoft::WRL::ComPtr;
 	}
@@ -26,7 +26,7 @@ namespace mint
 {
 	namespace Rendering
 	{
-		enum class GraphicResourceType
+		enum class GraphicsResourceType
 		{
 			INVALID,
 
@@ -48,9 +48,9 @@ namespace mint
 			R8G8B8A8_UNORM,
 		};
 
-		class GraphicResource final : public GraphicObject
+		class GraphicsResource final : public GraphicsObject
 		{
-			friend GraphicResourcePool;
+			friend GraphicsResourcePool;
 
 			static constexpr uint32 kIndexBufferElementStride = sizeof(IndexElementType);
 			static constexpr DXGI_FORMAT kIndexBufferFormat = DXGI_FORMAT::DXGI_FORMAT_R16_UINT;
@@ -60,14 +60,14 @@ namespace mint
 			static uint32 GetColorCount(const TextureFormat format);
 
 		private:
-			GraphicResource(GraphicDevice& graphicDevice);
+			GraphicsResource(GraphicsDevice& graphicsDevice);
 
 		public:
-			GraphicResource(GraphicResource&& rhs) noexcept = default;
-			virtual ~GraphicResource() = default;
+			GraphicsResource(GraphicsResource&& rhs) noexcept = default;
+			virtual ~GraphicsResource() = default;
 
 		public:
-			GraphicResource& operator=(GraphicResource&& rhs) noexcept = default;
+			GraphicsResource& operator=(GraphicsResource&& rhs) noexcept = default;
 
 		private:
 			bool CreateBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount);
@@ -98,7 +98,7 @@ namespace mint
 		public:
 			bool NeedsToBind() const noexcept;
 			void BindAsInput() const noexcept;
-			void BindToShader(const GraphicShaderType shaderType, const uint32 bindingSlot) const noexcept;
+			void BindToShader(const GraphicsShaderType shaderType, const uint32 bindingSlot) const noexcept;
 			void UnbindFromShader() const noexcept;
 
 		private:
@@ -106,7 +106,7 @@ namespace mint
 			ComPtr<ID3D11View> _view;
 
 		private:
-			GraphicResourceType _resourceType;
+			GraphicsResourceType _resourceType;
 			uint32 _resourceCapacity;
 
 			uint32 _elementStride;
@@ -121,42 +121,42 @@ namespace mint
 
 		private:
 			mutable bool _needToBind;
-			mutable uint32 _boundSlots[static_cast<uint32>(GraphicShaderType::COUNT)];
+			mutable uint32 _boundSlots[static_cast<uint32>(GraphicsShaderType::COUNT)];
 
 		private:
-			static GraphicResource s_invalidInstance;
+			static GraphicsResource s_invalidInstance;
 		};
 
 
-		class GraphicResourcePool final : public GraphicObject
+		class GraphicsResourcePool final : public GraphicsObject
 		{
 		public:
-			GraphicResourcePool(GraphicDevice& graphicDevice);
-			GraphicResourcePool(const GraphicResourcePool& rhs) = delete;
-			virtual ~GraphicResourcePool() = default;
+			GraphicsResourcePool(GraphicsDevice& graphicsDevice);
+			GraphicsResourcePool(const GraphicsResourcePool& rhs) = delete;
+			virtual ~GraphicsResourcePool() = default;
 
 		public:
-			GraphicObjectID AddConstantBuffer(const void* const resourceContent, const uint32 bufferSize, const uint32 registerIndex);
-			GraphicObjectID AddVertexBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount);
-			GraphicObjectID AddIndexBuffer(const void* const resourceContent, const uint32 elementCount);
-			GraphicObjectID AddStructuredBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount, const uint32 registerIndex);
+			GraphicsObjectID AddConstantBuffer(const void* const resourceContent, const uint32 bufferSize, const uint32 registerIndex);
+			GraphicsObjectID AddVertexBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount);
+			GraphicsObjectID AddIndexBuffer(const void* const resourceContent, const uint32 elementCount);
+			GraphicsObjectID AddStructuredBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount, const uint32 registerIndex);
 
 		public:
-			GraphicObjectID AddTexture2D(const ByteColorImage& byteColorImage);
-			GraphicObjectID AddTexture2D(const TextureFormat format, const byte* const textureContent, const uint32 width, const uint32 height);
+			GraphicsObjectID AddTexture2D(const ByteColorImage& byteColorImage);
+			GraphicsObjectID AddTexture2D(const TextureFormat format, const byte* const textureContent, const uint32 width, const uint32 height);
 
 		public:
-			void BindAsInput(const GraphicObjectID& objectID) noexcept;
-			void BindToShader(const GraphicObjectID& objectID, const GraphicShaderType shaderType, const uint32 bindingSlot) noexcept;
+			void BindAsInput(const GraphicsObjectID& objectID) noexcept;
+			void BindToShader(const GraphicsObjectID& objectID, const GraphicsShaderType shaderType, const uint32 bindingSlot) noexcept;
 
 		public:
-			GraphicResource& GetResource(const GraphicObjectID& objectID);
+			GraphicsResource& GetResource(const GraphicsObjectID& objectID);
 
 		private:
-			Vector<GraphicResource> _resourceArray;
+			Vector<GraphicsResource> _resourceArray;
 		};
 	}
 }
 
 
-#endif // !_MINT_RENDERING_BASE_GRAPHIC_RESOURCE_H_
+#endif // !_MINT_RENDERING_BASE_GRAPHICS_RESOURCE_H_

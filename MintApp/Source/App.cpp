@@ -1,7 +1,7 @@
 #include <MintApp/Include/App.h>
 
 #include <MintPlatform/Include/Window.h>
-#include <MintRenderingBase/Include/GraphicDevice.h>
+#include <MintRenderingBase/Include/GraphicsDevice.h>
 #include <MintGUI/Include/GUISystem.h>
 #include <MintApp/Include/ObjectPool.hpp>
 #include <MintApp/Include/ObjectRenderer.h>
@@ -19,15 +19,15 @@ namespace mint
 			return;
 		}
 
-		_graphicDevice.Assign(MINT_NEW(Rendering::GraphicDevice, *_window, useMSAA));
-		if (_graphicDevice->Initialize() == false)
+		_graphicsDevice.Assign(MINT_NEW(Rendering::GraphicsDevice, *_window, useMSAA));
+		if (_graphicsDevice->Initialize() == false)
 		{
 			MINT_NEVER;
 			return;
 		}
 
-		_objectRenderer.Assign(MINT_NEW(ObjectRenderer, *_graphicDevice));
-		_guiSystem.Assign(MINT_NEW(GUI::GUISystem, *_graphicDevice));
+		_objectRenderer.Assign(MINT_NEW(ObjectRenderer, *_graphicsDevice));
+		_guiSystem.Assign(MINT_NEW(GUI::GUISystem, *_graphicsDevice));
 	}
 
 	App::~App()
@@ -52,7 +52,7 @@ namespace mint
 	
 	void App::BeginRendering()
 	{
-		_graphicDevice->BeginRendering();
+		_graphicsDevice->BeginRendering();
 	}
 
 	void App::EndRendering()
@@ -61,7 +61,7 @@ namespace mint
 		
 		_guiSystem->Render();
 
-		_graphicDevice->EndRendering();
+		_graphicsDevice->EndRendering();
 	}
 
 	Window& App::GetWindow()
@@ -69,9 +69,9 @@ namespace mint
 		return *_window;
 	}
 
-	Rendering::GraphicDevice& App::GetGraphicDevice()
+	Rendering::GraphicsDevice& App::GetGraphicsDevice()
 	{
-		return *_graphicDevice;
+		return *_graphicsDevice;
 	}
 
 	ObjectPool& App::GetObjectPool()
