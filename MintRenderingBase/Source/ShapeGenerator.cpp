@@ -273,7 +273,7 @@ namespace mint
 
 		void ShapeGenerator::GenerateLine(const Float2& positionA, const Float2& positionB, float thickness, uint8 roundSideCount, const Color& color, Vector<VS_INPUT_SHAPE>& vertices, Vector<IndexElementType>& indices, const Transform2D& shapeTransform)
 		{
-			MINT_ASSERT(thickness > 0.0f, "thickness must be equal or greater than 0");
+			MINT_ASSERT(thickness >= 0.0f, "thickness must be equal to or greater than 0");
 			MINT_ASSERT(roundSideCount > 1, "roundSideCount must be greater than 1");
 
 			if (thickness == 0.0f)
