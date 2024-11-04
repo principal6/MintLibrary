@@ -272,7 +272,7 @@ namespace mint
 			const uint32 indexOffset = _lowLevelRenderer->GetIndexCount();
 			const uint32 transformIndex = _sbTransformData.Size();
 
-			ShapeGenerator::GenerateLine(p0, p1, thickness, 8, _defaultColor, _lowLevelRenderer->Vertices(), _lowLevelRenderer->Indices(), Transform2D());
+			ShapeGenerator::GenerateLine(p0, p1, thickness, 8, _color, _lowLevelRenderer->Vertices(), _lowLevelRenderer->Indices(), Transform2D());
 
 			const uint32 deltaVertexCount = _lowLevelRenderer->GetVertexCount() - vertexOffset;
 			for (uint32 i = 0; i < deltaVertexCount; i++)
@@ -307,7 +307,7 @@ namespace mint
 			const uint32 indexOffset = _lowLevelRenderer->GetIndexCount();
 			const uint32 transformIndex = _sbTransformData.Size();
 
-			ShapeGenerator::GenerateLine(begin, end, thickness, 8, _defaultColor, _lowLevelRenderer->Vertices(), _lowLevelRenderer->Indices(), Transform2D());
+			ShapeGenerator::GenerateLine(begin, end, thickness, 8, _color, _lowLevelRenderer->Vertices(), _lowLevelRenderer->Indices(), Transform2D());
 			{
 				const float headLength = length * headLengthRatio;
 				const float headWidth = thickness * headWidthRatio;
@@ -324,7 +324,7 @@ namespace mint
 					point0 = transform2D * point0;
 					point1 = transform2D * point1;
 					point2 = transform2D * point2;
-					ShapeGenerator::GenerateConvexShape({ point0, point1, point2 }, _defaultColor, _lowLevelRenderer->Vertices(), _lowLevelRenderer->Indices(), Transform2D());
+					ShapeGenerator::GenerateConvexShape({ point0, point1, point2 }, _color, _lowLevelRenderer->Vertices(), _lowLevelRenderer->Indices(), Transform2D());
 				}
 			}
 
@@ -345,7 +345,7 @@ namespace mint
 			const uint32 indexOffset = _lowLevelRenderer->GetIndexCount();
 			const uint32 transformIndex = _sbTransformData.Size();
 
-			ShapeGenerator::GenerateConvexShape({ pointA, pointB, pointC }, _defaultColor, _lowLevelRenderer->Vertices(), _lowLevelRenderer->Indices(), Transform2D());
+			ShapeGenerator::GenerateConvexShape({ pointA, pointB, pointC }, _color, _lowLevelRenderer->Vertices(), _lowLevelRenderer->Indices(), Transform2D());
 
 			const uint32 deltaVertexCount = _lowLevelRenderer->GetVertexCount() - vertexOffset;
 			for (uint32 i = 0; i < deltaVertexCount; i++)
@@ -364,7 +364,7 @@ namespace mint
 			const uint32 indexOffset = _lowLevelRenderer->GetIndexCount();
 			const uint32 transformIndex = _sbTransformData.Size();
 
-			ShapeGenerator::GenerateRectangle(size, _defaultColor, _lowLevelRenderer->Vertices(), _lowLevelRenderer->Indices(), Transform2D());
+			ShapeGenerator::GenerateRectangle(size, _color, _lowLevelRenderer->Vertices(), _lowLevelRenderer->Indices(), Transform2D());
 
 			const uint32 deltaVertexCount = _lowLevelRenderer->GetVertexCount() - vertexOffset;
 			for (uint32 i = 0; i < deltaVertexCount; i++)
@@ -389,7 +389,7 @@ namespace mint
 			const uint32 indexOffset = _lowLevelRenderer->GetIndexCount();
 			const uint32 transformIndex = _sbTransformData.Size();
 
-			ShapeGenerator::GenerateCircle(radius, 32, _defaultColor, _lowLevelRenderer->Vertices(), _lowLevelRenderer->Indices(), Transform2D());
+			ShapeGenerator::GenerateCircle(radius, 32, _color, _lowLevelRenderer->Vertices(), _lowLevelRenderer->Indices(), Transform2D());
 
 			const uint32 deltaVertexCount = _lowLevelRenderer->GetVertexCount() - vertexOffset;
 			for (uint32 i = 0; i < deltaVertexCount; i++)

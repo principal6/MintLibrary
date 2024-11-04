@@ -14,7 +14,7 @@ namespace mint
 			: _graphicsDevice{ graphicsDevice }
 			, _lowLevelRenderer{ nullptr }
 			, _ownsLowLevelRenderer{ true }
-			, _defaultColor{ Color::kWhite }
+			, _color{ Color::kWhite }
 			, _useMultipleViewports{ false }
 		{
 			LowLevelRenderer<VS_INPUT_SHAPE>*& lowLevelRendererCasted = const_cast<LowLevelRenderer<VS_INPUT_SHAPE>*&>(_lowLevelRenderer);
@@ -25,7 +25,7 @@ namespace mint
 			: _graphicsDevice{ graphicsDevice }
 			, _lowLevelRenderer{ nonOwnedLowLevelRenderer }
 			, _ownsLowLevelRenderer{ false }
-			, _defaultColor{ Color::kWhite }
+			, _color{ Color::kWhite }
 			, _useMultipleViewports{ false }
 		{
 			__noop;
@@ -35,7 +35,7 @@ namespace mint
 			: _graphicsDevice{ rhs._graphicsDevice }
 			, _lowLevelRenderer{ nullptr }
 			, _ownsLowLevelRenderer{ true }
-			, _defaultColor{ Color::kWhite }
+			, _color{ Color::kWhite }
 			, _useMultipleViewports{ false }
 		{
 			LowLevelRenderer<VS_INPUT_SHAPE>*& lowLevelRendererCasted = const_cast<LowLevelRenderer<VS_INPUT_SHAPE>*&>(_lowLevelRenderer);

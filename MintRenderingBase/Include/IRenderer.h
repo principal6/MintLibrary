@@ -53,7 +53,6 @@ namespace mint
 			void SetPositionZ(const float s) noexcept;
 			void SetColor(const ByteColor& color) noexcept;
 			void SetColor(const Color& color) noexcept;
-			void SetColor(const Vector<Color>& colorArray) noexcept;
 			virtual void SetClipRect(const Rect& clipRect) noexcept;
 
 		protected:
@@ -61,7 +60,6 @@ namespace mint
 			void PrepareTransformBuffer() noexcept;
 
 		protected:
-			const Float4& GetColorInternal(const uint32 index) const noexcept;
 			static float PackBits2_30AsFloat(const uint32 _2bits, const uint32 _30bits) noexcept;
 			static float PackBits4_28AsFloat(const uint32 _4bits, const uint32 _28bits) noexcept;
 
@@ -74,8 +72,7 @@ namespace mint
 
 		protected:
 			Float4 _position;
-			Vector<Color> _colorArray;
-			Color _defaultColor;
+			Color _color;
 			Rect _clipRect;
 
 		protected:
