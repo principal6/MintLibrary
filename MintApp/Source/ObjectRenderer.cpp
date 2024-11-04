@@ -89,16 +89,16 @@ namespace mint
 		const Vector<ObjectComponent*>& mesh2DComponents = objectPool.GetMesh2DComponents();
 		if (mesh2DComponents.IsEmpty() == false)
 		{
-			ShapeRendererContext& shapeRendererContext = _graphicsDevice.GetShapeRendererContext();
+			ShapeRenderer& shapeRenderer = _graphicsDevice.GetShapeRenderer();
 			const uint32 mesh2DComponentCount = mesh2DComponents.Size();
 			for (uint32 i = 0; i < mesh2DComponentCount; ++i)
 			{
 				const Mesh2DComponent* const mesh2DComponent = static_cast<Mesh2DComponent*>(mesh2DComponents[i]);
 				Object* const object = mesh2DComponent->GetOwnerObject();
-				shapeRendererContext.SetPosition(Float4(object->GetObjectTransform()._translation));
-				shapeRendererContext.AddShape(mesh2DComponent->GetShape());
+				shapeRenderer.SetPosition(Float4(object->GetObjectTransform()._translation));
+				shapeRenderer.AddShape(mesh2DComponent->GetShape());
 			}
-			shapeRendererContext.Render();
+			shapeRenderer.Render();
 		}
 	}
 

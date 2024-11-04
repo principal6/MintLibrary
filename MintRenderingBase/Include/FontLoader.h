@@ -26,7 +26,7 @@ namespace mint
 		struct FontData;
 		class GraphicsDevice;
 		class FontLoader;
-		class ShapeRendererContext;
+		class ShapeRenderer;
 
 
 		using GlyphMetricType = int8;
@@ -36,7 +36,7 @@ namespace mint
 		{
 			friend FontLoader;
 			friend FontData;
-			friend ShapeRendererContext;
+			friend ShapeRenderer;
 
 		public:
 			GlyphInfo();

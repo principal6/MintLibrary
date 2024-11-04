@@ -14,7 +14,7 @@ namespace mint
 		}
 
 		ImageRenderer::ImageRenderer(GraphicsDevice& graphicsDevice, const uint32 psTextureSlot, const ByteColor& transparentColor)
-			: ShapeRendererContext(graphicsDevice)
+			: ShapeRenderer(graphicsDevice)
 			, _psTextureSlot{ psTextureSlot }
 			, _transparentColor{ transparentColor }
 		{

@@ -11,9 +11,9 @@
 #include <MintRenderingBase/Include/DxShaderHeaderMemory.h>
 #include <MintRenderingBase/Include/GraphicsDevice.h>
 #include <MintRenderingBase/Include/GraphicsObject.h>
-#include <MintRenderingBase/Include/IRendererContext.h>
+#include <MintRenderingBase/Include/IRenderer.h>
 #include <MintRenderingBase/Include/ShapeGenerator.h>
-#include <MintRenderingBase/Include/ShapeRendererContext.h>
+#include <MintRenderingBase/Include/ShapeRenderer.h>
 #include <MintRenderingBase/Include/LowLevelRenderer.h>
 #include <MintRenderingBase/Include/ImageLoader.h>
 #include <MintRenderingBase/Include/SpriteAnimation.h>

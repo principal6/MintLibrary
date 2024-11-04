@@ -10,7 +10,7 @@ namespace mint
 	namespace GUI
 	{
 #pragma region GUIControlComponent
-		void GUIControlTextComponent::Render(Rendering::ShapeRendererContext& shapeRendererContext, const Float2& controlPosition, const GUIControlInteractionState& controlInteractionState) const
+		void GUIControlTextComponent::Render(Rendering::ShapeRenderer& shapeRenderer, const Float2& controlPosition, const GUIControlInteractionState& controlInteractionState) const
 		{
 			using namespace Rendering;
 
@@ -22,18 +22,18 @@ namespace mint
 			FontRenderingOption fontRenderingOption;
 			fontRenderingOption._directionHorz = TextRenderDirectionHorz::Centered;
 			fontRenderingOption._directionVert = TextRenderDirectionVert::Centered;
-			shapeRendererContext.DrawDynamicText(_text.CString(), controlPosition + _offset, fontRenderingOption);
+			shapeRenderer.DrawDynamicText(_text.CString(), controlPosition + _offset, fontRenderingOption);
 		}
 
-		void GUIControlShapeComponent::Render(Rendering::ShapeRendererContext& shapeRendererContext, const Float2& controlPosition, const GUIControlInteractionState& controlInteractionState) const
+		void GUIControlShapeComponent::Render(Rendering::ShapeRenderer& shapeRenderer, const Float2& controlPosition, const GUIControlInteractionState& controlInteractionState) const
 		{
 			using namespace Rendering;
 
 			const Float4 controlPosition4{ controlPosition };
-			shapeRendererContext.SetPosition(controlPosition4);
+			shapeRenderer.SetPosition(controlPosition4);
 
 			const uint32 shapeIndex = static_cast<uint32>(controlInteractionState);
-			shapeRendererContext.AddShape(_shapes[shapeIndex]);
+			shapeRenderer.AddShape(_shapes[shapeIndex]);
 		}
 #pragma endregion
 
@@ -55,11 +55,11 @@ namespace mint
 			__noop;
 		}
 
-		void GUIControl::Render(Rendering::ShapeRendererContext& shapeRendererContext, const GUIControlInteractionState& controlInteractionState) const
+		void GUIControl::Render(Rendering::ShapeRenderer& shapeRenderer, const GUIControlInteractionState& controlInteractionState) const
 		{
 			for (const SharedPtr<GUIControlComponent>& component : _components)
 			{
-				component->Render(shapeRendererContext, _position, controlInteractionState);
+				component->Render(shapeRenderer, _position, controlInteractionState);
 			}
 		}
 #pragma endregion

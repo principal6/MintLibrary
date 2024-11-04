@@ -5,10 +5,10 @@
 #include <MintRenderingBase/Source/FontLoader.cpp>
 #include <MintRenderingBase/Source/GraphicsDevice.cpp>
 #include <MintRenderingBase/Source/GraphicsObject.cpp>
-#include <MintRenderingBase/Source/IRendererContext.cpp>
+#include <MintRenderingBase/Source/IRenderer.cpp>
 #include <MintRenderingBase/Source/MeshData.cpp>
 #include <MintRenderingBase/Source/RenderingBaseCommon.cpp>
-#include <MintRenderingBase/Source/ShapeRendererContext.cpp>
+#include <MintRenderingBase/Source/ShapeRenderer.cpp>
 #include <MintRenderingBase/Source/ShapeGenerator.cpp>
 #include <MintRenderingBase/Source/SpriteAnimation.cpp>
 #include <MintRenderingBase/Source/CppHlsl/Interpreter.cpp>

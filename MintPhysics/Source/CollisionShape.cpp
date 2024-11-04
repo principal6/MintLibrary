@@ -4,7 +4,7 @@
 #include <MintMath/Include/Float2x2.h>
 #include <MintMath/Include/Geometry.h>
 #include <MintMath/Include/Transform.h>
-#include <MintRenderingBase/Include/ShapeRendererContext.h>
+#include <MintRenderingBase/Include/ShapeRenderer.h>
 
 
 namespace mint
@@ -86,11 +86,11 @@ namespace mint
 			MINT_ASSERT(tangent.Dot(direction) == 0.0f, "!!!");
 		}
 
-		void PointCollisionShape2D::DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Transform2D& transform2D) const
+		void PointCollisionShape2D::DebugDrawShape(ShapeRenderer& shapeRenderer, const ByteColor& color, const Transform2D& transform2D) const
 		{
-			shapeRendererContext.SetColor(color);
-			shapeRendererContext.SetPosition(Float4(_center + transform2D._translation));
-			shapeRendererContext.DrawCircle(2.0f);
+			shapeRenderer.SetColor(color);
+			shapeRenderer.SetPosition(Float4(_center + transform2D._translation));
+			shapeRenderer.DrawCircle(2.0f);
 		}
 #pragma endregion
 
@@ -127,10 +127,10 @@ namespace mint
 			outVertexB = _vertexB;
 		}
 
-		void EdgeCollisionShape2D::DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Transform2D& transform2D) const
+		void EdgeCollisionShape2D::DebugDrawShape(ShapeRenderer& shapeRenderer, const ByteColor& color, const Transform2D& transform2D) const
 		{
-			shapeRendererContext.SetColor(color);
-			shapeRendererContext.DrawLine(transform2D * _vertexA, transform2D * _vertexB, 4.0f);
+			shapeRenderer.SetColor(color);
+			shapeRenderer.DrawLine(transform2D * _vertexA, transform2D * _vertexB, 4.0f);
 		}
 #pragma endregion
 
@@ -165,9 +165,9 @@ namespace mint
 			MINT_ASSERT(tangent.Dot(direction) == 0.0f, "!!!");
 		}
 
-		void CircleCollisionShape2D::DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Transform2D& transform2D) const
+		void CircleCollisionShape2D::DebugDrawShape(ShapeRenderer& shapeRenderer, const ByteColor& color, const Transform2D& transform2D) const
 		{
-			shapeRendererContext.SetColor(color);
+			shapeRenderer.SetColor(color);
 
 			const uint32 kSideCount = 32;
 			const float kThetaUnit = Math::kTwoPi / kSideCount;
@@ -177,7 +177,7 @@ namespace mint
 				const float thetaB = kThetaUnit * sideIndex;
 				const Float2 pointA = Float2(::cos(thetaA) * _radius, -::sin(thetaA) * _radius);
 				const Float2 pointB = Float2(::cos(thetaB) * _radius, -::sin(thetaB) * _radius);
-				shapeRendererContext.DrawLine(transform2D._translation + _center + pointA, transform2D._translation + _center + pointB, 1.0f);
+				shapeRenderer.DrawLine(transform2D._translation + _center + pointA, transform2D._translation + _center + pointB, 1.0f);
 			}
 		}
 #pragma endregion
@@ -393,16 +393,16 @@ namespace mint
 			}
 		}
 
-		void AABBCollisionShape2D::DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Transform2D& transform2D) const
+		void AABBCollisionShape2D::DebugDrawShape(ShapeRenderer& shapeRenderer, const ByteColor& color, const Transform2D& transform2D) const
 		{
-			shapeRendererContext.SetColor(color);
+			shapeRenderer.SetColor(color);
 
 			const Float2 halfSizeX = Float2(_halfSize._x, 0.0f);
 			const Float2 halfSizeY = Float2(0.0f, _halfSize._y);
-			shapeRendererContext.DrawLine(transform2D._translation + _center - halfSizeX + halfSizeY, transform2D._translation + _center + halfSizeX + halfSizeY, 1.0f);
-			shapeRendererContext.DrawLine(transform2D._translation + _center - halfSizeX - halfSizeY, transform2D._translation + _center + halfSizeX - halfSizeY, 1.0f);
-			shapeRendererContext.DrawLine(transform2D._translation + _center + halfSizeX + halfSizeY, transform2D._translation + _center + halfSizeX - halfSizeY, 1.0f);
-			shapeRendererContext.DrawLine(transform2D._translation + _center - halfSizeX + halfSizeY, transform2D._translation + _center - halfSizeX - halfSizeY, 1.0f);
+			shapeRenderer.DrawLine(transform2D._translation + _center - halfSizeX + halfSizeY, transform2D._translation + _center + halfSizeX + halfSizeY, 1.0f);
+			shapeRenderer.DrawLine(transform2D._translation + _center - halfSizeX - halfSizeY, transform2D._translation + _center + halfSizeX - halfSizeY, 1.0f);
+			shapeRenderer.DrawLine(transform2D._translation + _center + halfSizeX + halfSizeY, transform2D._translation + _center + halfSizeX - halfSizeY, 1.0f);
+			shapeRenderer.DrawLine(transform2D._translation + _center - halfSizeX + halfSizeY, transform2D._translation + _center - halfSizeX - halfSizeY, 1.0f);
 		}
 #pragma endregion
 
@@ -482,18 +482,18 @@ namespace mint
 			}
 		}
 
-		void BoxCollisionShape2D::DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Transform2D& transform2D) const
+		void BoxCollisionShape2D::DebugDrawShape(ShapeRenderer& shapeRenderer, const ByteColor& color, const Transform2D& transform2D) const
 		{
-			shapeRendererContext.SetColor(color);
+			shapeRenderer.SetColor(color);
 
 			const Float2x2 rotationMatrix = Float2x2::RotationMatrix(transform2D._rotation);
 			const Float2 halfSizeX = rotationMatrix * GetHalfLengthedAxisX();
 			const Float2 halfSizeY = rotationMatrix * GetHalfLengthedAxisY();
 			const Float2 center = transform2D._translation + _center;
-			shapeRendererContext.DrawLine(center + halfSizeX + halfSizeY, center - halfSizeX + halfSizeY, 1.0f);
-			shapeRendererContext.DrawLine(center - halfSizeX + halfSizeY, center - halfSizeX - halfSizeY, 1.0f);
-			shapeRendererContext.DrawLine(center - halfSizeX - halfSizeY, center + halfSizeX - halfSizeY, 1.0f);
-			shapeRendererContext.DrawLine(center + halfSizeX - halfSizeY, center + halfSizeX + halfSizeY, 1.0f);
+			shapeRenderer.DrawLine(center + halfSizeX + halfSizeY, center - halfSizeX + halfSizeY, 1.0f);
+			shapeRenderer.DrawLine(center - halfSizeX + halfSizeY, center - halfSizeX - halfSizeY, 1.0f);
+			shapeRenderer.DrawLine(center - halfSizeX - halfSizeY, center + halfSizeX - halfSizeY, 1.0f);
+			shapeRenderer.DrawLine(center + halfSizeX - halfSizeY, center + halfSizeX + halfSizeY, 1.0f);
 		}
 #pragma endregion
 
@@ -703,21 +703,21 @@ namespace mint
 			}
 		}
 
-		void ConvexCollisionShape2D::DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Transform2D& transform2D) const
+		void ConvexCollisionShape2D::DebugDrawShape(ShapeRenderer& shapeRenderer, const ByteColor& color, const Transform2D& transform2D) const
 		{
-			shapeRendererContext.SetColor(color);
+			shapeRenderer.SetColor(color);
 
 			const Float2x2 rotationMatrix = Float2x2::RotationMatrix(transform2D._rotation);
 			const uint32 vertexCount = _vertices.Size();
 			const Float2 center = transform2D._translation;
 			for (uint32 vertexIndex = 1; vertexIndex < vertexCount; ++vertexIndex)
 			{
-				shapeRendererContext.DrawLine(center + rotationMatrix * _vertices[vertexIndex - 1], center + rotationMatrix * _vertices[vertexIndex], 1.0f);
+				shapeRenderer.DrawLine(center + rotationMatrix * _vertices[vertexIndex - 1], center + rotationMatrix * _vertices[vertexIndex], 1.0f);
 			}
-			shapeRendererContext.DrawLine(center + rotationMatrix * _vertices[vertexCount - 1], center + rotationMatrix * _vertices[0], 1.0f);
+			shapeRenderer.DrawLine(center + rotationMatrix * _vertices[vertexCount - 1], center + rotationMatrix * _vertices[0], 1.0f);
 
-			shapeRendererContext.SetPosition(Float4(center));
-			shapeRendererContext.DrawCircle(4.0f);
+			shapeRenderer.SetPosition(Float4(center));
+			shapeRenderer.DrawCircle(4.0f);
 		}
 #pragma endregion
 
@@ -739,11 +739,11 @@ namespace mint
 			MINT_NEVER;
 		}
 
-		void CompositeCollisionShape2D::DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Transform2D& transform2D) const
+		void CompositeCollisionShape2D::DebugDrawShape(ShapeRenderer& shapeRenderer, const ByteColor& color, const Transform2D& transform2D) const
 		{
 			for (const ShapeInstance& shapeInstance : _shapeInstances)
 			{
-				shapeInstance._shape->DebugDrawShape(shapeRendererContext, color, transform2D * shapeInstance._transform2D);
+				shapeInstance._shape->DebugDrawShape(shapeRenderer, color, transform2D * shapeInstance._transform2D);
 			}
 		}
 #pragma endregion

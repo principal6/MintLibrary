@@ -56,7 +56,7 @@ classDiagram
     }
     class MintRenderingBase{
         GraphicsDevice
-        RendererContext
+        Renderer
         ShapeGenerator
         ImageLoader
         SpriteAnimation

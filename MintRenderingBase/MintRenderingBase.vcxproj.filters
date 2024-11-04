@@ -36,10 +36,7 @@
     <ClInclude Include="Include\GraphicsObject.h">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="Include\IRendererContext.h">
-      <Filter>Include</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\ShapeRendererContext.h">
+    <ClInclude Include="Include\ShapeRenderer.h">
       <Filter>Include</Filter>
     </ClInclude>
     <ClInclude Include="Include\RenderingBaseCommon.h">
@@ -93,17 +90,16 @@
     <ClInclude Include="Include\SpriteAnimation.h">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="Include\IRenderer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Include\GraphicsDevice.inl">
       <Filter>Include</Filter>
     </None>
-    <None Include="Include\IRendererContext.inl">
-      <Filter>Include</Filter>
-    </None>
     <None Include="Include\CppHlsl\Parser.inl">
       <Filter>Include\CppHlsl</Filter>
     </None>
+    <None Include="Include\IRenderer.inl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\GraphicsResource.cpp">
@@ -121,10 +117,7 @@
     <ClCompile Include="Source\GraphicsObject.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Source\ShapeRendererContext.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\IRendererContext.cpp">
+    <ClCompile Include="Source\ShapeRenderer.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\MeshData.cpp">
@@ -157,5 +150,6 @@
     <ClCompile Include="Source\SpriteAnimation.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="Source\IRenderer.cpp" />
   </ItemGroup>
 </Project>

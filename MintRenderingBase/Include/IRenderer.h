@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 
-#ifndef _MINT_RENDERING_BASE_I_RENDERER_CONTEXT_H_
-#define _MINT_RENDERING_BASE_I_RENDERER_CONTEXT_H_
+#ifndef _MINT_RENDERING_BASE_I_RENDERER_H_
+#define _MINT_RENDERING_BASE_I_RENDERER_H_
 
 
 #include <MintCommon/Include/CommonDefinitions.h>
@@ -30,23 +30,19 @@ namespace mint
 		class GraphicsDevice;
 
 
-		class IRendererContext abstract
+		class IRenderer abstract
 		{
 		public:
-			IRendererContext(GraphicsDevice& graphicsDevice);
-			IRendererContext(GraphicsDevice& graphicsDevice, LowLevelRenderer<VS_INPUT_SHAPE>* const nonOwnedLowLevelRenderer);
-			IRendererContext(const IRendererContext& rhs);
-			virtual ~IRendererContext();
+			IRenderer(GraphicsDevice& graphicsDevice);
+			IRenderer(GraphicsDevice& graphicsDevice, LowLevelRenderer<VS_INPUT_SHAPE>* const nonOwnedLowLevelRenderer);
+			IRenderer(const IRenderer& rhs);
+			virtual ~IRenderer();
 
 		public:
 			virtual void InitializeShaders() noexcept abstract;
 			virtual bool IsEmpty() const noexcept abstract;
 			virtual void Flush() noexcept abstract;
 			virtual void Render() noexcept abstract;
-
-		protected:
-			void FlushTransformBuffer() noexcept;
-			void PrepareTransformBuffer() noexcept;
 
 		public:
 			void SetUseMultipleViewports() noexcept;
@@ -61,12 +57,13 @@ namespace mint
 			virtual void SetClipRect(const Rect& clipRect) noexcept;
 
 		protected:
+			void FlushTransformBuffer() noexcept;
+			void PrepareTransformBuffer() noexcept;
+
+		protected:
 			const Float4& GetColorInternal(const uint32 index) const noexcept;
 			static float PackBits2_30AsFloat(const uint32 _2bits, const uint32 _30bits) noexcept;
 			static float PackBits4_28AsFloat(const uint32 _4bits, const uint32 _28bits) noexcept;
-
-		public:
-			LowLevelRenderer<VS_INPUT_SHAPE>& AccessLowLevelRenderer() noexcept;
 
 		protected:
 			GraphicsDevice& _graphicsDevice;
@@ -91,7 +88,7 @@ namespace mint
 }
 
 
-#include <MintRenderingBase/Include/IRendererContext.inl>
+#include <MintRenderingBase/Include/IRenderer.inl>
 
 
-#endif // !_MINT_RENDERING_BASE_I_RENDERER_CONTEXT_H_
+#endif // !_MINT_RENDERING_BASE_I_RENDERER_H_

@@ -1,4 +1,4 @@
-﻿#include <MintRenderingBase/Include/ShapeRendererContext.h>
+﻿#include <MintRenderingBase/Include/ShapeRenderer.h>
 
 #include <MintContainer/Include/Vector.hpp>
 #include <MintContainer/Include/BitVector.hpp>
@@ -17,18 +17,18 @@ namespace mint
 {
 	namespace Rendering
 	{
-		ShapeRendererContext::ShapeRendererContext(GraphicsDevice& graphicsDevice)
-			: IRendererContext(graphicsDevice)
+		ShapeRenderer::ShapeRenderer(GraphicsDevice& graphicsDevice)
+			: IRenderer(graphicsDevice)
 		{
 			__noop;
 		}
 
-		ShapeRendererContext::~ShapeRendererContext()
+		ShapeRenderer::~ShapeRenderer()
 		{
 			__noop;
 		}
 
-		const char* ShapeRendererContext::GetDefaultVertexShaderString() const
+		const char* ShapeRenderer::GetDefaultVertexShaderString() const
 		{
 			static constexpr const char kShaderString[]
 			{
@@ -60,7 +60,7 @@ namespace mint
 			return kShaderString;
 		}
 
-		const char* ShapeRendererContext::GetDefaultGeometryShaderString() const
+		const char* ShapeRenderer::GetDefaultGeometryShaderString() const
 		{
 			static constexpr const char kShaderString[]
 			{
@@ -81,7 +81,7 @@ namespace mint
 			return kShaderString;
 		}
 
-		const char* ShapeRendererContext::GetDefaultPixelShaderString() const
+		const char* ShapeRenderer::GetDefaultPixelShaderString() const
 		{
 			static constexpr const char kShaderString[]
 			{
@@ -124,7 +124,7 @@ namespace mint
 			return kShaderString;
 		}
 
-		void ShapeRendererContext::InitializeShaders() noexcept
+		void ShapeRenderer::InitializeShaders() noexcept
 		{
 			_clipRect = _graphicsDevice.GetFullScreenClipRect();
 
@@ -163,19 +163,19 @@ namespace mint
 			}
 		}
 
-		bool ShapeRendererContext::IsEmpty() const noexcept
+		bool ShapeRenderer::IsEmpty() const noexcept
 		{
 			return _lowLevelRenderer->IsRenderable() == false;
 		}
 
-		void ShapeRendererContext::Flush() noexcept
+		void ShapeRenderer::Flush() noexcept
 		{
 			_lowLevelRenderer->Flush();
 
 			FlushTransformBuffer();
 		}
 
-		void ShapeRendererContext::Render() noexcept
+		void ShapeRenderer::Render() noexcept
 		{
 			if (_lowLevelRenderer->IsRenderable() == false)
 			{
@@ -215,7 +215,7 @@ namespace mint
 			Flush();
 		}
 
-		bool ShapeRendererContext::InitializeFontData(const FontData& fontData)
+		bool ShapeRenderer::InitializeFontData(const FontData& fontData)
 		{
 			if (fontData._fontTextureID.IsValid() == false)
 			{
@@ -234,12 +234,12 @@ namespace mint
 			return true;
 		}
 
-		void ShapeRendererContext::SetTextColor(const Color& textColor) noexcept
+		void ShapeRenderer::SetTextColor(const Color& textColor) noexcept
 		{
 			_textColor = textColor;
 		}
 
-		void ShapeRendererContext::AddShape(const Shape& shape)
+		void ShapeRenderer::AddShape(const Shape& shape)
 		{
 			const uint32 vertexOffset = _lowLevelRenderer->GetVertexCount();
 			const uint32 indexOffset = _lowLevelRenderer->GetIndexCount();
@@ -266,7 +266,7 @@ namespace mint
 			PushShapeTransformToBuffer(0.0f);
 		}
 
-		void ShapeRendererContext::DrawLine(const Float2& p0, const Float2& p1, const float thickness)
+		void ShapeRenderer::DrawLine(const Float2& p0, const Float2& p1, const float thickness)
 		{
 			const uint32 vertexOffset = _lowLevelRenderer->GetVertexCount();
 			const uint32 indexOffset = _lowLevelRenderer->GetIndexCount();
@@ -285,7 +285,7 @@ namespace mint
 			PushShapeTransformToBuffer(0.0f, false);
 		}
 
-		void ShapeRendererContext::DrawLineStrip(const Vector<Float2>& points, const float thickness)
+		void ShapeRenderer::DrawLineStrip(const Vector<Float2>& points, const float thickness)
 		{
 			const uint32 pointCount = points.Size();
 			for (uint32 i = 1; i < pointCount; i++)
@@ -294,7 +294,7 @@ namespace mint
 			}
 		}
 
-		void ShapeRendererContext::DrawArrow(const Float2& begin, const Float2& end, const float thickness, float headLengthRatio, float headWidthRatio)
+		void ShapeRenderer::DrawArrow(const Float2& begin, const Float2& end, const float thickness, float headLengthRatio, float headWidthRatio)
 		{
 			const Float2 difference = end - begin;
 			const float length = difference.Length();
@@ -339,7 +339,7 @@ namespace mint
 			PushShapeTransformToBuffer(0.0f, false);
 		}
 
-		void ShapeRendererContext::DrawTriangle(const Float2& pointA, const Float2& pointB, const Float2& pointC)
+		void ShapeRenderer::DrawTriangle(const Float2& pointA, const Float2& pointB, const Float2& pointC)
 		{
 			const uint32 vertexOffset = _lowLevelRenderer->GetVertexCount();
 			const uint32 indexOffset = _lowLevelRenderer->GetIndexCount();
@@ -358,7 +358,7 @@ namespace mint
 			PushShapeTransformToBuffer(0.0f);
 		}
 
-		void ShapeRendererContext::DrawRectangle(const Float2& size, const float borderThickness, const float rotationAngle)
+		void ShapeRenderer::DrawRectangle(const Float2& size, const float borderThickness, const float rotationAngle)
 		{
 			const uint32 vertexOffset = _lowLevelRenderer->GetVertexCount();
 			const uint32 indexOffset = _lowLevelRenderer->GetIndexCount();
@@ -383,7 +383,7 @@ namespace mint
 			PushShapeTransformToBuffer(0.0f);
 		}
 
-		void ShapeRendererContext::DrawCircle(const float radius)
+		void ShapeRenderer::DrawCircle(const float radius)
 		{
 			const uint32 vertexOffset = _lowLevelRenderer->GetVertexCount();
 			const uint32 indexOffset = _lowLevelRenderer->GetIndexCount();
@@ -402,18 +402,18 @@ namespace mint
 			PushShapeTransformToBuffer(0.0f);
 		}
 
-		void ShapeRendererContext::DrawDynamicText(const wchar_t* const wideText, const Float2& position, const FontRenderingOption& fontRenderingOption)
+		void ShapeRenderer::DrawDynamicText(const wchar_t* const wideText, const Float2& position, const FontRenderingOption& fontRenderingOption)
 		{
 			DrawDynamicText(wideText, Float3(position._x, position._y, 0.0f), fontRenderingOption);
 		}
 
-		void ShapeRendererContext::DrawDynamicText(const wchar_t* const wideText, const Float3& position, const FontRenderingOption& fontRenderingOption)
+		void ShapeRenderer::DrawDynamicText(const wchar_t* const wideText, const Float3& position, const FontRenderingOption& fontRenderingOption)
 		{
 			const uint32 textLength = StringUtil::Length(wideText);
 			DrawDynamicText(wideText, textLength, position, fontRenderingOption);
 		}
 
-		void ShapeRendererContext::DrawDynamicText(const wchar_t* const wideText, const uint32 textLength, const Float3& position, const FontRenderingOption& fontRenderingOption)
+		void ShapeRenderer::DrawDynamicText(const wchar_t* const wideText, const uint32 textLength, const Float3& position, const FontRenderingOption& fontRenderingOption)
 		{
 			const float scaledTextWidth = _fontData.ComputeTextWidth(wideText, textLength) * fontRenderingOption._scale;
 			const float scaledFontSize = _fontData._fontSize * fontRenderingOption._scale;
@@ -445,13 +445,13 @@ namespace mint
 			PushFontTransformToBuffer(preTranslation, fontRenderingOption._transformMatrix, postTranslation);
 		}
 
-		void ShapeRendererContext::DrawDynamicTextBitFlagged(const wchar_t* const wideText, const Float3& position, const FontRenderingOption& fontRenderingOption, const BitVector& bitFlags)
+		void ShapeRenderer::DrawDynamicTextBitFlagged(const wchar_t* const wideText, const Float3& position, const FontRenderingOption& fontRenderingOption, const BitVector& bitFlags)
 		{
 			const uint32 textLength = StringUtil::Length(wideText);
 			DrawDynamicTextBitFlagged(wideText, textLength, position, fontRenderingOption, bitFlags);
 		}
 
-		void ShapeRendererContext::DrawDynamicTextBitFlagged(const wchar_t* const wideText, const uint32 textLength, const Float3& position, const FontRenderingOption& fontRenderingOption, const BitVector& bitFlags)
+		void ShapeRenderer::DrawDynamicTextBitFlagged(const wchar_t* const wideText, const uint32 textLength, const Float3& position, const FontRenderingOption& fontRenderingOption, const BitVector& bitFlags)
 		{
 			const float scaledTextWidth = _fontData.ComputeTextWidth(wideText, textLength) * fontRenderingOption._scale;
 			const float scaledFontSize = _fontData._fontSize * fontRenderingOption._scale;
@@ -483,7 +483,7 @@ namespace mint
 			PushFontTransformToBuffer(preTranslation, fontRenderingOption._transformMatrix, postTranslation);
 		}
 
-		void ShapeRendererContext::DrawGlyph(const wchar_t wideChar, Float2& glyphPosition, const float scale, const bool drawShade, const bool leaveOnlySpace)
+		void ShapeRenderer::DrawGlyph(const wchar_t wideChar, Float2& glyphPosition, const float scale, const bool drawShade, const bool leaveOnlySpace)
 		{
 			const uint32 transformIndex = _sbTransformData.Size();
 			const uint32 glyphIndex = _fontData.GetSafeGlyphIndex(wideChar);
@@ -557,12 +557,12 @@ namespace mint
 			glyphPosition._x += static_cast<float>(glyphInfo._horiAdvance) * scale;
 		}
 
-		uint32 ShapeRendererContext::ComputeVertexInfo(uint32 transformIndex, uint8 type) const
+		uint32 ShapeRenderer::ComputeVertexInfo(uint32 transformIndex, uint8 type) const
 		{
 			return (type << 30) | (transformIndex & 0x3FFFFFFF);
 		}
 
-		void ShapeRendererContext::PushShapeTransformToBuffer(const float rotationAngle, const bool applyInternalPosition)
+		void ShapeRenderer::PushShapeTransformToBuffer(const float rotationAngle, const bool applyInternalPosition)
 		{
 			SB_Transform transform;
 			transform._transformMatrix = Float4x4::RotationMatrixZ(-rotationAngle);
@@ -572,7 +572,7 @@ namespace mint
 			_sbTransformData.PushBack(transform);
 		}
 
-		void ShapeRendererContext::PushFontTransformToBuffer(const Float3& preTranslation, Float4x4 transformMatrix, const Float3& postTranslation)
+		void ShapeRenderer::PushFontTransformToBuffer(const Float3& preTranslation, Float4x4 transformMatrix, const Float3& postTranslation)
 		{
 			SB_Transform transform;
 			transform._transformMatrix.PreTranslate(preTranslation);

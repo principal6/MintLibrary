@@ -14,7 +14,7 @@
 #include <MintRenderingBase/Include/Shader.h>
 #include <MintRenderingBase/Include/GraphicsResource.h>
 #include <MintRenderingBase/Include/LowLevelRenderer.h>
-#include <MintRenderingBase/Include/ShapeRendererContext.h>
+#include <MintRenderingBase/Include/ShapeRenderer.h>
 
 #include <MintRenderingBase/Include/CppHlsl/Interpreter.h>
 
@@ -108,7 +108,7 @@ namespace mint
 		public:
 			ShaderPool& GetShaderPool() noexcept;
 			GraphicsResourcePool& GetResourcePool() noexcept;
-			ShapeRendererContext& GetShapeRendererContext() noexcept;
+			ShapeRenderer& GetShapeRenderer() noexcept;
 			const Language::CppHlsl::Interpreter& GetCppHlslSteamData() const noexcept;
 			const Language::CppHlsl::Interpreter& GetCppHlslConstantBuffers() const noexcept;
 
@@ -246,7 +246,7 @@ namespace mint
 			Language::CppHlsl::Interpreter _cppHlslStructuredBuffers;
 
 		private:
-			ShapeRendererContext _shapeRendererContext;
+			ShapeRenderer _shapeRenderer;
 			bool _needEndRenderingCall;
 		};
 	}

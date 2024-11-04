@@ -3,7 +3,7 @@
 #include <MintContainer/Include/StringReference.hpp>
 #include <MintContainer/Include/Algorithm.hpp>
 #include <MintRenderingBase/Include/GraphicsDevice.h>
-#include <MintRenderingBase/Include/ShapeRendererContext.h>
+#include <MintRenderingBase/Include/ShapeRenderer.h>
 #include <MintPlatform/Include/InputContext.h>
 #include <MintPhysics/Include/CollisionShape.h>
 #include <MintPhysics/Include/Intersection.hpp>
@@ -195,7 +195,7 @@ namespace mint
 			_graphicsDevice.SetSolidCullNoneRasterizer();
 			_graphicsDevice.SetViewProjectionMatrix(Float4x4::kIdentity, _graphicsDevice.GetScreenSpace2DProjectionMatrix());
 
-			Rendering::ShapeRendererContext& shapeRendererContext = _graphicsDevice.GetShapeRendererContext();
+			Rendering::ShapeRenderer& shapeRenderer = _graphicsDevice.GetShapeRenderer();
 			Vector<SharedPtr<GUIControl>>& controlInstances = _controlManager.AccessControlInstances();
 			for (const SharedPtr<GUIControl>& control : controlInstances)
 			{
@@ -209,10 +209,10 @@ namespace mint
 					controlInteractionState = GUIControlInteractionState::Hovered;
 				}
 
-				control->Render(shapeRendererContext, controlInteractionState);
+				control->Render(shapeRenderer, controlInteractionState);
 			}
 
-			shapeRendererContext.Render();
+			shapeRenderer.Render();
 
 			_isUpdated = false;
 		}

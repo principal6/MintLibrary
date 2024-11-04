@@ -169,7 +169,7 @@ namespace mint
 			uint64 GetCurrentStepIndex() const;
 
 		public:
-			void RenderDebug(Rendering::ShapeRendererContext& shapeRendererContext) const;
+			void RenderDebug(Rendering::ShapeRenderer& shapeRenderer) const;
 
 		public:
 			void BeginHistoryRecording();
@@ -201,8 +201,8 @@ namespace mint
 			Transform2D PredictTransform(const Transform2D& transform2D, const Float2& linearVelocity, const Float2& linearAcceleration, float angularVelocity, float angularAcceleration, float deltaTime) const;
 
 		private:
-			void RenderDebugBody(Rendering::ShapeRendererContext& shapeRendererContext, const Body2D& body) const;
-			void RenderDebugCollisionManifold(Rendering::ShapeRendererContext& shapeRendererContext, const CollisionManifold2D& collisionManifold) const;
+			void RenderDebugBody(Rendering::ShapeRenderer& shapeRenderer, const Body2D& body) const;
+			void RenderDebugCollisionManifold(Rendering::ShapeRenderer& shapeRenderer, const CollisionManifold2D& collisionManifold) const;
 
 		public:
 			PhysicsObjectPool<Body2D> _bodyPool;

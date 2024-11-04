@@ -250,7 +250,7 @@ namespace mint
 			}
 		}
 
-		void TileMap::DrawCollisions(Rendering::ShapeRendererContext& shapeRendererContext) const
+		void TileMap::DrawCollisions(Rendering::ShapeRenderer& shapeRenderer) const
 		{
 			const Vector<uint32>& tiles = GetTiles();
 			const uint32 mapWidth = GetWidth();
@@ -273,7 +273,7 @@ namespace mint
 
 					const uint32 tileID = tileNumber - 1;
 					const Float2 position = ComputeTilePosition(x, y);
-					tileSet.GetTileCollisionShapes()[tileID]->DebugDrawShape(shapeRendererContext, ByteColor(255, 0, 0), Transform2D(position));
+					tileSet.GetTileCollisionShapes()[tileID]->DebugDrawShape(shapeRenderer, ByteColor(255, 0, 0), Transform2D(position));
 				}
 			}
 		}

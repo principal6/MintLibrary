@@ -65,7 +65,7 @@ void RunGJKTestWindow()
 	GJK2DInfo gjk2DInfo;
 	EPA2DInfo epa2DInfo;
 	GraphicsDevice& graphicsDevice = app.GetGraphicsDevice();
-	ShapeRendererContext& shapeRendererContext = graphicsDevice.GetShapeRendererContext();
+	ShapeRenderer& shapeRenderer = graphicsDevice.GetShapeRenderer();
 	const InputContext& inputContext = InputContext::GetInstance();
 	enum class SelectionMode
 	{
@@ -169,70 +169,70 @@ void RunGJKTestWindow()
 				const ByteColor kShapeAColor(255, 0, 0);
 				const ByteColor kShapeBColor(64, 128, 0);
 				const ByteColor kIntersectedColor(32, 196, 32);
-				shapeA.DebugDrawShape(shapeRendererContext, (intersects ? kIntersectedColor : kShapeAColor), Transform2D());
-				shapeB.DebugDrawShape(shapeRendererContext, (intersects ? kIntersectedColor : kShapeBColor), Transform2D());
+				shapeA.DebugDrawShape(shapeRenderer, (intersects ? kIntersectedColor : kShapeAColor), Transform2D());
+				shapeB.DebugDrawShape(shapeRenderer, (intersects ? kIntersectedColor : kShapeBColor), Transform2D());
 
 				// Minkowski Difference Shape
 				const ByteColor kShapeMDColor(64, 64, 64);
 				ConvexCollisionShape2D shapeMD{ ConvexCollisionShape2D::MakeMinkowskiDifferenceShape(shapeA, shapeB) };
-				shapeMD.DebugDrawShape(shapeRendererContext, kShapeMDColor, Transform2D());
+				shapeMD.DebugDrawShape(shapeRenderer, kShapeMDColor, Transform2D());
 
 				// Simplex
-				gjk2DInfo._simplex.DebugDrawShape(shapeRendererContext, ByteColor(255, 0, 255), Transform2D());
+				gjk2DInfo._simplex.DebugDrawShape(shapeRenderer, ByteColor(255, 0, 255), Transform2D());
 
 				// Grid
-				shapeRendererContext.SetColor(kShapeMDColor);
-				shapeRendererContext.DrawLine(Float2(0, -800), Float2(0, 800), 1.0f);
-				shapeRendererContext.DrawLine(Float2(-800, 0), Float2(800, 0), 1.0f);
+				shapeRenderer.SetColor(kShapeMDColor);
+				shapeRenderer.DrawLine(Float2(0, -800), Float2(0, 800), 1.0f);
+				shapeRenderer.DrawLine(Float2(-800, 0), Float2(800, 0), 1.0f);
 
 				//// Direction
-				//shapeRendererContext.DrawArrow(shapeATransform2D._translation, shapeATransform2D._translation + gjk2DInfo._direction * 50.0f, 1.0f, 0.125f, 4.0f);
-				//shapeRendererContext.DrawArrow(shapeBTransform2D._translation, shapeBTransform2D._translation - gjk2DInfo._direction * 50.0f, 1.0f, 0.125f, 4.0f);
-				//shapeRendererContext.DrawArrow(Float2::kZero, gjk2DInfo._direction * 100.0f, 2.0f, 0.125f, 4.0f);
+				//shapeRenderer.DrawArrow(shapeATransform2D._translation, shapeATransform2D._translation + gjk2DInfo._direction * 50.0f, 1.0f, 0.125f, 4.0f);
+				//shapeRenderer.DrawArrow(shapeBTransform2D._translation, shapeBTransform2D._translation - gjk2DInfo._direction * 50.0f, 1.0f, 0.125f, 4.0f);
+				//shapeRenderer.DrawArrow(Float2::kZero, gjk2DInfo._direction * 100.0f, 2.0f, 0.125f, 4.0f);
 
 				if (intersects)
 				{
 					Float2 normal = Float2(0, 1);
 					float distance = 0.0f;
 					ComputePenetration_EPA(shapeA, shapeB, gjk2DInfo, normal, distance, epa2DInfo);
-					//epa2DInfo._simplex.DebugDrawShape(shapeRendererContext, ByteColor(0, 64, 255), Transform2D());
+					//epa2DInfo._simplex.DebugDrawShape(shapeRenderer, ByteColor(0, 64, 255), Transform2D());
 
-					shapeRendererContext.SetColor(ByteColor(0, 64, 255));
-					shapeRendererContext.SetPosition(Float4(shapeA.ComputeSupportPoint(+normal)));
-					shapeRendererContext.DrawCircle(4.0f);
-					shapeRendererContext.SetPosition(Float4(shapeB.ComputeSupportPoint(-normal)));
-					shapeRendererContext.DrawCircle(4.0f);
+					shapeRenderer.SetColor(ByteColor(0, 64, 255));
+					shapeRenderer.SetPosition(Float4(shapeA.ComputeSupportPoint(+normal)));
+					shapeRenderer.DrawCircle(4.0f);
+					shapeRenderer.SetPosition(Float4(shapeB.ComputeSupportPoint(-normal)));
+					shapeRenderer.DrawCircle(4.0f);
 
 					const uint32 pointCount = epa2DInfo._points.Size();
 					for (uint32 i = 1; i < pointCount; ++i)
 					{
-						shapeRendererContext.DrawLine(epa2DInfo._points[i - 1], epa2DInfo._points[i], 2.0f);
+						shapeRenderer.DrawLine(epa2DInfo._points[i - 1], epa2DInfo._points[i], 2.0f);
 					}
 					if (pointCount > 0)
 					{
-						shapeRendererContext.DrawLine(epa2DInfo._points.Back(), epa2DInfo._points[0], 2.0f);
+						shapeRenderer.DrawLine(epa2DInfo._points.Back(), epa2DInfo._points[0], 2.0f);
 					}
 
-					shapeRendererContext.SetColor(ByteColor(255, 64, 0));
-					shapeRendererContext.SetPosition(Float4(normal * distance));
-					shapeRendererContext.DrawCircle(4.0f);
+					shapeRenderer.SetColor(ByteColor(255, 64, 0));
+					shapeRenderer.SetPosition(Float4(normal * distance));
+					shapeRenderer.DrawCircle(4.0f);
 				}
 
-				shapeRendererContext.Render();
+				shapeRenderer.Render();
 			}
 			{
 				graphicsDevice.SetViewProjectionMatrix(Float4x4::kIdentity, Float4x4::ProjectionMatrix2DFromTopLeft(windowSize._x, windowSize._y));
 
-				shapeRendererContext.SetTextColor(Color::kBlack);
+				shapeRenderer.SetTextColor(Color::kBlack);
 				StackStringW<100> buffer;
 				FormatString(buffer, L"GJK Iteration: %d / Max %u (Q/W)", gjk2DInfo._loopCount, gjk2DInfo._maxLoopCount);
-				shapeRendererContext.DrawDynamicText(buffer.CString(), Float2(10, 10), FontRenderingOption());
+				shapeRenderer.DrawDynamicText(buffer.CString(), Float2(10, 10), FontRenderingOption());
 				FormatString(buffer, L"EPA Iteration: %d / Max %u (A/S)", epa2DInfo._iteration, epa2DInfo._maxIterationCount);
-				shapeRendererContext.DrawDynamicText(buffer.CString(), Float2(10, 30), FontRenderingOption());
+				shapeRenderer.DrawDynamicText(buffer.CString(), Float2(10, 30), FontRenderingOption());
 				FormatString(buffer, L"Selected: %s (1: None / 2: A / 3: B)", (selectionMode == SelectionMode::None ? L"None" : (selectionMode == SelectionMode::ShapeA ? L"ShapeA" : L"ShapeB")));
-				shapeRendererContext.DrawDynamicText(buffer.CString(), Float2(10, 50), FontRenderingOption());
+				shapeRenderer.DrawDynamicText(buffer.CString(), Float2(10, 50), FontRenderingOption());
 
-				shapeRendererContext.Render();
+				shapeRenderer.Render();
 			}
 		}
 		app.EndRendering();
@@ -355,14 +355,14 @@ bool Run2DTestWindow()
 			imageRenderer.DrawImageScreenSpace(Float2(64, 64), Float2(128, 128), corgiCurrentAnimation.GetCurrentFrameUV0(), corgiCurrentAnimation.GetCurrentFrameUV1());
 			imageRenderer.Render();
 
-			ShapeRendererContext& shapeRendererContext = graphicsDevice.GetShapeRendererContext();
+			ShapeRenderer& shapeRenderer = graphicsDevice.GetShapeRenderer();
 			{
 				StackStringW<100> fpsString;
 				FormatString(fpsString, L"FPS: %d", Profiler::FPSCounter::GetFPS());
-				shapeRendererContext.SetTextColor(Color::kBlack);
-				shapeRendererContext.DrawDynamicText(fpsString.CString(), Float2(10, 10), FontRenderingOption());
+				shapeRenderer.SetTextColor(Color::kBlack);
+				shapeRenderer.DrawDynamicText(fpsString.CString(), Float2(10, 10), FontRenderingOption());
 			}
-			shapeRendererContext.Render();
+			shapeRenderer.Render();
 		}
 		app.EndRendering();
 
@@ -492,20 +492,20 @@ bool Run3DTestWindow()
 		// Rendering
 		app.BeginRendering();
 		{
-			ShapeRendererContext& shapeRendererContext = graphicsDevice.GetShapeRendererContext();
-			// # ShapeRendererContext 테스트
-			//shapeRendererContext.TestDraw(Float2(200, 100));
+			ShapeRenderer& shapeRenderer = graphicsDevice.GetShapeRenderer();
+			// # ShapeRenderer 테스트
+			//shapeRenderer.TestDraw(Float2(200, 100));
 			//Shape testShapeSet;
 			//ShapeGenerator::GenerateRectangle(Float2(32, 32), ByteColor(0,255,255), testShapeSet);
-			//shapeRendererContext.AddShape(testShapeSet);
+			//shapeRenderer.AddShape(testShapeSet);
 			graphicsDevice.SetViewProjectionMatrix(Float4x4::kIdentity, graphicsDevice.GetScreenSpace2DProjectionMatrix());
 			{
 				StackStringW<100> fpsString;
 				FormatString(fpsString, L"FPS: %d", Profiler::FPSCounter::GetFPS());
-				shapeRendererContext.SetTextColor(Color::kBlack);
-				shapeRendererContext.DrawDynamicText(fpsString.CString(), Float2(10, 10), FontRenderingOption());
+				shapeRenderer.SetTextColor(Color::kBlack);
+				shapeRenderer.DrawDynamicText(fpsString.CString(), Float2(10, 10), FontRenderingOption());
 			}
-			shapeRendererContext.Render();
+			shapeRenderer.Render();
 
 			graphicsDevice.SetViewProjectionMatrix(testCameraComponent->GetViewMatrix(), testCameraComponent->GetProjectionMatrix());
 		}

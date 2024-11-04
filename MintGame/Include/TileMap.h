@@ -16,7 +16,7 @@ namespace mint
 	namespace Rendering
 	{
 		class ImageRenderer;
-		class ShapeRendererContext;
+		class ShapeRenderer;
 	}
 
 	namespace Physics
@@ -72,7 +72,7 @@ namespace mint
 		public:
 			bool Load(const StringA& tileMapFileName);
 			void Draw(ImageRenderer& imageRenderer) const;
-			void DrawCollisions(Rendering::ShapeRendererContext& shapeRendererContext) const;
+			void DrawCollisions(Rendering::ShapeRenderer& shapeRenderer) const;
 
 		public:
 			const TileSet& GetTileSet() const { return _tileSet; }

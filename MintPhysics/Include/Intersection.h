@@ -18,7 +18,7 @@ namespace mint
 
 	namespace Rendering
 	{
-		class ShapeRendererContext;
+		class ShapeRenderer;
 	}
 
 	namespace Physics
@@ -32,7 +32,7 @@ namespace mint
 {
 	namespace Physics
 	{
-		using mint::Rendering::ShapeRendererContext;
+		using mint::Rendering::ShapeRenderer;
 
 		// Newest ---- Oldest
 		//   A  -  B  -  C
@@ -47,7 +47,7 @@ namespace mint
 			void AppendPoint(const Float2& pointA);
 
 		public:
-			void DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Transform2D& transform2D) const;
+			void DebugDrawShape(ShapeRenderer& shapeRenderer, const ByteColor& color, const Transform2D& transform2D) const;
 			const Float2& GetClosestPoint() const;
 			const uint8 GetValidPointCount() const { return _validPointCount; }
 			const Float2& GetPointA() const { return _points[_validPointCount - 1]; }

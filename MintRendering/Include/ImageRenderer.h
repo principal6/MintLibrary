@@ -5,14 +5,14 @@
 #define _MINT_RENDERING_SPRITE_RENDERER_H_
 
 
-#include <MintRenderingBase/Include/ShapeRendererContext.h>
+#include <MintRenderingBase/Include/ShapeRenderer.h>
 
 
 namespace mint
 {
 	namespace Rendering
 	{
-		class ImageRenderer : protected ShapeRendererContext
+		class ImageRenderer : protected ShapeRenderer
 		{
 		public:
 			ImageRenderer(GraphicsDevice& graphicsDevice, const uint32 psTextureSlot);

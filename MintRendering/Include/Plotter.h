@@ -14,7 +14,7 @@ namespace mint
 {
 	namespace Rendering
 	{
-		class ShapeRendererContext;
+		class ShapeRenderer;
 
 
 		class Plotter
@@ -37,7 +37,7 @@ namespace mint
 			};
 
 		public:
-			Plotter(ShapeRendererContext& shapeRendererContext);
+			Plotter(ShapeRenderer& shapeRenderer);
 			~Plotter() = default;
 
 		public:
@@ -62,7 +62,7 @@ namespace mint
 			void DrawLabels(const Float4& frameCenterPosition) noexcept;
 
 		private:
-			ShapeRendererContext* const _shapeRendererContext;
+			ShapeRenderer* const _shapeRenderer;
 
 		private:
 			Vector<Vector<float>> _xDataSets;

@@ -10,7 +10,7 @@
 #include <MintContainer/Include/StringUtil.h>
 #include <MintContainer/Include/BitVector.h>
 
-#include <MintRenderingBase/Include/ShapeRendererContext.h>
+#include <MintRenderingBase/Include/ShapeRenderer.h>
 
 
 namespace mint
@@ -86,7 +86,7 @@ namespace mint
 			void Render() noexcept;
 
 		private:
-			ShapeRendererContext _shapeRendererContexts[MathExpression::GetModifierTypeCount()];
+			ShapeRenderer _shapeRenderers[MathExpression::GetModifierTypeCount()];
 			BitVector _bitFlagsArray[MathExpression::GetModifierTypeCount()];
 		};
 	}

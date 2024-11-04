@@ -17,7 +17,7 @@ namespace mint
 
 	namespace Rendering
 	{
-		class ShapeRendererContext;
+		class ShapeRenderer;
 		struct Shape;
 	}
 
@@ -31,7 +31,7 @@ namespace mint
 {
 	namespace Physics
 	{
-		using mint::Rendering::ShapeRendererContext;
+		using mint::Rendering::ShapeRenderer;
 
 		enum class CollisionShapeType
 		{
@@ -59,7 +59,7 @@ namespace mint
 			virtual void ComputeSupportEdge(const Float2& direction, Float2& outVertexA, Float2& outVertexB) const abstract;
 		
 		public:
-			virtual void DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Transform2D& transform2D) const { __noop; }
+			virtual void DebugDrawShape(ShapeRenderer& shapeRenderer, const ByteColor& color, const Transform2D& transform2D) const { __noop; }
 		};
 
 		class PointCollisionShape2D : public CollisionShape2D
@@ -73,7 +73,7 @@ namespace mint
 			virtual void ComputeSupportEdge(const Float2& direction, Float2& outVertexA, Float2& outVertexB) const override final;
 		
 		public:
-			virtual void DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Transform2D& transform2D) const override final;
+			virtual void DebugDrawShape(ShapeRenderer& shapeRenderer, const ByteColor& color, const Transform2D& transform2D) const override final;
 
 		public:
 			Float2 _center;
@@ -91,7 +91,7 @@ namespace mint
 			virtual void ComputeSupportEdge(const Float2& direction, Float2& outVertexA, Float2& outVertexB) const override final;
 
 		public:
-			virtual void DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Transform2D& transform2D) const override final;
+			virtual void DebugDrawShape(ShapeRenderer& shapeRenderer, const ByteColor& color, const Transform2D& transform2D) const override final;
 
 		public:
 			Float2 _vertexA;
@@ -110,7 +110,7 @@ namespace mint
 			virtual void ComputeSupportEdge(const Float2& direction, Float2& outVertexA, Float2& outVertexB) const override final;
 		
 		public:
-			virtual void DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Transform2D& transform2D) const  override final;
+			virtual void DebugDrawShape(ShapeRenderer& shapeRenderer, const ByteColor& color, const Transform2D& transform2D) const  override final;
 
 		public:
 			Float2 _center;
@@ -136,7 +136,7 @@ namespace mint
 			virtual void ComputeSupportEdge(const Float2& direction, Float2& outVertexA, Float2& outVertexB) const override final;
 		
 		public:
-			virtual void DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Transform2D& transform2D) const override final;
+			virtual void DebugDrawShape(ShapeRenderer& shapeRenderer, const ByteColor& color, const Transform2D& transform2D) const override final;
 
 		public:
 			Float2 _center;
@@ -157,7 +157,7 @@ namespace mint
 			const Float2& GetHalfLengthedAxisY() const { return _halfLengthedAxisY; }
 		
 		public:
-			virtual void DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Transform2D& transform2D) const override final;
+			virtual void DebugDrawShape(ShapeRenderer& shapeRenderer, const ByteColor& color, const Transform2D& transform2D) const override final;
 
 		public:
 			Float2 _center;
@@ -193,7 +193,7 @@ namespace mint
 			const Vector<Float2>& GetVertices() const { return _vertices; }
 		
 		public:
-			virtual void DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Transform2D& transform2D) const override final;
+			virtual void DebugDrawShape(ShapeRenderer& shapeRenderer, const ByteColor& color, const Transform2D& transform2D) const override final;
 
 		private:
 			ConvexCollisionShape2D();
@@ -224,7 +224,7 @@ namespace mint
 			const Vector<ShapeInstance>& GetShapeInstances() const { return _shapeInstances; }
 
 		public:
-			virtual void DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Transform2D& transform2D) const override final;
+			virtual void DebugDrawShape(ShapeRenderer& shapeRenderer, const ByteColor& color, const Transform2D& transform2D) const override final;
 
 		private:
 			Vector<ShapeInstance> _shapeInstances;

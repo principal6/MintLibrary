@@ -1,6 +1,6 @@
 ﻿#include <MintRendering/Include/SplineGenerator.h>
 
-#include <MintRenderingBase/Include/ShapeRendererContext.h>
+#include <MintRenderingBase/Include/ShapeRenderer.h>
 
 
 namespace mint

@@ -5,7 +5,7 @@
 #include <MintContainer/Include/Color.h>
 #include <MintContainer/Include/Algorithm.hpp>
 #include <MintContainer/Include/StringUtil.hpp>
-#include <MintRenderingBase/Include/ShapeRendererContext.h>
+#include <MintRenderingBase/Include/ShapeRenderer.h>
 #include <MintPhysics/Include/Intersection.hpp>
 
 
@@ -588,18 +588,18 @@ namespace mint
 			return resultTransform2D;
 		}
 
-		void World::RenderDebug(Rendering::ShapeRendererContext& shapeRendererContext) const
+		void World::RenderDebug(Rendering::ShapeRenderer& shapeRenderer) const
 		{
 			if (_worldHistory.IsPlaying() == true)
 			{
 				const StepSnapshot& stepSnapshot = _worldHistory.GetStepSnapshot();
 				for (const StepSnapshot::BodySnapshot& bodySnapshot : stepSnapshot._bodySnapshots)
 				{
-					RenderDebugBody(shapeRendererContext, bodySnapshot._body);
+					RenderDebugBody(shapeRenderer, bodySnapshot._body);
 
 					for (const CollisionManifold2D& collisionManifold : bodySnapshot._collisionManifolds)
 					{
-						RenderDebugCollisionManifold(shapeRendererContext, collisionManifold);
+						RenderDebugCollisionManifold(shapeRenderer, collisionManifold);
 					}
 				}
 			}
@@ -614,50 +614,50 @@ namespace mint
 						continue;
 					}
 
-					RenderDebugBody(shapeRendererContext, body);
+					RenderDebugBody(shapeRenderer, body);
 				}
 
 				for (const Vector<CollisionManifold2D>& collisionManifold2Ds : _collisionManifold2DsMap)
 				{
 					for (const CollisionManifold2D& collisionManifold2D : collisionManifold2Ds)
 					{
-						RenderDebugCollisionManifold(shapeRendererContext, collisionManifold2D);
+						RenderDebugCollisionManifold(shapeRenderer, collisionManifold2D);
 					}
 				}
 			}
 
-			shapeRendererContext.Render();
+			shapeRenderer.Render();
 		}
 
-		void World::RenderDebugBody(Rendering::ShapeRendererContext& shapeRendererContext, const Body2D& body) const
+		void World::RenderDebugBody(Rendering::ShapeRenderer& shapeRenderer, const Body2D& body) const
 		{
 			MINT_ASSERT(body.IsValid() == true, "Caller must guarantee this!");
 
 			// TEMP
-			//body._bodyAABB->DebugDrawShape(shapeRendererContext, ByteColor(255, 255, 0), Transform2D());
+			//body._bodyAABB->DebugDrawShape(shapeRenderer, ByteColor(255, 255, 0), Transform2D());
 
-			body._shape._collisionShape->DebugDrawShape(shapeRendererContext, ByteColor(128, 128, 128), body._transform2D);
+			body._shape._collisionShape->DebugDrawShape(shapeRenderer, ByteColor(128, 128, 128), body._transform2D);
 
 			// TEMP
 			//StackStringW<256> buffer;
 			//FormatString(buffer, L"[%d]", body._bodyID.Value());
-			//shapeRendererContext.DrawDynamicText(buffer.CString(), Float4(body._transform2D._translation), Rendering::FontRenderingOption());
+			//shapeRenderer.DrawDynamicText(buffer.CString(), Float4(body._transform2D._translation), Rendering::FontRenderingOption());
 		}
 
-		void World::RenderDebugCollisionManifold(Rendering::ShapeRendererContext& shapeRendererContext, const CollisionManifold2D& collisionManifold) const
+		void World::RenderDebugCollisionManifold(Rendering::ShapeRenderer& shapeRenderer, const CollisionManifold2D& collisionManifold) const
 		{
 			const float kNormalLength = 64.0f;
 			const float kNormalThickness = 2.0f;
 			const float kPositionCircleRadius = 4.0f;
 
-			shapeRendererContext.SetColor(ByteColor(0, 128, 255));
-			shapeRendererContext.SetPosition(Float4(collisionManifold._collisionPosition));
-			shapeRendererContext.DrawCircle(kPositionCircleRadius);
-			shapeRendererContext.DrawLine(collisionManifold._collisionPosition, collisionManifold._collisionPosition + collisionManifold._collisionNormal * kNormalLength, kNormalThickness);
+			shapeRenderer.SetColor(ByteColor(0, 128, 255));
+			shapeRenderer.SetPosition(Float4(collisionManifold._collisionPosition));
+			shapeRenderer.DrawCircle(kPositionCircleRadius);
+			shapeRenderer.DrawLine(collisionManifold._collisionPosition, collisionManifold._collisionPosition + collisionManifold._collisionNormal * kNormalLength, kNormalThickness);
 
-			shapeRendererContext.SetColor(ByteColor(128, 0, 255));
-			shapeRendererContext.SetPosition(Float4(collisionManifold._collisionPosition + collisionManifold._collisionNormal * ::abs(collisionManifold._signedDistance)));
-			shapeRendererContext.DrawCircle(kPositionCircleRadius);
+			shapeRenderer.SetColor(ByteColor(128, 0, 255));
+			shapeRenderer.SetPosition(Float4(collisionManifold._collisionPosition + collisionManifold._collisionNormal * ::abs(collisionManifold._signedDistance)));
+			shapeRenderer.DrawCircle(kPositionCircleRadius);
 		}
 
 		void World::BeginHistoryRecording()

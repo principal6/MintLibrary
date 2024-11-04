@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 
-#ifndef _MINT_RENDERING_BASE_SHAPE_RENDERER_CONTEXT_H_
-#define _MINT_RENDERING_BASE_SHAPE_RENDERER_CONTEXT_H_
+#ifndef _MINT_RENDERING_BASE_SHAPE_RENDERER_H_
+#define _MINT_RENDERING_BASE_SHAPE_RENDERER_H_
 
 
 #include <MintCommon/Include/CommonDefinitions.h>
@@ -10,7 +10,7 @@
 #include <MintContainer/Include/Vector.h>
 #include <MintContainer/Include/StackVector.h>
 
-#include <MintRenderingBase/Include/IRendererContext.h>
+#include <MintRenderingBase/Include/IRenderer.h>
 #include <MintRenderingBase/Include/FontLoader.h>
 
 
@@ -54,7 +54,7 @@ namespace mint
 
 
 		// All draw functions use LowLevelRenderer::PushRenderCommandIndexed()
-		class ShapeRendererContext : public IRendererContext
+		class ShapeRenderer : public IRenderer
 		{
 		public:
 			struct Split
@@ -67,8 +67,8 @@ namespace mint
 			};
 
 		public:
-			ShapeRendererContext(GraphicsDevice& graphicsDevice);
-			virtual ~ShapeRendererContext();
+			ShapeRenderer(GraphicsDevice& graphicsDevice);
+			virtual ~ShapeRenderer();
 
 		public:
 			virtual void InitializeShaders() noexcept override;
@@ -140,4 +140,4 @@ namespace mint
 }
 
 
-#endif // !_MINT_RENDERING_BASE_SHAPE_RENDERER_CONTEXT_H_
+#endif // !_MINT_RENDERING_BASE_SHAPE_RENDERER_H_

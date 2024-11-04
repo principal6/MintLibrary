@@ -172,7 +172,7 @@ namespace mint
 
 
 		MathExpressionRenderer::MathExpressionRenderer(GraphicsDevice& graphicsDevice)
-			: _shapeRendererContexts{ graphicsDevice, graphicsDevice, graphicsDevice, graphicsDevice }
+			: _shapeRenderers{ graphicsDevice, graphicsDevice, graphicsDevice, graphicsDevice }
 		{
 			const char* const kFontFileNames[MathExpression::GetModifierTypeCount()] =
 			{ Path::MakeAssetPath("cmu_s_italic"), Path::MakeAssetPath("cmu_s_bold"), Path::MakeAssetPath("cmu_s_bold_italic"), Path::MakeAssetPath("cmu_s_roman") };
@@ -180,7 +180,7 @@ namespace mint
 			FontLoader fontLoader;
 			for (uint32 modifierTypeIndex = 0; modifierTypeIndex < MathExpression::GetModifierTypeCount(); ++modifierTypeIndex)
 			{
-				ShapeRendererContext& rendererContext = _shapeRendererContexts[modifierTypeIndex];
+				ShapeRenderer& shapeRenderer = _shapeRenderers[modifierTypeIndex];
 				const char* const kFontFileName = kFontFileNames[modifierTypeIndex];
 				if (FontLoader::ExistsFont(kFontFileName) == false)
 				{
@@ -188,10 +188,9 @@ namespace mint
 					fontLoader.BakeFontData(kFontFileName, 32, kFontFileName, 2048, 1, 1);
 				}
 				fontLoader.LoadFont(kFontFileName, graphicsDevice);
-
-				rendererContext.InitializeFontData(fontLoader.GetFontData());
-				rendererContext.InitializeShaders();
-				rendererContext.SetTextColor(Color::kBlack);
+				shapeRenderer.InitializeFontData(fontLoader.GetFontData());
+				shapeRenderer.InitializeShaders();
+				shapeRenderer.SetTextColor(Color::kBlack);
 			}
 		}
 
@@ -228,9 +227,8 @@ namespace mint
 
 			for (uint32 modifierTypeIndex = 0; modifierTypeIndex < MathExpression::GetModifierTypeCount(); ++modifierTypeIndex)
 			{
-				ShapeRendererContext& rendererContext = _shapeRendererContexts[modifierTypeIndex];
-
-				rendererContext.DrawDynamicTextBitFlagged(mathExpression.GetPlainString(), Float3(screenPosition._x, screenPosition._y, 0.0f),
+				ShapeRenderer& shapeRenderer = _shapeRenderers[modifierTypeIndex];
+				shapeRenderer.DrawDynamicTextBitFlagged(mathExpression.GetPlainString(), Float3(screenPosition._x, screenPosition._y, 0.0f),
 					FontRenderingOption(TextRenderDirectionHorz::Rightward, TextRenderDirectionVert::Downward), _bitFlagsArray[modifierTypeIndex]);
 			}
 		}
@@ -239,8 +237,8 @@ namespace mint
 		{
 			for (uint32 modifierTypeIndex = 0; modifierTypeIndex < MathExpression::GetModifierTypeCount(); ++modifierTypeIndex)
 			{
-				ShapeRendererContext& shapeRendererContext = _shapeRendererContexts[modifierTypeIndex];
-				shapeRendererContext.Render();
+				ShapeRenderer& shapeRenderer = _shapeRenderers[modifierTypeIndex];
+				shapeRenderer.Render();
 			}
 		}
 	}

@@ -469,27 +469,27 @@ namespace mint
 
 		void GameBase2D::DrawCircle(const Float2& position, float radius, const ByteColor& color)
 		{
-			Rendering::ShapeRendererContext& shapeRendererContext = _graphicsDevice->GetShapeRendererContext();
-			shapeRendererContext.SetColor(color);
-			shapeRendererContext.SetPosition(Float4(position));
-			shapeRendererContext.DrawCircle(radius);
+			Rendering::ShapeRenderer& shapeRenderer = _graphicsDevice->GetShapeRenderer();
+			shapeRenderer.SetColor(color);
+			shapeRenderer.SetPosition(Float4(position));
+			shapeRenderer.DrawCircle(radius);
 		}
 
 		void GameBase2D::DrawGrid()
 		{
-			Rendering::ShapeRendererContext& shapeRendererContext = _graphicsDevice->GetShapeRendererContext();
-			shapeRendererContext.SetColor(ByteColor(16, 16, 16));
-			shapeRendererContext.DrawLine(Float2(-2048, 0), Float2(2048, 0), 2.0f);
-			shapeRendererContext.DrawLine(Float2(0, -2048), Float2(0, 2048), 2.0f);
+			Rendering::ShapeRenderer& shapeRenderer = _graphicsDevice->GetShapeRenderer();
+			shapeRenderer.SetColor(ByteColor(16, 16, 16));
+			shapeRenderer.DrawLine(Float2(-2048, 0), Float2(2048, 0), 2.0f);
+			shapeRenderer.DrawLine(Float2(0, -2048), Float2(0, 2048), 2.0f);
 		}
 
 		void GameBase2D::DrawTextToScreen(const StringA& text, const Int2& position, const ByteColor& color)
 		{
-			Rendering::ShapeRendererContext& shapeRendererContext = _graphicsDevice->GetShapeRendererContext();
-			shapeRendererContext.SetTextColor(color);
+			Rendering::ShapeRenderer& shapeRenderer = _graphicsDevice->GetShapeRenderer();
+			shapeRenderer.SetTextColor(color);
 			StringW textW;
 			StringUtil::ConvertStringAToStringW(text, textW);
-			shapeRendererContext.DrawDynamicText(textW.CString(), Float3(static_cast<float>(position._x), static_cast<float>(position._y), 0), Rendering::FontRenderingOption());
+			shapeRenderer.DrawDynamicText(textW.CString(), Float3(static_cast<float>(position._x), static_cast<float>(position._y), 0), Rendering::FontRenderingOption());
 		}
 
 		void GameBase2D::DrawEffects()
@@ -504,8 +504,8 @@ namespace mint
 
 		void GameBase2D::EndRendering()
 		{
-			Rendering::ShapeRendererContext& shapeRendererContext = _graphicsDevice->GetShapeRendererContext();
-			shapeRendererContext.Render();
+			Rendering::ShapeRenderer& shapeRenderer = _graphicsDevice->GetShapeRenderer();
+			shapeRenderer.Render();
 
 			_graphicsDevice->EndRendering();
 		}
@@ -579,7 +579,7 @@ namespace mint
 		{
 			_tileMap.Draw(*_mapRenderer);
 
-			Rendering::ShapeRendererContext& shapeRendererContext = _graphicsDevice->GetShapeRendererContext();
+			Rendering::ShapeRenderer& shapeRenderer = _graphicsDevice->GetShapeRenderer();
 			_mapRenderer->Render();
 		}
 
@@ -601,11 +601,11 @@ namespace mint
 
 			if (_isDebugMode == true)
 			{
-				Rendering::ShapeRendererContext& shapeRendererContext = _graphicsDevice->GetShapeRendererContext();
-				//_tileMap.DrawCollisions(shapeRendererContext);
-				//shapeRendererContext.Render();
+				Rendering::ShapeRenderer& shapeRenderer = _graphicsDevice->GetShapeRenderer();
+				//_tileMap.DrawCollisions(shapeRenderer);
+				//shapeRenderer.Render();
 
-				_physicsWorld.RenderDebug(shapeRendererContext);
+				_physicsWorld.RenderDebug(shapeRenderer);
 			}
 		}
 

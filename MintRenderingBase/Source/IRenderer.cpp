@@ -1,4 +1,4 @@
-﻿#include <MintRenderingBase/Include/IRendererContext.h>
+﻿#include <MintRenderingBase/Include/IRenderer.h>
 
 #include <MintContainer/Include/Vector.hpp>
 
@@ -10,7 +10,7 @@ namespace mint
 {
 	namespace Rendering
 	{
-		IRendererContext::IRendererContext(GraphicsDevice& graphicsDevice)
+		IRenderer::IRenderer(GraphicsDevice& graphicsDevice)
 			: _graphicsDevice{ graphicsDevice }
 			, _lowLevelRenderer{ nullptr }
 			, _ownsLowLevelRenderer{ true }
@@ -21,7 +21,7 @@ namespace mint
 			lowLevelRendererCasted = MINT_NEW(LowLevelRenderer<VS_INPUT_SHAPE>, _graphicsDevice);
 		}
 
-		IRendererContext::IRendererContext(GraphicsDevice& graphicsDevice, LowLevelRenderer<VS_INPUT_SHAPE>* const nonOwnedLowLevelRenderer)
+		IRenderer::IRenderer(GraphicsDevice& graphicsDevice, LowLevelRenderer<VS_INPUT_SHAPE>* const nonOwnedLowLevelRenderer)
 			: _graphicsDevice{ graphicsDevice }
 			, _lowLevelRenderer{ nonOwnedLowLevelRenderer }
 			, _ownsLowLevelRenderer{ false }
@@ -31,7 +31,7 @@ namespace mint
 			__noop;
 		}
 
-		IRendererContext::IRendererContext(const IRendererContext& rhs)
+		IRenderer::IRenderer(const IRenderer& rhs)
 			: _graphicsDevice{ rhs._graphicsDevice }
 			, _lowLevelRenderer{ nullptr }
 			, _ownsLowLevelRenderer{ true }
@@ -42,7 +42,7 @@ namespace mint
 			lowLevelRendererCasted = MINT_NEW(LowLevelRenderer<VS_INPUT_SHAPE>, _graphicsDevice);
 		}
 
-		inline IRendererContext::~IRendererContext()
+		inline IRenderer::~IRenderer()
 		{
 			if (_ownsLowLevelRenderer)
 			{
@@ -51,12 +51,12 @@ namespace mint
 			}
 		}
 
-		void IRendererContext::FlushTransformBuffer() noexcept
+		void IRenderer::FlushTransformBuffer() noexcept
 		{
 			_sbTransformData.Clear();
 		}
 
-		void IRendererContext::PrepareTransformBuffer() noexcept
+		void IRenderer::PrepareTransformBuffer() noexcept
 		{
 			if (_sbTransformData.IsEmpty())
 			{

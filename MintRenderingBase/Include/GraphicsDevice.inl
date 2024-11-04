@@ -26,9 +26,9 @@ namespace mint
 			return _resourcePool;
 		}
 
-		MINT_INLINE ShapeRendererContext& GraphicsDevice::GetShapeRendererContext() noexcept
+		MINT_INLINE ShapeRenderer& GraphicsDevice::GetShapeRenderer() noexcept
 		{
-			return _shapeRendererContext;
+			return _shapeRenderer;
 		}
 		
 		MINT_INLINE const Language::CppHlsl::Interpreter& GraphicsDevice::GetCppHlslSteamData() const noexcept

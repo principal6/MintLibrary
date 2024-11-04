@@ -1,7 +1,7 @@
 ﻿#include <MintPhysics/Include/Intersection.h>
 #include <MintPhysics/Include/Intersection.hpp>
 #include <MintMath/Include/Geometry.h>
-#include <MintRenderingBase/Include/ShapeRendererContext.h>
+#include <MintRenderingBase/Include/ShapeRenderer.h>
 #include <MintRenderingBase/Include/ShapeGenerator.h>
 #include <MintPhysics/Include/CollisionShape.h>
 
@@ -37,7 +37,7 @@ namespace mint
 			++_validPointCount;
 		}
 
-		void GJK2DSimplex::DebugDrawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Transform2D& transform2D) const
+		void GJK2DSimplex::DebugDrawShape(ShapeRenderer& shapeRenderer, const ByteColor& color, const Transform2D& transform2D) const
 		{
 			if (GetValidPointCount() == 0)
 			{
@@ -46,33 +46,33 @@ namespace mint
 
 			const float kCircleRadius = 2.0f;
 			const float kLineThickness = 1.0f;
-			shapeRendererContext.SetColor(color);
+			shapeRenderer.SetColor(color);
 
 			if (GetValidPointCount() == 1)
 			{
-				shapeRendererContext.SetPosition(Float4(GetPointA()));
-				shapeRendererContext.DrawCircle(kCircleRadius);
+				shapeRenderer.SetPosition(Float4(GetPointA()));
+				shapeRenderer.DrawCircle(kCircleRadius);
 			}
 			else if (GetValidPointCount() == 2)
 			{
-				shapeRendererContext.SetPosition(Float4(GetPointA()));
-				shapeRendererContext.DrawCircle(kCircleRadius);
-				shapeRendererContext.SetPosition(Float4(GetPointB()));
-				shapeRendererContext.DrawCircle(kCircleRadius);
-				shapeRendererContext.DrawLine(GetPointA(), GetPointB(), kLineThickness);
+				shapeRenderer.SetPosition(Float4(GetPointA()));
+				shapeRenderer.DrawCircle(kCircleRadius);
+				shapeRenderer.SetPosition(Float4(GetPointB()));
+				shapeRenderer.DrawCircle(kCircleRadius);
+				shapeRenderer.DrawLine(GetPointA(), GetPointB(), kLineThickness);
 			}
 			else if (GetValidPointCount() == 3)
 			{
-				shapeRendererContext.SetPosition(Float4(GetPointA()));
-				shapeRendererContext.DrawCircle(kCircleRadius);
-				shapeRendererContext.SetPosition(Float4(GetPointB()));
-				shapeRendererContext.DrawCircle(kCircleRadius);
-				shapeRendererContext.SetPosition(Float4(GetPointC()));
-				shapeRendererContext.DrawCircle(kCircleRadius);
+				shapeRenderer.SetPosition(Float4(GetPointA()));
+				shapeRenderer.DrawCircle(kCircleRadius);
+				shapeRenderer.SetPosition(Float4(GetPointB()));
+				shapeRenderer.DrawCircle(kCircleRadius);
+				shapeRenderer.SetPosition(Float4(GetPointC()));
+				shapeRenderer.DrawCircle(kCircleRadius);
 
-				shapeRendererContext.DrawLine(GetPointA(), GetPointB(), kLineThickness);
-				shapeRendererContext.DrawLine(GetPointA(), GetPointC(), kLineThickness);
-				shapeRendererContext.DrawLine(GetPointB(), GetPointC(), kLineThickness);
+				shapeRenderer.DrawLine(GetPointA(), GetPointB(), kLineThickness);
+				shapeRenderer.DrawLine(GetPointA(), GetPointC(), kLineThickness);
+				shapeRenderer.DrawLine(GetPointB(), GetPointC(), kLineThickness);
 			}
 		}
 

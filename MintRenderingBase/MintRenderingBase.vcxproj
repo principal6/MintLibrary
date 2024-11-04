@@ -206,11 +206,11 @@
     <ClInclude Include="Include\GraphicsDevice.h" />
     <ClInclude Include="Include\GraphicsObject.h" />
     <ClInclude Include="Include\ImageLoader.h" />
-    <ClInclude Include="Include\IRendererContext.h" />
+    <ClInclude Include="Include\IRenderer.h" />
     <ClInclude Include="Include\MeshData.h" />
     <ClInclude Include="Include\AllHeaders.h" />
     <ClInclude Include="Include\ShapeGenerator.h" />
-    <ClInclude Include="Include\ShapeRendererContext.h" />
+    <ClInclude Include="Include\ShapeRenderer.h" />
     <ClInclude Include="Include\RenderingBaseCommon.h" />
     <ClInclude Include="Include\LowLevelRenderer.h" />
     <ClInclude Include="Include\LowLevelRenderer.hpp" />
@@ -219,7 +219,7 @@
   <ItemGroup>
     <None Include="Include\CppHlsl\Parser.inl" />
     <None Include="Include\GraphicsDevice.inl" />
-    <None Include="Include\IRendererContext.inl" />
+    <None Include="Include\IRenderer.inl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\CppHlsl\Interpreter.cpp">
@@ -282,7 +282,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="Source\IRendererContext.cpp">
+    <ClCompile Include="Source\IRenderer.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
@@ -306,7 +306,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="Source\ShapeRendererContext.cpp">
+    <ClCompile Include="Source\ShapeRenderer.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
