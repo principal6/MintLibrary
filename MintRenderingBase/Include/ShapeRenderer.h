@@ -18,12 +18,16 @@ namespace mint
 {
 	class BitVector;
 
-
 	namespace Rendering
 	{
 		struct Shape;
+	}
+}
 
-
+namespace mint
+{
+	namespace Rendering
+	{
 		struct FontRenderingOption
 		{
 			FontRenderingOption()
@@ -72,20 +76,11 @@ namespace mint
 
 		public:
 			virtual void InitializeShaders() noexcept override;
-			virtual bool IsEmpty() const noexcept override;
-			virtual void Flush() noexcept override;
 			virtual void Render() noexcept override;
-
-		protected:
-			const char* GetDefaultVertexShaderString() const;
-			const char* GetDefaultGeometryShaderString() const;
-			const char* GetDefaultPixelShaderString() const;
+			virtual void Flush() noexcept override;
 
 		public:
 			bool InitializeFontData(const FontData& fontData);
-			const FontData& GetFontData() const noexcept { return _fontData; }
-
-		public:
 			void SetTextColor(const Color& textColor) noexcept;
 
 		public:
@@ -114,6 +109,13 @@ namespace mint
 			void DrawDynamicText(const wchar_t* const wideText, const uint32 textLength, const Float3& position, const FontRenderingOption& fontRenderingOption);
 			void DrawDynamicTextBitFlagged(const wchar_t* const wideText, const Float3& position, const FontRenderingOption& fontRenderingOption, const BitVector& bitFlags);
 			void DrawDynamicTextBitFlagged(const wchar_t* const wideText, const uint32 textLength, const Float3& position, const FontRenderingOption& fontRenderingOption, const BitVector& bitFlags);
+
+		public:
+			virtual bool IsEmpty() const noexcept override;
+			const FontData& GetFontData() const noexcept { return _fontData; }
+			const char* GetDefaultVertexShaderString() const;
+			const char* GetDefaultGeometryShaderString() const;
+			const char* GetDefaultPixelShaderString() const;
 
 			// Font
 		protected:

@@ -28,8 +28,13 @@ namespace mint
 	namespace Rendering
 	{
 		class GraphicsDevice;
+	}
+}
 
-
+namespace mint
+{
+	namespace Rendering
+	{
 		class IRenderer abstract
 		{
 		public:
@@ -40,28 +45,25 @@ namespace mint
 
 		public:
 			virtual void InitializeShaders() noexcept abstract;
-			virtual bool IsEmpty() const noexcept abstract;
-			virtual void Flush() noexcept abstract;
 			virtual void Render() noexcept abstract;
-
-		public:
-			void SetUseMultipleViewports() noexcept;
-			bool IsUsingMultipleViewports() const noexcept;
+			virtual void Flush() noexcept abstract;
 
 		public:
 			void SetPosition(const Float4& position) noexcept;
 			void SetPositionZ(const float s) noexcept;
 			void SetColor(const ByteColor& color) noexcept;
 			void SetColor(const Color& color) noexcept;
-			virtual void SetClipRect(const Rect& clipRect) noexcept;
+			void SetClipRect(const Rect& clipRect) noexcept;
+			void SetUseMultipleViewports() noexcept;
+		
+		public:
+			virtual bool IsEmpty() const noexcept abstract;
+			const Rect& GetClipRect() const noexcept;
+			bool IsUsingMultipleViewports() const noexcept;
 
 		protected:
 			void FlushTransformBuffer() noexcept;
 			void PrepareTransformBuffer() noexcept;
-
-		protected:
-			static float PackBits2_30AsFloat(const uint32 _2bits, const uint32 _30bits) noexcept;
-			static float PackBits4_28AsFloat(const uint32 _4bits, const uint32 _28bits) noexcept;
 
 		protected:
 			GraphicsDevice& _graphicsDevice;
@@ -73,12 +75,12 @@ namespace mint
 		protected:
 			Float4 _position;
 			Color _color;
-			Rect _clipRect;
 
 		protected:
 			Vector<SB_Transform> _sbTransformData;
 
 		private:
+			Rect _clipRect;
 			bool _useMultipleViewports;
 		};
 	}

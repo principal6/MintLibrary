@@ -23,7 +23,7 @@ namespace mint
 
 		void ImageRenderer::InitializeShaders() noexcept
 		{
-			_clipRect = _graphicsDevice.GetFullScreenClipRect();
+			SetClipRect(_graphicsDevice.GetFullScreenClipRect());
 
 			ShaderPool& shaderPool = _graphicsDevice.GetShaderPool();
 			{
@@ -91,7 +91,7 @@ namespace mint
 					shaderString += "	return sampledColor;\n";
 					shaderString += "}";
 				}
-				
+
 				if (_pixelShaderID.IsValid())
 				{
 					shaderPool.RemoveShader(_pixelShaderID);

@@ -40,16 +40,9 @@ namespace mint
 			_clipRect = clipRect;
 		}
 
-		MINT_INLINE float IRenderer::PackBits2_30AsFloat(const uint32 _2bits, const uint32 _30bits) noexcept
+		MINT_INLINE const Rect& IRenderer::GetClipRect() const noexcept
 		{
-			const uint32 packedUint = (_2bits << 30) | (_30bits);
-			return *reinterpret_cast<const float*>(&packedUint);
-		}
-
-		MINT_INLINE float IRenderer::PackBits4_28AsFloat(const uint32 _4bits, const uint32 _28bits) noexcept
-		{
-			const uint32 packedUint = (_4bits << 28) | (_28bits);
-			return *reinterpret_cast<const float*>(&packedUint);
+			return _clipRect;
 		}
 	}
 }

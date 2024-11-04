@@ -126,7 +126,7 @@ namespace mint
 
 		void ShapeRenderer::InitializeShaders() noexcept
 		{
-			_clipRect = _graphicsDevice.GetFullScreenClipRect();
+			SetClipRect(_graphicsDevice.GetFullScreenClipRect());
 
 			ShaderPool& shaderPool = _graphicsDevice.GetShaderPool();
 
@@ -261,7 +261,7 @@ namespace mint
 				indices.PushBack(vertexOffset + index);
 			}
 
-			_lowLevelRenderer->PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, shape._indices.Size(), _clipRect);
+			_lowLevelRenderer->PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, shape._indices.Size(), GetClipRect());
 
 			PushShapeTransformToBuffer(0.0f);
 		}
@@ -280,7 +280,7 @@ namespace mint
 				_lowLevelRenderer->Vertices()[vertexOffset + i]._info = ComputeVertexInfo(transformIndex, 0);
 			}
 			const uint32 deltaIndexCount = _lowLevelRenderer->GetIndexCount() - indexOffset;
-			_lowLevelRenderer->PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, deltaIndexCount, _clipRect);
+			_lowLevelRenderer->PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, deltaIndexCount, GetClipRect());
 
 			PushShapeTransformToBuffer(0.0f, false);
 		}
@@ -334,7 +334,7 @@ namespace mint
 				_lowLevelRenderer->Vertices()[vertexOffset + i]._info = ComputeVertexInfo(transformIndex, 0);
 			}
 			const uint32 deltaIndexCount = _lowLevelRenderer->GetIndexCount() - indexOffset;
-			_lowLevelRenderer->PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, deltaIndexCount, _clipRect);
+			_lowLevelRenderer->PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, deltaIndexCount, GetClipRect());
 
 			PushShapeTransformToBuffer(0.0f, false);
 		}
@@ -353,7 +353,7 @@ namespace mint
 				_lowLevelRenderer->Vertices()[vertexOffset + i]._info = ComputeVertexInfo(transformIndex, 0);
 			}
 			const uint32 deltaIndexCount = _lowLevelRenderer->GetIndexCount() - indexOffset;
-			_lowLevelRenderer->PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, deltaIndexCount, _clipRect);
+			_lowLevelRenderer->PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, deltaIndexCount, GetClipRect());
 
 			PushShapeTransformToBuffer(0.0f);
 		}
@@ -378,7 +378,7 @@ namespace mint
 			_lowLevelRenderer->Vertices()[vertexOffset + 3]._texCoord = Float2(_uv1._x, _uv0._y);
 
 			const uint32 deltaIndexCount = _lowLevelRenderer->GetIndexCount() - indexOffset;
-			_lowLevelRenderer->PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, deltaIndexCount, _clipRect);
+			_lowLevelRenderer->PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, deltaIndexCount, GetClipRect());
 
 			PushShapeTransformToBuffer(0.0f);
 		}
@@ -397,7 +397,7 @@ namespace mint
 				_lowLevelRenderer->Vertices()[vertexOffset + i]._info = ComputeVertexInfo(transformIndex, 0);
 			}
 			const uint32 deltaIndexCount = _lowLevelRenderer->GetIndexCount() - indexOffset;
-			_lowLevelRenderer->PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, deltaIndexCount, _clipRect);
+			_lowLevelRenderer->PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, deltaIndexCount, GetClipRect());
 
 			PushShapeTransformToBuffer(0.0f);
 		}
@@ -439,7 +439,7 @@ namespace mint
 			}
 
 			const uint32 indexCount = _lowLevelRenderer->GetIndexCount() - indexOffset;
-			_lowLevelRenderer->PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, indexCount, _clipRect);
+			_lowLevelRenderer->PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, indexCount, GetClipRect());
 
 			const Float3& preTranslation = position;
 			PushFontTransformToBuffer(preTranslation, fontRenderingOption._transformMatrix, postTranslation);
@@ -477,7 +477,7 @@ namespace mint
 			}
 
 			const uint32 indexCount = _lowLevelRenderer->GetIndexCount() - indexOffset;
-			_lowLevelRenderer->PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, indexCount, _clipRect);
+			_lowLevelRenderer->PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, indexCount, GetClipRect());
 
 			const Float3& preTranslation = position;
 			PushFontTransformToBuffer(preTranslation, fontRenderingOption._transformMatrix, postTranslation);
