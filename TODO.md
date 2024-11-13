@@ -12,39 +12,39 @@ void OnDragEnd(GUIObject& object)
 
 }
 
-void TestGUI(Window& window)
+void TestGUI(GraphicsDevice& graphicsDevice)
 {
-    GUIFactory factory;
+    GUIFactory guiFactory;
     {
-        GUIObjectTemplate objectTemplate;
-        OwnPtr<GUIShapeComponent> shapeComponent = factory.CreateComponent<GUIShapeComponent>();
+        GUIObjectTemplate guiObjectTemplate;
+        SharedPtr<GUIShapeComponent> guiShapeComponent = guiFactory.CreateComponent<GUIShapeComponent>();
         SharedPtr<Shape2D> defaultShape;
         SharedPtr<Shape2D> pressedShape;
         SharedPtr<Shape2D> focusedShape;
-        shapeComponent->SetShape(GUIShapeSlot::Default, defaultShape);
-        shapeComponent->SetShape(GUIShapeSlot::Pressed, pressedShape);
-        shapeComponent->SetShape(GUIShapeSlot::Focused, focusedShape);
-        objectTemplate.AddComponent(move(shapeComponent));
+        guiShapeComponent->SetShape(GUIShapeSlot::Default, defaultShape);
+        guiShapeComponent->SetShape(GUIShapeSlot::Pressed, pressedShape);
+        guiShapeComponent->SetShape(GUIShapeSlot::Focused, focusedShape);
+        guiObjectTemplate.AddComponent(move(guiShapeComponent));
 
-        OwnPtr<GUITextComponent> textComponent = factory.CreateComponent<GUITextComponent>();
+        SharedPtr<GUITextComponent> guiTextComponent = guiFactory.CreateComponent<GUITextComponent>();
         float2 offset(0, 0);
-        textComponent->SetText("Test", offset);
-        objectTemplate.AddComponent(move(textComponent));
+        guiTextComponent->SetText("Test", offset);
+        guiObjectTemplate.AddComponent(move(guiTextComponent));
 
-        objectTemplate.AddComponent(factory.CreateComponent<GUIClickableComponent>());
+        guiObjectTemplate.AddComponent(guiFactory.CreateComponent<GUIClickableComponent>());
 
-        objectTemplate.AddComponent(factory.CreateComponent<GUIDraggableComponent>());
+        guiObjectTemplate.AddComponent(guiFactory.CreateComponent<GUIDraggableComponent>());
 
-        factory.AddObjectTemplate(objectTemplate, "TestObjectTemplate");
+        guiFactory.RegisterObjectTemplate(guiObjectTemplate, "TestObjectTemplate");
     }
     
-    GUIContext context( window );
-    OwnPtr<GUIObject> object = factory.CreateObject("TestObjectTemplate");
-    object->AddCallback(GUICallback::OnClicked, OnClicked);
-    object->AddCallback(GUICallback::OnDragEnd, OnDragEnd);
+    GUIContext guiContext( graphicsDevice );
+    SharedPtr<GUIObject> guiObject = guiFactory.CreateObject("TestObjectTemplate");
+    guiObject->AddCallback(GUICallback::OnClicked, OnClicked);
+    guiObject->AddCallback(GUICallback::OnDragEnd, OnDragEnd);
 
-    context.AddObject(object);
-    context.Render();
+    guiContext.AddObject(guiObject);
+    guiContext.Render();
 }
 ```
 
