@@ -121,7 +121,7 @@ namespace mint
 			};
 		public:
 			GUIObjectTemplate() : GUIObject() { __noop; }
-			Vector<SharedPtr<GUIComponent>>& AccessComponents();
+			void AddComponent(SharedPtr<GUIComponent> guiComponent);
 			void SetCollisionShape(Physics::ConvexCollisionShape2D&& collisionShape);
 		private:
 			StringU8 _templateName;

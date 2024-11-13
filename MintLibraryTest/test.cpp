@@ -409,22 +409,21 @@ bool Run3DTestWindow()
 	GUISystem& guiSystem = app.GetGUISystem();
 	GUIObjectTemplateID roundButton0TemplateID;
 	{
-		GUIObjectTemplate objectTemplate;
-		Vector<SharedPtr<GUIComponent>>& components = objectTemplate.AccessComponents();
+		GUIObjectTemplate guiObjectTemplate;
 		{
-			GUIShapeComponent shapeComponent;
-			ShapeGenerator::GenerateCircle(16.0f, 16, ByteColor(255, 0, 0), shapeComponent._shapes[0]);
-			ShapeGenerator::GenerateCircle(17.0f, 16, ByteColor(255, 64, 32), shapeComponent._shapes[1]);
-			ShapeGenerator::GenerateCircle(17.0f, 16, ByteColor(255, 128, 64), shapeComponent._shapes[2]);
-			objectTemplate.SetCollisionShape(Physics::ConvexCollisionShape2D::MakeFromRenderingShape(Float2::kZero, shapeComponent._shapes[0]));
-			components.PushBack(MakeShared<GUIComponent>(shapeComponent));
+			GUIShapeComponent guiShapeComponent;
+			ShapeGenerator::GenerateCircle(16.0f, 16, ByteColor(255, 0, 0), guiShapeComponent._shapes[0]);
+			ShapeGenerator::GenerateCircle(17.0f, 16, ByteColor(255, 64, 32), guiShapeComponent._shapes[1]);
+			ShapeGenerator::GenerateCircle(17.0f, 16, ByteColor(255, 128, 64), guiShapeComponent._shapes[2]);
+			guiObjectTemplate.SetCollisionShape(Physics::ConvexCollisionShape2D::MakeFromRenderingShape(Float2::kZero, guiShapeComponent._shapes[0]));
+			guiObjectTemplate.AddComponent(MakeShared<GUIComponent>(guiShapeComponent));
 		}
 		{
-			GUITextComponent textComponent;
-			textComponent._text = L"RoundButton0";
-			components.PushBack(MakeShared<GUIComponent>(textComponent));
+			GUITextComponent guiTextComponent;
+			guiTextComponent._text = L"RoundButton0";
+			guiObjectTemplate.AddComponent(MakeShared<GUIComponent>(guiTextComponent));
 		}
-		roundButton0TemplateID = guiSystem.RegisterTemplate(u8"RoundButton0", std::move(objectTemplate));
+		roundButton0TemplateID = guiSystem.RegisterTemplate(u8"RoundButton0", std::move(guiObjectTemplate));
 	}
 	const GUIObjectID buttonObjectID = guiSystem.AddObject(roundButton0TemplateID);
 	GUIObject& buttonObject = guiSystem.AccessObject(buttonObjectID);

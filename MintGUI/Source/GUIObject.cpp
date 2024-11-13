@@ -38,9 +38,9 @@ namespace mint
 #pragma endregion
 
 #pragma region GUIObjectTemplate
-		Vector<SharedPtr<GUIComponent>>& GUIObjectTemplate::AccessComponents()
+		void GUIObjectTemplate::AddComponent(SharedPtr<GUIComponent> guiComponent)
 		{
-			return _components;
+			_components.PushBack(guiComponent);
 		}
 
 		void GUIObjectTemplate::SetCollisionShape(Physics::ConvexCollisionShape2D&& collisionShape)
