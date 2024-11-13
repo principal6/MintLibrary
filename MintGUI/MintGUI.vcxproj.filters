@@ -9,25 +9,21 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Include\GUIControl.h">
-      <Filter>Include</Filter>
-    </ClInclude>
     <ClInclude Include="Include\GUISystem.h">
       <Filter>Include</Filter>
     </ClInclude>
     <ClInclude Include="Include\AllHeaders.h">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="Include\GUIObject.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\GUIControl.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="Source\GUISystem.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\_UnityBuild.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="Source\GUIObject.cpp" />
   </ItemGroup>
 </Project>

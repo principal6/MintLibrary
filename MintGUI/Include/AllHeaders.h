@@ -5,7 +5,7 @@
 #define _MINT_GUI_ALL_HEADERS_H_
 
 
-#include <MintGUI/Include/GUIControl.h>
+#include <MintGUI/Include/GUIObject.h>
 #include <MintGUI/Include/GUISystem.h>
 
 

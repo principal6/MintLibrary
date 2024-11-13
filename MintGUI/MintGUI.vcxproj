@@ -152,11 +152,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Include\AllHeaders.h" />
-    <ClInclude Include="Include\GUIControl.h" />
+    <ClInclude Include="Include\GUIObject.h" />
     <ClInclude Include="Include\GUISystem.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\GUIControl.cpp">
+    <ClCompile Include="Source\GUIObject.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>

@@ -407,28 +407,28 @@ bool Run3DTestWindow()
 	}
 
 	GUISystem& guiSystem = app.GetGUISystem();
-	GUIControlTemplateID roundButton0TemplateID;
+	GUIObjectTemplateID roundButton0TemplateID;
 	{
-		GUIControlTemplate controlTemplate;
-		Vector<SharedPtr<GUIControlComponent>>& components = controlTemplate.AccessComponents();
+		GUIObjectTemplate objectTemplate;
+		Vector<SharedPtr<GUIComponent>>& components = objectTemplate.AccessComponents();
 		{
-			GUIControlShapeComponent shapeComponent;
+			GUIShapeComponent shapeComponent;
 			ShapeGenerator::GenerateCircle(16.0f, 16, ByteColor(255, 0, 0), shapeComponent._shapes[0]);
 			ShapeGenerator::GenerateCircle(17.0f, 16, ByteColor(255, 64, 32), shapeComponent._shapes[1]);
 			ShapeGenerator::GenerateCircle(17.0f, 16, ByteColor(255, 128, 64), shapeComponent._shapes[2]);
-			controlTemplate.SetCollisionShape(Physics::ConvexCollisionShape2D::MakeFromRenderingShape(Float2::kZero, shapeComponent._shapes[0]));
-			components.PushBack(MakeShared<GUIControlComponent>(shapeComponent));
+			objectTemplate.SetCollisionShape(Physics::ConvexCollisionShape2D::MakeFromRenderingShape(Float2::kZero, shapeComponent._shapes[0]));
+			components.PushBack(MakeShared<GUIComponent>(shapeComponent));
 		}
 		{
-			GUIControlTextComponent textComponent;
+			GUITextComponent textComponent;
 			textComponent._text = L"RoundButton0";
-			components.PushBack(MakeShared<GUIControlComponent>(textComponent));
+			components.PushBack(MakeShared<GUIComponent>(textComponent));
 		}
-		roundButton0TemplateID = guiSystem.RegisterTemplate(u8"RoundButton0", std::move(controlTemplate));
+		roundButton0TemplateID = guiSystem.RegisterTemplate(u8"RoundButton0", std::move(objectTemplate));
 	}
-	const GUIControlID buttonControlID = guiSystem.AddControl(roundButton0TemplateID);
-	GUIControl& buttonControl = guiSystem.AccessControl(buttonControlID);
-	buttonControl.SetPosition(Float2(100, 100));
+	const GUIObjectID buttonObjectID = guiSystem.AddObject(roundButton0TemplateID);
+	GUIObject& buttonObject = guiSystem.AccessObject(buttonObjectID);
+	buttonObject.SetPosition(Float2(100, 100));
 
 	GraphicsDevice& graphicsDevice = app.GetGraphicsDevice();
 	const InputContext& inputContext = InputContext::GetInstance();

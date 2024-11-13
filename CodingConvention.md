@@ -92,7 +92,7 @@ Color MakeColor(const float r, const float g, const float b);
 
 ##### Use `Generate-` for classes with more things to be done.
 ```cpp
-ControlID GenerateControlID(const char* const text, const ControlType type);
+ObjectID GenerateObjectID(const char* const text, const ObjectType type);
 ```
 
 ##### Use `Clone-` to create objects whose data is based on the existing ones.

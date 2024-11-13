@@ -1,2 +1,2 @@
 #include <MintGUI/Source/GUISystem.cpp>
-#include <MintGUI/Source/GUIControl.cpp>
+#include <MintGUI/Source/GUIObject.cpp>

@@ -10,7 +10,7 @@
 #include <MintContainer/Include/OwnPtr.h>
 #include <MintContainer/Include/SharedPtr.h>
 #include <MintRenderingBase/Include/RenderingBaseCommon.h>
-#include <MintGUI/Include/GUIControl.h>
+#include <MintGUI/Include/GUIObject.h>
 
 
 namespace mint
@@ -19,7 +19,10 @@ namespace mint
 	{
 		class GraphicsDevice;
 	}
+}
 
+namespace mint
+{
 	namespace GUI
 	{
 		class GUISystem
@@ -29,13 +32,13 @@ namespace mint
 			~GUISystem();
 
 		public:
-			GUIControlTemplateID RegisterTemplate(const StringU8& name, GUIControlTemplate&& controlTemplate);
-			GUIControlTemplate& AccessTemplate(const GUIControlTemplateID& controlTemplateID);
+			GUIObjectTemplateID RegisterTemplate(const StringU8& name, GUIObjectTemplate&& objectTemplate);
+			GUIObjectTemplate& AccessTemplate(const GUIObjectTemplateID& objectTemplateID);
 
 		public:
-			GUIControlID AddControl(const GUIControlTemplateID& controlTemplateID);
-			void RemoveControl(const GUIControlID& controlID);
-			GUIControl& AccessControl(const GUIControlID& controlID);
+			GUIObjectID AddObject(const GUIObjectTemplateID& objectTemplateID);
+			void RemoveObject(const GUIObjectID& objectID);
+			GUIObject& AccessObject(const GUIObjectID& objectID);
 
 		public:
 			void Update();
@@ -46,47 +49,47 @@ namespace mint
 
 		private:
 			bool _isUpdated;
-			struct GUIControlUpdateContext
+			struct GUIObjectUpdateContext
 			{
 				Float2 _mouseLeftButtonPressedPosition;
-			} _controlUpdateContext;
+			} _objectUpdateContext;
 
-			class GUIControlManager
+			class GUIObjectManager
 			{
 			public:
-				GUIControlManager();
+				GUIObjectManager();
 
 			public:
-				GUIControlTemplateID RegisterTemplate(const StringU8& controlTemplateName, GUIControlTemplate&& controlTemplate);
-				GUIControlTemplate& AccessTemplate(const GUIControlTemplateID& controlTemplateID);
-				GUIControlID AddControl(const GUIControlTemplateID& controlTemplateID);
-				void RemoveControl(const GUIControlID& controlID);
+				GUIObjectTemplateID RegisterTemplate(const StringU8& objectTemplateName, GUIObjectTemplate&& objectTemplate);
+				GUIObjectTemplate& AccessTemplate(const GUIObjectTemplateID& objectTemplateID);
+				GUIObjectID AddObject(const GUIObjectTemplateID& objectTemplateID);
+				void RemoveObject(const GUIObjectID& objectID);
 
 			public:
-				void UpdateControls(const GUIControlUpdateContext& controlUpdateContext);
+				void UpdateObjects(const GUIObjectUpdateContext& objectUpdateContext);
 
 			public:
-				GUIControl& AccessControl(const GUIControlID& controlID);
-				Vector<SharedPtr<GUIControl>>& AccessControlInstances();
-				const GUIControlID& GetHoveredControlID() const { return _hoveredControlID; }
-				const GUIControlID& GetPressedControlID() const { return _pressedControlID; }
+				GUIObject& AccessObject(const GUIObjectID& objectID);
+				Vector<SharedPtr<GUIObject>>& AccessObjectInstances();
+				const GUIObjectID& GetHoveredObjectID() const { return _hoveredObjectID; }
+				const GUIObjectID& GetPressedObjectID() const { return _pressedObjectID; }
 
 			private:
-				void UpdateControl(const GUIControlUpdateContext& controlUpdateContext, GUIControl& control);
+				void UpdateObject(const GUIObjectUpdateContext& objectUpdateContext, GUIObject& guiObject);
 
 			private:
-				Vector<SharedPtr<GUIControlTemplate>> _controlTemplates;
+				Vector<SharedPtr<GUIObjectTemplate>> _objectTemplates;
 
 			private:
-				uint64 _nextControlRawID;
-				Vector<SharedPtr<GUIControl>> _controlInstances;
+				uint64 _nextObjectRawID;
+				Vector<SharedPtr<GUIObject>> _objectInstances;
 			
 			private:
-				GUIControlID _hoveredControlID;
-				GUIControlID _pressedControlID;
+				GUIObjectID _hoveredObjectID;
+				GUIObjectID _pressedObjectID;
 
 			private:
-			} _controlManager;
+			} _objectManager;
 		};
 	}
 }

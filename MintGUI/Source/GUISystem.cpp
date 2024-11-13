@@ -13,119 +13,119 @@ namespace mint
 {
 	namespace GUI
 	{
-#pragma region GUISystem::GUIControlManager
-		GUISystem::GUIControlManager::GUIControlManager()
-			: _nextControlRawID{ 0 }
+#pragma region GUISystem::GUIObjectManager
+		GUISystem::GUIObjectManager::GUIObjectManager()
+			: _nextObjectRawID{ 0 }
 		{
 			__noop;
 		}
 
-		GUIControlTemplateID GUISystem::GUIControlManager::RegisterTemplate(const StringU8& controlTemplateName, GUIControlTemplate&& controlTemplate)
+		GUIObjectTemplateID GUISystem::GUIObjectManager::RegisterTemplate(const StringU8& objectTemplateName, GUIObjectTemplate&& objectTemplate)
 		{
-			const int32 index = BinarySearch(_controlTemplates, controlTemplateName, GUIControlTemplate::NameEvaluator());
+			const int32 index = BinarySearch(_objectTemplates, objectTemplateName, GUIObjectTemplate::NameEvaluator());
 			if (index >= 0)
 			{
-				MINT_ASSERT(false, "ControlTemplate named (%s) is already registered!!!", controlTemplateName.CString());
-				return GUIControlTemplateID();
+				MINT_ASSERT(false, "ObjectTemplate named (%s) is already registered!!!", objectTemplateName.CString());
+				return GUIObjectTemplateID();
 			}
 
-			const GUIControlTemplateID::RawType nextRawID = (_controlTemplates.IsEmpty() ? 0 : _controlTemplates.Back()->_controlTemplateID.Value() + 1);
-			GUIControlTemplateID controlTemplateID;
-			controlTemplateID.Assign(nextRawID);;
-			controlTemplate._controlTemplateID = controlTemplateID;
-			controlTemplate._controlTemplateName = controlTemplateName;
-			_controlTemplates.PushBack(MakeShared(std::move(controlTemplate)));
-			return controlTemplateID;
+			const GUIObjectTemplateID::RawType nextRawID = (_objectTemplates.IsEmpty() ? 0 : _objectTemplates.Back()->_templateID.Value() + 1);
+			GUIObjectTemplateID objectTemplateID;
+			objectTemplateID.Assign(nextRawID);;
+			objectTemplate._templateID = objectTemplateID;
+			objectTemplate._templateName = objectTemplateName;
+			_objectTemplates.PushBack(MakeShared(std::move(objectTemplate)));
+			return objectTemplateID;
 		}
 
-		GUIControlTemplate& GUISystem::GUIControlManager::AccessTemplate(const GUIControlTemplateID& controlTemplateID)
+		GUIObjectTemplate& GUISystem::GUIObjectManager::AccessTemplate(const GUIObjectTemplateID& objectTemplateID)
 		{
-			const int32 index = BinarySearch(_controlTemplates, controlTemplateID, GUIControlTemplate::IDEvaluator());
+			const int32 index = BinarySearch(_objectTemplates, objectTemplateID, GUIObjectTemplate::IDEvaluator());
 			if (index < 0)
 			{
-				static GUIControlTemplate invalid;
+				static GUIObjectTemplate invalid;
 				return invalid;
 			}
-			return *_controlTemplates[index];
+			return *_objectTemplates[index];
 		}
 
-		GUIControlID GUISystem::GUIControlManager::AddControl(const GUIControlTemplateID& controlTemplateID)
+		GUIObjectID GUISystem::GUIObjectManager::AddObject(const GUIObjectTemplateID& objectTemplateID)
 		{
-			const int32 index = BinarySearch(_controlTemplates, controlTemplateID, GUIControlTemplate::IDEvaluator());
+			const int32 index = BinarySearch(_objectTemplates, objectTemplateID, GUIObjectTemplate::IDEvaluator());
 			MINT_ASSERT(index >= 0, "This assertion must never fail!");
 
-			SharedPtr<GUIControl> control = MakeShared<GUIControl>();
-			control->_controlID.Assign(_nextControlRawID);
-			_controlInstances.PushBack(control);
+			SharedPtr<GUIObject> guiObject = MakeShared<GUIObject>();
+			guiObject->_objectID.Assign(_nextObjectRawID);
+			_objectInstances.PushBack(guiObject);
 
-			const SharedPtr<GUIControlTemplate>& controlTemplate = _controlTemplates[index];
-			control->_collisionShape = controlTemplate->_collisionShape;
-			control->_components = controlTemplate->_components;
-			return control->_controlID;
+			const SharedPtr<GUIObjectTemplate>& objectTemplate = _objectTemplates[index];
+			guiObject->_collisionShape = objectTemplate->_collisionShape;
+			guiObject->_components = objectTemplate->_components;
+			return guiObject->_objectID;
 		}
 
-		void GUISystem::GUIControlManager::RemoveControl(const GUIControlID& controlID)
+		void GUISystem::GUIObjectManager::RemoveObject(const GUIObjectID& objectID)
 		{
-			const int32 controlInstanceFindResult = BinarySearch(_controlInstances, controlID, GUIControl::IDEvaluator());
-			if (controlInstanceFindResult < 0)
+			const int32 guiObjectInstanceFindResult = BinarySearch(_objectInstances, objectID, GUIObject::IDEvaluator());
+			if (guiObjectInstanceFindResult < 0)
 			{
-				MINT_ASSERT(false, "Control with ID(%s) is not added.", controlID.Value());
+				MINT_ASSERT(false, "Object with ID(%s) is not added.", objectID.Value());
 				return;
 			}
 
-			_controlInstances.Erase(controlInstanceFindResult);
+			_objectInstances.Erase(guiObjectInstanceFindResult);
 		}
 
-		void GUISystem::GUIControlManager::UpdateControls(const GUIControlUpdateContext& controlUpdateContext)
+		void GUISystem::GUIObjectManager::UpdateObjects(const GUIObjectUpdateContext& objectUpdateContext)
 		{
-			_hoveredControlID.Invalidate();
-			_pressedControlID.Invalidate();
+			_hoveredObjectID.Invalidate();
+			_pressedObjectID.Invalidate();
 
 			InputContext& inputContext = InputContext::GetInstance();
 			const Float2& mousePosition = inputContext.GetMousePosition();
 			const MouseButtonState leftMouseButtonState = inputContext.GetMouseButtonState(MouseButton::Left);
-			for (SharedPtr<GUIControl>& control : _controlInstances)
+			for (SharedPtr<GUIObject>& guiObject : _objectInstances)
 			{
-				UpdateControl(controlUpdateContext, *control);
+				UpdateObject(objectUpdateContext, *guiObject);
 			}
 		}
 
-		void GUISystem::GUIControlManager::UpdateControl(const GUIControlUpdateContext& controlUpdateContext, GUIControl& control)
+		void GUISystem::GUIObjectManager::UpdateObject(const GUIObjectUpdateContext& objectUpdateContext, GUIObject& guiObject)
 		{
 			InputContext& inputContext = InputContext::GetInstance();
 			const MouseButtonState leftMouseButtonState = inputContext.GetMouseButtonState(MouseButton::Left);
 			const Float2& mousePosition = inputContext.GetMousePosition();
-			const bool intersects = Physics::Intersect2D_GJK(*control._collisionShape, Physics::PointCollisionShape2D(mousePosition - control._position));
+			const bool intersects = Physics::Intersect2D_GJK(*guiObject._collisionShape, Physics::PointCollisionShape2D(mousePosition - guiObject._position));
 			if (intersects)
 			{
-				_hoveredControlID = control._controlID;
+				_hoveredObjectID = guiObject._objectID;
 
 				if (leftMouseButtonState == MouseButtonState::Down || leftMouseButtonState == MouseButtonState::DoubleClicked)
 				{
-					const bool intersects1 = Physics::Intersect2D_GJK(*control._collisionShape, Physics::PointCollisionShape2D(controlUpdateContext._mouseLeftButtonPressedPosition - control._position));
+					const bool intersects1 = Physics::Intersect2D_GJK(*guiObject._collisionShape, Physics::PointCollisionShape2D(objectUpdateContext._mouseLeftButtonPressedPosition - guiObject._position));
 					if (intersects1)
 					{
-						_pressedControlID = control._controlID;
+						_pressedObjectID = guiObject._objectID;
 
-						if (_hoveredControlID == _pressedControlID)
+						if (_hoveredObjectID == _pressedObjectID)
 						{
-							_hoveredControlID.Invalidate();
+							_hoveredObjectID.Invalidate();
 						}
 					}
 				}
 			}
 		}
 
-		GUIControl& GUISystem::GUIControlManager::AccessControl(const GUIControlID& controlID)
+		GUIObject& GUISystem::GUIObjectManager::AccessObject(const GUIObjectID& objectID)
 		{
-			static GUIControl invalid;
-			const int32 index = BinarySearch(_controlInstances, controlID, GUIControl::IDEvaluator());
-			return (index < 0 ? invalid : *_controlInstances[index]);
+			static GUIObject invalid;
+			const int32 index = BinarySearch(_objectInstances, objectID, GUIObject::IDEvaluator());
+			return (index < 0 ? invalid : *_objectInstances[index]);
 		}
 
-		Vector<SharedPtr<GUIControl>>& GUISystem::GUIControlManager::AccessControlInstances()
+		Vector<SharedPtr<GUIObject>>& GUISystem::GUIObjectManager::AccessObjectInstances()
 		{
-			return _controlInstances;
+			return _objectInstances;
 		}
 #pragma endregion
 
@@ -143,29 +143,29 @@ namespace mint
 			__noop;
 		}
 
-		GUIControlTemplateID GUISystem::RegisterTemplate(const StringU8& name, GUIControlTemplate&& controlTemplate)
+		GUIObjectTemplateID GUISystem::RegisterTemplate(const StringU8& name, GUIObjectTemplate&& objectTemplate)
 		{
-			return _controlManager.RegisterTemplate(name, std::move(controlTemplate));
+			return _objectManager.RegisterTemplate(name, std::move(objectTemplate));
 		}
 
-		GUIControlTemplate& GUISystem::AccessTemplate(const GUIControlTemplateID& controlTemplateID)
+		GUIObjectTemplate& GUISystem::AccessTemplate(const GUIObjectTemplateID& objectTemplateID)
 		{
-			return _controlManager.AccessTemplate(controlTemplateID);
+			return _objectManager.AccessTemplate(objectTemplateID);
 		}
 
-		GUIControlID GUISystem::AddControl(const GUIControlTemplateID& controlTemplateID)
+		GUIObjectID GUISystem::AddObject(const GUIObjectTemplateID& objectTemplateID)
 		{
-			return _controlManager.AddControl(controlTemplateID);
+			return _objectManager.AddObject(objectTemplateID);
 		}
 
-		void GUISystem::RemoveControl(const GUIControlID& controlID)
+		void GUISystem::RemoveObject(const GUIObjectID& objectID)
 		{
-			_controlManager.RemoveControl(controlID);
+			_objectManager.RemoveObject(objectID);
 		}
 
-		GUIControl& GUISystem::AccessControl(const GUIControlID& controlID)
+		GUIObject& GUISystem::AccessObject(const GUIObjectID& objectID)
 		{
-			return _controlManager.AccessControl(controlID);
+			return _objectManager.AccessObject(objectID);
 		}
 
 		void GUISystem::Update()
@@ -177,10 +177,10 @@ namespace mint
 			const MouseButtonState leftMouseButtonState = inputContext.GetMouseButtonState(MouseButton::Left);
 			if (leftMouseButtonState == MouseButtonState::Pressed)
 			{
-				_controlUpdateContext._mouseLeftButtonPressedPosition = mousePosition;
+				_objectUpdateContext._mouseLeftButtonPressedPosition = mousePosition;
 			}
 
-			_controlManager.UpdateControls(_controlUpdateContext);
+			_objectManager.UpdateObjects(_objectUpdateContext);
 
 			_isUpdated = true;
 		}
@@ -189,27 +189,27 @@ namespace mint
 		{
 			MINT_ASSERT(_isUpdated == true, "You must call Update() every frame!");
 
-			const GUIControlID& hoveredControlID = _controlManager.GetHoveredControlID();
-			const GUIControlID& pressedControlID = _controlManager.GetPressedControlID();
+			const GUIObjectID& hoveredObjectID = _objectManager.GetHoveredObjectID();
+			const GUIObjectID& pressedObjectID = _objectManager.GetPressedObjectID();
 
 			_graphicsDevice.SetSolidCullNoneRasterizer();
 			_graphicsDevice.SetViewProjectionMatrix(Float4x4::kIdentity, _graphicsDevice.GetScreenSpace2DProjectionMatrix());
 
 			Rendering::ShapeRenderer& shapeRenderer = _graphicsDevice.GetShapeRenderer();
-			Vector<SharedPtr<GUIControl>>& controlInstances = _controlManager.AccessControlInstances();
-			for (const SharedPtr<GUIControl>& control : controlInstances)
+			Vector<SharedPtr<GUIObject>>& guiObjectInstances = _objectManager.AccessObjectInstances();
+			for (const SharedPtr<GUIObject>& guiObject : guiObjectInstances)
 			{
-				GUIControlInteractionState controlInteractionState = GUIControlInteractionState::None;
-				if (control->_controlID == pressedControlID)
+				GUIObjectInteractionState objectInteractionState = GUIObjectInteractionState::None;
+				if (guiObject->_objectID == pressedObjectID)
 				{
-					controlInteractionState = GUIControlInteractionState::Pressed;
+					objectInteractionState = GUIObjectInteractionState::Pressed;
 				}
-				else if (control->_controlID == hoveredControlID)
+				else if (guiObject->_objectID == hoveredObjectID)
 				{
-					controlInteractionState = GUIControlInteractionState::Hovered;
+					objectInteractionState = GUIObjectInteractionState::Hovered;
 				}
 
-				control->Render(shapeRenderer, controlInteractionState);
+				guiObject->Render(shapeRenderer, objectInteractionState);
 			}
 
 			shapeRenderer.Render();
