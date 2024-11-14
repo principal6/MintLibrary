@@ -25,6 +25,11 @@ namespace mint
 			shapeRenderer.DrawDynamicText(_text.CString(), objectPosition + _offset, fontRenderingOption);
 		}
 
+		void GUIShapeComponent::SetShape(const GUIObjectInteractionState& objectInteractionState, const Rendering::Shape& shape)
+		{
+			_shapes[static_cast<uint32>(objectInteractionState)] = shape;
+		}
+
 		void GUIShapeComponent::Render(Rendering::ShapeRenderer& shapeRenderer, const Float2& objectPosition, const GUIObjectInteractionState& objectInteractionState) const
 		{
 			using namespace Rendering;
@@ -32,7 +37,12 @@ namespace mint
 			const Float4 objectPosition4{ objectPosition };
 			shapeRenderer.SetPosition(objectPosition4);
 
-			const uint32 shapeIndex = static_cast<uint32>(objectInteractionState);
+			uint32 shapeIndex = static_cast<uint32>(objectInteractionState);
+			if (_shapes[shapeIndex]._vertices.IsEmpty())
+			{
+				shapeIndex = 0;
+			}
+
 			shapeRenderer.AddShape(_shapes[shapeIndex]);
 		}
 #pragma endregion

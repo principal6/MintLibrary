@@ -44,13 +44,15 @@ namespace mint
 			friend GUISystem;
 		};
 
-		enum class GUIObjectInteractionState
+		enum class GUIObjectInteractionState : uint8
 		{
 			None,
 			Hovered,
-			Pressed
+			Pressed,
+			Focused,
+			COUNT
 		};
-
+		
 		class GUIComponent
 		{
 		public:
@@ -66,6 +68,7 @@ namespace mint
 		public:
 			GUITextComponent() : GUIComponent() { __noop; }
 			virtual void Render(Rendering::ShapeRenderer& shapeRenderer, const Float2& objectPosition, const GUIObjectInteractionState& objectInteractionState) const override;
+		
 		public:
 			Float2 _offset;
 			StringW _text;
@@ -75,10 +78,11 @@ namespace mint
 		{
 		public:
 			GUIShapeComponent() : GUIComponent() { __noop; }
+			void SetShape(const GUIObjectInteractionState& objectInteractionState, const Rendering::Shape& shape);
 			virtual void Render(Rendering::ShapeRenderer& shapeRenderer, const Float2& objectPosition, const GUIObjectInteractionState& objectInteractionState) const override;
-		public:
-			Float2 _offset;
-			Rendering::Shape _shapes[3];
+		
+		private:
+			Rendering::Shape _shapes[static_cast<uint32>(GUIObjectInteractionState::COUNT)];
 		};
 
 		class GUIObject

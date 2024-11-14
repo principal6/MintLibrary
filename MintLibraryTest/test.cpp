@@ -412,10 +412,16 @@ bool Run3DTestWindow()
 		GUIObjectTemplate guiObjectTemplate;
 		{
 			SharedPtr<GUIShapeComponent> guiShapeComponent = MakeShared<GUIShapeComponent>();
-			ShapeGenerator::GenerateCircle(16.0f, 16, ByteColor(255, 0, 0), guiShapeComponent->_shapes[0]);
-			ShapeGenerator::GenerateCircle(17.0f, 16, ByteColor(255, 64, 32), guiShapeComponent->_shapes[1]);
-			ShapeGenerator::GenerateCircle(17.0f, 16, ByteColor(255, 128, 64), guiShapeComponent->_shapes[2]);
-			guiObjectTemplate.SetCollisionShape(Physics::ConvexCollisionShape2D::MakeFromRenderingShape(Float2::kZero, guiShapeComponent->_shapes[0]));
+			Shape defaultShape;
+			Shape hoveredShape;
+			Shape pressedShape;
+			ShapeGenerator::GenerateCircle(16.0f, 16, ByteColor(255, 0, 0), defaultShape);
+			ShapeGenerator::GenerateCircle(17.0f, 16, ByteColor(255, 64, 32), hoveredShape);
+			ShapeGenerator::GenerateCircle(17.0f, 16, ByteColor(255, 128, 64), pressedShape);
+			guiShapeComponent->SetShape(GUIObjectInteractionState::None, defaultShape);
+			guiShapeComponent->SetShape(GUIObjectInteractionState::Hovered, hoveredShape);
+			guiShapeComponent->SetShape(GUIObjectInteractionState::Pressed, pressedShape);
+			guiObjectTemplate.SetCollisionShape(Physics::ConvexCollisionShape2D::MakeFromRenderingShape(Float2::kZero, defaultShape));
 			guiObjectTemplate.AddComponent(guiShapeComponent);
 		}
 		{
