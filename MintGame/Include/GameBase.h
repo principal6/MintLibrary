@@ -62,7 +62,7 @@ namespace mint
 			Rendering::GraphicsObjectID _graphicsObjectID;
 
 			// TEMP
-			Rendering::ImageRenderer* _imageRenderer;
+			Rendering::ImageRenderer* _imageRenderer = nullptr;
 		};
 
 		class Value abstract
