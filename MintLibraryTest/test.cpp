@@ -411,17 +411,17 @@ bool Run3DTestWindow()
 	{
 		GUIObjectTemplate guiObjectTemplate;
 		{
-			GUIShapeComponent guiShapeComponent;
-			ShapeGenerator::GenerateCircle(16.0f, 16, ByteColor(255, 0, 0), guiShapeComponent._shapes[0]);
-			ShapeGenerator::GenerateCircle(17.0f, 16, ByteColor(255, 64, 32), guiShapeComponent._shapes[1]);
-			ShapeGenerator::GenerateCircle(17.0f, 16, ByteColor(255, 128, 64), guiShapeComponent._shapes[2]);
-			guiObjectTemplate.SetCollisionShape(Physics::ConvexCollisionShape2D::MakeFromRenderingShape(Float2::kZero, guiShapeComponent._shapes[0]));
-			guiObjectTemplate.AddComponent(MakeShared<GUIComponent>(guiShapeComponent));
+			SharedPtr<GUIShapeComponent> guiShapeComponent = MakeShared<GUIShapeComponent>();
+			ShapeGenerator::GenerateCircle(16.0f, 16, ByteColor(255, 0, 0), guiShapeComponent->_shapes[0]);
+			ShapeGenerator::GenerateCircle(17.0f, 16, ByteColor(255, 64, 32), guiShapeComponent->_shapes[1]);
+			ShapeGenerator::GenerateCircle(17.0f, 16, ByteColor(255, 128, 64), guiShapeComponent->_shapes[2]);
+			guiObjectTemplate.SetCollisionShape(Physics::ConvexCollisionShape2D::MakeFromRenderingShape(Float2::kZero, guiShapeComponent->_shapes[0]));
+			guiObjectTemplate.AddComponent(guiShapeComponent);
 		}
 		{
-			GUITextComponent guiTextComponent;
-			guiTextComponent._text = L"RoundButton0";
-			guiObjectTemplate.AddComponent(MakeShared<GUIComponent>(guiTextComponent));
+			SharedPtr<GUITextComponent> guiTextComponent = MakeShared<GUITextComponent>();
+			guiTextComponent->_text = L"RoundButton0";
+			guiObjectTemplate.AddComponent(guiTextComponent);
 		}
 		roundButton0TemplateID = guiSystem.RegisterTemplate(u8"RoundButton0", std::move(guiObjectTemplate));
 	}
