@@ -15,7 +15,9 @@
     <ClInclude Include="Include\AllHeaders.h">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="Include\GUIObject.h" />
+    <ClInclude Include="Include\GUIObject.h">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\GUISystem.cpp">
@@ -24,6 +26,8 @@
     <ClCompile Include="Source\_UnityBuild.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Source\GUIObject.cpp" />
+    <ClCompile Include="Source\GUIObject.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
