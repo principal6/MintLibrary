@@ -37,12 +37,12 @@ namespace mint
 
 	public:
 		virtual void Serialize(BinarySerializer& serializer) const noexcept abstract;
-		virtual void SerializeValue(BinarySerializer& serializer, const void* const memberPointer, const uint32 arrayItemCount) const noexcept abstract;
-		virtual void SerializeValue(JSONSerializer& serializer, const uint32 depth, const void* const memberPointer, const uint32 arrayItemCount) const noexcept abstract;
+		virtual void SerializeValue(BinarySerializer& serializer, const void* const memberPointer, const uint32 ArrayItemCount) const noexcept abstract;
+		virtual void SerializeValue(JSONSerializer& serializer, const uint32 depth, const void* const memberPointer, const uint32 ArrayItemCount) const noexcept abstract;
 
 	public:
 		virtual bool Deserialize(BinarySerializer& serializer) noexcept abstract;
-		virtual void DeserializeValue(BinarySerializer& serializer, void* const memberPointer, const uint32 arrayItemCount) noexcept abstract;
+		virtual void DeserializeValue(BinarySerializer& serializer, void* const memberPointer, const uint32 ArrayItemCount) noexcept abstract;
 	};
 
 	template <typename T>
@@ -54,17 +54,19 @@ namespace mint
 
 	public:
 		virtual void Serialize(BinarySerializer& serializer) const noexcept override final;
-		virtual void SerializeValue(BinarySerializer& serializer, const void* const memberPointer, const uint32 arrayItemCount) const noexcept override final;
-		virtual void SerializeValue(JSONSerializer& serializer, const uint32 depth, const void* const memberPointer, const uint32 arrayItemCount) const noexcept override final;
+		virtual void SerializeValue(BinarySerializer& serializer, const void* const memberPointer, const uint32 ArrayItemCount) const noexcept override final;
+		virtual void SerializeValue(JSONSerializer& serializer, const uint32 depth, const void* const memberPointer, const uint32 ArrayItemCount) const noexcept override final;
 
 	public:
 		virtual bool Deserialize(BinarySerializer& serializer) noexcept override final;
-		virtual void DeserializeValue(BinarySerializer& serializer, void* const memberPointer, const uint32 arrayItemCount) noexcept override final;
+		virtual void DeserializeValue(BinarySerializer& serializer, void* const memberPointer, const uint32 ArrayItemCount) noexcept override final;
 	};
 
 
 	struct ReflectionData
 	{
+		using BindFunction = void(*)();
+
 	public:
 		ReflectionData() : _typeData{ nullptr }
 		{
@@ -86,73 +88,82 @@ namespace mint
 	public:
 		Vector<TypeBaseData*> _memberTypeDatas;
 		TypeBaseData* _typeData;
+		Vector<BindFunction> _bindFunctions;
 	};
 
 
-#define REFLECTION_CLASS(className) \
- private: \
- void InitializeReflection() noexcept \
- { \
- static bool isReflectionDataBuilt = false; \
- if (isReflectionDataBuilt == false) \
- { \
- __buildMemberReflectionData(); \
- ReflectionData& reflectionData = const_cast<ReflectionData&>(GetReflectionDataStatic()); \
- reflectionData._typeData = MINT_NEW(TypeData<className>); \
- reflectionData._typeData->_typeName = #className; \
- reflectionData._typeData->_size = sizeof(className); \
- reflectionData._typeData->_alignment = alignof(className); \
- isReflectionDataBuilt = true; \
- } \
- } \
- private: \
- using __classType = className; \
- public: \
- virtual const ReflectionData& GetReflectionData() const noexcept \
- { \
- return GetReflectionDataStatic(); \
- } \
- static const ReflectionData& GetReflectionDataStatic() noexcept \
- { \
- static const ReflectionData kReflectionData; \
- return kReflectionData; \
- } \
- template<typename T>\
- bool IsTypeOf() const \
- { \
- 	return GetReflectionData()._typeData->_typeName == T::GetReflectionDataStatic()._typeData->_typeName; \
- }
+#define REFLECTION_CLASS(ClassName)\
+	private:\
+		void InitializeReflection() noexcept\
+		{\
+			static bool sIsReflectionDataBuilt = false;\
+			if (sIsReflectionDataBuilt == true)\
+			{\
+				return;\
+			}\
+			ReflectionData& reflectionData = const_cast<ReflectionData&>(GetReflectionDataStatic());\
+			reflectionData._typeData = MINT_NEW(TypeData<ClassName>);\
+			reflectionData._typeData->_typeName = #ClassName;\
+			reflectionData._typeData->_size = sizeof(ClassName);\
+			reflectionData._typeData->_alignment = alignof(ClassName);\
+			for (const ReflectionData::BindFunction& bindFunction : reflectionData._bindFunctions )\
+			{\
+				bindFunction();\
+			}\
+			reflectionData._bindFunctions.Clear();\
+			reflectionData._bindFunctions.ShrinkToFit();\
+			sIsReflectionDataBuilt = true;\
+		}\
+	private:\
+		using __ClassType = ClassName;\
+	public:\
+		virtual const ReflectionData& GetReflectionData() const noexcept\
+		{\
+			return GetReflectionDataStatic();\
+		}\
+		static const ReflectionData& GetReflectionDataStatic() noexcept\
+		{\
+			static const ReflectionData kReflectionData;\
+			return kReflectionData;\
+		}\
+		template<typename T>\
+		bool IsTypeOf() const\
+		{\
+			return GetReflectionData()._typeData->_typeName == T::GetReflectionDataStatic()._typeData->_typeName;\
+		}
 
-#define REFLECTION_MEMBER(type, name) \
- type name; \
- __REFLECTION_MEMBER_DEFINE_REGISTRATION(type, name, 0)
-	
-#define REFLECTION_MEMBER_ARRAY(type, name, arrayItemCount) \
- type name[arrayItemCount]; \
- __REFLECTION_MEMBER_DEFINE_REGISTRATION(type, name, arrayItemCount)
+#define REFLECTION_MEMBER(Type, Name)\
+	Type Name;\
+	__REFLECTION_MEMBER_DEFINE_REGISTRATION(Type, Name, 0)
 
-#define REFLECTION_MEMBER_INIT(type, name, init) \
- type name{ init }; \
- __REFLECTION_MEMBER_DEFINE_REGISTRATION(type, name, 0)
+#define REFLECTION_MEMBER_ARRAY(Type, Name, ArrayItemCount)\
+	Type Name[ArrayItemCount];\
+	__REFLECTION_MEMBER_DEFINE_REGISTRATION(Type, Name, ArrayItemCount)
 
-#define __REFLECTION_MEMBER_DEFINE_REGISTRATION(type, name, arrayItemCount) \
- void _bind##name()\
- {\
- ReflectionData& reflectionData = const_cast<ReflectionData&>(GetReflectionDataStatic()); \
- TypeData<type>* newTypeData = MINT_NEW(TypeData<type>);\
- newTypeData->_typeName = #type;\
- newTypeData->_declarationName = #name;\
- newTypeData->_size = sizeof(type);\
- newTypeData->_alignment = alignof(type);\
- newTypeData->_offset = offsetof(__classType, name); \
- newTypeData->_arrayItemCount = arrayItemCount; \
- reflectionData._memberTypeDatas.PushBack(newTypeData);\
- }
+#define REFLECTION_MEMBER_INIT(Type, Name, init)\
+	Type Name{ init };\
+	__REFLECTION_MEMBER_DEFINE_REGISTRATION(Type, Name, 0)
 
-#define REFLECTION_BIND_BEGIN private: void __buildMemberReflectionData() {
-#define REFLECTION_BIND(name) _bind##name();
-#define REFLECTION_BIND_END }
-
+#define __REFLECTION_MEMBER_DEFINE_REGISTRATION(Type, Name, ArrayItemCount)\
+	static void __Bind##Name()\
+	{\
+		static bool sIsBound = false;\
+		if (sIsBound == true)\
+		{\
+			return;\
+		}\
+		ReflectionData& reflectionData = const_cast<ReflectionData&>(GetReflectionDataStatic());\
+		TypeData<Type>* newTypeData = MINT_NEW(TypeData<Type>);\
+		newTypeData->_typeName = #Type;\
+		newTypeData->_declarationName = #Name;\
+		newTypeData->_size = sizeof(Type);\
+		newTypeData->_alignment = alignof(Type);\
+		newTypeData->_offset = offsetof(__ClassType, Name);\
+		newTypeData->_arrayItemCount = ArrayItemCount;\
+		reflectionData._memberTypeDatas.PushBack(newTypeData);\
+		reflectionData._bindFunctions.PushBack(__Bind##Name);\
+		sIsBound = true;\
+	}
 
 	template <typename T, typename = void>
 	class IsReflectionClass : public std::false_type {};
@@ -178,13 +189,6 @@ namespace mint
 		REFLECTION_MEMBER_INIT(uint32, _ui, 0xDDCCBBAA);
 		REFLECTION_MEMBER_INIT(float, _f, 32.0f);
 		REFLECTION_MEMBER_INIT(StringA, _str, "abc");
-
-	private:
-		REFLECTION_BIND_BEGIN;
-		REFLECTION_BIND(_ui);
-		REFLECTION_BIND(_f);
-		REFLECTION_BIND(_str);
-		REFLECTION_BIND_END;
 	};
 
 	class ReflectionTesterOuter
@@ -199,13 +203,6 @@ namespace mint
 		REFLECTION_MEMBER_INIT(uint32, _id, 0xFFFFFFFF);
 		REFLECTION_MEMBER(ReflectionTesterInner, _inner);
 		REFLECTION_MEMBER(Vector<uint32>, _uis);
-
-	private:
-		REFLECTION_BIND_BEGIN;
-		REFLECTION_BIND(_id);
-		REFLECTION_BIND(_inner);
-		REFLECTION_BIND(_uis);
-		REFLECTION_BIND_END;
 	};
 
 

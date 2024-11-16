@@ -25,12 +25,6 @@ namespace mint
 		public:
 			REFLECTION_MEMBER_ARRAY(byte, _arr, 3)
 			REFLECTION_MEMBER_ARRAY(StringA, _strs, 2)
-			
-		private:
-			REFLECTION_BIND_BEGIN
-			REFLECTION_BIND(_arr)
-			REFLECTION_BIND(_strs)
-			REFLECTION_BIND_END
 		};
 
 		bool Test()
