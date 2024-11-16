@@ -61,6 +61,10 @@ namespace mint
 			GUIComponent() { InitializeReflection(); }
 			virtual ~GUIComponent() = default;
 			virtual void Render(Rendering::ShapeRenderer& shapeRenderer, const Float2& objectPosition, const GUIObjectInteractionState& objectInteractionState) const { __noop; }
+		//protected:
+			//GUIObjectID _objectID;
+			REFLECTION_BIND_BEGIN;
+			REFLECTION_BIND_END;
 		};
 
 		class GUITextComponent : public GUIComponent
@@ -76,6 +80,8 @@ namespace mint
 		private:
 			StringW _text;
 			Float2 _offset;
+			REFLECTION_BIND_BEGIN;
+			REFLECTION_BIND_END;
 		};
 
 		class GUIShapeComponent : public GUIComponent
@@ -88,6 +94,8 @@ namespace mint
 		
 		private:
 			Rendering::Shape _shapes[static_cast<uint32>(GUIObjectInteractionState::COUNT)];
+			REFLECTION_BIND_BEGIN;
+			REFLECTION_BIND_END;
 		};
 
 		class GUIObject
