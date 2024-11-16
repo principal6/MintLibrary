@@ -97,7 +97,7 @@ namespace mint
  if (isReflectionDataBuilt == false) \
  { \
  __buildMemberReflectionData(); \
- ReflectionData& reflectionData = const_cast<ReflectionData&>(getReflectionData()); \
+ ReflectionData& reflectionData = const_cast<ReflectionData&>(GetReflectionDataStatic()); \
  reflectionData._typeData = MINT_NEW(TypeData<className>); \
  reflectionData._typeData->_typeName = #className; \
  reflectionData._typeData->_size = sizeof(className); \
@@ -108,10 +108,19 @@ namespace mint
  private: \
  using __classType = className; \
  public: \
- static const ReflectionData& getReflectionData() noexcept \
+ virtual const ReflectionData& GetReflectionData() const noexcept \
+ { \
+ return GetReflectionDataStatic(); \
+ } \
+ static const ReflectionData& GetReflectionDataStatic() noexcept \
  { \
  static const ReflectionData kReflectionData; \
  return kReflectionData; \
+ } \
+ template<typename T>\
+ bool IsTypeOf() const \
+ { \
+ 	return GetReflectionData()._typeData->_typeName == T::GetReflectionDataStatic()._typeData->_typeName; \
  }
 
 #define REFLECTION_MEMBER(type, name) \
@@ -129,7 +138,7 @@ namespace mint
 #define __REFLECTION_MEMBER_DEFINE_REGISTRATION(type, name, arrayItemCount) \
  void _bind##name()\
  {\
- ReflectionData& reflectionData = const_cast<ReflectionData&>(getReflectionData()); \
+ ReflectionData& reflectionData = const_cast<ReflectionData&>(GetReflectionDataStatic()); \
  TypeData<type>* newTypeData = MINT_NEW(TypeData<type>);\
  newTypeData->_typeName = #type;\
  newTypeData->_declarationName = #name;\
@@ -148,9 +157,9 @@ namespace mint
 	template <typename T, typename = void>
 	class IsReflectionClass : public std::false_type {};
 
-	// ### getReflectionData() 가 static 멤버 함수인 경우
+	// ### GetReflectionDataStatic() 가 static 멤버 함수인 경우
 	template <typename T>
-	class IsReflectionClass<T, std::enable_if_t<std::is_function<decltype(T::getReflectionData)>::value, void>> : public std::true_type {};
+	class IsReflectionClass<T, std::enable_if_t<std::is_function<decltype(T::GetReflectionDataStatic)>::value, void>> : public std::true_type {};
 
 	// ### kReflectionData 가 멤버일 경우
 	//template <typename T>

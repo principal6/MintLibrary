@@ -52,7 +52,7 @@ namespace mint
 
 			_writer.Write("{\n");
 
-			const ReflectionData& reflectionData = from.getReflectionData();
+			const ReflectionData& reflectionData = from.GetReflectionData();
 			const uint32 memberCount = reflectionData._memberTypeDatas.Size();
 			for (uint32 memberIndex = 0; memberIndex < memberCount; ++memberIndex)
 			{

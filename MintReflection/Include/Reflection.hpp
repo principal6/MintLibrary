@@ -177,7 +177,7 @@ namespace mint
 
 		if constexpr (IsReflectionClass<T>::value == true)
 		{
-			const ReflectionData& reflectionData = from.getReflectionData();
+			const ReflectionData& reflectionData = from.GetReflectionData();
 			TypeBaseData* const typeData = reflectionData._typeData;
 			typeData->Serialize(*this);
 
@@ -253,7 +253,7 @@ namespace mint
 
 		if constexpr (IsReflectionClass<T>::value == true)
 		{
-			const ReflectionData& reflectionData = to.getReflectionData();
+			const ReflectionData& reflectionData = to.GetReflectionData();
 			TypeBaseData* const typeData = reflectionData._typeData;
 			if (typeData->Deserialize(*this) == false)
 			{

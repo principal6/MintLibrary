@@ -35,9 +35,9 @@ namespace mint
 
 		bool Test()
 		{
-			const ReflectionData& refl1 = ReflectionTesterOuter::getReflectionData();
-			const ReflectionData& refl2 = ReflectionTesterInner::getReflectionData();
-			const ReflectionData& refl3 = StructOfArrays::getReflectionData();
+			const ReflectionData& refl1 = ReflectionTesterOuter::GetReflectionDataStatic();
+			const ReflectionData& refl2 = ReflectionTesterInner::GetReflectionDataStatic();
+			const ReflectionData& refl3 = StructOfArrays::GetReflectionDataStatic();
 
 			ReflectionTesterOuter outer0;
 			outer0._id = 0xAABBCCDD;

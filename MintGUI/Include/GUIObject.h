@@ -10,6 +10,7 @@
 #include <MintContainer/Include/String.h>
 #include <MintContainer/Include/OwnPtr.h>
 #include <MintContainer/Include/SharedPtr.h>
+#include <MintReflection/Include/Reflection.h>
 
 
 namespace mint
@@ -55,18 +56,23 @@ namespace mint
 		
 		class GUIComponent
 		{
+			REFLECTION_CLASS(GUIComponent);
 		public:
-			GUIComponent() = default;
+			GUIComponent() { InitializeReflection(); }
 			virtual ~GUIComponent() = default;
 			virtual void Render(Rendering::ShapeRenderer& shapeRenderer, const Float2& objectPosition, const GUIObjectInteractionState& objectInteractionState) const { __noop; }
 		//protected:
 			//GUIObjectID _objectID;
+			REFLECTION_BIND_BEGIN;
+			REFLECTION_BIND_END;
 		};
 
 		class GUITextComponent : public GUIComponent
 		{
+			REFLECTION_CLASS(GUITextComponent);
+
 		public:
-			GUITextComponent() : GUIComponent() { __noop; }
+			GUITextComponent() : GUIComponent() { InitializeReflection(); }
 			void SetText(const StringReferenceW& text);
 			void SetOffset(const Float2& offset);
 			virtual void Render(Rendering::ShapeRenderer& shapeRenderer, const Float2& objectPosition, const GUIObjectInteractionState& objectInteractionState) const override;
@@ -74,17 +80,22 @@ namespace mint
 		private:
 			StringW _text;
 			Float2 _offset;
+			REFLECTION_BIND_BEGIN;
+			REFLECTION_BIND_END;
 		};
 
 		class GUIShapeComponent : public GUIComponent
 		{
+			REFLECTION_CLASS(GUIShapeComponent);
 		public:
-			GUIShapeComponent() : GUIComponent() { __noop; }
+			GUIShapeComponent() : GUIComponent() { InitializeReflection(); }
 			void SetShape(const GUIObjectInteractionState& objectInteractionState, const Rendering::Shape& shape);
 			virtual void Render(Rendering::ShapeRenderer& shapeRenderer, const Float2& objectPosition, const GUIObjectInteractionState& objectInteractionState) const override;
 		
 		private:
 			Rendering::Shape _shapes[static_cast<uint32>(GUIObjectInteractionState::COUNT)];
+			REFLECTION_BIND_BEGIN;
+			REFLECTION_BIND_END;
 		};
 
 		class GUIObject
@@ -102,6 +113,8 @@ namespace mint
 			void SetPosition(const Float2& position) { _position = position; }
 			void Render(Rendering::ShapeRenderer& shapeRenderer, const GUIObjectInteractionState& objectInteractionState) const;
 			uint32 GetComponentCount() const { return _components.Size(); }
+			template<typename T>
+			SharedPtr<GUIComponent> GetComponent() const;
 			SharedPtr<GUIComponent> GetComponent(const uint32 index) const { return _components.At(index); }
 		protected:
 			GUIObjectID _objectID;

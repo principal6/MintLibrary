@@ -17,6 +17,8 @@
 
 #include <MintPhysics/Include/AllHpps.h>
 
+#include <MintGUI/Include/AllHpps.h>
+
 #include <MintApp/Include/AllHpps.h>
 
 

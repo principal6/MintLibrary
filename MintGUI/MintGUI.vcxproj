@@ -152,7 +152,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Include\AllHeaders.h" />
+    <ClInclude Include="Include\AllHpps.h" />
     <ClInclude Include="Include\GUIObject.h" />
+    <ClInclude Include="Include\GUIObject.hpp" />
     <ClInclude Include="Include\GUISystem.h" />
   </ItemGroup>
   <ItemGroup>

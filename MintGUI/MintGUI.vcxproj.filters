@@ -18,6 +18,12 @@
     <ClInclude Include="Include\GUIObject.h">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="Include\GUIObject.hpp">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\AllHpps.h">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\GUISystem.cpp">
