@@ -63,18 +63,10 @@ namespace mint
 	};
 
 
-	struct ReflectionRegistry
-	{
-		using BindFunction = void(*)();
-		static Vector<BindFunction>& GetThreadLocalBindFunctions()
-		{
-			static thread_local Vector<BindFunction> sThreadLocalBindFunctions;
-			return sThreadLocalBindFunctions;
-		}
-	};
-
 	struct ReflectionData
 	{
+		using BindFunction = void(*)();
+
 	public:
 		ReflectionData() : _typeData{ nullptr }
 		{
@@ -96,6 +88,7 @@ namespace mint
 	public:
 		Vector<TypeBaseData*> _memberTypeDatas;
 		TypeBaseData* _typeData;
+		Vector<BindFunction> _bindFunctions;
 	};
 
 
@@ -113,12 +106,12 @@ namespace mint
 			reflectionData._typeData->_typeName = #ClassName;\
 			reflectionData._typeData->_size = sizeof(ClassName);\
 			reflectionData._typeData->_alignment = alignof(ClassName);\
-			Vector<ReflectionRegistry::BindFunction>& bindFunctions = ReflectionRegistry::GetThreadLocalBindFunctions();\
-			for (const ReflectionRegistry::BindFunction& bindFunction : bindFunctions )\
+			for (const ReflectionData::BindFunction& bindFunction : reflectionData._bindFunctions )\
 			{\
 				bindFunction();\
 			}\
-			bindFunctions.Clear();\
+			reflectionData._bindFunctions.Clear();\
+			reflectionData._bindFunctions.ShrinkToFit();\
 			sIsReflectionDataBuilt = true;\
 		}\
 	private:\
@@ -168,8 +161,7 @@ namespace mint
 		newTypeData->_offset = offsetof(__ClassType, Name);\
 		newTypeData->_arrayItemCount = ArrayItemCount;\
 		reflectionData._memberTypeDatas.PushBack(newTypeData);\
-		Vector<ReflectionRegistry::BindFunction>& bindFunctions = ReflectionRegistry::GetThreadLocalBindFunctions();\
-		bindFunctions.PushBack(__Bind##Name);\
+		reflectionData._bindFunctions.PushBack(__Bind##Name);\
 		sIsBound = true;\
 	}
 
