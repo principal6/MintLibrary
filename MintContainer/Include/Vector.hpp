@@ -184,6 +184,13 @@ namespace mint
 			return;
 		}
 
+		if (_size == 0)
+		{
+			MemoryRaw::DeallocateMemory<T>(_rawPointer);
+			_capacity = 0;
+			return;
+		}
+
 		T* temp = MemoryRaw::AllocateMemory<T>(_size);
 		MemoryRaw::MoveMemory_<T>(temp, _rawPointer, _size);
 
