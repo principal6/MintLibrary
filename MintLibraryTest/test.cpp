@@ -426,7 +426,7 @@ bool Run3DTestWindow()
 		}
 		{
 			SharedPtr<GUITextComponent> guiTextComponent = MakeShared<GUITextComponent>();
-			guiTextComponent->_text = L"RoundButton0";
+			guiTextComponent->SetText(L"RoundButton0");
 			guiObjectTemplate.AddComponent(guiTextComponent);
 		}
 		roundButton0TemplateID = guiSystem.RegisterTemplate(u8"RoundButton0", std::move(guiObjectTemplate));

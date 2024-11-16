@@ -67,11 +67,13 @@ namespace mint
 		{
 		public:
 			GUITextComponent() : GUIComponent() { __noop; }
+			void SetText(const StringReferenceW& text);
+			void SetOffset(const Float2& offset);
 			virtual void Render(Rendering::ShapeRenderer& shapeRenderer, const Float2& objectPosition, const GUIObjectInteractionState& objectInteractionState) const override;
 		
-		public:
-			Float2 _offset;
+		private:
 			StringW _text;
+			Float2 _offset;
 		};
 
 		class GUIShapeComponent : public GUIComponent

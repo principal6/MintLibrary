@@ -28,6 +28,7 @@ namespace mint
 	public:
 		String& operator=(const T* const rhs) noexcept;
 		String& operator=(const String& rhs) noexcept;
+		String& operator=(const StringReference<T>& rhs) noexcept;
 		String& operator=(String&& rhs) noexcept;
 
 	public:

@@ -76,6 +76,16 @@ namespace mint
 	}
 
 	template<typename T>
+	MINT_INLINE String<T>& String<T>::operator=(const StringReference<T>& rhs) noexcept
+	{
+		if (this != &rhs)
+		{
+			AssignInternalXXX(rhs.CString());
+		}
+		return *this;
+	}
+
+	template<typename T>
 	MINT_INLINE String<T>& String<T>::operator=(String&& rhs) noexcept
 	{
 		if (this != &rhs)

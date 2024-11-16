@@ -10,6 +10,16 @@ namespace mint
 	namespace GUI
 	{
 #pragma region GUIComponent
+		void GUITextComponent::SetText(const StringReferenceW& text)
+		{
+			_text = text;
+		}
+
+		void GUITextComponent::SetOffset(const Float2& offset)
+		{
+			_offset = offset;
+		}
+
 		void GUITextComponent::Render(Rendering::ShapeRenderer& shapeRenderer, const Float2& objectPosition, const GUIObjectInteractionState& objectInteractionState) const
 		{
 			using namespace Rendering;
