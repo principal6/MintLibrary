@@ -125,7 +125,9 @@ namespace mint
 			GUIObject() = default;
 			virtual ~GUIObject();
 			void SetPosition(const Float2& position) { _position = position; }
+			void AddComponent(SharedPtr<GUIComponent> guiComponent);
 			void Render(Rendering::ShapeRenderer& shapeRenderer, const GUIObjectInteractionState& objectInteractionState) const;
+		public:
 			uint32 GetComponentCount() const { return _components.Size(); }
 			template<typename T>
 			SharedPtr<GUIComponent> GetComponent() const;

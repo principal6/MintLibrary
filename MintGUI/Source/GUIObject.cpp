@@ -75,6 +75,11 @@ namespace mint
 			__noop;
 		}
 
+		void GUIObject::AddComponent(SharedPtr<GUIComponent> guiComponent)
+		{
+			_components.PushBack(guiComponent);
+		}
+
 		void GUIObject::Render(Rendering::ShapeRenderer& shapeRenderer, const GUIObjectInteractionState& objectInteractionState) const
 		{
 			for (const SharedPtr<GUIComponent>& component : _components)
