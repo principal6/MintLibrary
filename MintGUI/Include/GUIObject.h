@@ -97,6 +97,20 @@ namespace mint
 			REFLECTION_BIND_BEGIN;
 			REFLECTION_BIND_END;
 		};
+		
+		class GUIDraggableComponent : public GUIComponent
+		{
+			REFLECTION_CLASS(GUIDraggableComponent);
+		public:
+			GUIDraggableComponent() : GUIComponent() { InitializeReflection(); }
+			MINT_INLINE void SetLocalPressedPosition(const Float2& localPressedPosition) { _localPressedPosition = localPressedPosition; }
+			MINT_INLINE const Float2& GetLocalPressedPosition() const { return _localPressedPosition; }
+		
+		private:
+			Float2 _localPressedPosition;
+			REFLECTION_BIND_BEGIN;
+			REFLECTION_BIND_END;
+		};
 
 		class GUIObject
 		{

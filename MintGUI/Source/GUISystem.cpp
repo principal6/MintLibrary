@@ -7,6 +7,7 @@
 #include <MintPlatform/Include/InputContext.h>
 #include <MintPhysics/Include/CollisionShape.h>
 #include <MintPhysics/Include/Intersection.hpp>
+#include <MintGUI/Include/GUIObject.hpp>
 
 
 namespace mint
@@ -79,39 +80,72 @@ namespace mint
 		void GUISystem::GUIObjectManager::UpdateObjects(const GUIObjectUpdateContext& objectUpdateContext)
 		{
 			_hoveredObjectID.Invalidate();
-			_pressedObjectID.Invalidate();
 
-			InputContext& inputContext = InputContext::GetInstance();
-			const Float2& mousePosition = inputContext.GetMousePosition();
-			const MouseButtonState leftMouseButtonState = inputContext.GetMouseButtonState(MouseButton::Left);
 			for (SharedPtr<GUIObject>& guiObject : _objectInstances)
 			{
 				UpdateObject(objectUpdateContext, *guiObject);
+			}
+
+			UpdatePressedObject(objectUpdateContext);
+
+			// MouseButtonState 가 Released 나 Up 이더라도 이번 프레임 Update 끝날 때까지 PressedObject 를 유지한다.
+			InputContext& inputContext = InputContext::GetInstance();
+			const MouseButtonState leftMouseButtonState = inputContext.GetMouseButtonState(MouseButton::Left);
+			if (leftMouseButtonState == MouseButtonState::Released || leftMouseButtonState == MouseButtonState::Up)
+			{
+				_pressedObjectID.Invalidate();
 			}
 		}
 
 		void GUISystem::GUIObjectManager::UpdateObject(const GUIObjectUpdateContext& objectUpdateContext, GUIObject& guiObject)
 		{
 			InputContext& inputContext = InputContext::GetInstance();
-			const MouseButtonState leftMouseButtonState = inputContext.GetMouseButtonState(MouseButton::Left);
 			const Float2& mousePosition = inputContext.GetMousePosition();
 			const bool intersects = Physics::Intersect2D_GJK(*guiObject._collisionShape, Physics::PointCollisionShape2D(mousePosition - guiObject._position));
-			if (intersects)
+			if (intersects == false)
 			{
-				_hoveredObjectID = guiObject._objectID;
+				return;
+			}
 
-				if (leftMouseButtonState == MouseButtonState::Down || leftMouseButtonState == MouseButtonState::DoubleClicked)
+			_hoveredObjectID = guiObject._objectID;
+
+			const MouseButtonState leftMouseButtonState = inputContext.GetMouseButtonState(MouseButton::Left);
+			if (leftMouseButtonState == MouseButtonState::Pressed || leftMouseButtonState == MouseButtonState::Down || leftMouseButtonState == MouseButtonState::DoubleClicked)
+			{
+				const bool intersects1 = Physics::Intersect2D_GJK(*guiObject._collisionShape, Physics::PointCollisionShape2D(objectUpdateContext._mouseLeftButtonPressedPosition - guiObject._position));
+				if (intersects1)
 				{
-					const bool intersects1 = Physics::Intersect2D_GJK(*guiObject._collisionShape, Physics::PointCollisionShape2D(objectUpdateContext._mouseLeftButtonPressedPosition - guiObject._position));
-					if (intersects1)
-					{
-						_pressedObjectID = guiObject._objectID;
+					_pressedObjectID = guiObject._objectID;
 
-						if (_hoveredObjectID == _pressedObjectID)
-						{
-							_hoveredObjectID.Invalidate();
-						}
+					if (_hoveredObjectID == _pressedObjectID)
+					{
+						_hoveredObjectID.Invalidate();
 					}
+				}
+			}
+		}
+
+		void GUISystem::GUIObjectManager::UpdatePressedObject(const GUIObjectUpdateContext& objectUpdateContext)
+		{
+			if (_pressedObjectID.IsValid() == false)
+			{
+				return;
+			}
+
+			InputContext& inputContext = InputContext::GetInstance();
+			const Float2& mousePosition = inputContext.GetMousePosition();
+			const MouseButtonState leftMouseButtonState = inputContext.GetMouseButtonState(MouseButton::Left);
+			GUIObject& pressedObject = AccessObject(_pressedObjectID);
+			SharedPtr<GUIDraggableComponent> guiDraggableComponent = pressedObject.GetComponent<GUIDraggableComponent>();
+			if (guiDraggableComponent.IsValid() == true)
+			{
+				if (leftMouseButtonState == MouseButtonState::Pressed)
+				{
+					guiDraggableComponent->SetLocalPressedPosition(objectUpdateContext._mouseLeftButtonPressedPosition - pressedObject._position);
+				}
+				else
+				{
+					pressedObject._position = mousePosition - guiDraggableComponent->GetLocalPressedPosition();
 				}
 			}
 		}

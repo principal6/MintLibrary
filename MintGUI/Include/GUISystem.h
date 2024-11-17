@@ -76,6 +76,7 @@ namespace mint
 
 			private:
 				void UpdateObject(const GUIObjectUpdateContext& objectUpdateContext, GUIObject& guiObject);
+				void UpdatePressedObject(const GUIObjectUpdateContext& objectUpdateContext);
 
 			private:
 				Vector<SharedPtr<GUIObjectTemplate>> _objectTemplates;

@@ -429,6 +429,10 @@ bool Run3DTestWindow()
 			guiTextComponent->SetText(L"RoundButton0");
 			guiObjectTemplate.AddComponent(guiTextComponent);
 		}
+		{
+			SharedPtr<GUIDraggableComponent> guiDraggableComponent = MakeShared<GUIDraggableComponent>();
+			guiObjectTemplate.AddComponent(guiDraggableComponent);
+		}
 		roundButton0TemplateID = guiSystem.RegisterTemplate(u8"RoundButton0", std::move(guiObjectTemplate));
 	}
 	const GUIObjectID buttonObjectID = guiSystem.AddObject(roundButton0TemplateID);
