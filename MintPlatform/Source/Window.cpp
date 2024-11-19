@@ -139,7 +139,7 @@ namespace mint
 		windowClass.cbSize = sizeof(windowClass);
 		windowClass.cbWndExtra = 0;
 		windowClass.hbrBackground = ::CreateSolidBrush(backgroundColor);
-		windowClass.hCursor = nullptr;
+		windowClass.hCursor = ::LoadCursorW(nullptr, IDC_ARROW);
 		windowClass.hIconSm = windowClass.hIcon = ::LoadIconW(nullptr, IDI_SHIELD);
 		windowClass.hInstance = _hInstance;
 		windowClass.lpfnWndProc = WndProc;
