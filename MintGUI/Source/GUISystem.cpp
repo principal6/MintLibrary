@@ -57,6 +57,7 @@ namespace mint
 
 			SharedPtr<GUIObject> guiObject = MakeShared<GUIObject>();
 			guiObject->_objectID.Assign(_nextObjectRawID);
+			++_nextObjectRawID;
 			_objectInstances.PushBack(guiObject);
 
 			const SharedPtr<GUIObjectTemplate>& objectTemplate = _objectTemplates[index];
