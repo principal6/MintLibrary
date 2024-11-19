@@ -62,7 +62,12 @@ namespace mint
 
 			const SharedPtr<GUIObjectTemplate>& objectTemplate = _objectTemplates[index];
 			guiObject->_collisionShape = objectTemplate->_collisionShape;
-			guiObject->_components = objectTemplate->_components;
+			const uint32 componentCount = objectTemplate->_components.Size();
+			guiObject->_components.Resize(componentCount);
+			for (uint32 i = 0; i < componentCount; ++i)
+			{
+				guiObject->_components[i] = objectTemplate->_components[i]->Clone();
+			}
 			return guiObject->_objectID;
 		}
 

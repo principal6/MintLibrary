@@ -14,7 +14,7 @@ namespace mint
 	namespace GUI
 	{
 		template<typename T>
-		SharedPtr<GUIComponent> GUIObject::GetComponent() const
+		SharedPtr<T> GUIObject::GetComponent() const
 		{
 			for (const SharedPtr<GUIComponent>& component : _components)
 			{
@@ -23,7 +23,7 @@ namespace mint
 					return component;
 				}
 			}
-			return SharedPtr<GUIComponent>();
+			return SharedPtr<T>();
 		}
 	}
 }

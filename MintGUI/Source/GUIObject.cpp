@@ -10,6 +10,13 @@ namespace mint
 	namespace GUI
 	{
 #pragma region GUIComponent
+		SharedPtr<GUIComponent> GUITextComponent::Clone() const
+		{
+			SharedPtr<GUITextComponent> cloned = MakeShared<GUITextComponent>();
+			*cloned = *this;
+			return cloned;
+		}
+
 		void GUITextComponent::SetText(const StringReferenceW& text)
 		{
 			_text = text;
@@ -35,6 +42,17 @@ namespace mint
 			shapeRenderer.DrawDynamicText(_text.CString(), objectPosition + _offset, fontRenderingOption);
 		}
 
+		SharedPtr<GUIComponent> GUIShapeComponent::Clone() const
+		{
+			SharedPtr<GUIShapeComponent> cloned = MakeShared<GUIShapeComponent>();
+			*cloned = *this;
+			for (uint32 i = 0; i < static_cast<uint32>(GUIObjectInteractionState::COUNT); ++i)
+			{
+				cloned->_shapes[i] = _shapes[i];
+			}
+			return cloned;
+		}
+
 		void GUIShapeComponent::SetShape(const GUIObjectInteractionState& objectInteractionState, const Rendering::Shape& shape)
 		{
 			_shapes[static_cast<uint32>(objectInteractionState)] = shape;
@@ -54,6 +72,13 @@ namespace mint
 			}
 
 			shapeRenderer.AddShape(_shapes[shapeIndex]);
+		}
+
+		SharedPtr<GUIComponent> GUIDraggableComponent::Clone() const
+		{
+			SharedPtr<GUIDraggableComponent> cloned = MakeShared<GUIDraggableComponent>();
+			*cloned = *this;
+			return cloned;
 		}
 #pragma endregion
 

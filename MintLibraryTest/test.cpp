@@ -17,6 +17,7 @@
 
 
 void RunGJKTestWindow();
+void RunSplineTestWindow();
 bool Run2DTestWindow();
 bool Run3DTestWindow();
 
@@ -42,8 +43,9 @@ int main()
 #endif
 
 	//RunGJKTestWindow();
+	RunSplineTestWindow();
 	//Run2DTestWindow();
-	Run3DTestWindow();
+	//Run3DTestWindow();
 	return 0;
 }
 
@@ -236,6 +238,81 @@ void RunGJKTestWindow()
 			}
 		}
 		app.EndRendering();
+	}
+}
+
+void RunSplineTestWindow()
+{
+	using namespace mint;
+	using namespace Rendering;
+	using namespace GUI;
+	using namespace Game;
+
+	WindowCreationDesc windowCreationDesc;
+	windowCreationDesc._position.Set(200, 100);
+	windowCreationDesc._size.Set(1024, 768);
+	windowCreationDesc._title = L"HI";
+	windowCreationDesc._backgroundColor = ByteColor(224, 224, 224);
+
+	mint::App app{ windowCreationDesc , true };
+
+	GUISystem& guiSystem = app.GetGUISystem();
+	GUIObjectTemplateID guiControlPointObjectTemplateID;
+	{
+		GUIObjectTemplate guiObjectTemplate;
+		{
+			SharedPtr<GUIShapeComponent> guiShapeComponent = MakeShared<GUIShapeComponent>();
+			Shape defaultShape;
+			Shape hoveredShape;
+			Shape pressedShape;
+			ShapeGenerator::GenerateCircle(8.0f, 16, ByteColor(255, 0, 0), defaultShape);
+			ShapeGenerator::GenerateCircle(8.0f, 16, ByteColor(255, 64, 32), hoveredShape);
+			ShapeGenerator::GenerateCircle(8.0f, 16, ByteColor(255, 128, 64), pressedShape);
+			guiShapeComponent->SetShape(GUIObjectInteractionState::None, defaultShape);
+			guiShapeComponent->SetShape(GUIObjectInteractionState::Hovered, hoveredShape);
+			guiShapeComponent->SetShape(GUIObjectInteractionState::Pressed, pressedShape);
+			guiObjectTemplate.SetCollisionShape(Physics::ConvexCollisionShape2D::MakeFromRenderingShape(Float2::kZero, defaultShape));
+			guiObjectTemplate.AddComponent(guiShapeComponent);
+		}
+		{
+			SharedPtr<GUITextComponent> guiTextComponent = MakeShared<GUITextComponent>();
+			guiTextComponent->SetOffset(Float2(0, 16));
+			guiTextComponent->SetText(L"CP");
+			guiObjectTemplate.AddComponent(guiTextComponent);
+
+			guiObjectTemplate.AddComponent(MakeShared<GUIDraggableComponent>());
+		}
+		guiControlPointObjectTemplateID = guiSystem.RegisterTemplate(u8"CP", std::move(guiObjectTemplate));
+	}
+	const GUIObjectID guiControlPointObjectID0 = guiSystem.AddObject(guiControlPointObjectTemplateID);
+	const GUIObjectID guiControlPointObjectID1 = guiSystem.AddObject(guiControlPointObjectTemplateID);
+	GUIObject& guiControlPointObject0 = guiSystem.AccessObject(guiControlPointObjectID0);
+	guiControlPointObject0.SetPosition(Float2(80, 160));
+	guiControlPointObject0.GetComponent<GUITextComponent>()->SetText(L"CP0");
+	GUIObject& guiControlPointObject1 = guiSystem.AccessObject(guiControlPointObjectID1);
+	guiControlPointObject1.SetPosition(Float2(160, 80));
+	guiControlPointObject1.GetComponent<GUITextComponent>()->SetText(L"CP1");
+
+	GraphicsDevice& graphicsDevice = app.GetGraphicsDevice();
+	const InputContext& inputContext = InputContext::GetInstance();
+	while (app.IsRunning() == true)
+	{
+		// Rendering
+		app.BeginRendering();
+		{
+			ShapeRenderer& shapeRenderer = graphicsDevice.GetShapeRenderer();
+			graphicsDevice.SetViewProjectionMatrix(Float4x4::kIdentity, graphicsDevice.GetScreenSpace2DProjectionMatrix());
+			{
+				StackStringW<100> fpsString;
+				FormatString(fpsString, L"FPS: %d", Profiler::FPSCounter::GetFPS());
+				shapeRenderer.SetTextColor(Color::kBlack);
+				shapeRenderer.DrawDynamicText(fpsString.CString(), Float2(10, 10), FontRenderingOption());
+			}
+			shapeRenderer.Render();
+		}
+		app.EndRendering();
+
+		Profiler::FPSCounter::Count();
 	}
 }
 

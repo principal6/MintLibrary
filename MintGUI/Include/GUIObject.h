@@ -60,6 +60,7 @@ namespace mint
 		public:
 			GUIComponent() { InitializeReflection(); }
 			virtual ~GUIComponent() = default;
+			virtual SharedPtr<GUIComponent> Clone() const = 0;
 			virtual void Render(Rendering::ShapeRenderer& shapeRenderer, const Float2& objectPosition, const GUIObjectInteractionState& objectInteractionState) const { __noop; }
 		//protected:
 			//GUIObjectID _objectID;
@@ -75,8 +76,9 @@ namespace mint
 			GUITextComponent() : GUIComponent() { InitializeReflection(); }
 			void SetText(const StringReferenceW& text);
 			void SetOffset(const Float2& offset);
+			virtual SharedPtr<GUIComponent> Clone() const override final;
 			virtual void Render(Rendering::ShapeRenderer& shapeRenderer, const Float2& objectPosition, const GUIObjectInteractionState& objectInteractionState) const override;
-		
+
 		private:
 			StringW _text;
 			Float2 _offset;
@@ -90,8 +92,9 @@ namespace mint
 		public:
 			GUIShapeComponent() : GUIComponent() { InitializeReflection(); }
 			void SetShape(const GUIObjectInteractionState& objectInteractionState, const Rendering::Shape& shape);
+			virtual SharedPtr<GUIComponent> Clone() const override final;
 			virtual void Render(Rendering::ShapeRenderer& shapeRenderer, const Float2& objectPosition, const GUIObjectInteractionState& objectInteractionState) const override;
-		
+
 		private:
 			Rendering::Shape _shapes[static_cast<uint32>(GUIObjectInteractionState::COUNT)];
 			REFLECTION_BIND_BEGIN;
@@ -104,6 +107,7 @@ namespace mint
 		public:
 			GUIDraggableComponent() : GUIComponent() { InitializeReflection(); }
 			MINT_INLINE void SetLocalPressedPosition(const Float2& localPressedPosition) { _localPressedPosition = localPressedPosition; }
+			virtual SharedPtr<GUIComponent> Clone() const override final;
 			MINT_INLINE const Float2& GetLocalPressedPosition() const { return _localPressedPosition; }
 		
 		private:
@@ -130,7 +134,7 @@ namespace mint
 		public:
 			uint32 GetComponentCount() const { return _components.Size(); }
 			template<typename T>
-			SharedPtr<GUIComponent> GetComponent() const;
+			SharedPtr<T> GetComponent() const;
 			SharedPtr<GUIComponent> GetComponent(const uint32 index) const { return _components.At(index); }
 		protected:
 			GUIObjectID _objectID;
