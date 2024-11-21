@@ -114,7 +114,7 @@ namespace mint
 					continue;
 				}
 
-				static_cast<const GUIRenderableComponent*>(component.Get())->Render(shapeRenderer, _position, objectInteractionState);
+				static_cast<const GUIRenderableComponent*>(component.Get())->Render(shapeRenderer, _transform2D._translation, objectInteractionState);
 			}
 		}
 #pragma endregion

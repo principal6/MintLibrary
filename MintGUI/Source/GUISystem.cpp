@@ -107,7 +107,7 @@ namespace mint
 		{
 			InputContext& inputContext = InputContext::GetInstance();
 			const Float2& mousePosition = inputContext.GetMousePosition();
-			const bool intersects = Physics::Intersect2D_GJK(*guiObject._collisionShape, Physics::PointCollisionShape2D(mousePosition - guiObject._position));
+			const bool intersects = Physics::Intersect2D_GJK(*guiObject._collisionShape, Physics::PointCollisionShape2D(mousePosition - guiObject.GetPosition()));
 			if (intersects == false)
 			{
 				return;
@@ -118,7 +118,7 @@ namespace mint
 			const MouseButtonState leftMouseButtonState = inputContext.GetMouseButtonState(MouseButton::Left);
 			if (leftMouseButtonState == MouseButtonState::Pressed || leftMouseButtonState == MouseButtonState::Down || leftMouseButtonState == MouseButtonState::DoubleClicked)
 			{
-				const bool intersects1 = Physics::Intersect2D_GJK(*guiObject._collisionShape, Physics::PointCollisionShape2D(objectUpdateContext._mouseLeftButtonPressedPosition - guiObject._position));
+				const bool intersects1 = Physics::Intersect2D_GJK(*guiObject._collisionShape, Physics::PointCollisionShape2D(objectUpdateContext._mouseLeftButtonPressedPosition - guiObject.GetPosition()));
 				if (intersects1)
 				{
 					_pressedObjectID = guiObject._objectID;
@@ -147,11 +147,11 @@ namespace mint
 			{
 				if (leftMouseButtonState == MouseButtonState::Pressed)
 				{
-					guiDraggableComponent->SetLocalPressedPosition(objectUpdateContext._mouseLeftButtonPressedPosition - pressedObject._position);
+					guiDraggableComponent->SetLocalPressedPosition(objectUpdateContext._mouseLeftButtonPressedPosition - pressedObject.GetPosition());
 				}
 				else
 				{
-					pressedObject._position = mousePosition - guiDraggableComponent->GetLocalPressedPosition();
+					pressedObject.SetPosition(mousePosition - guiDraggableComponent->GetLocalPressedPosition());
 				}
 			}
 		}

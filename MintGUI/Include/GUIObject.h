@@ -10,6 +10,7 @@
 #include <MintContainer/Include/String.h>
 #include <MintContainer/Include/OwnPtr.h>
 #include <MintContainer/Include/SharedPtr.h>
+#include <MintMath/Include/Transform.h>
 #include <MintReflection/Include/Reflection.h>
 
 
@@ -140,9 +141,11 @@ namespace mint
 		public:
 			GUIObject() = default;
 			virtual ~GUIObject();
-			void SetPosition(const Float2& position) { _position = position; }
+			void SetPosition(const Float2& position) { _transform2D._translation = position; }
 			void AddComponent(SharedPtr<GUIComponent> guiComponent);
 			void Render(Rendering::ShapeRenderer& shapeRenderer, const GUIObjectInteractionState& objectInteractionState) const;
+		public:
+			const Float2& GetPosition() const { return _transform2D._translation; }
 		public:
 			uint32 GetComponentCount() const { return _components.Size(); }
 			template<typename T>
@@ -153,7 +156,7 @@ namespace mint
 			SharedPtr<Physics::ConvexCollisionShape2D> _collisionShape;
 			Vector<SharedPtr<GUIComponent>> _components;
 		protected:
-			Float2 _position;
+			Transform2D _transform2D;
 		};
 
 		class GUIObjectTemplate : public GUIObject
