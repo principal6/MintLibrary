@@ -146,7 +146,6 @@ namespace mint
 			void Render(Rendering::ShapeRenderer& shapeRenderer, const GUIObjectInteractionState& objectInteractionState) const;
 		public:
 			const Float2& GetPosition() const { return _transform2D._translation; }
-		public:
 			uint32 GetComponentCount() const { return _components.Size(); }
 			template<typename T>
 			SharedPtr<T> GetComponent() const;
