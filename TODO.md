@@ -1,4 +1,5 @@
 ﻿# TODO
+## Transform2D 에 Scale 추가
 ## ShapeRenderer 에 Scale 기능 넣기!
 ## GUI 개편
 컨트롤 배치 등 꾸미는 쪽은 Script 이용해서 Hot Reload 가능하면 좋을 듯!
