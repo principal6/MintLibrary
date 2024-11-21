@@ -263,7 +263,7 @@ namespace mint
 
 			_lowLevelRenderer->PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, shape._indices.Size(), GetClipRect());
 
-			PushShapeTransformToBuffer(0.0f);
+			PushTransformToBuffer(0.0f);
 		}
 
 		void ShapeRenderer::DrawLine(const Float2& p0, const Float2& p1, const float thickness)
@@ -282,7 +282,7 @@ namespace mint
 			const uint32 deltaIndexCount = _lowLevelRenderer->GetIndexCount() - indexOffset;
 			_lowLevelRenderer->PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, deltaIndexCount, GetClipRect());
 
-			PushShapeTransformToBuffer(0.0f, false);
+			PushTransformToBuffer(0.0f, false);
 		}
 
 		void ShapeRenderer::DrawLineStrip(const Vector<Float2>& points, const float thickness)
@@ -336,7 +336,7 @@ namespace mint
 			const uint32 deltaIndexCount = _lowLevelRenderer->GetIndexCount() - indexOffset;
 			_lowLevelRenderer->PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, deltaIndexCount, GetClipRect());
 
-			PushShapeTransformToBuffer(0.0f, false);
+			PushTransformToBuffer(0.0f, false);
 		}
 
 		void ShapeRenderer::DrawTriangle(const Float2& pointA, const Float2& pointB, const Float2& pointC)
@@ -355,7 +355,7 @@ namespace mint
 			const uint32 deltaIndexCount = _lowLevelRenderer->GetIndexCount() - indexOffset;
 			_lowLevelRenderer->PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, deltaIndexCount, GetClipRect());
 
-			PushShapeTransformToBuffer(0.0f);
+			PushTransformToBuffer(0.0f);
 		}
 
 		void ShapeRenderer::DrawRectangle(const Float2& size, const float borderThickness, const float rotationAngle)
@@ -380,7 +380,7 @@ namespace mint
 			const uint32 deltaIndexCount = _lowLevelRenderer->GetIndexCount() - indexOffset;
 			_lowLevelRenderer->PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, deltaIndexCount, GetClipRect());
 
-			PushShapeTransformToBuffer(0.0f);
+			PushTransformToBuffer(0.0f);
 		}
 
 		void ShapeRenderer::DrawCircle(const float radius)
@@ -399,7 +399,7 @@ namespace mint
 			const uint32 deltaIndexCount = _lowLevelRenderer->GetIndexCount() - indexOffset;
 			_lowLevelRenderer->PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, deltaIndexCount, GetClipRect());
 
-			PushShapeTransformToBuffer(0.0f);
+			PushTransformToBuffer(0.0f);
 		}
 
 		void ShapeRenderer::DrawDynamicText(const wchar_t* const wideText, const Float2& position, const FontRenderingOption& fontRenderingOption)
@@ -442,7 +442,7 @@ namespace mint
 			_lowLevelRenderer->PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, indexCount, GetClipRect());
 
 			const Float3& preTranslation = position;
-			PushFontTransformToBuffer(preTranslation, fontRenderingOption._transformMatrix, postTranslation);
+			PushTransformToBuffer(preTranslation, fontRenderingOption._transformMatrix, postTranslation);
 		}
 
 		void ShapeRenderer::DrawDynamicTextBitFlagged(const wchar_t* const wideText, const Float3& position, const FontRenderingOption& fontRenderingOption, const BitVector& bitFlags)
@@ -480,7 +480,7 @@ namespace mint
 			_lowLevelRenderer->PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, indexCount, GetClipRect());
 
 			const Float3& preTranslation = position;
-			PushFontTransformToBuffer(preTranslation, fontRenderingOption._transformMatrix, postTranslation);
+			PushTransformToBuffer(preTranslation, fontRenderingOption._transformMatrix, postTranslation);
 		}
 
 		void ShapeRenderer::DrawGlyph(const wchar_t wideChar, Float2& glyphPosition, const float scale, const bool drawShade, const bool leaveOnlySpace)
@@ -562,7 +562,7 @@ namespace mint
 			return (type << 30) | (transformIndex & 0x3FFFFFFF);
 		}
 
-		void ShapeRenderer::PushShapeTransformToBuffer(const float rotationAngle, const bool applyInternalPosition)
+		void ShapeRenderer::PushTransformToBuffer(const float rotationAngle, const bool applyInternalPosition)
 		{
 			SB_Transform transform;
 			transform._transformMatrix = Float4x4::RotationMatrixZ(-rotationAngle);
@@ -572,7 +572,7 @@ namespace mint
 			_sbTransformData.PushBack(transform);
 		}
 
-		void ShapeRenderer::PushFontTransformToBuffer(const Float3& preTranslation, const Float4x4& transformMatrix, const Float3& postTranslation)
+		void ShapeRenderer::PushTransformToBuffer(const Float3& preTranslation, const Float4x4& transformMatrix, const Float3& postTranslation)
 		{
 			SB_Transform transform;
 			transform._transformMatrix.PreTranslate(preTranslation);
