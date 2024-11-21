@@ -39,7 +39,6 @@ namespace mint
 
 	public:
 		uint32 GetObjectCount() const noexcept;
-		float GetDeltaTimeSec() const noexcept;
 
 	private:
 		SharedPtr<Object> CreateObjectInternal(SharedPtr<Object>&& object);

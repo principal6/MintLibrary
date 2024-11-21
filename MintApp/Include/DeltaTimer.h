@@ -22,11 +22,13 @@ namespace mint
 
 	public:
 		static const DeltaTimer& GetInstance() noexcept;
-		float ComputeDeltaTime(uint64 frameNumber) const noexcept;
-		float GetDeltaTimeSec() const noexcept;
+		void ComputeDeltaTime(uint64 frameNumber) const noexcept;
+		MINT_INLINE float GetDeltaTimeMs() const noexcept { return _deltaTimeMs; }
+		MINT_INLINE float GetDeltaTimeS() const noexcept { return _deltaTimeS; }
 
 	private:
 		mutable uint64 _lastFrameNumber;
+		mutable float _deltaTimeMs;
 		mutable float _deltaTimeS;
 		mutable uint64 _prevTimePointUs;
 	};

@@ -80,7 +80,7 @@ void RunGJKTestWindow()
 	Transform2D shapeBTransform2D{ Float2(128 + 64 + 32, 128 - 32) };
 	while (app.IsRunning() == true)
 	{
-		const float deltaTime = DeltaTimer::GetInstance().GetDeltaTimeSec();
+		const float deltaTime = DeltaTimer::GetInstance().GetDeltaTimeS();
 
 		if (inputContext.IsKeyPressed())
 		{
@@ -413,6 +413,8 @@ bool Run2DTestWindow()
 	const InputContext& inputContext = InputContext::GetInstance();
 	while (app.IsRunning() == true)
 	{
+		const float deltaTime = DeltaTimer::GetInstance().GetDeltaTimeS();
+
 		if (inputContext.IsKeyPressed())
 		{
 			if (inputContext.IsKeyDown(KeyCode::Enter) == true)
@@ -425,7 +427,7 @@ bool Run2DTestWindow()
 			}
 		}
 
-		testCameraComponent->SteerDefault(objectPool.GetDeltaTimeSec(), inputContext, false);
+		testCameraComponent->SteerDefault(deltaTime, inputContext, false);
 
 		// Rendering
 		app.BeginRendering();
@@ -435,7 +437,7 @@ bool Run2DTestWindow()
 			graphicsDevice.SetViewProjectionMatrix(Float4x4::kIdentity, graphicsDevice.GetScreenSpace2DProjectionMatrix());
 			resourcePool.GetResource(corgiSpriteSheetTextureID).BindToShader(GraphicsShaderType::PixelShader, 1);
 			//imageRenderer.DrawImageScreenSpace(Float2(0, 0), Float2(800, 512), Float2(0, 0), Float2(1, 1));
-			corgiAnimationSet.Update(objectPool.GetDeltaTimeSec());
+			corgiAnimationSet.Update(deltaTime);
 			const SpriteAnimation& corgiCurrentAnimation = corgiAnimationSet.GetCurrentAnimation();
 			imageRenderer.DrawImageScreenSpace(Float2(64, 64), Float2(128, 128), corgiCurrentAnimation.GetCurrentFrameUV0(), corgiCurrentAnimation.GetCurrentFrameUV1());
 			imageRenderer.Render();
@@ -525,6 +527,8 @@ bool Run3DTestWindow()
 	const InputContext& inputContext = InputContext::GetInstance();
 	while (app.IsRunning() == true)
 	{
+		const float deltaTime = DeltaTimer::GetInstance().GetDeltaTimeS();
+
 		if (inputContext.IsKeyPressed())
 		{
 			if (inputContext.IsKeyDown(KeyCode::Enter) == true)
@@ -578,7 +582,7 @@ bool Run3DTestWindow()
 			}
 		}
 
-		testCameraComponent->SteerDefault(objectPool.GetDeltaTimeSec(), inputContext, true);
+		testCameraComponent->SteerDefault(deltaTime, inputContext, true);
 
 		// Rendering
 		app.BeginRendering();

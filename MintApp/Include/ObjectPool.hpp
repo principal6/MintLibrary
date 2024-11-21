@@ -146,9 +146,4 @@ namespace mint
 	{
 		return _objects.Size();
 	}
-
-	MINT_INLINE float ObjectPool::GetDeltaTimeSec() const noexcept
-	{
-		return DeltaTimer::GetInstance().GetDeltaTimeSec();
-	}
 }
