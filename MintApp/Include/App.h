@@ -47,5 +47,6 @@ namespace mint
 		OwnPtr<ObjectPool> _objectPool;
 		OwnPtr<ObjectRenderer> _objectRenderer;
 		OwnPtr<GUI::GUISystem> _guiSystem;
+		uint64 _frameNumber;
 	};
 }

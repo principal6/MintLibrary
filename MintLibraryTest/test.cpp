@@ -80,7 +80,7 @@ void RunGJKTestWindow()
 	Transform2D shapeBTransform2D{ Float2(128 + 64 + 32, 128 - 32) };
 	while (app.IsRunning() == true)
 	{
-		const float deltaTime = DeltaTimer::GetInstance().ComputeDeltaTimeSec();
+		const float deltaTime = DeltaTimer::GetInstance().GetDeltaTimeSec();
 
 		if (inputContext.IsKeyPressed())
 		{

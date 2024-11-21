@@ -31,7 +31,6 @@ namespace mint
 		ComponentType* CreateObjectComponent();
 
 	public:
-		void ComputeDeltaTime() const noexcept;
 		void UpdateScreenSize(const Float2& screenSize);
 
 	public:

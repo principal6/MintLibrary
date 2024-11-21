@@ -118,11 +118,6 @@ namespace mint
 		}
 	}
 
-	MINT_INLINE void ObjectPool::ComputeDeltaTime() const noexcept
-	{
-		DeltaTimer::GetInstance().ComputeDeltaTimeSec();
-	}
-
 	MINT_INLINE void ObjectPool::UpdateScreenSize(const Float2& screenSize)
 	{
 		const uint32 objectCount = _objects.Size();

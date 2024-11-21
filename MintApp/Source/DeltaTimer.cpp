@@ -6,7 +6,8 @@
 namespace mint
 {
 	DeltaTimer::DeltaTimer()
-		: _deltaTimeS{ 0.0f }
+		: _lastFrameNumber{ 0 }
+		, _deltaTimeS{ 0.0f }
 		, _prevTimePointUs{ Profiler::GetCurrentTimeUs() }
 	{
 		__noop;
@@ -23,18 +24,18 @@ namespace mint
 		return deltaTimer;
 	}
 
-	float DeltaTimer::ComputeDeltaTimeSec() const noexcept
+	float DeltaTimer::ComputeDeltaTime(uint64 frameNumber) const noexcept
 	{
 		const uint64 currTimePointUs = Profiler::GetCurrentTimeUs();
-		const uint64 deltaTimeUs = currTimePointUs - _prevTimePointUs;
-
-		std::scoped_lock<std::mutex> scopedLock{ _mutex };
-
-		_deltaTimeS = deltaTimeUs * 0.000001f;
-
-		_prevTimePointUs = currTimePointUs;
-
-		return _deltaTimeS;
+		
+		if (frameNumber != _lastFrameNumber)
+		{
+			const uint64 deltaTimeUs = currTimePointUs - _prevTimePointUs;
+			_deltaTimeS = deltaTimeUs * 0.000001f;
+			_prevTimePointUs = currTimePointUs;
+			_lastFrameNumber = frameNumber;
+		}
+		return GetDeltaTimeSec();
 	}
 
 	float DeltaTimer::GetDeltaTimeSec() const noexcept

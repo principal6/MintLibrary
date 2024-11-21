@@ -12,6 +12,7 @@ namespace mint
 	App::App(const WindowCreationDesc& windowCreationDesc, bool useMSAA)
 		: _window{ MINT_NEW(Window) }
 		, _objectPool{ MINT_NEW(ObjectPool) }
+		, _frameNumber{ 0 }
 	{
 		if (_window->Create(windowCreationDesc) == false)
 		{
@@ -36,6 +37,8 @@ namespace mint
 
 	bool App::IsRunning()
 	{
+		++_frameNumber;
+
 		if (_window->IsResized())
 		{
 			_objectPool->UpdateScreenSize(Float2(_window->GetSize()));
@@ -43,7 +46,7 @@ namespace mint
 
 		if (_window->IsRunning())
 		{
-			_objectPool->ComputeDeltaTime();
+			DeltaTimer::GetInstance().ComputeDeltaTime(_frameNumber);
 			_guiSystem->Update();
 			return true;
 		}
