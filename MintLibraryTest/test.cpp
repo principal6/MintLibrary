@@ -285,13 +285,21 @@ void RunSplineTestWindow()
 		guiControlPointObjectTemplateID = guiSystem.RegisterTemplate(u8"CP", std::move(guiObjectTemplate));
 	}
 	const GUIObjectID guiControlPointObjectID0 = guiSystem.AddObject(guiControlPointObjectTemplateID);
-	const GUIObjectID guiControlPointObjectID1 = guiSystem.AddObject(guiControlPointObjectTemplateID);
 	GUIObject& guiControlPointObject0 = guiSystem.AccessObject(guiControlPointObjectID0);
 	guiControlPointObject0.SetPosition(Float2(80, 160));
 	guiControlPointObject0.GetComponent<GUITextComponent>()->SetText(L"CP0");
+	const GUIObjectID guiControlPointObjectID1 = guiSystem.AddObject(guiControlPointObjectTemplateID);
 	GUIObject& guiControlPointObject1 = guiSystem.AccessObject(guiControlPointObjectID1);
 	guiControlPointObject1.SetPosition(Float2(160, 80));
 	guiControlPointObject1.GetComponent<GUITextComponent>()->SetText(L"CP1");
+	const GUIObjectID guiControlPointObjectID2 = guiSystem.AddObject(guiControlPointObjectTemplateID);
+	GUIObject& guiControlPointObject2 = guiSystem.AccessObject(guiControlPointObjectID2);
+	guiControlPointObject2.SetPosition(Float2(240, 80));
+	guiControlPointObject2.GetComponent<GUITextComponent>()->SetText(L"CP2");
+	const GUIObjectID guiControlPointObjectID3 = guiSystem.AddObject(guiControlPointObjectTemplateID);
+	GUIObject& guiControlPointObject3 = guiSystem.AccessObject(guiControlPointObjectID3);
+	guiControlPointObject3.SetPosition(Float2(320, 160));
+	guiControlPointObject3.GetComponent<GUITextComponent>()->SetText(L"CP3");
 
 	GraphicsDevice& graphicsDevice = app.GetGraphicsDevice();
 	const InputContext& inputContext = InputContext::GetInstance();
