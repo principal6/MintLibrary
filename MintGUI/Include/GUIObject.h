@@ -61,19 +61,31 @@ namespace mint
 			GUIComponent() { InitializeReflection(); }
 			virtual ~GUIComponent() = default;
 			virtual SharedPtr<GUIComponent> Clone() const = 0;
-			virtual void Render(Rendering::ShapeRenderer& shapeRenderer, const Float2& objectPosition, const GUIObjectInteractionState& objectInteractionState) const { __noop; }
-		//protected:
-			//GUIObjectID _objectID;
+			virtual bool IsRenderable() const { return false; }
 			REFLECTION_BIND_BEGIN;
 			REFLECTION_BIND_END;
 		};
 
-		class GUITextComponent : public GUIComponent
+		class GUIRenderableComponent : public GUIComponent
+		{
+			REFLECTION_CLASS(GUIRenderableComponent);
+
+		public:
+			GUIRenderableComponent() : GUIComponent() { InitializeReflection(); }
+			virtual bool IsRenderable() const override final { return true; }
+			virtual void Render(Rendering::ShapeRenderer& shapeRenderer, const Float2& objectPosition, const GUIObjectInteractionState& objectInteractionState) const = 0;
+
+		private:
+			REFLECTION_BIND_BEGIN;
+			REFLECTION_BIND_END;
+		};
+
+		class GUITextComponent : public GUIRenderableComponent
 		{
 			REFLECTION_CLASS(GUITextComponent);
 
 		public:
-			GUITextComponent() : GUIComponent() { InitializeReflection(); }
+			GUITextComponent() : GUIRenderableComponent() { InitializeReflection(); }
 			void SetText(const StringReferenceW& text);
 			void SetOffset(const Float2& offset);
 			virtual SharedPtr<GUIComponent> Clone() const override final;
@@ -86,11 +98,11 @@ namespace mint
 			REFLECTION_BIND_END;
 		};
 
-		class GUIShapeComponent : public GUIComponent
+		class GUIShapeComponent : public GUIRenderableComponent
 		{
-			REFLECTION_CLASS(GUIShapeComponent);
+			REFLECTION_CLASS(GUIRenderableComponent);
 		public:
-			GUIShapeComponent() : GUIComponent() { InitializeReflection(); }
+			GUIShapeComponent() : GUIRenderableComponent() { InitializeReflection(); }
 			void SetShape(const GUIObjectInteractionState& objectInteractionState, const Rendering::Shape& shape);
 			virtual SharedPtr<GUIComponent> Clone() const override final;
 			virtual void Render(Rendering::ShapeRenderer& shapeRenderer, const Float2& objectPosition, const GUIObjectInteractionState& objectInteractionState) const override;

@@ -109,7 +109,12 @@ namespace mint
 		{
 			for (const SharedPtr<GUIComponent>& component : _components)
 			{
-				component->Render(shapeRenderer, _position, objectInteractionState);
+				if (component->IsRenderable() == false)
+				{
+					continue;
+				}
+
+				static_cast<const GUIRenderableComponent*>(component.Get())->Render(shapeRenderer, _position, objectInteractionState);
 			}
 		}
 #pragma endregion
