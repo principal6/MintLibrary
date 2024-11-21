@@ -576,8 +576,8 @@ namespace mint
 		{
 			SB_Transform transform;
 			transform._transformMatrix.PreTranslate(preTranslation);
-			transform._transformMatrix.PostTranslate(postTranslation);
 			transform._transformMatrix *= transformMatrix;
+			transform._transformMatrix.PostTranslate(postTranslation);
 			_sbTransformData.PushBack(transform);
 		}
 	}
