@@ -1,4 +1,5 @@
 ﻿# TODO
+## ShapeRenderer 에 Scale 기능 넣기!
 ## GUI 개편
 컨트롤 배치 등 꾸미는 쪽은 Script 이용해서 Hot Reload 가능하면 좋을 듯!
 ```cpp
