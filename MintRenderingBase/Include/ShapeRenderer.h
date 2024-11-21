@@ -124,7 +124,7 @@ namespace mint
 		protected:
 			uint32 ComputeVertexInfo(uint32 transformIndex, uint8 type) const;
 			void PushShapeTransformToBuffer(const float rotationAngle, const bool applyInternalPosition = true);
-			void PushFontTransformToBuffer(const Float3& preTranslation, Float4x4 transformMatrix, const Float3& postTranslation);
+			void PushFontTransformToBuffer(const Float3& preTranslation, const Float4x4& transformMatrix, const Float3& postTranslation);
 
 		protected:
 			GraphicsObjectID _inputLayoutID;

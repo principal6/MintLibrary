@@ -572,7 +572,7 @@ namespace mint
 			_sbTransformData.PushBack(transform);
 		}
 
-		void ShapeRenderer::PushFontTransformToBuffer(const Float3& preTranslation, Float4x4 transformMatrix, const Float3& postTranslation)
+		void ShapeRenderer::PushFontTransformToBuffer(const Float3& preTranslation, const Float4x4& transformMatrix, const Float3& postTranslation)
 		{
 			SB_Transform transform;
 			transform._transformMatrix.PreTranslate(preTranslation);
