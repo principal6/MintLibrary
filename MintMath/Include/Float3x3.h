@@ -34,8 +34,12 @@ namespace mint
 	public:
 		Float3x3& operator=(const Float3x3& rhs) = default;
 		Float3x3& operator=(Float3x3&& rhs) noexcept = default;
+	
+	public:
+		Float3x3& operator*=(const Float3x3& rhs) noexcept;
 
 	public:
+		bool operator==(const Float3x3& rhs) const;
 		Float3x3 operator*(const Float3x3& rhs) const noexcept;
 		Float3 operator*(const Float3& vec) const noexcept;
 		Float3x3 operator*(const float scalar) const noexcept;

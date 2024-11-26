@@ -69,6 +69,17 @@ namespace mint
 		__noop;
 	}
 
+	Float3x3& Float3x3::operator*=(const Float3x3& rhs) noexcept
+	{
+		Math::Mul(_m, rhs._m, _m);
+		return *this;
+	}
+
+	bool Float3x3::operator==(const Float3x3& rhs) const
+	{
+		return _row[0] == rhs._row[0] && _row[1] == rhs._row[1] && _row[2] == rhs._row[2];
+	}
+
 	Float3x3 Float3x3::operator*(const Float3x3& rhs) const noexcept
 	{
 		Float3x3 result;
