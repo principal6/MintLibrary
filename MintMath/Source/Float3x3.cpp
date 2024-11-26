@@ -6,6 +6,26 @@
 
 namespace mint
 {
+	Float3x3 Float3x3::TranslationMatrix(const Float2& translation) noexcept
+	{
+		return Float3x3
+		(
+			1.0f, 0.0f, translation._x,
+			0.0f, 1.0f, translation._y,
+			0.0f, 0.0f, 1.0f
+		);
+	}
+
+	Float3x3 Float3x3::ScalingMatrix(const Float2& scale) noexcept
+	{
+		return Float3x3
+		(
+			scale._x, 0.0f    , 0.0f,
+			0.0f    , scale._y, 0.0f,
+			0.0f    , 0.0f    , 1.0f
+		);
+	}
+
 	Float3x3 Float3x3::RotationMatrixX(const float angle) noexcept
 	{
 		const float cosAngle = ::cos(angle);

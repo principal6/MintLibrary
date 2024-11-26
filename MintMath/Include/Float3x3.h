@@ -15,6 +15,8 @@ namespace mint
 	{
 #pragma region Static Functions
 	public:
+		static Float3x3 TranslationMatrix(const Float2& translation) noexcept;
+		static Float3x3 ScalingMatrix(const Float2& scale) noexcept;
 		static Float3x3 RotationMatrixX(const float angle) noexcept;
 		static Float3x3 RotationMatrixY(const float angle) noexcept;
 		static Float3x3 RotationMatrixZ(const float angle) noexcept;
