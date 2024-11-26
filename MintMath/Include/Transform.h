@@ -36,6 +36,7 @@ namespace mint
 		Transform2D();
 		Transform2D(const Float2& translation);
 		Transform2D(float rotation, const Float2& translation);
+		Transform2D(const Float2& scale, float rotation, const Float2& translation);
 
 	public:
 		Transform2D operator*(const Transform2D& rhs) const;
@@ -49,6 +50,7 @@ namespace mint
 		Transform2D GetInverted() const;
 
 	public:
+		Float2 _scale;
 		float _rotation;
 		Float2 _translation;
 	};

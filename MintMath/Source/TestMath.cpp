@@ -105,12 +105,30 @@ namespace mint
 		bool Test_Transforms()
 		{
 			{
-				Transform2D a(Math::kPiOverTwo, Float2(2, 0));
+				Transform2D a(Float2::kOne, Math::kPiOverTwo, Float2(2, 0));
 				Float3x3 ma = a.ToMatrix();
 				Float3 v0{ 2, 1, 1 };
 				Float3 v1 = a * v0;
 				Float3 v1cmp = ma * v0;
 				MINT_ASSURE(v1 == v1cmp);
+			}
+			{
+				Transform2D a(Float2(2.0f, 3.0f), Math::kPiOverTwo, Float2(0, 0));
+				Transform2D a2Cmp = a * a;
+				Float3x3 ma = a.ToMatrix();
+				Float3x3 ma2 = a2Cmp.ToMatrix();
+				Float3x3 ma2Cmp = ma * ma;
+				MINT_ASSURE(Math::Equals(ma2._m, ma2Cmp._m, Math::kFloatEpsilon) == false);
+			}
+			{
+				Transform2D a(Float2(2.0f, 2.0f), Math::kPiOverTwo, Float2(3, 5));
+				Transform2D b(Float2(3.0f, 5.0f), Math::kPiOverTwo, Float2(5, 7));
+				Transform2D c = a * b;
+				Float3x3 ma = a.ToMatrix();
+				Float3x3 mb = b.ToMatrix();
+				Float3x3 mc = ma * mb;
+				Float3x3 mcCmp = c.ToMatrix();
+				MINT_ASSURE(Math::Equals(mc._m, mcCmp._m, Math::kFloatEpsilon));
 			}
 			return true;
 		}

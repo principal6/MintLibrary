@@ -26,7 +26,7 @@ namespace mint
 
 #pragma region Transform2D
 	Transform2D::Transform2D()
-		: Transform2D(0.0f, Float2::kZero)
+		: Transform2D(Float2::kZero)
 	{
 		__noop;
 	}
@@ -38,7 +38,14 @@ namespace mint
 	}
 
 	Transform2D::Transform2D(float rotation, const Float2& translation)
-		: _rotation{ rotation }
+		: Transform2D(Float2::kOne, rotation, translation)
+	{
+		__noop;
+	}
+
+	Transform2D::Transform2D(const Float2& scale, float rotation, const Float2& translation)
+		: _scale{ scale }
+		, _rotation{ rotation }
 		, _translation{ translation }
 	{
 		__noop;
@@ -47,9 +54,11 @@ namespace mint
 	Transform2D Transform2D::operator*(const Transform2D& rhs) const
 	{
 		// *this == parent, rhs == child
+		// If _scale is not uniform, the result is different from matrix multiplication!!!
 		Transform2D result;
+		result._scale = _scale * rhs._scale;
 		result._translation = _translation;
-		result._translation += Float2x2::RotationMatrix(_rotation).Mul(rhs._translation);
+		result._translation += Float2x2::RotationMatrix(_rotation).Mul(_scale * rhs._translation);
 		result._rotation = _rotation + rhs._rotation;
 		return result;
 	}
@@ -57,37 +66,46 @@ namespace mint
 	Transform2D& Transform2D::operator*=(const Transform2D& rhs)
 	{
 		// *this == parent, rhs == child
-		_translation += Float2x2::RotationMatrix(_rotation).Mul(rhs._translation);
+		// If _scale is not uniform, the result is different from matrix multiplication!!!
+		_scale *= rhs._scale;
+		_translation += Float2x2::RotationMatrix(_rotation).Mul(_scale * rhs._translation);
 		_rotation += rhs._rotation;
 		return *this;
 	}
 
 	Float2 Transform2D::operator*(const Float2& v) const
 	{
-		return Float2x2::RotationMatrix(_rotation).Mul(v) + _translation;
+		return Float2x2::RotationMatrix(_rotation).Mul(_scale * v) + _translation;
 	}
 
 	Float3 Transform2D::operator*(const Float3& v) const
 	{
-		return Float3(Float2x2::RotationMatrix(_rotation).Mul(v.XY()), v._z) + Float3(_translation);
+		return Float3(Float2x2::RotationMatrix(_rotation).Mul(_scale * v.XY()), v._z) + Float3(_translation);
 	}
 
 	bool Transform2D::IsIdentity() const
 	{
-		return _rotation == 0.0f && _translation == Float2::kZero;
+		return _scale == Float2::kOne && _rotation == 0.0f && _translation == Float2::kZero;
 	}
 
 	Float3x3 Transform2D::ToMatrix() const
 	{
+		//Float3x3 matrix = Float3x3::TranslationMatrix(_translation);
+		//matrix *= Float3x3::RotationMatrixZ(_rotation);
+		//matrix *= Float3x3::ScalingMatrix(_scale);
 		Float3x3 matrix = Float3x3::RotationMatrixZ(_rotation);
 		matrix._13 = _translation._x;
 		matrix._23 = _translation._y;
+		matrix._11 *= _scale._x;
+		matrix._21 *= _scale._x;
+		matrix._12 *= _scale._y;
+		matrix._22 *= _scale._y;
 		return matrix;
 	}
 
 	Transform2D Transform2D::GetInverted() const
 	{
-		return Transform2D(-_rotation, -_translation);
+		return Transform2D(Float2::kOne / _scale, -_rotation, -_translation);
 	}
 #pragma endregion
 }
