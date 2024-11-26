@@ -29,6 +29,18 @@ namespace mint
 		Math::SetSubVec(_c, rhs._c);
 		return *this;
 	}
+	
+	Float2& Float2::operator*=(const Float2& rhs)
+	{
+		Math::SetMulVec(_c, rhs._c);
+		return *this;
+	}
+
+	Float2& Float2::operator/=(const Float2& rhs)
+	{
+		Math::SetDivVec(_c, rhs._c);
+		return *this;
+	}
 
 	Float2& Float2::operator*=(const float scalar)
 	{

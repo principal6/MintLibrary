@@ -48,6 +48,8 @@ namespace mint
 	public:
 		Float2& operator+=(const Float2& rhs);
 		Float2& operator-=(const Float2& rhs);
+		Float2& operator*=(const Float2& rhs);
+		Float2& operator/=(const Float2& rhs);
 		Float2& operator*=(const float scalar);
 		Float2& operator/=(const float scalar);
 
