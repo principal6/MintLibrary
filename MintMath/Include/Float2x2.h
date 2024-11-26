@@ -49,6 +49,7 @@ namespace mint
 
 	public:
 		float Determinant() const noexcept;
+		Float2x2 Transpose() const noexcept;
 		Float2x2 Inverse() const noexcept;
 		bool isInvertible() const noexcept;
 

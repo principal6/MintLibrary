@@ -93,6 +93,13 @@ namespace mint
 		return Math::Determinant(_m);
 	}
 
+	Float2x2 Float2x2::Transpose() const noexcept
+	{
+		Float2x2 result;
+		Math::Transpose(_m, result._m);
+		return result;
+	}
+
 	Float2x2 Float2x2::Inverse() const noexcept
 	{
 		const float a = _m[0][0];
