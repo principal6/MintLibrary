@@ -37,6 +37,7 @@ namespace mint
 		Transform2D(const Float2& translation);
 		Transform2D(float rotation, const Float2& translation);
 		Transform2D(const Float2& scale, float rotation, const Float2& translation);
+		explicit Transform2D(const Float3x3& matrix);
 
 	public:
 		Transform2D operator*(const Transform2D& rhs) const;
@@ -55,6 +56,11 @@ namespace mint
 		Float2 _translation;
 	};
 #pragma endregion
+
+	namespace Math
+	{
+		bool Equals(const Transform2D& lhs, const Transform2D& rhs, float epsilon = 0) noexcept;
+	}
 }
 
 

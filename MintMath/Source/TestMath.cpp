@@ -121,13 +121,19 @@ namespace mint
 				MINT_ASSURE(Math::Equals(ma2._m, ma2Cmp._m, Math::kFloatEpsilon) == false);
 			}
 			{
-				Transform2D a(Float2(2.0f, 2.0f), Math::kPiOverTwo, Float2(3, 5));
-				Transform2D b(Float2(3.0f, 5.0f), Math::kPiOverTwo, Float2(5, 7));
-				Transform2D c = a * b;
-				Float3x3 ma = a.ToMatrix();
-				Float3x3 mb = b.ToMatrix();
-				Float3x3 mc = ma * mb;
-				Float3x3 mcCmp = c.ToMatrix();
+				const Transform2D a(Float2(2.0f, 2.0f), Math::kPiOverTwo, Float2(3, 5));
+				const Transform2D b(Float2(3.0f, 5.0f), Math::kPiOverTwo, Float2(5, 7));
+				const Transform2D c = a * b;
+				
+				const Float3x3 ma = a.ToMatrix();
+				const Float3x3 mb = b.ToMatrix();
+				const Float3x3 mc = ma * mb;
+				const Transform2D aCmp(ma);
+				const Transform2D bCmp(mb);
+				MINT_ASSURE(Math::Equals(a, aCmp, Math::kFloatEpsilon));
+				MINT_ASSURE(Math::Equals(b, bCmp, Math::kFloatEpsilon));
+
+				const Float3x3 mcCmp = c.ToMatrix();
 				MINT_ASSURE(Math::Equals(mc._m, mcCmp._m, Math::kFloatEpsilon));
 			}
 			return true;

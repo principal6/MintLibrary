@@ -50,6 +50,18 @@ namespace mint
 	{
 		__noop;
 	}
+	
+	Transform2D::Transform2D(const Float3x3& matrix)
+	{
+		Float3x3 rotationMatrix;
+		matrix.DecomposeSRT(_scale, rotationMatrix, _translation);
+		
+		// RotationMatrix
+		// | +cos  -sin  0 |
+		// | +sin  +cos  0 |
+		// | 0     0     1 |
+		_rotation = ::acos(rotationMatrix._11);
+	}
 
 	Transform2D Transform2D::operator*(const Transform2D& rhs) const
 	{
@@ -108,4 +120,19 @@ namespace mint
 		return Transform2D(Float2::kOne / _scale, -_rotation, -_translation);
 	}
 #pragma endregion
+
+	namespace Math
+	{
+		bool Equals(const Transform2D& lhs, const Transform2D& rhs, float epsilon) noexcept
+		{
+			if (Math::Equals(lhs._scale._c, rhs._scale._c, epsilon) == false)
+				return false;
+			if (Math::Equals(lhs._rotation, rhs._rotation, epsilon) == false)
+				return false;
+			if (Math::Equals(lhs._translation._c, rhs._translation._c, epsilon) == false)
+				return false;
+
+			return true;
+		}
+	}
 }
