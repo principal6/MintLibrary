@@ -123,7 +123,7 @@ namespace mint
 
 		protected:
 			uint32 ComputeVertexInfo(uint32 transformIndex, uint8 type) const;
-			void PushTransformToBuffer(const float rotationAngle, const Float3& position);
+			void PushTransformToBuffer(const Float2& scale, const float rotationAngle, const Float3& position);
 			void PushTransformToBuffer(const Float3& preTranslation, const Float4x4& transformMatrix, const Float3& postTranslation);
 
 		protected:
