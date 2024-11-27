@@ -21,6 +21,7 @@ namespace mint
 
 	public:
 		Float4x4 ToMatrix() const noexcept;
+		static const Transform& GetIdentity() noexcept;
 
 	public:
 		Float3 _scale;
@@ -49,6 +50,7 @@ namespace mint
 		bool IsIdentity() const;
 		Float3x3 ToMatrix() const;
 		Transform2D GetInverted() const;
+		static const Transform2D& GetIdentity() noexcept;
 
 	public:
 		Float2 _scale;

@@ -22,6 +22,12 @@ namespace mint
 	{
 		return Float4x4::SRTMatrix(_scale, _rotation, _translation);
 	}
+
+	const Transform& Transform::GetIdentity() noexcept
+	{
+		static const Transform kIdentity;
+		return kIdentity;
+	}
 #pragma endregion
 
 #pragma region Transform2D
@@ -118,6 +124,12 @@ namespace mint
 	Transform2D Transform2D::GetInverted() const
 	{
 		return Transform2D(Float2::kOne / _scale, -_rotation, -_translation);
+	}
+
+	const Transform2D& Transform2D::GetIdentity() noexcept
+	{
+		static const Transform2D kIdentity;
+		return kIdentity;
 	}
 #pragma endregion
 
