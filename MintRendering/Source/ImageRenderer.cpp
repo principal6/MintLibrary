@@ -116,7 +116,7 @@ namespace mint
 			_uv0 = uv0;
 			_uv1 = uv1;
 			DrawRectangle(size, 0.0f, 0.0f);
-			PushTransformToBuffer(0.0f);
+			PushTransformToBuffer(0.0f, _position.GetXYZ());
 		}
 
 		void ImageRenderer::DrawImageScreenSpace(const Float2& position, const Float2& size, const Float2& uv0, const Float2& uv1)
@@ -126,7 +126,7 @@ namespace mint
 			_uv0 = uv0;
 			_uv1 = uv1;
 			DrawRectangle(Float2(size._x, -size._y), 0.0f, 0.0f);
-			PushTransformToBuffer(0.0f);
+			PushTransformToBuffer(0.0f, _position.GetXYZ());
 		}
 	}
 }
