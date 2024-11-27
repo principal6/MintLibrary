@@ -95,8 +95,7 @@ namespace mint
 			{
 				const Mesh2DComponent* const mesh2DComponent = static_cast<Mesh2DComponent*>(mesh2DComponents[i]);
 				Object* const object = mesh2DComponent->GetOwnerObject();
-				shapeRenderer.SetPosition(Float4(object->GetObjectTransform()._translation));
-				shapeRenderer.AddShape(mesh2DComponent->GetShape());
+				shapeRenderer.AddShape(mesh2DComponent->GetShape(), object->GetObjectTransform());
 			}
 			shapeRenderer.Render();
 		}

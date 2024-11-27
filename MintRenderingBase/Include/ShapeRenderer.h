@@ -17,6 +17,8 @@
 namespace mint
 {
 	class BitVector;
+	struct Transform;
+	struct Transform2D;
 
 	namespace Rendering
 	{
@@ -85,6 +87,8 @@ namespace mint
 
 		public:
 			void AddShape(const Shape& shape);
+			void AddShape(const Shape& shape, const Transform& transform);
+			void AddShape(const Shape& shape, const Transform2D& transform2D);
 
 			// Independent from internal position set by SetPosition() call
 			// No rotation allowed
@@ -123,8 +127,13 @@ namespace mint
 
 		protected:
 			uint32 ComputeVertexInfo(uint32 transformIndex, uint8 type) const;
+			void PushTransformToBuffer(const Transform2D& transform2D);
 			void PushTransformToBuffer(const Float2& scale, const float rotationAngle, const Float3& position);
+			void PushTransformToBuffer(const Transform& transform);
 			void PushTransformToBuffer(const Float3& preTranslation, const Float4x4& transformMatrix, const Float3& postTranslation);
+
+		private:
+			void AddShape_Internal(const Shape& shape);
 
 		protected:
 			GraphicsObjectID _inputLayoutID;

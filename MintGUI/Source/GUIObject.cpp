@@ -62,16 +62,14 @@ namespace mint
 		{
 			using namespace Rendering;
 
-			const Float4 objectPosition4{ objectPosition };
-			shapeRenderer.SetPosition(objectPosition4);
-
 			uint32 shapeIndex = static_cast<uint32>(objectInteractionState);
 			if (_shapes[shapeIndex]._vertices.IsEmpty())
 			{
 				shapeIndex = 0;
 			}
 
-			shapeRenderer.AddShape(_shapes[shapeIndex]);
+			Transform2D transform2D(objectPosition);
+			shapeRenderer.AddShape(_shapes[shapeIndex], transform2D);
 		}
 
 		SharedPtr<GUIComponent> GUIDraggableComponent::Clone() const

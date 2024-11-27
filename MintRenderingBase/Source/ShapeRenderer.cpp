@@ -239,31 +239,21 @@ namespace mint
 			_textColor = textColor;
 		}
 
+		void ShapeRenderer::AddShape(const Shape& shape, const Transform& transform)
+		{
+			AddShape_Internal(shape);
+			PushTransformToBuffer(transform);
+		}
+
+		void ShapeRenderer::AddShape(const Shape& shape, const Transform2D& transform2D)
+		{
+			AddShape_Internal(shape);
+			PushTransformToBuffer(transform2D);
+		}
+
 		void ShapeRenderer::AddShape(const Shape& shape)
 		{
-			const uint32 vertexOffset = _lowLevelRenderer->GetVertexCount();
-			const uint32 indexOffset = _lowLevelRenderer->GetIndexCount();
-			const uint32 transformIndex = _sbTransformData.Size();
-
-			VS_INPUT_SHAPE v;
-			v._info = ComputeVertexInfo(transformIndex, 0);
-			auto& vertices = _lowLevelRenderer->Vertices();
-			for (const VS_INPUT_SHAPE& vertex : shape._vertices)
-			{
-				v._color = vertex._color;
-				v._position = vertex._position;
-				vertices.PushBack(v);
-			}
-
-			auto& indices = _lowLevelRenderer->Indices();
-			for (const IndexElementType index : shape._indices)
-			{
-				indices.PushBack(vertexOffset + index);
-			}
-
-			_lowLevelRenderer->PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, shape._indices.Size(), GetClipRect());
-
-			PushTransformToBuffer(Float2::kOne, 0.0f, _position.GetXYZ());
+			AddShape(shape, Transform2D::GetIdentity());
 		}
 
 		void ShapeRenderer::DrawLine(const Float2& p0, const Float2& p1, const float thickness)
@@ -562,20 +552,57 @@ namespace mint
 			return (type << 30) | (transformIndex & 0x3FFFFFFF);
 		}
 
+		void ShapeRenderer::PushTransformToBuffer(const Transform2D& transform2D)
+		{
+			PushTransformToBuffer(transform2D._scale, transform2D._rotation, Float3(transform2D._translation._x, transform2D._translation._y, 0.0f));
+		}
+
 		void ShapeRenderer::PushTransformToBuffer(const Float2& scale, const float rotationAngle, const Float3& position)
 		{
-			SB_Transform transform;
-			transform._transformMatrix = Float4x4::SRTMatrix(Float3(scale._x, scale._y, 1.0f), QuaternionF::MakeRotationQuaternion(Float3::kAxisZ, -rotationAngle), position);
-			_sbTransformData.PushBack(transform);
+			SB_Transform sbTransform;
+			sbTransform._transformMatrix = Float4x4::SRTMatrix(Float3(scale._x, scale._y, 1.0f), QuaternionF::MakeRotationQuaternion(Float3::kAxisZ, -rotationAngle), position);
+			_sbTransformData.PushBack(sbTransform);
+		}
+
+		void ShapeRenderer::PushTransformToBuffer(const Transform& transform)
+		{
+			SB_Transform sbTransform;
+			sbTransform._transformMatrix = transform.ToMatrix();
+			_sbTransformData.PushBack(sbTransform);
 		}
 
 		void ShapeRenderer::PushTransformToBuffer(const Float3& preTranslation, const Float4x4& transformMatrix, const Float3& postTranslation)
 		{
-			SB_Transform transform;
-			transform._transformMatrix.PreTranslate(preTranslation);
-			transform._transformMatrix *= transformMatrix;
-			transform._transformMatrix.PostTranslate(postTranslation);
-			_sbTransformData.PushBack(transform);
+			SB_Transform sbTransform;
+			sbTransform._transformMatrix.PreTranslate(preTranslation);
+			sbTransform._transformMatrix *= transformMatrix;
+			sbTransform._transformMatrix.PostTranslate(postTranslation);
+			_sbTransformData.PushBack(sbTransform);
+		}
+
+		void ShapeRenderer::AddShape_Internal(const Shape& shape)
+		{
+			const uint32 vertexOffset = _lowLevelRenderer->GetVertexCount();
+			const uint32 indexOffset = _lowLevelRenderer->GetIndexCount();
+			const uint32 transformIndex = _sbTransformData.Size();
+
+			VS_INPUT_SHAPE v;
+			v._info = ComputeVertexInfo(transformIndex, 0);
+			auto& vertices = _lowLevelRenderer->Vertices();
+			for (const VS_INPUT_SHAPE& vertex : shape._vertices)
+			{
+				v._color = vertex._color;
+				v._position = vertex._position;
+				vertices.PushBack(v);
+			}
+
+			auto& indices = _lowLevelRenderer->Indices();
+			for (const IndexElementType index : shape._indices)
+			{
+				indices.PushBack(vertexOffset + index);
+			}
+
+			_lowLevelRenderer->PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, shape._indices.Size(), GetClipRect());
 		}
 	}
 }
