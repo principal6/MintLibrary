@@ -164,7 +164,7 @@ namespace mint
 		return result;
 	}
 
-	void Float3x3::DecomposeSRT(Float2& outScale, Float3x3& outRotationMatrix, Float2& outTranslation) const
+	void Float3x3::DecomposeSRT(Float2& outScale, Float3x3& outRotationMatrix, Float2& outTranslation) const noexcept
 	{
 		// SRT Matrix
 		// 
