@@ -163,4 +163,31 @@ namespace mint
 		Math::Mul(_m, vec._c, result._c);
 		return result;
 	}
+
+	void Float3x3::DecomposeSRT(Float2& outScale, Float3x3& outRotationMatrix, Float2& outTranslation) const
+	{
+		// SRT Matrix
+		// 
+		// | s_x * r_11  s_y * r_12  t_x |
+		// | s_x * r_21  s_y * r_22  t_y |
+		// | 0           0           1   |
+
+		// s
+		outScale._x = ::sqrtf((_11 * _11) + (_21 * _21));
+		outScale._y = ::sqrtf((_12 * _12) + (_22 * _22));
+
+		// r
+		outRotationMatrix._11 = _11 / outScale._x;
+		outRotationMatrix._21 = _21 / outScale._x;
+
+		outRotationMatrix._12 = _12 / outScale._y;
+		outRotationMatrix._22 = _22 / outScale._y;
+
+		outRotationMatrix._13 = outRotationMatrix._23 = outRotationMatrix._31 = outRotationMatrix._32 = 0.0f;
+		outRotationMatrix._33 = 1.0f;
+
+		// t
+		outTranslation._x = _13;
+		outTranslation._y = _23;
+	}
 }

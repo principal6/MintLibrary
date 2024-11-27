@@ -55,9 +55,8 @@ namespace mint
 		float Determinant() const noexcept;
 		Float3x3 Transpose() const noexcept;
 		Float3x3 Inverse() const noexcept;
-
-	public:
 		Float3 Mul(const Float3& vec) const noexcept;
+		void DecomposeSRT(Float2& outScale, Float3x3& outRotationMatrix, Float2& outTranslation) const noexcept;
 
 	public:
 		union
