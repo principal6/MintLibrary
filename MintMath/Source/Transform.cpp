@@ -123,7 +123,9 @@ namespace mint
 
 	Transform2D Transform2D::GetInverted() const
 	{
-		return Transform2D(Float2::kOne / _scale, -_rotation, -_translation);
+		Float2 inverseTranslation = Float2x2::RotationMatrix(-_rotation).Mul(-_translation);
+		inverseTranslation /= _scale;
+		return Transform2D(Float2::kOne / _scale, -_rotation, inverseTranslation);
 	}
 
 	const Transform2D& Transform2D::GetIdentity() noexcept
