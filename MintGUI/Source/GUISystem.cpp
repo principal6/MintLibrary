@@ -107,7 +107,8 @@ namespace mint
 		{
 			InputContext& inputContext = InputContext::GetInstance();
 			const Float2& mousePosition = inputContext.GetMousePosition();
-			const bool intersects = Physics::Intersect2D_GJK(*guiObject._collisionShape, Physics::PointCollisionShape2D(mousePosition - guiObject.GetPosition()));
+			const Float2 objectSpaceMousePosition = guiObject.GetTransform2D().GetInverted() * mousePosition;
+			const bool intersects = Physics::Intersect2D_GJK(*guiObject._collisionShape, Physics::PointCollisionShape2D(objectSpaceMousePosition));
 			if (intersects == false)
 			{
 				return;
@@ -118,7 +119,8 @@ namespace mint
 			const MouseButtonState leftMouseButtonState = inputContext.GetMouseButtonState(MouseButton::Left);
 			if (leftMouseButtonState == MouseButtonState::Pressed || leftMouseButtonState == MouseButtonState::Down || leftMouseButtonState == MouseButtonState::DoubleClicked)
 			{
-				const bool intersects1 = Physics::Intersect2D_GJK(*guiObject._collisionShape, Physics::PointCollisionShape2D(objectUpdateContext._mouseLeftButtonPressedPosition - guiObject.GetPosition()));
+				const Float2 objectSpaceMouseLeftButtonPressedPosition = guiObject.GetTransform2D().GetInverted() * objectUpdateContext._mouseLeftButtonPressedPosition;
+				const bool intersects1 = Physics::Intersect2D_GJK(*guiObject._collisionShape, Physics::PointCollisionShape2D(objectSpaceMouseLeftButtonPressedPosition));
 				if (intersects1)
 				{
 					_pressedObjectID = guiObject._objectID;
