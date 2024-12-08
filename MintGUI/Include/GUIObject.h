@@ -141,10 +141,16 @@ namespace mint
 		public:
 			GUIObject() = default;
 			virtual ~GUIObject();
+			void SetTransform2D(const Transform2D& transform2D) { _transform2D = transform2D; }
+			void SetScale(const Float2& scale) { _transform2D._scale = scale; }
+			void SetRotation(float angle) { _transform2D._rotation = angle; }
 			void SetPosition(const Float2& position) { _transform2D._translation = position; }
 			void AddComponent(SharedPtr<GUIComponent> guiComponent);
 			void Render(Rendering::ShapeRenderer& shapeRenderer, const GUIObjectInteractionState& objectInteractionState) const;
 		public:
+			const Transform2D& GetTransform2D() const { return _transform2D; }
+			const Float2& GetScale() const { return _transform2D._scale; }
+			float GetRotation() const { return _transform2D._rotation; }
 			const Float2& GetPosition() const { return _transform2D._translation; }
 			uint32 GetComponentCount() const { return _components.Size(); }
 			template<typename T>
