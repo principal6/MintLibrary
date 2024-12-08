@@ -8,7 +8,7 @@ namespace mint
 {
 	namespace Rendering
 	{
-		void DxShaderHeaderMemory::pushHeader(const char* const name, const char* const content)
+		void DxShaderHeaderMemory::PushHeader(const char* const name, const char* const content)
 		{
 			_fileNameArray.PushBack(name);
 			_fileContentArray.PushBack(content);

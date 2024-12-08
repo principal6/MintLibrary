@@ -24,7 +24,7 @@ namespace mint
 			virtual ~DxShaderHeaderMemory() = default;
 
 		public:
-			void pushHeader(const char* const name, const char* const content);
+			void PushHeader(const char* const name, const char* const content);
 
 		public:
 			STDMETHOD(Open)(D3D_INCLUDE_TYPE IncludeType, LPCSTR pFileName, LPCVOID pParentData, LPCVOID* ppData, UINT* pBytes) override final;

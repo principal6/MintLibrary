@@ -199,7 +199,7 @@ namespace mint
 			__noop;
 		}
 
-		void MathExpressionRenderer::drawMathExpression(const MathExpression& mathExpression, const Float2& screenPosition) noexcept
+		void MathExpressionRenderer::DrawMathExpression(const MathExpression& mathExpression, const Float2& screenPosition) noexcept
 		{
 			mathExpression.Evaluate();
 

@@ -543,7 +543,7 @@ namespace mint
 			{
 				_cppHlslStreamData.ParseCppHlslFile(Path::MakeIncludeAssetPath("CppHlsl/CppHlslStreamData.h"));
 				_cppHlslStreamData.GenerateHlslString(Language::CppHlsl::CppHlslFileType::StreamData);
-				_shaderHeaderMemory.pushHeader("ShaderStructDefinitions", _cppHlslStreamData.GetHlslString());
+				_shaderHeaderMemory.PushHeader("ShaderStructDefinitions", _cppHlslStreamData.GetHlslString());
 			}
 
 			using namespace Language;
@@ -552,7 +552,7 @@ namespace mint
 			{
 				_cppHlslConstantBuffers.ParseCppHlslFile(Path::MakeIncludeAssetPath("CppHlsl/CppHlslConstantBuffers.h"));
 				_cppHlslConstantBuffers.GenerateHlslString(Language::CppHlsl::CppHlslFileType::ConstantBuffers);
-				_shaderHeaderMemory.pushHeader("ShaderConstantBuffers", _cppHlslConstantBuffers.GetHlslString());
+				_shaderHeaderMemory.PushHeader("ShaderConstantBuffers", _cppHlslConstantBuffers.GetHlslString());
 
 				{
 					const TypeMetaData<CppHlsl::TypeCustomData>& typeMetaData = _cppHlslConstantBuffers.GetTypeMetaData(typeid(_cbViewData));
@@ -577,7 +577,7 @@ namespace mint
 			{
 				_cppHlslStructuredBuffers.ParseCppHlslFile(Path::MakeIncludeAssetPath("CppHlsl/CppHlslStructuredBuffers.h"));
 				_cppHlslStructuredBuffers.GenerateHlslString(Language::CppHlsl::CppHlslFileType::StructuredBuffers);
-				_shaderHeaderMemory.pushHeader("ShaderStructuredBufferDefinitions", _cppHlslStructuredBuffers.GetHlslString());
+				_shaderHeaderMemory.PushHeader("ShaderStructuredBufferDefinitions", _cppHlslStructuredBuffers.GetHlslString());
 
 				{
 					SB_Transform sbTransformData;

@@ -80,7 +80,7 @@ namespace mint
 			~MathExpressionRenderer();
 
 		public:
-			void drawMathExpression(const MathExpression& mathExpression, const Float2& screenPosition) noexcept;
+			void DrawMathExpression(const MathExpression& mathExpression, const Float2& screenPosition) noexcept;
 
 		public:
 			void Render() noexcept;

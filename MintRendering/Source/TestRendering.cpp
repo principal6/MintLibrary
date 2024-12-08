@@ -117,7 +117,7 @@ namespace mint
 		{
 			using namespace Rendering;
 
-			mathExpressionRenderer.drawMathExpression(MathExpression(L"\\bold{aba} is it even possibile? AB=C"), Float2(100, 100));
+			mathExpressionRenderer.DrawMathExpression(MathExpression(L"\\bold{aba} is it even possibile? AB=C"), Float2(100, 100));
 			mathExpressionRenderer.Render();
 			return true;
 		}
