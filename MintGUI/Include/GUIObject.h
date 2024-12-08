@@ -74,7 +74,7 @@ namespace mint
 		public:
 			GUIRenderableComponent() : GUIComponent() { InitializeReflection(); }
 			virtual bool IsRenderable() const override final { return true; }
-			virtual void Render(Rendering::ShapeRenderer& shapeRenderer, const Float2& objectPosition, const GUIObjectInteractionState& objectInteractionState) const = 0;
+			virtual void Render(Rendering::ShapeRenderer& shapeRenderer, const Transform2D& objectTransform2D, const GUIObjectInteractionState& objectInteractionState) const = 0;
 
 		private:
 			REFLECTION_BIND_BEGIN;
@@ -90,7 +90,7 @@ namespace mint
 			void SetText(const StringReferenceW& text);
 			void SetOffset(const Float2& offset);
 			virtual SharedPtr<GUIComponent> Clone() const override final;
-			virtual void Render(Rendering::ShapeRenderer& shapeRenderer, const Float2& objectPosition, const GUIObjectInteractionState& objectInteractionState) const override;
+			virtual void Render(Rendering::ShapeRenderer& shapeRenderer, const Transform2D& objectTransform2D, const GUIObjectInteractionState& objectInteractionState) const override;
 
 		private:
 			StringW _text;
@@ -106,7 +106,7 @@ namespace mint
 			GUIShapeComponent() : GUIRenderableComponent() { InitializeReflection(); }
 			void SetShape(const GUIObjectInteractionState& objectInteractionState, const Rendering::Shape& shape);
 			virtual SharedPtr<GUIComponent> Clone() const override final;
-			virtual void Render(Rendering::ShapeRenderer& shapeRenderer, const Float2& objectPosition, const GUIObjectInteractionState& objectInteractionState) const override;
+			virtual void Render(Rendering::ShapeRenderer& shapeRenderer, const Transform2D& objectTransform2D, const GUIObjectInteractionState& objectInteractionState) const override;
 
 		private:
 			Rendering::Shape _shapes[static_cast<uint32>(GUIObjectInteractionState::COUNT)];

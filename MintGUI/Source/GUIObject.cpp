@@ -27,7 +27,7 @@ namespace mint
 			_offset = offset;
 		}
 
-		void GUITextComponent::Render(Rendering::ShapeRenderer& shapeRenderer, const Float2& objectPosition, const GUIObjectInteractionState& objectInteractionState) const
+		void GUITextComponent::Render(Rendering::ShapeRenderer& shapeRenderer, const Transform2D& objectTransform2D, const GUIObjectInteractionState& objectInteractionState) const
 		{
 			using namespace Rendering;
 
@@ -39,7 +39,7 @@ namespace mint
 			FontRenderingOption fontRenderingOption;
 			fontRenderingOption._directionHorz = TextRenderDirectionHorz::Centered;
 			fontRenderingOption._directionVert = TextRenderDirectionVert::Centered;
-			shapeRenderer.DrawDynamicText(_text.CString(), objectPosition + _offset, fontRenderingOption);
+			shapeRenderer.DrawDynamicText(_text.CString(), objectTransform2D._translation + _offset, fontRenderingOption);
 		}
 
 		SharedPtr<GUIComponent> GUIShapeComponent::Clone() const
@@ -58,7 +58,7 @@ namespace mint
 			_shapes[static_cast<uint32>(objectInteractionState)] = shape;
 		}
 
-		void GUIShapeComponent::Render(Rendering::ShapeRenderer& shapeRenderer, const Float2& objectPosition, const GUIObjectInteractionState& objectInteractionState) const
+		void GUIShapeComponent::Render(Rendering::ShapeRenderer& shapeRenderer, const Transform2D& objectTransform2D, const GUIObjectInteractionState& objectInteractionState) const
 		{
 			using namespace Rendering;
 
@@ -68,8 +68,7 @@ namespace mint
 				shapeIndex = 0;
 			}
 
-			Transform2D transform2D(objectPosition);
-			shapeRenderer.AddShape(_shapes[shapeIndex], transform2D);
+			shapeRenderer.AddShape(_shapes[shapeIndex], objectTransform2D);
 		}
 
 		SharedPtr<GUIComponent> GUIDraggableComponent::Clone() const
@@ -112,7 +111,7 @@ namespace mint
 					continue;
 				}
 
-				static_cast<const GUIRenderableComponent*>(component.Get())->Render(shapeRenderer, _transform2D._translation, objectInteractionState);
+				static_cast<const GUIRenderableComponent*>(component.Get())->Render(shapeRenderer, _transform2D, objectInteractionState);
 			}
 		}
 #pragma endregion
