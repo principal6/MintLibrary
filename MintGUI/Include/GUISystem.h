@@ -37,6 +37,7 @@ namespace mint
 
 		public:
 			GUIObjectID AddObject(const GUIObjectTemplateID& objectTemplateID);
+			GUIObjectID CloneObject(const GUIObjectID& objectID);
 			void RemoveObject(const GUIObjectID& objectID);
 			GUIObject& AccessObject(const GUIObjectID& objectID);
 
@@ -63,6 +64,7 @@ namespace mint
 				GUIObjectTemplateID RegisterTemplate(const StringU8& objectTemplateName, GUIObjectTemplate&& objectTemplate);
 				GUIObjectTemplate& AccessTemplate(const GUIObjectTemplateID& objectTemplateID);
 				GUIObjectID AddObject(const GUIObjectTemplateID& objectTemplateID);
+				GUIObjectID CloneObject(const GUIObjectID& objectID);
 				void RemoveObject(const GUIObjectID& objectID);
 
 			public:

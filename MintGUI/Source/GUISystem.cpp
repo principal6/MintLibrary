@@ -71,6 +71,24 @@ namespace mint
 			return guiObject->_objectID;
 		}
 
+		GUIObjectID GUISystem::GUIObjectManager::CloneObject(const GUIObjectID& objectID)
+		{
+			SharedPtr<GUIObject> guiObject = MakeShared<GUIObject>();
+			guiObject->_objectID.Assign(_nextObjectRawID);
+			++_nextObjectRawID;
+			_objectInstances.PushBack(guiObject);
+
+			const GUIObject& sourceObject = AccessObject(objectID);
+			guiObject->_collisionShape = sourceObject._collisionShape;
+			const uint32 componentCount = sourceObject._components.Size();
+			guiObject->_components.Resize(componentCount);
+			for (uint32 i = 0; i < componentCount; ++i)
+			{
+				guiObject->_components[i] = sourceObject._components[i]->Clone();
+			}
+			return guiObject->_objectID;
+		}
+
 		void GUISystem::GUIObjectManager::RemoveObject(const GUIObjectID& objectID)
 		{
 			const int32 guiObjectInstanceFindResult = BinarySearch(_objectInstances, objectID, GUIObject::IDEvaluator());
@@ -199,6 +217,11 @@ namespace mint
 		GUIObjectID GUISystem::AddObject(const GUIObjectTemplateID& objectTemplateID)
 		{
 			return _objectManager.AddObject(objectTemplateID);
+		}
+
+		GUIObjectID GUISystem::CloneObject(const GUIObjectID& objectID)
+		{
+			return _objectManager.CloneObject(objectID);
 		}
 
 		void GUISystem::RemoveObject(const GUIObjectID& objectID)
