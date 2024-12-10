@@ -160,6 +160,7 @@ namespace mint
 
 		GUIObject& GUISystem::GUIObjectManager::AccessObject(const GUIObjectID& objectID)
 		{
+			MINT_ASSERT(objectID.IsValid() == true, "Accessing GUI object with an invalid objectID!");
 			static GUIObject invalid;
 			const int32 index = BinarySearch(_objectInstances, objectID, GUIObject::IDEvaluator());
 			return (index < 0 ? invalid : *_objectInstances[index]);
