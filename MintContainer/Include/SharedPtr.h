@@ -153,9 +153,9 @@ namespace mint
 		// this is really dangerous ...
 		//T* operator&() noexcept { return _rawPtr; }
 		T& operator*() noexcept { return *_rawPtr; }
-		const T& operator*() const noexcept { return *_rawPtr; }
+		T& operator*() const noexcept { return *_rawPtr; }
 		T* operator->() noexcept { return _rawPtr; }
-		const T* operator->() const noexcept { return _rawPtr; }
+		T* operator->() const noexcept { return _rawPtr; }
 
 	public:
 		bool IsValid() const { return (_referenceCounter == nullptr ? false : _referenceCounter->GetStrongReferenceCount() != 0); }
