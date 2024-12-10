@@ -51,7 +51,7 @@ namespace mint
 			R8G8B8A8_UNORM,
 		};
 
-		class GraphicsResource final : public GraphicsObject
+		class GraphicsResource : public GraphicsObject
 		{
 			friend GraphicsResourcePool;
 
@@ -72,37 +72,31 @@ namespace mint
 		public:
 			GraphicsResource& operator=(GraphicsResource&& rhs) noexcept = default;
 
-		private:
-			bool CreateBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount);
-			bool CreateTexture(const TextureFormat format, const void* const resourceContent, const uint32 width, const uint32 height);
-
 		public:
 			bool IsValid() const noexcept;
+			uint32 GetRegisterIndex() const noexcept;
+			ID3D11Buffer* const* GetBuffer() const noexcept;
+			ID3D11ShaderResourceView* const* GetResourceView() const noexcept;
+			bool NeedsToBind() const noexcept;
 
 		public:
 			void UpdateBuffer(const void* const resourceContent, const uint32 elementCount);
 			void UpdateBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount);
-
-		public:
 			void UpdateTexture(const void* const resourceContent);
 			void UpdateTexture(const void* const resourceContent, const uint32 width, const uint32 height);
 
-		private:
-			void UpdateContentInternal(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount, const uint32 width);
-
 		public:
 			void SetOffset(const uint32 elementOffset);
-
-		public:
-			uint32 GetRegisterIndex() const noexcept;
-			ID3D11Buffer* const* GetBuffer() const noexcept;
-			ID3D11ShaderResourceView* const* GetResourceView() const noexcept;
-
-		public:
-			bool NeedsToBind() const noexcept;
 			void BindAsInput() const noexcept;
 			void BindToShader(const GraphicsShaderType shaderType, const uint32 bindingSlot) const noexcept;
 			void UnbindFromShader() const noexcept;
+
+		private:
+			bool CreateBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount);
+			bool CreateTexture(const TextureFormat format, const void* const resourceContent, const uint32 width, const uint32 height);
+
+		private:
+			void UpdateContentInternal(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount, const uint32 width);
 
 		private:
 			ComPtr<ID3D11Resource> _resource;
