@@ -153,17 +153,12 @@
   <ItemGroup>
     <ClInclude Include="Include\AllHeaders.h" />
     <ClInclude Include="Include\AllHpps.h" />
-    <ClInclude Include="Include\GUIObject.h" />
-    <ClInclude Include="Include\GUIObject.hpp" />
+    <ClInclude Include="Include\GUIComponents.h" />
+    <ClInclude Include="Include\GUIComponents.hpp" />
     <ClInclude Include="Include\GUISystem.h" />
+    <ClInclude Include="Include\GUISystem.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\GUIObject.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="Source\GUISystem.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>

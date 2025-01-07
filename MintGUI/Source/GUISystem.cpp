@@ -1,4 +1,5 @@
 ﻿#include <MintGUI/Include/GUISystem.h>
+#include <MintGUI/Include/GUISystem.hpp>
 #include <MintContainer/Include/HashMap.hpp>
 #include <MintContainer/Include/StringReference.hpp>
 #include <MintContainer/Include/Algorithm.hpp>
@@ -7,280 +8,139 @@
 #include <MintPlatform/Include/InputContext.h>
 #include <MintPhysics/Include/CollisionShape.h>
 #include <MintPhysics/Include/Intersection.hpp>
-#include <MintGUI/Include/GUIObject.hpp>
+#include <MintGUI/Include/GUIComponents.hpp>
 
 
 namespace mint
 {
 	namespace GUI
 	{
-#pragma region GUISystem::GUIObjectManager
-		GUISystem::GUIObjectManager::GUIObjectManager()
-			: _nextObjectRawID{ 0 }
+#pragma region GUIEntityPool
+		GUIEntityPool::GUIEntityPool()
+			: _nextEntityID{ 0 }
 		{
 			__noop;
 		}
 
-		GUIObjectTemplateID GUISystem::GUIObjectManager::RegisterTemplate(const StringU8& objectTemplateName, GUIObjectTemplate&& objectTemplate)
+		GUIEntityPool::~GUIEntityPool()
 		{
-			const int32 index = BinarySearch(_objectTemplates, objectTemplateName, GUIObjectTemplate::NameEvaluator());
-			if (index >= 0)
-			{
-				MINT_ASSERT(false, "ObjectTemplate named (%s) is already registered!!!", objectTemplateName.CString());
-				return GUIObjectTemplateID();
-			}
-
-			const GUIObjectTemplateID::RawType nextRawID = (_objectTemplates.IsEmpty() ? 0 : _objectTemplates.Back()->_templateID.Value() + 1);
-			GUIObjectTemplateID objectTemplateID;
-			objectTemplateID.Assign(nextRawID);;
-			objectTemplate._templateID = objectTemplateID;
-			objectTemplate._templateName = objectTemplateName;
-			_objectTemplates.PushBack(MakeShared(std::move(objectTemplate)));
-			return objectTemplateID;
+			__noop;
 		}
 
-		GUIObjectTemplate& GUISystem::GUIObjectManager::AccessTemplate(const GUIObjectTemplateID& objectTemplateID)
+		GUIEntity GUIEntityPool::CreateEntity()
 		{
-			const int32 index = BinarySearch(_objectTemplates, objectTemplateID, GUIObjectTemplate::IDEvaluator());
-			if (index < 0)
-			{
-				static GUIObjectTemplate invalid;
-				return invalid;
-			}
-			return *_objectTemplates[index];
+			GUIEntity entity;
+			entity.Assign(_nextEntityID);
+			++_nextEntityID;
+			_entities.PushBack(entity);
+			return entity;
 		}
 
-		GUIObjectID GUISystem::GUIObjectManager::AddObject(const GUIObjectTemplateID& objectTemplateID)
+		const Vector<GUIEntity>& GUIEntityPool::GetEntities() const
 		{
-			const int32 index = BinarySearch(_objectTemplates, objectTemplateID, GUIObjectTemplate::IDEvaluator());
-			MINT_ASSERT(index >= 0, "This assertion must never fail!");
-
-			SharedPtr<GUIObject> guiObject = MakeShared<GUIObject>();
-			guiObject->_objectID.Assign(_nextObjectRawID);
-			++_nextObjectRawID;
-			_objectInstances.PushBack(guiObject);
-
-			const SharedPtr<GUIObjectTemplate>& objectTemplate = _objectTemplates[index];
-			guiObject->_collisionShape = objectTemplate->_collisionShape;
-			const uint32 componentCount = objectTemplate->_components.Size();
-			guiObject->_components.Resize(componentCount);
-			for (uint32 i = 0; i < componentCount; ++i)
-			{
-				guiObject->_components[i] = objectTemplate->_components[i]->Clone();
-			}
-			return guiObject->_objectID;
+			return _entities;
 		}
+#pragma endregion
 
-		GUIObjectID GUISystem::GUIObjectManager::CloneObject(const GUIObjectID& objectID)
+#pragma region GUISystem
+		void GUISystem::InputSystem(const Vector<GUIEntity>& entities)
 		{
-			SharedPtr<GUIObject> guiObject = MakeShared<GUIObject>();
-			guiObject->_objectID.Assign(_nextObjectRawID);
-			++_nextObjectRawID;
-			_objectInstances.PushBack(guiObject);
+			static Float2 sMouseLeftButtonPressedPosition;
 
-			const GUIObject& sourceObject = AccessObject(objectID);
-			guiObject->_collisionShape = sourceObject._collisionShape;
-			const uint32 componentCount = sourceObject._components.Size();
-			guiObject->_components.Resize(componentCount);
-			for (uint32 i = 0; i < componentCount; ++i)
-			{
-				guiObject->_components[i] = sourceObject._components[i]->Clone();
-			}
-			return guiObject->_objectID;
-		}
-
-		void GUISystem::GUIObjectManager::RemoveObject(const GUIObjectID& objectID)
-		{
-			const int32 guiObjectInstanceFindResult = BinarySearch(_objectInstances, objectID, GUIObject::IDEvaluator());
-			if (guiObjectInstanceFindResult < 0)
-			{
-				MINT_ASSERT(false, "Object with ID(%s) is not added.", objectID.Value());
-				return;
-			}
-
-			_objectInstances.Erase(guiObjectInstanceFindResult);
-		}
-
-		void GUISystem::GUIObjectManager::UpdateObjects(const GUIObjectUpdateContext& objectUpdateContext)
-		{
-			_hoveredObjectID.Invalidate();
-
-			for (SharedPtr<GUIObject>& guiObject : _objectInstances)
-			{
-				UpdateObject(objectUpdateContext, *guiObject);
-			}
-
-			UpdatePressedObject(objectUpdateContext);
-
-			// MouseButtonState 가 Released 나 Up 이더라도 이번 프레임 Update 끝날 때까지 PressedObject 를 유지한다.
-			InputContext& inputContext = InputContext::GetInstance();
-			const MouseButtonState leftMouseButtonState = inputContext.GetMouseButtonState(MouseButton::Left);
-			if (leftMouseButtonState == MouseButtonState::Released || leftMouseButtonState == MouseButtonState::Up)
-			{
-				_pressedObjectID.Invalidate();
-			}
-		}
-
-		void GUISystem::GUIObjectManager::UpdateObject(const GUIObjectUpdateContext& objectUpdateContext, GUIObject& guiObject)
-		{
 			InputContext& inputContext = InputContext::GetInstance();
 			const Float2& mousePosition = inputContext.GetMousePosition();
-			const Float2 objectSpaceMousePosition = guiObject.GetTransform2D().GetInverted() * mousePosition;
-			const bool intersects = Physics::Intersect2D_GJK(*guiObject._collisionShape, Physics::PointCollisionShape2D(objectSpaceMousePosition));
-			if (intersects == false)
+			const MouseButtonState leftMouseButtonState = inputContext.GetMouseButtonState(MouseButton::Left);
+
+			if (leftMouseButtonState == MouseButtonState::Pressed)
 			{
-				return;
+				sMouseLeftButtonPressedPosition = mousePosition;
 			}
 
-			_hoveredObjectID = guiObject._objectID;
-
-			const MouseButtonState leftMouseButtonState = inputContext.GetMouseButtonState(MouseButton::Left);
-			if (leftMouseButtonState == MouseButtonState::Pressed || leftMouseButtonState == MouseButtonState::Down || leftMouseButtonState == MouseButtonState::DoubleClicked)
+			const bool isLeftMouseButtonReleasedOrUp = leftMouseButtonState == MouseButtonState::Released || leftMouseButtonState == MouseButtonState::Up;
+			for (const GUIEntity& entity : entities)
 			{
-				const Float2 objectSpaceMouseLeftButtonPressedPosition = guiObject.GetTransform2D().GetInverted() * objectUpdateContext._mouseLeftButtonPressedPosition;
-				const bool intersects1 = Physics::Intersect2D_GJK(*guiObject._collisionShape, Physics::PointCollisionShape2D(objectSpaceMouseLeftButtonPressedPosition));
-				if (intersects1)
-				{
-					_pressedObjectID = guiObject._objectID;
+				GUITransform2DComponent* const transform2DComponent = GUISystem::GetComponent<GUITransform2DComponent>(entity);
+				GUICollisionShape2DComponent* const collisionShape2DComponent = GUISystem::GetComponent<GUICollisionShape2DComponent>(entity);
+				GUIInteractionStateComponent* const interactionStateComponent = GUISystem::GetComponent<GUIInteractionStateComponent>(entity);
 
-					if (_hoveredObjectID == _pressedObjectID)
+				if (isLeftMouseButtonReleasedOrUp)
+				{
+					interactionStateComponent->_interactionState = GUIInteractionState::None;
+				}
+
+				const Float2 objectSpaceMousePosition = transform2DComponent->_transform2D.GetInverted() * mousePosition;
+				const bool intersects = Physics::Intersect2D_GJK(*collisionShape2DComponent->_collisionShape2D, Physics::PointCollisionShape2D(objectSpaceMousePosition));
+				if (intersects == true)
+				{
+					if (interactionStateComponent->_interactionState != GUIInteractionState::Pressed)
+						interactionStateComponent->_interactionState = GUIInteractionState::Hovered;
+
+					const MouseButtonState leftMouseButtonState = inputContext.GetMouseButtonState(MouseButton::Left);
+					if (leftMouseButtonState == MouseButtonState::Pressed || leftMouseButtonState == MouseButtonState::Down || leftMouseButtonState == MouseButtonState::DoubleClicked)
 					{
-						_hoveredObjectID.Invalidate();
+						const Float2 objectSpaceMouseLeftButtonPressedPosition = transform2DComponent->_transform2D.GetInverted() * sMouseLeftButtonPressedPosition;
+						const bool intersects1 = Physics::Intersect2D_GJK(*collisionShape2DComponent->_collisionShape2D, Physics::PointCollisionShape2D(objectSpaceMouseLeftButtonPressedPosition));
+						if (intersects1)
+						{
+							interactionStateComponent->_interactionState = GUIInteractionState::Pressed;
+						}
+					}
+				}
+
+				if (interactionStateComponent->_interactionState == GUIInteractionState::Pressed)
+				{
+					GUIDraggableComponent* const draggableComponent = GUISystem::GetComponent<GUIDraggableComponent>(entity);
+					if (draggableComponent != nullptr)
+					{
+						if (leftMouseButtonState == MouseButtonState::Pressed)
+						{
+							draggableComponent->_localPressedPosition = sMouseLeftButtonPressedPosition - transform2DComponent->_transform2D._translation;
+						}
+						else
+						{
+							transform2DComponent->_transform2D._translation = mousePosition - draggableComponent->_localPressedPosition;
+						}
 					}
 				}
 			}
 		}
 
-		void GUISystem::GUIObjectManager::UpdatePressedObject(const GUIObjectUpdateContext& objectUpdateContext)
+		void GUISystem::RenderSystem(const Vector<GUIEntity>& entities, Rendering::GraphicsDevice& graphicsDevice)
 		{
-			if (_pressedObjectID.IsValid() == false)
+			using namespace Rendering;
+
+			graphicsDevice.SetSolidCullNoneRasterizer();
+			graphicsDevice.SetViewProjectionMatrix(Float4x4::kIdentity, graphicsDevice.GetScreenSpace2DProjectionMatrix());
+
+			Rendering::ShapeRenderer& shapeRenderer = graphicsDevice.GetShapeRenderer();
+			for (const GUIEntity& entity : entities)
 			{
-				return;
-			}
+				GUITransform2DComponent* const transform2DComponent = GUISystem::GetComponent<GUITransform2DComponent>(entity);
+				GUIInteractionStateComponent* const interactionStateComponent = GUISystem::GetComponent<GUIInteractionStateComponent>(entity);
 
-			InputContext& inputContext = InputContext::GetInstance();
-			const Float2& mousePosition = inputContext.GetMousePosition();
-			const MouseButtonState leftMouseButtonState = inputContext.GetMouseButtonState(MouseButton::Left);
-			GUIObject& pressedObject = AccessObject(_pressedObjectID);
-			SharedPtr<GUIDraggableComponent> guiDraggableComponent = pressedObject.GetComponent<GUIDraggableComponent>();
-			if (guiDraggableComponent.IsValid() == true)
-			{
-				if (leftMouseButtonState == MouseButtonState::Pressed)
+				GUITextComponent* const textComponent = GUISystem::GetComponent<GUITextComponent>(entity);
+				if (textComponent != nullptr)
 				{
-					guiDraggableComponent->SetLocalPressedPosition(objectUpdateContext._mouseLeftButtonPressedPosition - pressedObject.GetPosition());
-				}
-				else
-				{
-					pressedObject.SetPosition(mousePosition - guiDraggableComponent->GetLocalPressedPosition());
-				}
-			}
-		}
-
-		GUIObject& GUISystem::GUIObjectManager::AccessObject(const GUIObjectID& objectID)
-		{
-			MINT_ASSERT(objectID.IsValid() == true, "Accessing GUI object with an invalid objectID!");
-			static GUIObject invalid;
-			const int32 index = BinarySearch(_objectInstances, objectID, GUIObject::IDEvaluator());
-			return (index < 0 ? invalid : *_objectInstances[index]);
-		}
-
-		Vector<SharedPtr<GUIObject>>& GUISystem::GUIObjectManager::AccessObjectInstances()
-		{
-			return _objectInstances;
-		}
-#pragma endregion
-
-
-#pragma region GUISystem
-		GUISystem::GUISystem(Rendering::GraphicsDevice& graphicsDevice)
-			: _graphicsDevice{ graphicsDevice }
-			, _isUpdated{ false }
-		{
-			__noop;
-		}
-
-		GUISystem::~GUISystem()
-		{
-			__noop;
-		}
-
-		GUIObjectTemplateID GUISystem::RegisterTemplate(const StringU8& name, GUIObjectTemplate&& objectTemplate)
-		{
-			return _objectManager.RegisterTemplate(name, std::move(objectTemplate));
-		}
-
-		GUIObjectTemplate& GUISystem::AccessTemplate(const GUIObjectTemplateID& objectTemplateID)
-		{
-			return _objectManager.AccessTemplate(objectTemplateID);
-		}
-
-		GUIObjectID GUISystem::AddObject(const GUIObjectTemplateID& objectTemplateID)
-		{
-			return _objectManager.AddObject(objectTemplateID);
-		}
-
-		GUIObjectID GUISystem::CloneObject(const GUIObjectID& objectID)
-		{
-			return _objectManager.CloneObject(objectID);
-		}
-
-		void GUISystem::RemoveObject(const GUIObjectID& objectID)
-		{
-			_objectManager.RemoveObject(objectID);
-		}
-
-		GUIObject& GUISystem::AccessObject(const GUIObjectID& objectID)
-		{
-			return _objectManager.AccessObject(objectID);
-		}
-
-		void GUISystem::Update()
-		{
-			MINT_ASSERT(_isUpdated == false, "Don't call Update() multiple times in a frame!");
-
-			InputContext& inputContext = InputContext::GetInstance();
-			const Float2& mousePosition = inputContext.GetMousePosition();
-			const MouseButtonState leftMouseButtonState = inputContext.GetMouseButtonState(MouseButton::Left);
-			if (leftMouseButtonState == MouseButtonState::Pressed)
-			{
-				_objectUpdateContext._mouseLeftButtonPressedPosition = mousePosition;
-			}
-
-			_objectManager.UpdateObjects(_objectUpdateContext);
-
-			_isUpdated = true;
-		}
-
-		void GUISystem::Render()
-		{
-			MINT_ASSERT(_isUpdated == true, "You must call Update() every frame!");
-
-			const GUIObjectID& hoveredObjectID = _objectManager.GetHoveredObjectID();
-			const GUIObjectID& pressedObjectID = _objectManager.GetPressedObjectID();
-
-			_graphicsDevice.SetSolidCullNoneRasterizer();
-			_graphicsDevice.SetViewProjectionMatrix(Float4x4::kIdentity, _graphicsDevice.GetScreenSpace2DProjectionMatrix());
-
-			Rendering::ShapeRenderer& shapeRenderer = _graphicsDevice.GetShapeRenderer();
-			Vector<SharedPtr<GUIObject>>& guiObjectInstances = _objectManager.AccessObjectInstances();
-			for (const SharedPtr<GUIObject>& guiObject : guiObjectInstances)
-			{
-				GUIObjectInteractionState objectInteractionState = GUIObjectInteractionState::None;
-				if (guiObject->_objectID == pressedObjectID)
-				{
-					objectInteractionState = GUIObjectInteractionState::Pressed;
-				}
-				else if (guiObject->_objectID == hoveredObjectID)
-				{
-					objectInteractionState = GUIObjectInteractionState::Hovered;
+					FontRenderingOption fontRenderingOption;
+					fontRenderingOption._directionHorz = TextRenderDirectionHorz::Centered;
+					fontRenderingOption._directionVert = TextRenderDirectionVert::Centered;
+					shapeRenderer.DrawDynamicText(textComponent->_text.CString(), transform2DComponent->_transform2D._translation + textComponent->_offset, fontRenderingOption);
 				}
 
-				guiObject->Render(shapeRenderer, objectInteractionState);
+				GUIShapeComponent* const shapeComponent = GUISystem::GetComponent<GUIShapeComponent>(entity);
+				if (shapeComponent != nullptr)
+				{
+					uint32 shapeIndex = static_cast<uint32>(interactionStateComponent->_interactionState);
+					if (shapeComponent->_shapes[shapeIndex]._vertices.IsEmpty())
+					{
+						shapeIndex = 0;
+					}
+
+					shapeRenderer.AddShape(shapeComponent->_shapes[shapeIndex], transform2DComponent->_transform2D);
+				}
 			}
 
 			shapeRenderer.Render();
-
-			_isUpdated = false;
 		}
 #pragma endregion
 	}

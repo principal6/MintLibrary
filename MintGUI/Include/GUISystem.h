@@ -10,7 +10,7 @@
 #include <MintContainer/Include/OwnPtr.h>
 #include <MintContainer/Include/SharedPtr.h>
 #include <MintRenderingBase/Include/RenderingBaseCommon.h>
-#include <MintGUI/Include/GUIObject.h>
+#include <MintGUI/Include/GUIComponents.h>
 
 
 namespace mint
@@ -19,80 +19,45 @@ namespace mint
 	{
 		class GraphicsDevice;
 	}
+
+	namespace GUI
+	{
+		class GUIEntityPool;
+	}
 }
 
 namespace mint
 {
 	namespace GUI
 	{
+		class GUIEntity : public ID32 { friend GUIEntityPool; };
+
+		class GUIEntityPool
+		{
+		public:
+			GUIEntityPool();
+			~GUIEntityPool();
+
+		public:
+			GUIEntity CreateEntity();
+			const Vector<GUIEntity>& GetEntities() const;
+
+		private:
+			uint32 _nextEntityID;
+			Vector<GUIEntity> _entities;
+		};
+
 		class GUISystem
 		{
 		public:
-			GUISystem(Rendering::GraphicsDevice& graphicsDevice);
-			~GUISystem();
+			template<typename ComponentType>
+			static void AttachComponent(const GUIEntity& entity, ComponentType&& component);
 
-		public:
-			GUIObjectTemplateID RegisterTemplate(const StringU8& name, GUIObjectTemplate&& objectTemplate);
-			GUIObjectTemplate& AccessTemplate(const GUIObjectTemplateID& objectTemplateID);
+			template<typename ComponentType>
+			static ComponentType* GetComponent(const GUIEntity& entity);
 
-		public:
-			GUIObjectID AddObject(const GUIObjectTemplateID& objectTemplateID);
-			GUIObjectID CloneObject(const GUIObjectID& objectID);
-			void RemoveObject(const GUIObjectID& objectID);
-			GUIObject& AccessObject(const GUIObjectID& objectID);
-
-		public:
-			void Update();
-			void Render();
-
-		private:
-			Rendering::GraphicsDevice& _graphicsDevice;
-
-		private:
-			bool _isUpdated;
-			struct GUIObjectUpdateContext
-			{
-				Float2 _mouseLeftButtonPressedPosition;
-			} _objectUpdateContext;
-
-			class GUIObjectManager
-			{
-			public:
-				GUIObjectManager();
-
-			public:
-				GUIObjectTemplateID RegisterTemplate(const StringU8& objectTemplateName, GUIObjectTemplate&& objectTemplate);
-				GUIObjectTemplate& AccessTemplate(const GUIObjectTemplateID& objectTemplateID);
-				GUIObjectID AddObject(const GUIObjectTemplateID& objectTemplateID);
-				GUIObjectID CloneObject(const GUIObjectID& objectID);
-				void RemoveObject(const GUIObjectID& objectID);
-
-			public:
-				void UpdateObjects(const GUIObjectUpdateContext& objectUpdateContext);
-
-			public:
-				GUIObject& AccessObject(const GUIObjectID& objectID);
-				Vector<SharedPtr<GUIObject>>& AccessObjectInstances();
-				const GUIObjectID& GetHoveredObjectID() const { return _hoveredObjectID; }
-				const GUIObjectID& GetPressedObjectID() const { return _pressedObjectID; }
-
-			private:
-				void UpdateObject(const GUIObjectUpdateContext& objectUpdateContext, GUIObject& guiObject);
-				void UpdatePressedObject(const GUIObjectUpdateContext& objectUpdateContext);
-
-			private:
-				Vector<SharedPtr<GUIObjectTemplate>> _objectTemplates;
-
-			private:
-				uint64 _nextObjectRawID;
-				Vector<SharedPtr<GUIObject>> _objectInstances;
-			
-			private:
-				GUIObjectID _hoveredObjectID;
-				GUIObjectID _pressedObjectID;
-
-			private:
-			} _objectManager;
+			static void InputSystem(const Vector<GUIEntity>& entities);
+			static void RenderSystem(const Vector<GUIEntity>& entities, Rendering::GraphicsDevice& graphicsDevice);
 		};
 	}
 }

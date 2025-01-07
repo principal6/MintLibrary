@@ -5,7 +5,8 @@
 #define _MINT_GUI_ALL_HPPS_H_
 
 
-#include <MintGUI/Include/GUIObject.hpp>
+#include <MintGUI/Include/GUIComponents.hpp>
+#include <MintGUI/Include/GUISystem.hpp>
 
 
 #endif // !_MINT_GUI_ALL_HPPS_H_

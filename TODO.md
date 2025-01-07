@@ -3,12 +3,12 @@
 ## GUI 개편
 컨트롤 배치 등 꾸미는 쪽은 Script 이용해서 Hot Reload 가능하면 좋을 듯!
 ```cpp
-void OnClicked(GUIObject& object)
+void OnClicked(GUIEntity& object)
 {
 
 }
 
-void OnDragEnd(GUIObject& object)
+void OnDragEnd(GUIEntity& object)
 {
 
 }
@@ -17,7 +17,7 @@ void TestGUI(GraphicsDevice& graphicsDevice)
 {
     GUIFactory guiFactory;
     {
-        GUIObjectTemplate guiObjectTemplate;
+        GUIEntityTemplate guiObjectTemplate;
         SharedPtr<GUIShapeComponent> guiShapeComponent = guiFactory.CreateComponent<GUIShapeComponent>();
         SharedPtr<Shape2D> defaultShape;
         SharedPtr<Shape2D> pressedShape;
@@ -40,7 +40,7 @@ void TestGUI(GraphicsDevice& graphicsDevice)
     }
     
     GUIContext guiContext( graphicsDevice );
-    SharedPtr<GUIObject> guiObject = guiFactory.CreateObject("TestObjectTemplate");
+    SharedPtr<GUIEntity> guiObject = guiFactory.CreateObject("TestObjectTemplate");
     guiObject->AddCallback(GUICallback::OnClicked, OnClicked);
     guiObject->AddCallback(GUICallback::OnDragEnd, OnDragEnd);
 

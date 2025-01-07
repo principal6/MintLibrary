@@ -12,6 +12,7 @@ namespace mint
 	App::App(const WindowCreationDesc& windowCreationDesc, bool useMSAA)
 		: _window{ MINT_NEW(Window) }
 		, _objectPool{ MINT_NEW(ObjectPool) }
+		, _guiEntityPool{ MINT_NEW(GUI::GUIEntityPool) }
 		, _frameNumber{ 0 }
 	{
 		if (_window->Create(windowCreationDesc) == false)
@@ -28,7 +29,6 @@ namespace mint
 		}
 
 		_objectRenderer.Assign(MINT_NEW(ObjectRenderer, *_graphicsDevice));
-		_guiSystem.Assign(MINT_NEW(GUI::GUISystem, *_graphicsDevice));
 	}
 
 	App::~App()
@@ -47,7 +47,8 @@ namespace mint
 		if (_window->IsRunning())
 		{
 			DeltaTimer::GetInstance().ComputeDeltaTime(_frameNumber);
-			_guiSystem->Update();
+
+			GUI::GUISystem::InputSystem(_guiEntityPool->GetEntities());
 			return true;
 		}
 		return false;
@@ -62,7 +63,7 @@ namespace mint
 	{
 		_objectRenderer->Render(*_objectPool);
 		
-		_guiSystem->Render();
+		GUI::GUISystem::RenderSystem(_guiEntityPool->GetEntities(), *_graphicsDevice);
 
 		_graphicsDevice->EndRendering();
 	}
@@ -82,8 +83,8 @@ namespace mint
 		return *_objectPool;
 	}
 
-	GUI::GUISystem& App::GetGUISystem()
+	GUI::GUIEntityPool& App::GetGUIEntityPool()
 	{
-		return *_guiSystem;
+		return *_guiEntityPool;
 	}
 }

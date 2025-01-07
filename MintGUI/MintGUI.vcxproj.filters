@@ -15,13 +15,16 @@
     <ClInclude Include="Include\AllHeaders.h">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="Include\GUIObject.h">
+    <ClInclude Include="Include\GUIComponents.h">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="Include\GUIObject.hpp">
+    <ClInclude Include="Include\GUIComponents.hpp">
       <Filter>Include</Filter>
     </ClInclude>
     <ClInclude Include="Include\AllHpps.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\GUISystem.hpp">
       <Filter>Include</Filter>
     </ClInclude>
   </ItemGroup>
@@ -30,9 +33,6 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\_UnityBuild.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\GUIObject.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
