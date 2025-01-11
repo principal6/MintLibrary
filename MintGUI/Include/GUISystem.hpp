@@ -13,7 +13,7 @@ namespace mint
 	namespace GUI
 	{
 		template<typename ComponentType>
-		static void GUISystem::AttachComponent(const GUIEntity& entity, ComponentType&& component)
+		void GUISystem::AttachComponent(const GUIEntity& entity, ComponentType&& component)
 		{
 			return GUIComponentPool<ComponentType>::GetInstance().AddComponentTo(entity, std::move(component));
 		}

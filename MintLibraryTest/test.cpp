@@ -256,15 +256,15 @@ void RunSplineTestWindow()
 
 	mint::App app{ windowCreationDesc , true };
 
-	GUIEntityPool& guiEntityPool = app.GetGUIEntityPool();
-	GUIEntity guiControlPointEntity = guiEntityPool.CreateEntity();
+	GUISystem& guiSystem = app.GetGUISystem();
+	GUIEntity guiControlPointEntity = guiSystem.CreateEntity();
 	{
 		GUITransform2DComponent transform2DComponent;
 		transform2DComponent._transform2D._translation = Float2(60, 40);
-		GUISystem::AttachComponent(guiControlPointEntity, std::move(transform2DComponent));
+		guiSystem.AttachComponent(guiControlPointEntity, std::move(transform2DComponent));
 		
-		GUISystem::AttachComponent(guiControlPointEntity, GUIInteractionStateComponent());
-		GUISystem::AttachComponent(guiControlPointEntity, GUIDraggableComponent());
+		guiSystem.AttachComponent(guiControlPointEntity, GUIInteractionStateComponent());
+		guiSystem.AttachComponent(guiControlPointEntity, GUIDraggableComponent());
 		
 		GUIShapeComponent shapeComponent;
 		Shape defaultShape;
@@ -276,17 +276,17 @@ void RunSplineTestWindow()
 		shapeComponent._shapes[static_cast<uint32>(GUIInteractionState::None)] = defaultShape;
 		shapeComponent._shapes[static_cast<uint32>(GUIInteractionState::Hovered)] = hoveredShape;
 		shapeComponent._shapes[static_cast<uint32>(GUIInteractionState::Pressed)] = pressedShape;
-		GUISystem::AttachComponent(guiControlPointEntity, std::move(shapeComponent));
+		guiSystem.AttachComponent(guiControlPointEntity, std::move(shapeComponent));
 
 		GUICollisionShape2DComponent collisionShape2DComponent;
 		collisionShape2DComponent._collisionShape2D = MakeShared<Physics::CollisionShape2D>(Physics::ConvexCollisionShape2D::MakeFromRenderingShape(Float2::kZero, defaultShape));
-		GUISystem::AttachComponent(guiControlPointEntity, std::move(collisionShape2DComponent));
+		guiSystem.AttachComponent(guiControlPointEntity, std::move(collisionShape2DComponent));
 		
 		{
 			GUITextComponent textComponent;
 			textComponent._offset = Float2(0, 16);
 			textComponent._text = L"CP";
-			GUISystem::AttachComponent(guiControlPointEntity, std::move(textComponent));
+			guiSystem.AttachComponent(guiControlPointEntity, std::move(textComponent));
 		}
 
 		//guiControlPointObjectTemplateID = guiSystem.RegisterTemplate(u8"CP", std::move(guiObjectTemplate));
@@ -528,7 +528,7 @@ bool Run3DTestWindow()
 		transform._translation._z = -1.0f;
 	}
 
-	GUIEntityPool& guiEntityPool = app.GetGUIEntityPool();
+	GUISystem& guiSystem = app.GetGUISystem();
 	//GUITemplateEntity roundButton0TemplateID;
 	//{
 	//	GUIEntityTemplate guiObjectTemplate;

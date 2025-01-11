@@ -18,7 +18,7 @@ namespace mint
 
 	namespace GUI
 	{
-		class GUIEntityPool;
+		class GUISystem;
 	}
 }
 
@@ -39,14 +39,14 @@ namespace mint
 		Window& GetWindow();
 		Rendering::GraphicsDevice& GetGraphicsDevice();
 		ObjectPool& GetObjectPool();
-		GUI::GUIEntityPool& GetGUIEntityPool();
+		GUI::GUISystem& GetGUISystem();
 
 	protected:
 		OwnPtr<Window> _window;
 		OwnPtr<Rendering::GraphicsDevice> _graphicsDevice;
 		OwnPtr<ObjectPool> _objectPool;
 		OwnPtr<ObjectRenderer> _objectRenderer;
-		OwnPtr<GUI::GUIEntityPool> _guiEntityPool;
+		OwnPtr<GUI::GUISystem> _guiSystem;
 		uint64 _frameNumber;
 	};
 }

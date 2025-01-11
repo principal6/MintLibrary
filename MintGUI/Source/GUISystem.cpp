@@ -15,19 +15,19 @@ namespace mint
 {
 	namespace GUI
 	{
-#pragma region GUIEntityPool
-		GUIEntityPool::GUIEntityPool()
+#pragma region GUISystem
+		GUISystem::GUISystem()
 			: _nextEntityID{ 0 }
 		{
 			__noop;
 		}
 
-		GUIEntityPool::~GUIEntityPool()
+		GUISystem::~GUISystem()
 		{
 			__noop;
 		}
 
-		GUIEntity GUIEntityPool::CreateEntity()
+		GUIEntity GUISystem::CreateEntity()
 		{
 			GUIEntity entity;
 			entity.Assign(_nextEntityID);
@@ -36,13 +36,16 @@ namespace mint
 			return entity;
 		}
 
-		const Vector<GUIEntity>& GUIEntityPool::GetEntities() const
+		void GUISystem::Update()
 		{
-			return _entities;
+			InputSystem(_entities);
 		}
-#pragma endregion
 
-#pragma region GUISystem
+		void GUISystem::Render(Rendering::GraphicsDevice& graphicsDevice)
+		{
+			RenderSystem(_entities, graphicsDevice);
+		}
+
 		void GUISystem::InputSystem(const Vector<GUIEntity>& entities)
 		{
 			static Float2 sMouseLeftButtonPressedPosition;
@@ -59,9 +62,9 @@ namespace mint
 			const bool isLeftMouseButtonReleasedOrUp = leftMouseButtonState == MouseButtonState::Released || leftMouseButtonState == MouseButtonState::Up;
 			for (const GUIEntity& entity : entities)
 			{
-				GUITransform2DComponent* const transform2DComponent = GUISystem::GetComponent<GUITransform2DComponent>(entity);
-				GUICollisionShape2DComponent* const collisionShape2DComponent = GUISystem::GetComponent<GUICollisionShape2DComponent>(entity);
-				GUIInteractionStateComponent* const interactionStateComponent = GUISystem::GetComponent<GUIInteractionStateComponent>(entity);
+				GUITransform2DComponent* const transform2DComponent = GetComponent<GUITransform2DComponent>(entity);
+				GUICollisionShape2DComponent* const collisionShape2DComponent = GetComponent<GUICollisionShape2DComponent>(entity);
+				GUIInteractionStateComponent* const interactionStateComponent = GetComponent<GUIInteractionStateComponent>(entity);
 
 				if (isLeftMouseButtonReleasedOrUp)
 				{
@@ -89,7 +92,7 @@ namespace mint
 
 				if (interactionStateComponent->_interactionState == GUIInteractionState::Pressed)
 				{
-					GUIDraggableComponent* const draggableComponent = GUISystem::GetComponent<GUIDraggableComponent>(entity);
+					GUIDraggableComponent* const draggableComponent = GetComponent<GUIDraggableComponent>(entity);
 					if (draggableComponent != nullptr)
 					{
 						if (leftMouseButtonState == MouseButtonState::Pressed)
@@ -115,10 +118,10 @@ namespace mint
 			Rendering::ShapeRenderer& shapeRenderer = graphicsDevice.GetShapeRenderer();
 			for (const GUIEntity& entity : entities)
 			{
-				GUITransform2DComponent* const transform2DComponent = GUISystem::GetComponent<GUITransform2DComponent>(entity);
-				GUIInteractionStateComponent* const interactionStateComponent = GUISystem::GetComponent<GUIInteractionStateComponent>(entity);
+				GUITransform2DComponent* const transform2DComponent = GetComponent<GUITransform2DComponent>(entity);
+				GUIInteractionStateComponent* const interactionStateComponent = GetComponent<GUIInteractionStateComponent>(entity);
 
-				GUITextComponent* const textComponent = GUISystem::GetComponent<GUITextComponent>(entity);
+				GUITextComponent* const textComponent = GetComponent<GUITextComponent>(entity);
 				if (textComponent != nullptr)
 				{
 					FontRenderingOption fontRenderingOption;
@@ -127,7 +130,7 @@ namespace mint
 					shapeRenderer.DrawDynamicText(textComponent->_text.CString(), transform2DComponent->_transform2D._translation + textComponent->_offset, fontRenderingOption);
 				}
 
-				GUIShapeComponent* const shapeComponent = GUISystem::GetComponent<GUIShapeComponent>(entity);
+				GUIShapeComponent* const shapeComponent = GetComponent<GUIShapeComponent>(entity);
 				if (shapeComponent != nullptr)
 				{
 					uint32 shapeIndex = static_cast<uint32>(interactionStateComponent->_interactionState);
