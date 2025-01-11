@@ -1,5 +1,4 @@
 ﻿# TODO
-## GUI - ComponentPool Iterate 할 수 있게 Registry 구현하기
 ## GUI - Template 기능 부활시키기
 ## ShapeRenderer 에 Scale 기능 넣기!
 ## GUI 개편

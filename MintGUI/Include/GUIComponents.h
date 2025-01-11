@@ -71,17 +71,30 @@ namespace mint
 			Float2 _localPressedPosition;
 		};
 
+		// type-erasure for GUIComponentPool
+		class IGUIComponentPool abstract
+		{
+		public:
+			IGUIComponentPool() { __noop; }
+			virtual ~IGUIComponentPool() { __noop; }
+
+		public:
+			virtual bool HasComponent(const GUIEntity& entity) const = 0;
+			virtual void CopyComponent(const GUIEntity& sourceEntity, const GUIEntity& targetEntity) = 0;
+		};
+
 		template<typename ComponentType>
-		class GUIComponentPool
+		class GUIComponentPool final : public IGUIComponentPool
 		{
 		public:
 			GUIComponentPool();
-			~GUIComponentPool();
+			virtual ~GUIComponentPool();
 
 		public:
 			static GUIComponentPool& GetInstance();
 			void AddComponentTo(const GUIEntity& entity, ComponentType&& component);
-			bool HasComponent(const GUIEntity& entity) const;
+			virtual bool HasComponent(const GUIEntity& entity) const override final;
+			virtual void CopyComponent(const GUIEntity& sourceEntity, const GUIEntity& targetEntity) override final;
 			ComponentType* GetComponent(const GUIEntity& entity);
 
 		private:

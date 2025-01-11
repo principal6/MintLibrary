@@ -19,12 +19,22 @@ namespace mint
 		GUISystem::GUISystem()
 			: _nextEntityID{ 0 }
 		{
-			__noop;
+			RegisterComponentPool(GUIComponentPool<GUITransform2DComponent>::GetInstance());
+			RegisterComponentPool(GUIComponentPool<GUIInteractionStateComponent>::GetInstance());
+			RegisterComponentPool(GUIComponentPool<GUICollisionShape2DComponent>::GetInstance());
+			RegisterComponentPool(GUIComponentPool<GUITextComponent>::GetInstance());
+			RegisterComponentPool(GUIComponentPool<GUIShapeComponent>::GetInstance());
+			RegisterComponentPool(GUIComponentPool<GUIDraggableComponent>::GetInstance());
 		}
 
 		GUISystem::~GUISystem()
 		{
 			__noop;
+		}
+
+		void GUISystem::RegisterComponentPool(IGUIComponentPool& componentPool)
+		{
+			_componentPools.PushBack(&componentPool);
 		}
 
 		GUIEntity GUISystem::CreateEntity()
@@ -34,6 +44,16 @@ namespace mint
 			++_nextEntityID;
 			_entities.PushBack(entity);
 			return entity;
+		}
+
+		GUIEntity GUISystem::CloneEntity(const GUIEntity& sourceEntity)
+		{
+			GUIEntity targetEntity = CreateEntity();
+			for (IGUIComponentPool* const componentPool : _componentPools)
+			{
+				componentPool->CopyComponent(sourceEntity, targetEntity);
+			}
+			return targetEntity;
 		}
 
 		void GUISystem::Update()

@@ -35,21 +35,41 @@ namespace mint
 		void GUIComponentPool<ComponentType>::AddComponentTo(const GUIEntity& entity, ComponentType&& component)
 		{
 			_entities.PushBack(entity);
-			QuickSort(_entities, ComparatorAscending<GUIEntity>());
 			_components.PushBack(std::move(component));
 		}
 
 		template<typename ComponentType>
 		bool GUIComponentPool<ComponentType>::HasComponent(const GUIEntity& entity) const
 		{
-			return _entities.Find(entity);
+			for (const GUIEntity& iter : _entities)
+			{
+				if (iter == entity)
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+
+		template<typename ComponentType>
+		void GUIComponentPool<ComponentType>::CopyComponent(const GUIEntity& sourceEntity, const GUIEntity& targetEntity)
+		{
+			const ComponentType* const sourceComponent = GetComponent(sourceEntity);
+			AddComponentTo(targetEntity, ComponentType(*sourceComponent));
 		}
 
 		template<typename ComponentType>
 		ComponentType* GUIComponentPool<ComponentType>::GetComponent(const GUIEntity& entity)
 		{
-			const int32 index = mint::BinarySearch(_entities, entity);
-			return (index >= 0 ? &_components.At(index) : nullptr);
+			const uint32 entityCount = _entities.Size();
+			for (uint32 i = 0; i < entityCount; ++i)
+			{
+				if (_entities[i] == entity)
+				{
+					return &_components.At(i);
+				}
+			}
+			return nullptr;
 		}
 #pragma endregion
 	}
