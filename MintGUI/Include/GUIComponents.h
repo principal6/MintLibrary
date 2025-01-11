@@ -10,6 +10,7 @@
 #include <MintContainer/Include/String.h>
 #include <MintContainer/Include/OwnPtr.h>
 #include <MintContainer/Include/SharedPtr.h>
+#include <MintContainer/Include/HashMap.h>
 #include <MintMath/Include/Transform.h>
 #include <MintReflection/Include/Reflection.h>
 
@@ -24,13 +25,22 @@ namespace mint
 	namespace GUI
 	{
 		class GUIEntity;
+		class GUISystem;
 	}
 }
 
 namespace mint
 {
+	template <>
+	struct Hasher<GUI::GUIEntity> final
+	{
+		uint64 operator()(const GUI::GUIEntity& value) const noexcept;
+	};
+
 	namespace GUI
 	{
+		class GUIEntity : public ID32 { friend GUISystem; };
+
 		enum class GUIInteractionState : uint8
 		{
 			None,
@@ -98,7 +108,8 @@ namespace mint
 			ComponentType* GetComponent(const GUIEntity& entity);
 
 		private:
-			Vector<GUIEntity> _entities;
+			// sparse set
+			HashMap<GUIEntity, uint32> _entities;
 			Vector<ComponentType> _components;
 		};
 	}

@@ -19,19 +19,12 @@ namespace mint
 	{
 		class GraphicsDevice;
 	}
-
-	namespace GUI
-	{
-		class GUISystem;
-	}
 }
 
 namespace mint
 {
 	namespace GUI
 	{
-		class GUIEntity : public ID32 { friend GUISystem; };
-
 		class GUISystem
 		{
 		public:
