@@ -38,10 +38,13 @@ namespace mint
 			GUIEntity CreateEntity(const GUIEntityTemplate& entityTemplate);
 			GUIEntity CloneEntity(const GUIEntity& sourceEntity);
 			
+			GUIEntityTemplate CreateTemplate();
 			GUIEntityTemplate CreateTemplate(const GUIEntity& sourceEntity);
 
 			template<typename ComponentType>
 			void AttachComponent(const GUIEntity& entity, ComponentType&& component);
+			template<typename ComponentType>
+			void AttachComponent(const GUIEntityTemplate& entityTemplate, ComponentType&& component);
 			template<typename ComponentType>
 			ComponentType* GetComponent(const GUIEntity& entity);
 

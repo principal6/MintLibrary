@@ -57,7 +57,7 @@ namespace mint
 		
 		GUIEntity GUISystem::CreateEntity(const GUIEntityTemplate& entityTemplate)
 		{
-			GUIEntity entity = CreateEntity();
+			const GUIEntity entity = CreateEntity();
 			for (IGUIComponentPool* const componentPool : _componentPools)
 			{
 				componentPool->CopyComponentFromTemplate(entityTemplate, entity);
@@ -67,7 +67,7 @@ namespace mint
 
 		GUIEntity GUISystem::CloneEntity(const GUIEntity& sourceEntity)
 		{
-			GUIEntity targetEntity = CreateEntity();
+			const GUIEntity targetEntity = CreateEntity();
 			for (IGUIComponentPool* const componentPool : _componentPools)
 			{
 				componentPool->CopyComponent(sourceEntity, targetEntity);
@@ -75,13 +75,18 @@ namespace mint
 			return targetEntity;
 		}
 
-		GUIEntityTemplate GUISystem::CreateTemplate(const GUIEntity& sourceEntity)
+		GUIEntityTemplate GUISystem::CreateTemplate()
 		{
 			GUIEntityTemplate entityTemplate;
 			entityTemplate.Assign(_nextEntityTemplateID);
 			++_nextEntityTemplateID;
 			_entityTemplates.PushBack(entityTemplate);
+			return entityTemplate;
+		}
 
+		GUIEntityTemplate GUISystem::CreateTemplate(const GUIEntity& sourceEntity)
+		{
+			const GUIEntityTemplate entityTemplate = CreateTemplate();
 			for (IGUIComponentPool* const componentPool : _componentPools)
 			{
 				componentPool->CopyComponentToTemplate(sourceEntity, entityTemplate);
