@@ -34,6 +34,15 @@ namespace mint
 
 		void GUISystem::RegisterComponentPool(IGUIComponentPool& componentPool)
 		{
+			for (const auto& iter : _componentPools)
+			{
+				if (iter == &componentPool)
+				{
+					MINT_ASSERT(false, "This component pool is already registered!!!");
+					return;
+				}
+			}
+
 			_componentPools.PushBack(&componentPool);
 		}
 
