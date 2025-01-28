@@ -284,7 +284,7 @@ void RunSplineTestWindow()
 		
 		GUITextComponent textComponent;
 		textComponent._offset = Float2(0, 16);
-		textComponent._text = L"CP_Template";
+		textComponent._text = L"CP";
 		guiSystem.AttachComponent(guiControlPointEntityTemplateID, std::move(textComponent));
 	}
 	
