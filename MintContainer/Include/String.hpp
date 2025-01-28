@@ -182,6 +182,9 @@ namespace mint
 		const uint32 length = StringUtil::Length(rawString);
 		if (length <= Short::kShortStringCapacity)
 		{
+			// Needs to Release if this is a LongString
+			Release();
+
 			_short._size = length;
 			__CopyString(_short._shortString, rawString, length);
 			return *this;
