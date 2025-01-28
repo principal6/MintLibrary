@@ -258,6 +258,7 @@ void RunSplineTestWindow()
 
 	GUISystem& guiSystem = app.GetGUISystem();
 	GUIEntity guiControlPointEntity0 = guiSystem.CreateEntity();
+	GUIEntityTemplate guiControlPointEntityTemplateID;
 	{
 		GUITransform2DComponent transform2DComponent;
 		transform2DComponent._transform2D._translation = Float2(60, 40);
@@ -289,56 +290,29 @@ void RunSplineTestWindow()
 			guiSystem.AttachComponent(guiControlPointEntity0, std::move(textComponent));
 		}
 
-		//guiControlPointObjectTemplateID = guiSystem.RegisterTemplate(u8"CP", std::move(guiObjectTemplate));
+		guiControlPointEntityTemplateID = guiSystem.CreateTemplate(guiControlPointEntity0);
 	}
 	
 	GUIEntity guiControlPointEntity1 = guiSystem.CloneEntity(guiControlPointEntity0);
 	guiSystem.GetComponent<GUITransform2DComponent>(guiControlPointEntity1)->_transform2D._translation._x = 200;
 	guiSystem.GetComponent<GUITextComponent>(guiControlPointEntity1)->_text = L"CP1";
 
-	//GUITemplateEntity guiControlPointObjectTemplateID;
-	//{
-	//	GUIEntityTemplate guiObjectTemplate;
-	//	{
-	//		SharedPtr<GUIShapeComponent> guiShapeComponent = MakeShared<GUIShapeComponent>();
-	//		Shape defaultShape;
-	//		Shape hoveredShape;
-	//		Shape pressedShape;
-	//		ShapeGenerator::GenerateCircle(8.0f, 16, ByteColor(255, 0, 0), defaultShape);
-	//		ShapeGenerator::GenerateCircle(8.0f, 16, ByteColor(255, 64, 32), hoveredShape);
-	//		ShapeGenerator::GenerateCircle(8.0f, 16, ByteColor(255, 128, 64), pressedShape);
-	//		guiShapeComponent->SetShape(GUIInteractionState::None, defaultShape);
-	//		guiShapeComponent->SetShape(GUIInteractionState::Hovered, hoveredShape);
-	//		guiShapeComponent->SetShape(GUIInteractionState::Pressed, pressedShape);
-	//		guiObjectTemplate.SetCollisionShape(Physics::ConvexCollisionShape2D::MakeFromRenderingShape(Float2::kZero, defaultShape));
-	//		guiObjectTemplate.AddComponent(guiShapeComponent);
-	//	}
-	//	{
-	//		SharedPtr<GUITextComponent> guiTextComponent = MakeShared<GUITextComponent>();
-	//		guiTextComponent->SetOffset(Float2(0, 16));
-	//		guiTextComponent->SetText(L"CP");
-	//		guiObjectTemplate.AddComponent(guiTextComponent);
-	//
-	//		guiObjectTemplate.AddComponent(MakeShared<GUIDraggableComponent>());
-	//	}
-	//	guiControlPointObjectTemplateID = guiSystem.RegisterTemplate(u8"CP", std::move(guiObjectTemplate));
-	//}
-	//const GUIEntity guiControlPointObjectID0 = guiSystem.AddObject(guiControlPointObjectTemplateID);
-	//GUIEntity& guiControlPointObject0 = guiSystem.AccessObject(guiControlPointObjectID0);
-	//guiControlPointObject0.SetPosition(Float2(80, 160));
-	//guiControlPointObject0.GetComponent<GUITextComponent>()->SetText(L"CP0");
-	//const GUIEntity guiControlPointObjectID1 = guiSystem.AddObject(guiControlPointObjectTemplateID);
-	//GUIEntity& guiControlPointObject1 = guiSystem.AccessObject(guiControlPointObjectID1);
-	//guiControlPointObject1.SetPosition(Float2(160, 80));
-	//guiControlPointObject1.GetComponent<GUITextComponent>()->SetText(L"CP1");
-	//const GUIEntity guiControlPointObjectID2 = guiSystem.AddObject(guiControlPointObjectTemplateID);
-	//GUIEntity& guiControlPointObject2 = guiSystem.AccessObject(guiControlPointObjectID2);
-	//guiControlPointObject2.SetPosition(Float2(240, 80));
-	//guiControlPointObject2.GetComponent<GUITextComponent>()->SetText(L"CP2");
-	//const GUIEntity guiControlPointObjectID3 = guiSystem.AddObject(guiControlPointObjectTemplateID);
-	//GUIEntity& guiControlPointObject3 = guiSystem.AccessObject(guiControlPointObjectID3);
-	//guiControlPointObject3.SetPosition(Float2(320, 160));
-	//guiControlPointObject3.GetComponent<GUITextComponent>()->SetText(L"CP3");
+	const GUIEntity guiControlPointEntity2 = guiSystem.CreateEntity(guiControlPointEntityTemplateID);
+	guiSystem.GetComponent<GUITransform2DComponent>(guiControlPointEntity2)->_transform2D._translation._x = 80;
+	guiSystem.GetComponent<GUITransform2DComponent>(guiControlPointEntity2)->_transform2D._translation._y = 160;
+	guiSystem.GetComponent<GUITextComponent>(guiControlPointEntity2)->_text = L"CP2";
+	const GUIEntity guiControlPointEntity3 = guiSystem.CreateEntity(guiControlPointEntityTemplateID);
+	guiSystem.GetComponent<GUITransform2DComponent>(guiControlPointEntity3)->_transform2D._translation._x = 160;
+	guiSystem.GetComponent<GUITransform2DComponent>(guiControlPointEntity3)->_transform2D._translation._y = 80;
+	guiSystem.GetComponent<GUITextComponent>(guiControlPointEntity3)->_text = L"CP3";
+	const GUIEntity guiControlPointEntity4 = guiSystem.CreateEntity(guiControlPointEntityTemplateID);
+	guiSystem.GetComponent<GUITransform2DComponent>(guiControlPointEntity4)->_transform2D._translation._x = 240;
+	guiSystem.GetComponent<GUITransform2DComponent>(guiControlPointEntity4)->_transform2D._translation._y = 80;
+	guiSystem.GetComponent<GUITextComponent>(guiControlPointEntity4)->_text = L"CP4";
+	const GUIEntity guiControlPointEntity5 = guiSystem.CreateEntity(guiControlPointEntityTemplateID);
+	guiSystem.GetComponent<GUITransform2DComponent>(guiControlPointEntity5)->_transform2D._translation._x = 320;
+	guiSystem.GetComponent<GUITransform2DComponent>(guiControlPointEntity5)->_transform2D._translation._y = 160;
+	guiSystem.GetComponent<GUITextComponent>(guiControlPointEntity5)->_text = L"CP5";
 
 	GraphicsDevice& graphicsDevice = app.GetGraphicsDevice();
 	const InputContext& inputContext = InputContext::GetInstance();
@@ -533,7 +507,7 @@ bool Run3DTestWindow()
 	}
 
 	GUISystem& guiSystem = app.GetGUISystem();
-	//GUITemplateEntity roundButton0TemplateID;
+	//GUIEntityTemplate roundButton0TemplateID;
 	//{
 	//	GUIEntityTemplate guiObjectTemplate;
 	//	{

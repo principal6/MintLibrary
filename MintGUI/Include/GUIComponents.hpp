@@ -17,6 +17,11 @@ namespace mint
 		return ComputeHash(value.Value());
 	}
 
+	inline uint64 Hasher<GUI::GUIEntityTemplate>::operator()(const GUI::GUIEntityTemplate& value) const noexcept
+	{
+		return ComputeHash(value.Value());
+	}
+
 	namespace GUI
 	{
 #pragma region GUIComponentPool
@@ -41,13 +46,20 @@ namespace mint
 		void GUIComponentPool<ComponentType>::AddComponentTo(const GUIEntity& entity, ComponentType&& component)
 		{
 			_components.PushBack(std::move(component));
-			_entities.Insert(entity, _components.Size() - 1);
+			_entityToComponentMap.Insert(entity, _components.Size() - 1);
+		}
+		
+		template<typename ComponentType>
+		void GUIComponentPool<ComponentType>::AddComponentToTemplate(const GUIEntityTemplate& targetEntityTemplate, ComponentType&& component)
+		{
+			_templateComponents.PushBack(std::move(component));
+			_entityTemplateToTemplateComponentMap.Insert(targetEntityTemplate, _templateComponents.Size() - 1);
 		}
 
 		template<typename ComponentType>
 		bool GUIComponentPool<ComponentType>::HasComponent(const GUIEntity& entity) const
 		{
-			return _entities.Find(entity).IsValid();
+			return _entityToComponentMap.Find(entity).IsValid();
 		}
 
 		template<typename ComponentType>
@@ -56,15 +68,42 @@ namespace mint
 			const ComponentType* const sourceComponent = GetComponent(sourceEntity);
 			AddComponentTo(targetEntity, ComponentType(*sourceComponent));
 		}
+		
+		template<typename ComponentType>
+		void GUIComponentPool<ComponentType>::CopyComponentToTemplate(const GUIEntity& sourceEntity, const GUIEntityTemplate& targetEntityTemplate)
+		{
+			const ComponentType* const sourceComponent = GetComponent(sourceEntity);
+			AddComponentToTemplate(targetEntityTemplate, ComponentType(*sourceComponent));
+		}
+		
+		template<typename ComponentType>
+		void GUIComponentPool<ComponentType>::CopyComponentFromTemplate(const GUIEntityTemplate& sourceEntityTemplate, const GUIEntity& targetEntity)
+		{
+			const ComponentType* const sourceComponent = GetTemplateComponent(sourceEntityTemplate);
+			AddComponentTo(targetEntity, ComponentType(*sourceComponent));
+		}
 
 		template<typename ComponentType>
 		ComponentType* GUIComponentPool<ComponentType>::GetComponent(const GUIEntity& entity)
 		{
-			for (auto iter = _entities.begin(); iter != _entities.end(); ++iter)
+			for (auto iter = _entityToComponentMap.begin(); iter != _entityToComponentMap.end(); ++iter)
 			{
 				if (iter.GetKey() == entity)
 				{
 					return &_components[iter.GetValue()];
+				}
+			}
+			return nullptr;
+		}
+
+		template<typename ComponentType>
+		ComponentType* GUIComponentPool<ComponentType>::GetTemplateComponent(const GUIEntityTemplate& entityTemplate)
+		{
+			for (auto iter = _entityTemplateToTemplateComponentMap.begin(); iter != _entityTemplateToTemplateComponentMap.end(); ++iter)
+			{
+				if (iter.GetKey() == entityTemplate)
+				{
+					return &_templateComponents[iter.GetValue()];
 				}
 			}
 			return nullptr;

@@ -35,7 +35,10 @@ namespace mint
 			void RegisterComponentPool(IGUIComponentPool& componentPool);
 
 			GUIEntity CreateEntity();
+			GUIEntity CreateEntity(const GUIEntityTemplate& entityTemplate);
 			GUIEntity CloneEntity(const GUIEntity& sourceEntity);
+			
+			GUIEntityTemplate CreateTemplate(const GUIEntity& sourceEntity);
 
 			template<typename ComponentType>
 			void AttachComponent(const GUIEntity& entity, ComponentType&& component);
@@ -52,6 +55,10 @@ namespace mint
 		private:
 			uint32 _nextEntityID;
 			Vector<GUIEntity> _entities;
+
+		private:
+			uint16 _nextEntityTemplateID;
+			Vector<GUIEntityTemplate> _entityTemplates;
 
 		private:
 			Vector<IGUIComponentPool*> _componentPools;

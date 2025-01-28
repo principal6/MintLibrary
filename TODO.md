@@ -1,5 +1,7 @@
 ﻿# TODO
 ## GUI - Template 기능 부활시키기
+## SparseSet 클래스 만들기!!!
+## GUI - TemplateRegistry 싱글톤 클래스로 분리하기 => 그래야 Register 안 하고 쓰는 경우를 검출할 수 있다.
 ## ShapeRenderer 에 Scale 기능 넣기!
 ## GUI 개편
 컨트롤 배치 등 꾸미는 쪽은 Script 이용해서 Hot Reload 가능하면 좋을 듯!
