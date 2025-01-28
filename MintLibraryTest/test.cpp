@@ -282,12 +282,10 @@ void RunSplineTestWindow()
 		collisionShape2DComponent._collisionShape2D = MakeShared<Physics::CollisionShape2D>(Physics::ConvexCollisionShape2D::MakeFromRenderingShape(Float2::kZero, defaultShape));
 		guiSystem.AttachComponent(guiControlPointEntityTemplateID, std::move(collisionShape2DComponent));
 		
-		{
-			GUITextComponent textComponent;
-			textComponent._offset = Float2(0, 16);
-			textComponent._text = L"CP_Template";
-			guiSystem.AttachComponent(guiControlPointEntityTemplateID, std::move(textComponent));
-		}
+		GUITextComponent textComponent;
+		textComponent._offset = Float2(0, 16);
+		textComponent._text = L"CP_Template";
+		guiSystem.AttachComponent(guiControlPointEntityTemplateID, std::move(textComponent));
 	}
 	
 	const GUIEntity guiControlPointEntity0 = guiSystem.CreateEntity(guiControlPointEntityTemplateID);
