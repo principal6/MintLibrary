@@ -132,6 +132,12 @@
     <ClInclude Include="Include\SharedPtr.hpp">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="Include\ContiguousHashMap.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\ContiguousHashMap.hpp">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Include\Array.inl">

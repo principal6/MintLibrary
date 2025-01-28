@@ -10,7 +10,7 @@
 #include <MintContainer/Include/String.h>
 #include <MintContainer/Include/OwnPtr.h>
 #include <MintContainer/Include/SharedPtr.h>
-#include <MintContainer/Include/HashMap.h>
+#include <MintContainer/Include/ContiguousHashMap.h>
 #include <MintMath/Include/Transform.h>
 #include <MintReflection/Include/Reflection.h>
 
@@ -116,7 +116,7 @@ namespace mint
 
 		public:
 			void AddComponentTo(const GUIEntity& entity, ComponentType&& component);
-			void AddComponentToTemplate(const GUIEntityTemplate& targetEntityTemplate, ComponentType&& component);
+			void AddComponentToTemplate(const GUIEntityTemplate& entityTemplate, ComponentType&& component);
 			virtual bool HasComponent(const GUIEntity& entity) const override final;
 			virtual void CopyComponent(const GUIEntity& sourceEntity, const GUIEntity& targetEntity) override final;
 			virtual void CopyComponentToTemplate(const GUIEntity& sourceEntity, const GUIEntityTemplate& targetEntityTemplate) override final;
@@ -125,13 +125,8 @@ namespace mint
 			ComponentType* GetTemplateComponent(const GUIEntityTemplate& entityTemplate);
 
 		private:
-			// sparse set
-			HashMap<GUIEntity, uint32> _entityToComponentMap;
-			Vector<ComponentType> _components;
-
-		private:
-			HashMap<GUIEntityTemplate, uint32> _entityTemplateToTemplateComponentMap;
-			Vector<ComponentType> _templateComponents;
+			ContiguousHashMap<GUIEntity, ComponentType> _entityComponents;
+			ContiguousHashMap<GUIEntityTemplate, ComponentType> _entityTemplateComponents;
 		};
 	}
 }

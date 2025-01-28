@@ -183,6 +183,7 @@
     <ClInclude Include="Include\AllHeaders.h" />
     <ClInclude Include="Include\AllHpps.h" />
     <ClInclude Include="Include\Color.h" />
+    <ClInclude Include="Include\ContiguousHashMap.hpp" />
     <ClInclude Include="Include\Hash.h" />
     <ClInclude Include="Include\HashMap.h" />
     <ClInclude Include="Include\HashMap.hpp" />
@@ -195,6 +196,7 @@
     <ClInclude Include="Include\Queue.hpp" />
     <ClInclude Include="Include\SharedPtr.h" />
     <ClInclude Include="Include\SharedPtr.hpp" />
+    <ClInclude Include="Include\ContiguousHashMap.h" />
     <ClInclude Include="Include\StackString.h" />
     <ClInclude Include="Include\StackString.hpp" />
     <ClInclude Include="Include\StackVector.h" />
