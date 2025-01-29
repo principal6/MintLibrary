@@ -37,7 +37,7 @@ namespace mint
 	{
 		uint64 operator()(const GUI::GUIEntity& value) const noexcept;
 	};
-	
+
 	template <>
 	struct Hasher<GUI::GUIEntityTemplate> final
 	{
@@ -57,7 +57,7 @@ namespace mint
 			Focused,
 			COUNT
 		};
-		
+
 		struct GUIInteractionStateComponent
 		{
 			GUIInteractionState _interactionState;
@@ -67,7 +67,7 @@ namespace mint
 		{
 			SharedPtr<Physics::CollisionShape2D> _collisionShape2D;
 		};
-		
+
 		struct GUITransform2DComponent
 		{
 			Transform2D _transform2D;
@@ -83,7 +83,7 @@ namespace mint
 		{
 			Rendering::Shape _shapes[static_cast<uint32>(GUIInteractionState::COUNT)];
 		};
-		
+
 		struct GUIDraggableComponent
 		{
 			Float2 _localPressedPosition;
@@ -127,6 +127,28 @@ namespace mint
 		private:
 			ContiguousHashMap<GUIEntity, ComponentType> _entityComponents;
 			ContiguousHashMap<GUIEntityTemplate, ComponentType> _entityTemplateComponents;
+		};
+
+		class GUIComponentPoolRegistry
+		{
+			GUIComponentPoolRegistry();
+			GUIComponentPoolRegistry(const GUIComponentPoolRegistry& rhs) = delete;
+			GUIComponentPoolRegistry(GUIComponentPoolRegistry&& rhs) noexcept = delete;
+
+		public:
+			~GUIComponentPoolRegistry();
+			static GUIComponentPoolRegistry& GetInstance();
+
+		public:
+			void RegisterComponentPool(IGUIComponentPool& componentPool);
+			const Vector<IGUIComponentPool*>& GetComponentPools() const;
+
+		private:
+			Vector<IGUIComponentPool*> _componentPools;
+#if defined(MINT_DEBUG)
+		private:
+			static GUIComponentPoolRegistry* _sInstance;
+#endif // defined(MINT_DEBUG)
 		};
 	}
 }

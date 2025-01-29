@@ -19,31 +19,12 @@ namespace mint
 		GUISystem::GUISystem()
 			: _nextEntityID{ 0 }
 		{
-			RegisterComponentPool(GUIComponentPool<GUITransform2DComponent>::GetInstance());
-			RegisterComponentPool(GUIComponentPool<GUIInteractionStateComponent>::GetInstance());
-			RegisterComponentPool(GUIComponentPool<GUICollisionShape2DComponent>::GetInstance());
-			RegisterComponentPool(GUIComponentPool<GUITextComponent>::GetInstance());
-			RegisterComponentPool(GUIComponentPool<GUIShapeComponent>::GetInstance());
-			RegisterComponentPool(GUIComponentPool<GUIDraggableComponent>::GetInstance());
+			__noop;
 		}
 
 		GUISystem::~GUISystem()
 		{
 			__noop;
-		}
-
-		void GUISystem::RegisterComponentPool(IGUIComponentPool& componentPool)
-		{
-			for (const auto& iter : _componentPools)
-			{
-				if (iter == &componentPool)
-				{
-					MINT_ASSERT(false, "This component pool is already registered!!!");
-					return;
-				}
-			}
-
-			_componentPools.PushBack(&componentPool);
 		}
 
 		GUIEntity GUISystem::CreateEntity()
@@ -58,7 +39,8 @@ namespace mint
 		GUIEntity GUISystem::CreateEntity(const GUIEntityTemplate& entityTemplate)
 		{
 			const GUIEntity entity = CreateEntity();
-			for (IGUIComponentPool* const componentPool : _componentPools)
+			const Vector<IGUIComponentPool*>& componentPools = GUIComponentPoolRegistry::GetInstance().GetComponentPools();
+			for (IGUIComponentPool* const componentPool : componentPools)
 			{
 				componentPool->CopyComponentFromTemplate(entityTemplate, entity);
 			}
@@ -68,7 +50,8 @@ namespace mint
 		GUIEntity GUISystem::CloneEntity(const GUIEntity& sourceEntity)
 		{
 			const GUIEntity targetEntity = CreateEntity();
-			for (IGUIComponentPool* const componentPool : _componentPools)
+			const Vector<IGUIComponentPool*>& componentPools = GUIComponentPoolRegistry::GetInstance().GetComponentPools();
+			for (IGUIComponentPool* const componentPool : componentPools)
 			{
 				componentPool->CopyComponent(sourceEntity, targetEntity);
 			}
@@ -87,7 +70,8 @@ namespace mint
 		GUIEntityTemplate GUISystem::CreateTemplate(const GUIEntity& sourceEntity)
 		{
 			const GUIEntityTemplate entityTemplate = CreateTemplate();
-			for (IGUIComponentPool* const componentPool : _componentPools)
+			const Vector<IGUIComponentPool*>& componentPools = GUIComponentPoolRegistry::GetInstance().GetComponentPools();
+			for (IGUIComponentPool* const componentPool : componentPools)
 			{
 				componentPool->CopyComponentToTemplate(sourceEntity, entityTemplate);
 			}

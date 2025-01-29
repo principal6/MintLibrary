@@ -33,12 +33,19 @@ namespace mint
 		template<typename ComponentType>
 		GUIComponentPool<ComponentType>::~GUIComponentPool()
 		{
+			__noop;
 		}
 
 		template<typename ComponentType>
 		GUIComponentPool<ComponentType>& GUIComponentPool<ComponentType>::GetInstance()
 		{
 			static GUIComponentPool<ComponentType> sInstance;
+			static bool isRegistered = false;
+			if (isRegistered == false)
+			{
+				GUIComponentPoolRegistry::GetInstance().RegisterComponentPool(sInstance);
+				isRegistered = true;
+			}
 			return sInstance;
 		}
 
