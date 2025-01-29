@@ -262,10 +262,10 @@ void RunSplineTestWindow()
 		GUITransform2DComponent transform2DComponent;
 		transform2DComponent._transform2D._translation = Float2(60, 40);
 		guiSystem.AttachComponent(guiControlPointEntityTemplateID, std::move(transform2DComponent));
-		
+
 		guiSystem.AttachComponent(guiControlPointEntityTemplateID, GUIInteractionStateComponent());
 		guiSystem.AttachComponent(guiControlPointEntityTemplateID, GUIDraggableComponent());
-		
+
 		GUIShapeComponent shapeComponent;
 		Shape defaultShape;
 		Shape hoveredShape;
@@ -281,28 +281,24 @@ void RunSplineTestWindow()
 		GUICollisionShape2DComponent collisionShape2DComponent;
 		collisionShape2DComponent._collisionShape2D = MakeShared<Physics::CollisionShape2D>(Physics::ConvexCollisionShape2D::MakeFromRenderingShape(Float2::kZero, defaultShape));
 		guiSystem.AttachComponent(guiControlPointEntityTemplateID, std::move(collisionShape2DComponent));
-		
+
 		GUITextComponent textComponent;
 		textComponent._offset = Float2(0, 16);
 		textComponent._text = L"CP";
 		guiSystem.AttachComponent(guiControlPointEntityTemplateID, std::move(textComponent));
 	}
-	
+
 	const GUIEntity guiControlPointEntity0 = guiSystem.CreateEntity(guiControlPointEntityTemplateID);
-	guiSystem.GetComponent<GUITransform2DComponent>(guiControlPointEntity0)->_transform2D._translation._x = 80;
-	guiSystem.GetComponent<GUITransform2DComponent>(guiControlPointEntity0)->_transform2D._translation._y = 160;
+	guiSystem.GetComponent<GUITransform2DComponent>(guiControlPointEntity0)->_transform2D._translation = Float2(80, 160);
 	guiSystem.GetComponent<GUITextComponent>(guiControlPointEntity0)->_text = L"CP0";
 	const GUIEntity guiControlPointEntity1 = guiSystem.CreateEntity(guiControlPointEntityTemplateID);
-	guiSystem.GetComponent<GUITransform2DComponent>(guiControlPointEntity1)->_transform2D._translation._x = 160;
-	guiSystem.GetComponent<GUITransform2DComponent>(guiControlPointEntity1)->_transform2D._translation._y = 80;
+	guiSystem.GetComponent<GUITransform2DComponent>(guiControlPointEntity1)->_transform2D._translation = Float2(160, 80);
 	guiSystem.GetComponent<GUITextComponent>(guiControlPointEntity1)->_text = L"CP1";
 	const GUIEntity guiControlPointEntity2 = guiSystem.CreateEntity(guiControlPointEntityTemplateID);
-	guiSystem.GetComponent<GUITransform2DComponent>(guiControlPointEntity2)->_transform2D._translation._x = 240;
-	guiSystem.GetComponent<GUITransform2DComponent>(guiControlPointEntity2)->_transform2D._translation._y = 80;
+	guiSystem.GetComponent<GUITransform2DComponent>(guiControlPointEntity2)->_transform2D._translation = Float2(240, 80);
 	guiSystem.GetComponent<GUITextComponent>(guiControlPointEntity2)->_text = L"CP2";
 	const GUIEntity guiControlPointEntity3 = guiSystem.CreateEntity(guiControlPointEntityTemplateID);
-	guiSystem.GetComponent<GUITransform2DComponent>(guiControlPointEntity3)->_transform2D._translation._x = 320;
-	guiSystem.GetComponent<GUITransform2DComponent>(guiControlPointEntity3)->_transform2D._translation._y = 160;
+	guiSystem.GetComponent<GUITransform2DComponent>(guiControlPointEntity3)->_transform2D._translation = Float2(320, 160);
 	guiSystem.GetComponent<GUITextComponent>(guiControlPointEntity3)->_text = L"CP3";
 
 	GraphicsDevice& graphicsDevice = app.GetGraphicsDevice();
@@ -394,7 +390,7 @@ bool Run2DTestWindow()
 		testCameraObject->GetObjectTransform()._translation._z = 5.0f;
 		testCameraObject->AttachComponent(testCameraComponent);
 	}
-	
+
 	SpriteAnimationSet corgiAnimationSet;
 	{
 		const float kTimePerFrame = 0.125f;
