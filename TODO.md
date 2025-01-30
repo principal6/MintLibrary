@@ -1,5 +1,4 @@
 ﻿# TODO
-## ID class 가 별도로 nextID 를 저장할 필요가 없도록 개선하기... => Singleton Inner Class 가 ID 생성하면 될 듯???
 ## Tree Print 기능 추가, Tree 를 가변트리/고정트리로 나눠서 Cache Miss 개선( Vector/StackVector 이용 )
 ## ShapeRenderer 에 Scale 기능 넣기!
 ## GUI 개편
