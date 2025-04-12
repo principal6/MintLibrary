@@ -16,35 +16,12 @@ PlayerID playerID = player.GetID();
 ```
 
 ### Acronyms
-#### Use all UPPER CASE for acronyms
+#### Use all UPPER CASE for acronyms (except for variables)
 ```cpp
 uint32 GetHP() const;
-uint32 HP = 10;
+uint32 hp = 10;
 bool TestGUI();
 void UpdateAI();
-```
-
-### Edge cases
-#### Variables that start with acronyms
-```cpp
-struct GUITheme;
-GUITheme aGUITheme;
-
-class
-{
-    GUITheme    _GUITheme;
-};
-
-class Player
-{
-    uint32      _HP;
-}
-
-// How to bypass the problem
-namesapce GUI
-{
-    struct Theme;
-}
 ```
 
 ## Prefix
@@ -52,7 +29,7 @@ namesapce GUI
 ```cpp
 class Player
 {
-    uint32  _HP;
+    uint32  _hp;
     String  _name;
 };
 ```
