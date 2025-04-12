@@ -1,54 +1,58 @@
 ﻿# TODO
+## GUI 개편
+### Managers for GUI system
+FocusManager
+ZOrderManager
+InputManager
+EventManager => Event Routing
+ThemeManager???
+
+### Components
+> Renderable Component
+>> ShapeComponent: Holds and draws shapes( Border, Background, etc )
+>> TextContentComponent: Holds text content
+>> TextEditComponent: Manges Caret, Selection, Clipboard
+>> TooltipComponent: Control can have tooltip
+
+> Behavioral Component
+>> ValueBindingComponent: Bind a value to a control
+>> HoverableComponent: Control recieves hover events
+>> ClickableComponent: Control recieves click events
+>> FocusableComponent: Control recieves focus events. => Tab navigation, input routing
+>> DraggableComponent: Control recieves drag events( TitleBar needs DragZone! )
+>> ToggleableComponent: Control recieves toggle events
+>> ResizableComponent: Control recieves resize events
+>> ItemProviderComponent: It can access a list of data and can rebuild UI items on demand, and handles selection!
+//>> SelectableComponent: A list of controls can be selected
+>> ControlLayoutComponent: Organize layout of controls
+>> GroupComponent: Control can be grouped with other controls
+>> ModalComponent: Control can be modal
+>> ZOrderComponent: It determines the z-order of the control
+
+### Controls
+"Controls can have child controls."
+[Label] = Shape + TextContent
+[Button] = [Label] + Clickable
+[Thumb]: Shape + Clickable + Draggable
+[Slider] = Shape + [Thumb] + ValueBinding
+[ScrollBar] = [Buttons]s + [Slider]
+[TextEdit] = Shape + TextContent + TextEdit + [ScrollBar]
+[Panel] = Shape + [ScrollBar] + [Control]s + EntityLayout
+[ListBox] = [Panel]{ [Label]s + [ScrollBar] } + ItemProvider
+[ComboBox] = [Label] + [Button] + [Panel]{ [Label]s + [ScrollBar] } + ItemProvider
+[CheckBox] = [Label] + Shape + Toggle
+[RadioButton] = [Label] + Shape + Toggle + Group
+[TitleBar] = Shape + TextContent + [Button]s
+[Expander] = [TitleBar] + [Panel]
+[Window] = [TitleBar] + [Panel] + Resizable
+[SliderEdit] = [TextEdit] + [Track]
+
+### TODO
+[ProgressBar]
+[Image]
+
 ## Tree Print 기능 추가, Tree 를 가변트리/고정트리로 나눠서 Cache Miss 개선( Vector/StackVector 이용 )
 ## ShapeRenderer 에 Scale 기능 넣기!
-## GUI 개편
-컨트롤 배치 등 꾸미는 쪽은 Script 이용해서 Hot Reload 가능하면 좋을 듯!
-```cpp
-void OnClicked(GUIEntity& object)
-{
-
-}
-
-void OnDragEnd(GUIEntity& object)
-{
-
-}
-
-void TestGUI(GraphicsDevice& graphicsDevice)
-{
-    GUIFactory guiFactory;
-    {
-        GUIEntityTemplate guiObjectTemplate;
-        SharedPtr<GUIShapeComponent> guiShapeComponent = guiFactory.CreateComponent<GUIShapeComponent>();
-        SharedPtr<Shape2D> defaultShape;
-        SharedPtr<Shape2D> pressedShape;
-        SharedPtr<Shape2D> focusedShape;
-        guiShapeComponent->SetShape(GUIShapeSlot::Default, defaultShape);
-        guiShapeComponent->SetShape(GUIShapeSlot::Pressed, pressedShape);
-        guiShapeComponent->SetShape(GUIShapeSlot::Focused, focusedShape);
-        guiObjectTemplate.AddComponent(move(guiShapeComponent));
-
-        SharedPtr<GUITextComponent> guiTextComponent = guiFactory.CreateComponent<GUITextComponent>();
-        float2 offset(0, 0);
-        guiTextComponent->SetText("Test", offset);
-        guiObjectTemplate.AddComponent(move(guiTextComponent));
-
-        guiObjectTemplate.AddComponent(guiFactory.CreateComponent<GUIClickableComponent>());
-
-        guiObjectTemplate.AddComponent(guiFactory.CreateComponent<GUIDraggableComponent>());
-
-        guiFactory.RegisterObjectTemplate(guiObjectTemplate, "TestObjectTemplate");
-    }
-    
-    GUIContext guiContext( graphicsDevice );
-    SharedPtr<GUIEntity> guiObject = guiFactory.CreateObject("TestObjectTemplate");
-    guiObject->AddCallback(GUICallback::OnClicked, OnClicked);
-    guiObject->AddCallback(GUICallback::OnDragEnd, OnDragEnd);
-
-    guiContext.AddObject(guiObject);
-    guiContext.Render();
-}
-```
 
 ## Camera 클래스 만들자! (Object, Component 래핑용도...?)
 ## 기본 그래프 그리면서 확대,축소 카메라까지 쉽게 테스트할 수 있는 시스템 만들기!!!
