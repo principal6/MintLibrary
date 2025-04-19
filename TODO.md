@@ -1,11 +1,17 @@
 ﻿# TODO
 ## GUI 개편
-### Managers for GUI system
-FocusManager
+### Manager classes for GUI system
+ControlRegistry
+FocusManager - Focus, Tab navigation, Visual focus effects
+	- SetFocus, AdvanceFocus, ClearFocus
 ZOrderManager
 InputManager
-EventManager => Event Routing
-ThemeManager???
+	- Hit testing on controls
+EventRouter => Event Routing, Decoupled communication between components or systems
+	- Raise events, Register listeners, Route events up or down
+ThemeManager
+AnimationManager
+TooltipManager
 
 ### Components
 > Renderable Component
