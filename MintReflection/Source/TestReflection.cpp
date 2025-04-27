@@ -20,7 +20,7 @@ namespace mint
 			REFLECTION_CLASS(StructOfArrays)
 
 		public:
-			StructOfArrays() { InitializeReflection(); }
+			StructOfArrays() = default;
 
 		public:
 			REFLECTION_MEMBER_ARRAY(byte, _arr, 3)

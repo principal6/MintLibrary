@@ -90,66 +90,67 @@ namespace mint
 
 
 #define REFLECTION_CLASS(className) \
- private: \
- void InitializeReflection() noexcept \
- { \
- static bool isReflectionDataBuilt = false; \
- if (isReflectionDataBuilt == false) \
- { \
- __buildMemberReflectionData(); \
- ReflectionData& reflectionData = const_cast<ReflectionData&>(GetReflectionDataStatic()); \
- reflectionData._typeData = MINT_NEW(TypeData<className>); \
- reflectionData._typeData->_typeName = #className; \
- reflectionData._typeData->_size = sizeof(className); \
- reflectionData._typeData->_alignment = alignof(className); \
- isReflectionDataBuilt = true; \
- } \
- } \
- private: \
- using __classType = className; \
- public: \
- virtual const ReflectionData& GetReflectionData() const noexcept \
- { \
- return GetReflectionDataStatic(); \
- } \
- static const ReflectionData& GetReflectionDataStatic() noexcept \
- { \
- static const ReflectionData kReflectionData; \
- return kReflectionData; \
- } \
- template<typename T>\
- bool IsTypeOf() const \
- { \
- 	return GetReflectionData()._typeData->_typeName == T::GetReflectionDataStatic()._typeData->_typeName; \
- }
+private: \
+static void InitializeReflection() noexcept \
+{ \
+	 static bool isReflectionDataBuilt = false; \
+	 if (isReflectionDataBuilt == false) \
+	 { \
+		 isReflectionDataBuilt = true; \
+		 __buildMemberReflectionData(); \
+		 ReflectionData& reflectionData = const_cast<ReflectionData&>(GetReflectionDataStatic()); \
+		 reflectionData._typeData = MINT_NEW(TypeData<className>); \
+		 reflectionData._typeData->_typeName = #className; \
+		 reflectionData._typeData->_size = sizeof(className); \
+		 reflectionData._typeData->_alignment = alignof(className); \
+	 } \
+} \
+private: \
+using __classType = className; \
+public: \
+virtual const ReflectionData& GetReflectionData() const noexcept \
+{ \
+	return GetReflectionDataStatic(); \
+} \
+static const ReflectionData& GetReflectionDataStatic() noexcept \
+{ \
+	static const ReflectionData kReflectionData; \
+	InitializeReflection();\
+	return kReflectionData; \
+} \
+template<typename T>\
+bool IsTypeOf() const \
+{ \
+	return GetReflectionData()._typeData->_typeName == T::GetReflectionDataStatic()._typeData->_typeName; \
+}
 
 #define REFLECTION_MEMBER(type, name) \
- type name; \
- __REFLECTION_MEMBER_DEFINE_REGISTRATION(type, name, 0)
+type name; \
+__REFLECTION_MEMBER_DEFINE_REGISTRATION(type, name, 0)
 	
 #define REFLECTION_MEMBER_ARRAY(type, name, arrayItemCount) \
- type name[arrayItemCount]; \
- __REFLECTION_MEMBER_DEFINE_REGISTRATION(type, name, arrayItemCount)
+type name[arrayItemCount]; \
+__REFLECTION_MEMBER_DEFINE_REGISTRATION(type, name, arrayItemCount)
 
 #define REFLECTION_MEMBER_INIT(type, name, init) \
- type name{ init }; \
- __REFLECTION_MEMBER_DEFINE_REGISTRATION(type, name, 0)
+type name{ init }; \
+__REFLECTION_MEMBER_DEFINE_REGISTRATION(type, name, 0)
 
 #define __REFLECTION_MEMBER_DEFINE_REGISTRATION(type, name, arrayItemCount) \
- void _bind##name()\
- {\
- ReflectionData& reflectionData = const_cast<ReflectionData&>(GetReflectionDataStatic()); \
- TypeData<type>* newTypeData = MINT_NEW(TypeData<type>);\
- newTypeData->_typeName = #type;\
- newTypeData->_declarationName = #name;\
- newTypeData->_size = sizeof(type);\
- newTypeData->_alignment = alignof(type);\
- newTypeData->_offset = offsetof(__classType, name); \
- newTypeData->_arrayItemCount = arrayItemCount; \
- reflectionData._memberTypeDatas.PushBack(newTypeData);\
- }
+static void _bind##name()\
+{\
+	ReflectionData& reflectionData = const_cast<ReflectionData&>(GetReflectionDataStatic()); \
+	TypeData<type>* newTypeData = MINT_NEW(TypeData<type>);\
+	newTypeData->_typeName = #type;\
+	newTypeData->_declarationName = #name;\
+	newTypeData->_size = sizeof(type);\
+	newTypeData->_alignment = alignof(type);\
+	newTypeData->_offset = offsetof(__classType, name); \
+	newTypeData->_arrayItemCount = arrayItemCount; \
+	reflectionData._memberTypeDatas.PushBack(newTypeData);\
+}
 
-#define REFLECTION_BIND_BEGIN private: void __buildMemberReflectionData() {
+#define REFLECTION_BIND_BEGIN private: static void __buildMemberReflectionData() {
 #define REFLECTION_BIND(name) _bind##name();
 #define REFLECTION_BIND_END }
 
@@ -171,7 +172,7 @@ namespace mint
 		REFLECTION_CLASS(ReflectionTesterInner);
 
 	public:
-		ReflectionTesterInner() { InitializeReflection(); }
+		ReflectionTesterInner() = default;
 		~ReflectionTesterInner() = default;
 
 	public:
@@ -192,7 +193,7 @@ namespace mint
 		REFLECTION_CLASS(ReflectionTesterOuter);
 
 	public:
-		ReflectionTesterOuter() { InitializeReflection(); }
+		ReflectionTesterOuter() = default;
 		~ReflectionTesterOuter() = default;
 
 	public:
