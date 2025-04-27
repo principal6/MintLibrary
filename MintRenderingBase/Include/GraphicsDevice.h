@@ -247,7 +247,7 @@ namespace mint
 
 		private:
 			ShapeRenderer _shapeRenderer;
-			bool _needEndRenderingCall;
+			bool _isInRenderingScope;
 		};
 	}
 }

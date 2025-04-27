@@ -36,16 +36,16 @@ int main()
 	mint::TestReflection::Test();
 	mint::TestLibrary::Test();
 
-	mint::AudioSystem audioSystem;
-	mint::AudioObject audioObject0;
-	audioSystem.LoadAudioMP3("Assets/Christmas_Jazz-SoundStreet.mp3", audioObject0);
-	audioObject0.Play();
+	//mint::AudioSystem audioSystem;
+	//mint::AudioObject audioObject0;
+	//audioSystem.LoadAudioMP3("Assets/Christmas_Jazz-SoundStreet.mp3", audioObject0);
+	//audioObject0.Play();
 #endif
 
 	//RunGJKTestWindow();
-	RunSplineTestWindow();
+	//RunSplineTestWindow();
 	//Run2DTestWindow();
-	//Run3DTestWindow();
+	Run3DTestWindow();
 	return 0;
 }
 
@@ -468,10 +468,10 @@ bool Run3DTestWindow()
 	WindowCreationDesc windowCreationDesc;
 	windowCreationDesc._position.Set(200, 100);
 	windowCreationDesc._size.Set(1024, 768);
-	windowCreationDesc._title = L"HI";
+	windowCreationDesc._title = L"3DTestWindow";
 	windowCreationDesc._backgroundColor = ByteColor(224, 224, 224);
 
-	mint::App app{ windowCreationDesc , true };
+	mint::App app{ windowCreationDesc, true };
 
 
 	ObjectPool& objectPool = app.GetObjectPool();

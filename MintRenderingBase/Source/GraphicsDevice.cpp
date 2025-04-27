@@ -303,7 +303,7 @@ namespace mint
 			, _resourcePool{ *this }
 			, _stateManager{ *this }
 			, _shapeRenderer{ *this }
-			, _needEndRenderingCall{ false }
+			, _isInRenderingScope{ false }
 		{
 			__noop;
 		}
@@ -671,7 +671,7 @@ namespace mint
 
 		void GraphicsDevice::BeginRendering()
 		{
-			if (_needEndRenderingCall)
+			if (_isInRenderingScope)
 			{
 				MINT_LOG_ERROR("BeginRendering() 을 두 번 연달아 호출할 수 없습니다. 먼저 EndRendering() 을 호출해 주세요!");
 				return;
@@ -682,7 +682,7 @@ namespace mint
 				UpdateScreenSize();
 			}
 
-			_needEndRenderingCall = true;
+			_isInRenderingScope = true;
 
 			_deviceContext->ClearRenderTargetView(_backBufferRtv.Get(), _clearColor);
 			_deviceContext->ClearDepthStencilView(_depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
@@ -704,7 +704,7 @@ namespace mint
 
 		void GraphicsDevice::EndRendering()
 		{
-			if (_needEndRenderingCall == false)
+			if (_isInRenderingScope == false)
 			{
 				MINT_LOG_ERROR("EndRendering() 을 두 번 연달아 호출할 수 없습니다. 먼저 BeginRendering() 을 호출해 주세요!");
 				return;
@@ -719,7 +719,7 @@ namespace mint
 
 			_swapChain->Present(0, 0);
 
-			_needEndRenderingCall = false;
+			_isInRenderingScope = false;
 		}
 
 		void GraphicsDevice::UseScissorRectangles() noexcept
