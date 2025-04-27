@@ -68,7 +68,8 @@ namespace mint
 		template<typename U>
 		friend class SharedPtr;
 
-		friend SharedPtrViewer;
+		template<typename T>
+		friend class SharedPtrViewer;
 
 		template<typename T>
 		friend static SharedPtr<T> MakeShared();
