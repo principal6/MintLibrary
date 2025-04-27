@@ -89,7 +89,6 @@ namespace mint
 			Float2 _localPressedPosition;
 		};
 
-		// Don't forget to RegisterComponentPool to GUISystem for each type of ComponentPool!
 		// type-erasure for GUIComponentPool
 		class IGUIComponentPool abstract
 		{
