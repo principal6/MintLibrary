@@ -61,8 +61,10 @@ void RunGJKTestWindow()
 	windowCreationDesc._size.Set(1024, 768);
 	windowCreationDesc._title = L"GJK Test";
 	windowCreationDesc._backgroundColor = ByteColor(224, 224, 224);
-
-	mint::App app{ windowCreationDesc , true };
+	AppCreationDesc appCreationDesc;
+	appCreationDesc._useMSAA = true;
+	appCreationDesc._appType = AppType::Default2D;
+	mint::App app{ windowCreationDesc, appCreationDesc };
 
 	GJK2DInfo gjk2DInfo;
 	EPA2DInfo epa2DInfo;
@@ -253,8 +255,10 @@ void RunSplineTestWindow()
 	windowCreationDesc._size.Set(1024, 768);
 	windowCreationDesc._title = L"HI";
 	windowCreationDesc._backgroundColor = ByteColor(224, 224, 224);
-
-	mint::App app{ windowCreationDesc , true };
+	AppCreationDesc appCreationDesc;
+	appCreationDesc._useMSAA = true;
+	appCreationDesc._appType = AppType::Default2D;
+	mint::App app{ windowCreationDesc, appCreationDesc };
 
 	GUISystem& guiSystem = app.GetGUISystem();
 	GUIEntityTemplate guiControlPointEntityTemplateID = guiSystem.CreateTemplate();
@@ -330,14 +334,16 @@ bool Run2DTestWindow()
 	using namespace Rendering;
 	using namespace Physics;
 	using namespace Game;
-
+	
 	WindowCreationDesc windowCreationDesc;
 	windowCreationDesc._position.Set(200, 100);
 	windowCreationDesc._size.Set(1024, 768);
 	windowCreationDesc._title = L"HI";
 	windowCreationDesc._backgroundColor = ByteColor(224, 224, 224);
-
-	mint::App app{ windowCreationDesc , true };
+	AppCreationDesc appCreationDesc;
+	appCreationDesc._useMSAA = true;
+	appCreationDesc._appType = AppType::Default2D;
+	mint::App app{ windowCreationDesc, appCreationDesc };
 
 	ByteColorImage corgiSpriteSheet;
 	ImageLoader imageLoader;
@@ -382,15 +388,6 @@ bool Run2DTestWindow()
 		object1->AttachComponent(collision2DComponent);
 	}
 
-	SharedPtr<Object> testCameraObject = objectPool.CreateObject();
-	CameraComponent* testCameraComponent = objectPool.CreateObjectComponent<CameraComponent>();
-	{
-		Float2 windowSize{ app.GetWindow().GetSize() };
-		testCameraComponent->SetPerspectiveCamera(Math::ToRadian(60.0f), 1.0f, 100.0f, windowSize._x / windowSize._y);
-		testCameraObject->GetObjectTransform()._translation._z = 5.0f;
-		testCameraObject->AttachComponent(testCameraComponent);
-	}
-
 	SpriteAnimationSet corgiAnimationSet;
 	{
 		const float kTimePerFrame = 0.125f;
@@ -427,13 +424,9 @@ bool Run2DTestWindow()
 			}
 		}
 
-		testCameraComponent->SteerDefault(deltaTime, inputContext, false);
-
 		// Rendering
 		app.BeginRendering();
 		{
-			graphicsDevice.SetViewProjectionMatrix(testCameraComponent->GetViewMatrix(), testCameraComponent->GetProjectionMatrix());
-
 			graphicsDevice.SetViewProjectionMatrix(Float4x4::kIdentity, graphicsDevice.GetScreenSpace2DProjectionMatrix());
 			resourcePool.GetResource(corgiSpriteSheetTextureID).BindToShader(GraphicsShaderType::PixelShader, 1);
 			//imageRenderer.DrawImageScreenSpace(Float2(0, 0), Float2(800, 512), Float2(0, 0), Float2(1, 1));
@@ -470,21 +463,13 @@ bool Run3DTestWindow()
 	windowCreationDesc._size.Set(1024, 768);
 	windowCreationDesc._title = L"3DTestWindow";
 	windowCreationDesc._backgroundColor = ByteColor(224, 224, 224);
-
-	mint::App app{ windowCreationDesc, true };
+	AppCreationDesc appCreationDesc;
+	appCreationDesc._useMSAA = true;
+	appCreationDesc._appType = AppType::Default3D;
+	mint::App app{ windowCreationDesc, appCreationDesc };
 
 
 	ObjectPool& objectPool = app.GetObjectPool();
-	SharedPtr<Object> testCameraObject = objectPool.CreateObject();
-	CameraComponent* testCameraComponent = objectPool.CreateObjectComponent<CameraComponent>();
-	{
-		Float2 windowSize{ app.GetWindow().GetSize() };
-		testCameraComponent->SetPerspectiveCamera(Math::ToRadian(60.0f), 0.01f, 100.0f, windowSize._x / windowSize._y);
-		testCameraComponent->RotatePitch(0.125f);
-		testCameraObject->GetObjectTransform()._translation._z = 5.0f;
-		testCameraObject->AttachComponent(testCameraComponent);
-	}
-
 	SharedPtr<Object> testObject = objectPool.CreateObject();
 	{
 		testObject->AttachComponent(objectPool.CreateObjectComponent<MeshComponent>());
@@ -528,7 +513,8 @@ bool Run3DTestWindow()
 	while (app.IsRunning() == true)
 	{
 		const float deltaTime = DeltaTimer::GetInstance().GetDeltaTimeS();
-
+		SharedPtr<Object> currentCameraObject = app.GetCurrentCameraObject();
+		CameraComponent* const cameraComponent = static_cast<CameraComponent*>(currentCameraObject->GetComponent(ObjectComponentType::CameraComponent));
 		if (inputContext.IsKeyPressed())
 		{
 			if (inputContext.IsKeyDown(KeyCode::Enter) == true)
@@ -559,14 +545,14 @@ bool Run3DTestWindow()
 			}
 			else if (inputContext.IsKeyDown(KeyCode::Shift) == true)
 			{
-				testCameraComponent->SetBoostMode(true);
+				cameraComponent->SetBoostMode(true);
 			}
 		}
 		else if (inputContext.IsKeyReleased())
 		{
 			if (inputContext.IsKeyUp(KeyCode::Shift) == true)
 			{
-				testCameraComponent->SetBoostMode(false);
+				cameraComponent->SetBoostMode(false);
 			}
 		}
 		else if (inputContext.IsMouseWheelScrolled())
@@ -574,15 +560,13 @@ bool Run3DTestWindow()
 			const float mouseWheelScroll = inputContext.GetMouseWheelScroll();
 			if (mouseWheelScroll > 0.0f)
 			{
-				testCameraComponent->IncreaseMoveSpeed();
+				cameraComponent->IncreaseMoveSpeed();
 			}
 			else
 			{
-				testCameraComponent->DecreaseMoveSpeed();
+				cameraComponent->DecreaseMoveSpeed();
 			}
 		}
-
-		testCameraComponent->SteerDefault(deltaTime, inputContext, true);
 
 		// Rendering
 		app.BeginRendering();
@@ -602,7 +586,7 @@ bool Run3DTestWindow()
 			}
 			shapeRenderer.Render();
 
-			graphicsDevice.SetViewProjectionMatrix(testCameraComponent->GetViewMatrix(), testCameraComponent->GetProjectionMatrix());
+			graphicsDevice.SetViewProjectionMatrix(cameraComponent->GetViewMatrix(), cameraComponent->GetProjectionMatrix());
 		}
 		app.EndRendering();
 

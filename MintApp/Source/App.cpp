@@ -9,7 +9,7 @@
 
 namespace mint
 {
-	App::App(const WindowCreationDesc& windowCreationDesc, bool useMSAA)
+	App::App(const WindowCreationDesc& windowCreationDesc, const AppCreationDesc& appCreationDesc)
 		: _window{ MINT_NEW(Window) }
 		, _objectPool{ MINT_NEW(ObjectPool) }
 		, _guiSystem{ MINT_NEW(GUI::GUISystem) }
@@ -21,7 +21,7 @@ namespace mint
 			return;
 		}
 
-		_graphicsDevice.Assign(MINT_NEW(Rendering::GraphicsDevice, *_window, useMSAA));
+		_graphicsDevice.Assign(MINT_NEW(Rendering::GraphicsDevice, *_window, appCreationDesc._useMSAA));
 		if (_graphicsDevice->Initialize() == false)
 		{
 			MINT_NEVER;
@@ -29,6 +29,36 @@ namespace mint
 		}
 
 		_objectRenderer.Assign(MINT_NEW(ObjectRenderer, *_graphicsDevice));
+
+		const Float2 windowSize{ GetWindow().GetSize() };
+		_defaultCameraObject = _objectPool->CreateObject();
+		switch (appCreationDesc._appType)
+		{
+		case AppType::Default3D:
+		{
+			CameraComponent* cameraComponent = _objectPool->CreateObjectComponent<CameraComponent>();
+			cameraComponent->SetPerspectiveCamera(Math::ToRadian(60.0f), 0.01f, 100.0f, windowSize._x / windowSize._y);
+			cameraComponent->RotatePitch(0.125f);
+			_defaultCameraObject->GetObjectTransform()._translation._z = 5.0f;
+			_defaultCameraObject->AttachComponent(cameraComponent);
+			_is3DMode = true;
+			break;
+		}
+		case AppType::Default2D:
+		{
+			CameraComponent* cameraComponent = _objectPool->CreateObjectComponent<CameraComponent>();
+			cameraComponent->SetPerspectiveCamera(Math::ToRadian(60.0f), 1.0f, 100.0f, windowSize._x / windowSize._y);
+			_defaultCameraObject->GetObjectTransform()._translation._z = 5.0f;
+			_defaultCameraObject->AttachComponent(cameraComponent);
+			_is3DMode = false;
+			break;
+		}
+		default:
+			MINT_ASSERT(false, "Invalid AppType!");
+			break;
+		}
+
+		_currentCameraObject = _defaultCameraObject;
 	}
 
 	App::~App()
@@ -49,14 +79,22 @@ namespace mint
 			DeltaTimer::GetInstance().ComputeDeltaTime(_frameNumber);
 
 			_guiSystem->Update();
+
+			const float deltaTime = DeltaTimer::GetInstance().GetDeltaTimeS();
+			const InputContext& inputContext = InputContext::GetInstance();
+			CameraComponent* const cameraComponent = static_cast<CameraComponent*>(_currentCameraObject->GetComponent(ObjectComponentType::CameraComponent));
+			cameraComponent->SteerDefault(deltaTime, inputContext, _is3DMode);
 			return true;
 		}
 		return false;
 	}
-	
+
 	void App::BeginRendering()
 	{
 		_graphicsDevice->BeginRendering();
+
+		CameraComponent* const cameraComponent = static_cast<CameraComponent*>(_currentCameraObject->GetComponent(ObjectComponentType::CameraComponent));
+		_graphicsDevice->SetViewProjectionMatrix(cameraComponent->GetViewMatrix(), cameraComponent->GetProjectionMatrix());
 	}
 
 	void App::EndRendering()
