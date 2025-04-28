@@ -76,9 +76,9 @@ classDiagram
         ...
     }
     class MintApp{
-        ObjectPool
-        Object
-        ObjectComponent
+        SceneObjectPool
+        SceneObject
+        SceneObjectComponent
         App
         ...
     }

@@ -5,7 +5,7 @@
 #define _MINT_APP_ALL_HPPS_H_
 
 
-#include <MintApp/Include/ObjectPool.hpp>
+#include <MintApp/Include/SceneObjectPool.hpp>
 
 
 #endif // !_MINT_APP_ALL_HPPS_H_

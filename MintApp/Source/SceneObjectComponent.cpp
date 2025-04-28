@@ -1,25 +1,25 @@
-﻿#include <MintApp/Include/ObjectComponent.h>
+﻿#include <MintApp/Include/SceneObjectComponent.h>
 
 #include <MintPlatform/Include/InputContext.h>
-#include <MintApp/Include/Object.h>
+#include <MintApp/Include/SceneObject.h>
 
 
 namespace mint
 {
-	std::atomic<uint32> ObjectComponent::_nextRawID = 0;
-	ObjectComponent::ObjectComponent(const ObjectComponentType type)
+	std::atomic<uint32> SceneObjectComponent::_nextRawID = 0;
+	SceneObjectComponent::SceneObjectComponent(const SceneObjectComponentType type)
 		: _ownerObject{ nullptr }
 		, _type{ type }
 	{
-		_id.Assign(ObjectComponent::_nextRawID);
+		_id.Assign(SceneObjectComponent::_nextRawID);
 
-		++ObjectComponent::_nextRawID;
+		++SceneObjectComponent::_nextRawID;
 	}
 
 
 #pragma region CameraComponent
 	CameraComponent::CameraComponent()
-		: ObjectComponent(ObjectComponentType::CameraComponent)
+		: SceneObjectComponent(SceneObjectComponentType::CameraComponent)
 		, _usePerspectiveProjection{ true }
 		, _isRightHanded{ true }
 		, _fov{ Math::ToRadian(60.0f) }

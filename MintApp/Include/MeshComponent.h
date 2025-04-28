@@ -12,12 +12,12 @@
 
 #include <MintRendering/Include/MeshGenerator.h>
 
-#include <MintApp/Include/ObjectComponent.h>
+#include <MintApp/Include/SceneObjectComponent.h>
 
 
 namespace mint
 {
-	class MeshComponent final : public ObjectComponent
+	class MeshComponent final : public SceneObjectComponent
 	{
 	public:
 		MeshComponent();
@@ -42,7 +42,7 @@ namespace mint
 		bool _shouldDrawEdges;
 	};
 
-	class Mesh2DComponent final : public ObjectComponent
+	class Mesh2DComponent final : public SceneObjectComponent
 	{
 	public:
 		Mesh2DComponent();

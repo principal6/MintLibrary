@@ -7,7 +7,7 @@ namespace mint
 	namespace Game
 	{
 		Collision2DComponent::Collision2DComponent()
-			: ObjectComponent(ObjectComponentType::Collision2DComponent)
+			: SceneObjectComponent(SceneObjectComponentType::Collision2DComponent)
 		{
 			__noop;
 		}

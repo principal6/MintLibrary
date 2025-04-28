@@ -60,7 +60,7 @@ TooltipManager
 ## Tree Print 기능 추가, Tree 를 가변트리/고정트리로 나눠서 Cache Miss 개선( Vector/StackVector 이용 )
 ## ShapeRenderer 에 Scale 기능 넣기!
 
-## Camera 클래스 만들자! (Object, Component 래핑용도...?)
+## Camera 클래스 만들자! (SceneObject, Component 래핑용도...?)
 ## 기본 그래프 그리면서 확대,축소 카메라까지 쉽게 테스트할 수 있는 시스템 만들기!!!
 
 ## Euler's method error evaluation (with graph)

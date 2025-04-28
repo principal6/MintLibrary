@@ -1,36 +1,36 @@
-﻿#include <MintApp/Include/ObjectRenderer.h>
+﻿#include <MintApp/Include/SceneObjectRenderer.h>
 
 #include <MintContainer/Include/Vector.hpp>
 
 #include <MintRenderingBase/Include/GraphicsDevice.h>
 #include <MintRenderingBase/Include/LowLevelRenderer.hpp>
 
-#include <MintApp/Include/Object.h>
-#include <MintApp/Include/ObjectPool.hpp>
+#include <MintApp/Include/SceneObject.h>
+#include <MintApp/Include/SceneObjectPool.hpp>
 #include <MintApp/Include/MeshComponent.h>
 
 
 namespace mint
 {
-	ObjectRenderer::ObjectRenderer(Rendering::GraphicsDevice& graphicsDevice)
+	SceneObjectRenderer::SceneObjectRenderer(Rendering::GraphicsDevice& graphicsDevice)
 		: _graphicsDevice{ graphicsDevice }
 		, _lowLevelRenderer{ graphicsDevice }
 	{
 		Initialize();
 	}
 
-	ObjectRenderer::~ObjectRenderer()
+	SceneObjectRenderer::~SceneObjectRenderer()
 	{
 		__noop;
 	}
 
-	void ObjectRenderer::Render(const ObjectPool& objectPool) noexcept
+	void SceneObjectRenderer::Render(const SceneObjectPool& sceneObjectPool) noexcept
 	{
 		using namespace Rendering;
 
 		ShaderPool& shaderPool = _graphicsDevice.GetShaderPool();
 		GraphicsResourcePool& resourcePool = _graphicsDevice.GetResourcePool();
-		const Vector<ObjectComponent*>& meshComponents = objectPool.GetMeshComponents();
+		const Vector<SceneObjectComponent*>& meshComponents = sceneObjectPool.GetMeshComponents();
 		if (meshComponents.IsEmpty() == false)
 		{
 			shaderPool.BindInputLayoutIfNot(_inputLayoutDefaultID);
@@ -86,7 +86,7 @@ namespace mint
 			sbMaterial.UnbindFromShader();
 		}
 
-		const Vector<ObjectComponent*>& mesh2DComponents = objectPool.GetMesh2DComponents();
+		const Vector<SceneObjectComponent*>& mesh2DComponents = sceneObjectPool.GetMesh2DComponents();
 		if (mesh2DComponents.IsEmpty() == false)
 		{
 			ShapeRenderer& shapeRenderer = _graphicsDevice.GetShapeRenderer();
@@ -94,14 +94,14 @@ namespace mint
 			for (uint32 i = 0; i < mesh2DComponentCount; ++i)
 			{
 				const Mesh2DComponent* const mesh2DComponent = static_cast<Mesh2DComponent*>(mesh2DComponents[i]);
-				Object* const object = mesh2DComponent->GetOwnerObject();
-				shapeRenderer.AddShape(mesh2DComponent->GetShape(), object->GetObjectTransform());
+				SceneObject* const sceneObject = mesh2DComponent->GetOwnerObject();
+				shapeRenderer.AddShape(mesh2DComponent->GetShape(), sceneObject->GetObjectTransform());
 			}
 			shapeRenderer.Render();
 		}
 	}
 
-	void ObjectRenderer::Initialize() noexcept
+	void SceneObjectRenderer::Initialize() noexcept
 	{
 		using namespace Rendering;
 		using namespace Language;

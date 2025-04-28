@@ -170,11 +170,11 @@
     <ClInclude Include="Include\App.h" />
     <ClInclude Include="Include\DeltaTimer.h" />
     <ClInclude Include="Include\MeshComponent.h" />
-    <ClInclude Include="Include\Object.h" />
-    <ClInclude Include="Include\ObjectComponent.h" />
-    <ClInclude Include="Include\ObjectPool.h" />
-    <ClInclude Include="Include\ObjectPool.hpp" />
-    <ClInclude Include="Include\ObjectRenderer.h" />
+    <ClInclude Include="Include\SceneObject.h" />
+    <ClInclude Include="Include\SceneObjectComponent.h" />
+    <ClInclude Include="Include\SceneObjectPool.h" />
+    <ClInclude Include="Include\SceneObjectPool.hpp" />
+    <ClInclude Include="Include\SceneObjectRenderer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\App.cpp">
@@ -195,19 +195,19 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="Source\Object.cpp">
+    <ClCompile Include="Source\SceneObject.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="Source\ObjectComponent.cpp">
+    <ClCompile Include="Source\SceneObjectComponent.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="Source\ObjectRenderer.cpp">
+    <ClCompile Include="Source\SceneObjectRenderer.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>

@@ -17,19 +17,19 @@
     <ClInclude Include="Include\MeshComponent.h">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Object.h">
+    <ClInclude Include="Include\SceneObject.h">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="Include\ObjectComponent.h">
+    <ClInclude Include="Include\SceneObjectComponent.h">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="Include\ObjectPool.h">
+    <ClInclude Include="Include\SceneObjectPool.h">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="Include\ObjectPool.hpp">
+    <ClInclude Include="Include\SceneObjectPool.hpp">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="Include\ObjectRenderer.h">
+    <ClInclude Include="Include\SceneObjectRenderer.h">
       <Filter>Include</Filter>
     </ClInclude>
     <ClInclude Include="Include\AllHeaders.h">
@@ -49,13 +49,13 @@
     <ClCompile Include="Source\MeshComponent.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Object.cpp">
+    <ClCompile Include="Source\SceneObject.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Source\ObjectComponent.cpp">
+    <ClCompile Include="Source\SceneObjectComponent.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Source\ObjectRenderer.cpp">
+    <ClCompile Include="Source\SceneObjectRenderer.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\_UnityBuild.cpp">

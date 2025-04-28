@@ -9,7 +9,7 @@ namespace mint
 {
 #pragma region MeshComponent
 	MeshComponent::MeshComponent()
-		: ObjectComponent(ObjectComponentType::MeshComponent)
+		: SceneObjectComponent(SceneObjectComponentType::MeshComponent)
 		, _shouldDrawNormals{ false }
 		, _shouldDrawEdges{ false }
 	{
@@ -74,7 +74,7 @@ namespace mint
 
 #pragma region Mesh2DComponent
 	Mesh2DComponent::Mesh2DComponent()
-		: ObjectComponent(ObjectComponentType::Mesh2DComponent)
+		: SceneObjectComponent(SceneObjectComponentType::Mesh2DComponent)
 	{
 		__noop;
 	}

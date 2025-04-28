@@ -8,14 +8,14 @@
 #include <MintCommon/Include/CommonDefinitions.h>
 #include <MintContainer/Include/SharedPtr.h>
 #include <MintPhysics/Include/Intersection.h>
-#include <MintApp/Include/ObjectComponent.h>
+#include <MintApp/Include/SceneObjectComponent.h>
 
 
 namespace mint
 {
 	namespace Game
 	{
-		class Collision2DComponent final : public mint::ObjectComponent
+		class Collision2DComponent final : public mint::SceneObjectComponent
 		{
 		public:
 			Collision2DComponent();

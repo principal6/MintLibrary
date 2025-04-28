@@ -8,7 +8,7 @@
 #include <MintAudio/Include/AudioSystem.h>
 #include <MintPlatform/Include/InputContext.h>
 #include <MintApp/Include/DeltaTimer.h>
-#include <MintApp/Include/ObjectPool.hpp>
+#include <MintApp/Include/SceneObjectPool.hpp>
 #include <MintGame/Include/TileMap.h>
 
 
@@ -330,12 +330,12 @@ namespace mint
 
 			_characterRenderer.Assign(MINT_NEW(Rendering::ImageRenderer, *_graphicsDevice, kCharacterTextureSlot));
 			_mapRenderer.Assign(MINT_NEW(Rendering::ImageRenderer, *_graphicsDevice, kTileMapTextureSlot));
-			_objectRenderer.Assign(MINT_NEW(Rendering::ImageRenderer, *_graphicsDevice, kObjectTextureSlot));
+			_sceneObjectRenderer.Assign(MINT_NEW(Rendering::ImageRenderer, *_graphicsDevice, kObjectTextureSlot));
 			_effectRenderer.Assign(MINT_NEW(Rendering::ImageRenderer, *_graphicsDevice, kEffectTextureSlot));
 
 			_audioSystem.Assign(MINT_NEW(AudioSystem));
 
-			_objectPool.Assign(MINT_NEW(ObjectPool));
+			_sceneObjectPool.Assign(MINT_NEW(SceneObjectPool));
 
 			InitializeMainCharacterObject();
 			InitializeMainCameraOject();
@@ -463,7 +463,7 @@ namespace mint
 
 			_graphicsDevice->SetSolidCullNoneRasterizer();
 
-			CameraComponent* const cameraComponent = static_cast<CameraComponent*>(_mainCameraObject->GetComponent(ObjectComponentType::CameraComponent));
+			CameraComponent* const cameraComponent = static_cast<CameraComponent*>(_mainCameraObject->GetComponent(SceneObjectComponentType::CameraComponent));
 			_graphicsDevice->SetViewProjectionMatrix(cameraComponent->GetViewMatrix(), cameraComponent->GetProjectionMatrix());
 		}
 
@@ -561,15 +561,15 @@ namespace mint
 
 		void GameBase2D::InitializeMainCharacterObject()
 		{
-			_mainCharacterObject = _objectPool->CreateObject();
+			_mainCharacterObject = _sceneObjectPool->CreateSceneObject();
 
 			SetCharacterCollision(Float2(0, 0), 32.0f);
 		}
 
 		void GameBase2D::InitializeMainCameraOject()
 		{
-			_mainCameraObject = _objectPool->CreateObject();
-			CameraComponent* cameraComponent = _objectPool->CreateObjectComponent<CameraComponent>();
+			_mainCameraObject = _sceneObjectPool->CreateSceneObject();
+			CameraComponent* cameraComponent = _sceneObjectPool->CreateSceneObjectComponent<CameraComponent>();
 			Float2 windowSize{ _graphicsDevice->GetWindowSize() };
 			cameraComponent->SetOrthographic2DCamera(windowSize);
 			_mainCameraObject->AttachComponent(cameraComponent);
@@ -657,7 +657,7 @@ namespace mint
 
 			Rendering::GraphicsResourcePool& resourcePool = _graphicsDevice->GetResourcePool();
 			Image image(resourcePool.AddTexture2D(byteColorImage));
-			image._imageRenderer = _objectRenderer.Get();
+			image._imageRenderer = _sceneObjectRenderer.Get();
 			GetGraphicsDevice().GetResourcePool().BindToShader(image.GetGraphicsObjectID(), Rendering::GraphicsShaderType::PixelShader, kObjectTextureSlot);
 			return image;
 		}
@@ -690,10 +690,10 @@ namespace mint
 		{
 			MINT_ASSERT(_mainCharacterObject.IsValid() == true, "Caller must guarantee this!");
 
-			Collision2DComponent* collision2DComponent = static_cast<Collision2DComponent*>(_mainCharacterObject->GetComponent(ObjectComponentType::Collision2DComponent));
+			Collision2DComponent* collision2DComponent = static_cast<Collision2DComponent*>(_mainCharacterObject->GetComponent(SceneObjectComponentType::Collision2DComponent));
 			if (collision2DComponent == nullptr)
 			{
-				collision2DComponent = _objectPool->CreateObjectComponent<Collision2DComponent>();
+				collision2DComponent = _sceneObjectPool->CreateSceneObjectComponent<Collision2DComponent>();
 				_mainCharacterObject->AttachComponent(collision2DComponent);
 			}
 			collision2DComponent->SetCollisionShape2D(MakeShared<Physics::CircleCollisionShape2D>(Physics::CircleCollisionShape2D(centerOffset, radius)));

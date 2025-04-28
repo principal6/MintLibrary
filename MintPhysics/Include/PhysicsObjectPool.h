@@ -59,7 +59,7 @@ namespace mint
 			T& GetObject_(const uint32 index) { MINT_ASSERT(index < _objects.Size(), "!!!"); return _objects[index]; }
 			const T& GetObject_(const uint32 index) const { MINT_ASSERT(index < _objects.Size(), "!!!"); return _objects[index]; }
 			const Vector<T>& GetObjects() const { return _objects; }
-			uint32 GetObjectCount() const { return _objects.Size(); }
+			uint32 GetSceneObjectCount() const { return _objects.Size(); }
 
 		private:
 			void UpdateNextSlotIndex()

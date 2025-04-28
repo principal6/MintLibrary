@@ -1,43 +1,43 @@
-﻿#include <MintApp/Include/Object.h>
+﻿#include <MintApp/Include/SceneObject.h>
 
 #include <MintContainer/Include/Vector.hpp>
 
-#include <MintApp/Include/ObjectComponent.h>
-#include <MintApp/Include/ObjectPool.hpp>
+#include <MintApp/Include/SceneObjectComponent.h>
+#include <MintApp/Include/SceneObjectPool.hpp>
 
 
 namespace mint
 {
-	Object::Object(const ObjectPool* const objectPool)
-		: _objectPool{ objectPool }
+	SceneObject::SceneObject(const SceneObjectPool* const sceneObjectPool)
+		: _sceneObjectPool{ sceneObjectPool }
 	{
 		__noop;
 	}
 
-	Object::~Object()
+	SceneObject::~SceneObject()
 	{
 		__noop;
 	}
 
-	void Object::AttachComponent(ObjectComponent* const objectComponent)
+	void SceneObject::AttachComponent(SceneObjectComponent* const component)
 	{
-		if (objectComponent != nullptr)
+		if (component != nullptr)
 		{
-			if (GetComponent(objectComponent->GetType()) != nullptr)
+			if (GetComponent(component->GetType()) != nullptr)
 			{
 				MINT_LOG_ERROR("동일한 Type 의 Component 를 Attach 하는 것은 아직 지원되지 않습니다!");
 				return;
 			}
 
-			objectComponent->_ownerObject = this;
+			component->_ownerObject = this;
 
-			_componentArray.PushBack(objectComponent);
+			_componentArray.PushBack(component);
 		}
 	}
 
-	void Object::DetachComponent(ObjectComponent* const objectComponent)
+	void SceneObject::DetachComponent(SceneObjectComponent* const component)
 	{
-		if (objectComponent == nullptr)
+		if (component == nullptr)
 		{
 			return;
 		}
@@ -46,7 +46,7 @@ namespace mint
 		const int32 componentCount = static_cast<int32>(_componentArray.Size());
 		for (int32 componentIndex = 0; componentIndex < componentCount; ++componentIndex)
 		{
-			if (_componentArray[componentIndex] == objectComponent)
+			if (_componentArray[componentIndex] == component)
 			{
 				foundComponentIndex = componentIndex;
 				break;
@@ -64,12 +64,12 @@ namespace mint
 		}
 	}
 
-	uint32 Object::GetComponentCount() const noexcept
+	uint32 SceneObject::GetComponentCount() const noexcept
 	{
 		return static_cast<uint32>(_componentArray.Size());
 	}
 
-	ObjectComponent* Object::GetComponent(const ObjectComponentType type) const noexcept
+	SceneObjectComponent* SceneObject::GetComponent(const SceneObjectComponentType type) const noexcept
 	{
 		const uint32 componentCount = GetComponentCount();
 		for (uint32 componentIndex = 0; componentIndex < componentCount; ++componentIndex)
@@ -82,27 +82,27 @@ namespace mint
 		return nullptr;
 	}
 
-	void Object::SetObjectTransform(const Transform& transform) noexcept
+	void SceneObject::SetObjectTransform(const Transform& transform) noexcept
 	{
 		GetObjectTransformComponent()->_transform = transform;
 	}
 
-	Transform& Object::GetObjectTransform() noexcept
+	Transform& SceneObject::GetObjectTransform() noexcept
 	{
 		return GetObjectTransformComponent()->_transform;
 	}
 
-	const Transform& Object::GetObjectTransform() const noexcept
+	const Transform& SceneObject::GetObjectTransform() const noexcept
 	{
 		return GetObjectTransformComponent()->_transform;
 	}
 
-	Float4x4 Object::GetObjectTransformMatrix() const noexcept
+	Float4x4 SceneObject::GetObjectTransformMatrix() const noexcept
 	{
 		return GetObjectTransformComponent()->_transform.ToMatrix();
 	}
 
-	TransformComponent* Object::GetObjectTransformComponent() const noexcept
+	TransformComponent* SceneObject::GetObjectTransformComponent() const noexcept
 	{
 		return static_cast<TransformComponent*>(_componentArray[0]);
 	}

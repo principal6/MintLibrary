@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 
-#ifndef _MINT_GAME_OBJECT_COMPONENT_H_
-#define _MINT_GAME_OBJECT_COMPONENT_H_
+#ifndef _MINT_APP_SCENE_OBJECT_COMPONENT_H_
+#define _MINT_APP_SCENE_OBJECT_COMPONENT_H_
 
 
 #include <MintCommon/Include/CommonDefinitions.h>
@@ -14,14 +14,14 @@
 
 namespace mint
 {
-	class Object;
-	class ObjectComponent;
+	class SceneObject;
+	class SceneObjectComponent;
 	class InputContext;
 }
 
 namespace mint
 {
-	enum class ObjectComponentType
+	enum class SceneObjectComponentType
 	{
 		Invalid,
 		TransformComponent,
@@ -32,46 +32,46 @@ namespace mint
 	};
 
 
-	class ObjectComponentID final : public ID32
+	class SceneObjectComponentID final : public ID32
 	{
-		friend ObjectComponent;
+		friend SceneObjectComponent;
 	};
 
 
-	class ObjectComponent abstract
+	class SceneObjectComponent abstract
 	{
-		friend Object;
+		friend SceneObject;
 
 	private:
 		static std::atomic<uint32> _nextRawID;
 
 	public:
-		ObjectComponent(const ObjectComponentType type);
-		virtual ~ObjectComponent() { __noop; }
+		SceneObjectComponent(const SceneObjectComponentType type);
+		virtual ~SceneObjectComponent() { __noop; }
 
 	public:
-		MINT_INLINE ObjectComponentType GetType() const noexcept { return _type; }
-		MINT_INLINE bool IsTypeOf(const ObjectComponentType type) const noexcept { return _type == type; }
-		MINT_INLINE const ObjectComponentID& GetID() const noexcept { return _id; }
-		MINT_INLINE Object* GetOwnerObject() const noexcept { return _ownerObject; }
+		MINT_INLINE SceneObjectComponentType GetType() const noexcept { return _type; }
+		MINT_INLINE bool IsTypeOf(const SceneObjectComponentType type) const noexcept { return _type == type; }
+		MINT_INLINE const SceneObjectComponentID& GetID() const noexcept { return _id; }
+		MINT_INLINE SceneObject* GetOwnerObject() const noexcept { return _ownerObject; }
 
 	protected:
-		Object* _ownerObject;
-		ObjectComponentType _type;
-		ObjectComponentID _id;
+		SceneObject* _ownerObject;
+		SceneObjectComponentType _type;
+		SceneObjectComponentID _id;
 	};
 
-	class TransformComponent : public ObjectComponent
+	class TransformComponent : public SceneObjectComponent
 	{
 	public:
-		TransformComponent() : ObjectComponent(ObjectComponentType::TransformComponent) { __noop; }
+		TransformComponent() : SceneObjectComponent(SceneObjectComponentType::TransformComponent) { __noop; }
 		virtual ~TransformComponent() { __noop; }
 
 	public:
 		Transform _transform;
 	};
 
-	class CameraComponent : public ObjectComponent
+	class CameraComponent : public SceneObjectComponent
 	{
 	public:
 		CameraComponent();
@@ -180,4 +180,4 @@ namespace mint
 }
 
 
-#endif // !_MINT_GAME_OBJECT_COMPONENT_H_
+#endif // !_MINT_APP_SCENE_OBJECT_COMPONENT_H_

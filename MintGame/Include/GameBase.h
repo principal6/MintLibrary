@@ -21,8 +21,8 @@ namespace mint
 	class AudioObject;
 	class AudioSystem;
 
-	class ObjectPool;
-	class Object;
+	class SceneObjectPool;
+	class SceneObject;
 
 	namespace Rendering
 	{
@@ -272,7 +272,7 @@ namespace mint
 			static constexpr const uint32 kEffectTextureSlot = 4;
 			OwnPtr<Rendering::ImageRenderer> _characterRenderer;
 			OwnPtr<Rendering::ImageRenderer> _mapRenderer;
-			OwnPtr<Rendering::ImageRenderer> _objectRenderer;
+			OwnPtr<Rendering::ImageRenderer> _sceneObjectRenderer;
 			OwnPtr<Rendering::ImageRenderer> _effectRenderer;
 
 		protected:
@@ -280,7 +280,7 @@ namespace mint
 			OwnPtr<AudioObject> _backgroundMusic;
 
 		protected:
-			OwnPtr<ObjectPool> _objectPool;
+			OwnPtr<SceneObjectPool> _sceneObjectPool;
 
 			// TODO: make this object!
 			OwnPtr<Rendering::SpriteAnimation> _effectAnimation;
@@ -289,10 +289,10 @@ namespace mint
 
 		protected:
 			CharacterControlMode _characterControlMode;
-			SharedPtr<Object> _mainCharacterObject;
+			SharedPtr<SceneObject> _mainCharacterObject;
 		
 		protected:
-			SharedPtr<Object> _mainCameraObject;
+			SharedPtr<SceneObject> _mainCameraObject;
 			GameCameraMode _gameCameraMode;
 
 		protected:

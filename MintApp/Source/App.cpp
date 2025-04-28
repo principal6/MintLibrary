@@ -3,15 +3,15 @@
 #include <MintPlatform/Include/Window.h>
 #include <MintRenderingBase/Include/GraphicsDevice.h>
 #include <MintGUI/Include/GUISystem.h>
-#include <MintApp/Include/ObjectPool.hpp>
-#include <MintApp/Include/ObjectRenderer.h>
+#include <MintApp/Include/SceneObjectPool.hpp>
+#include <MintApp/Include/SceneObjectRenderer.h>
 
 
 namespace mint
 {
 	App::App(const WindowCreationDesc& windowCreationDesc, const AppCreationDesc& appCreationDesc)
 		: _window{ MINT_NEW(Window) }
-		, _objectPool{ MINT_NEW(ObjectPool) }
+		, _sceneObjectPool{ MINT_NEW(SceneObjectPool) }
 		, _guiSystem{ MINT_NEW(GUI::GUISystem) }
 		, _frameNumber{ 0 }
 	{
@@ -28,15 +28,15 @@ namespace mint
 			return;
 		}
 
-		_objectRenderer.Assign(MINT_NEW(ObjectRenderer, *_graphicsDevice));
+		_sceneObjectRenderer.Assign(MINT_NEW(SceneObjectRenderer, *_graphicsDevice));
 
 		const Float2 windowSize{ GetWindow().GetSize() };
-		_defaultCameraObject = _objectPool->CreateObject();
+		_defaultCameraObject = _sceneObjectPool->CreateSceneObject();
 		switch (appCreationDesc._appType)
 		{
 		case AppType::Default3D:
 		{
-			CameraComponent* cameraComponent = _objectPool->CreateObjectComponent<CameraComponent>();
+			CameraComponent* cameraComponent = _sceneObjectPool->CreateSceneObjectComponent<CameraComponent>();
 			cameraComponent->SetPerspectiveCamera(Math::ToRadian(60.0f), 0.01f, 100.0f, windowSize._x / windowSize._y);
 			cameraComponent->RotatePitch(0.125f);
 			_defaultCameraObject->GetObjectTransform()._translation._z = 5.0f;
@@ -46,7 +46,7 @@ namespace mint
 		}
 		case AppType::Default2D:
 		{
-			CameraComponent* cameraComponent = _objectPool->CreateObjectComponent<CameraComponent>();
+			CameraComponent* cameraComponent = _sceneObjectPool->CreateSceneObjectComponent<CameraComponent>();
 			cameraComponent->SetPerspectiveCamera(Math::ToRadian(60.0f), 1.0f, 100.0f, windowSize._x / windowSize._y);
 			_defaultCameraObject->GetObjectTransform()._translation._z = 5.0f;
 			_defaultCameraObject->AttachComponent(cameraComponent);
@@ -71,7 +71,7 @@ namespace mint
 
 		if (_window->IsResized())
 		{
-			_objectPool->UpdateScreenSize(Float2(_window->GetSize()));
+			_sceneObjectPool->UpdateScreenSize(Float2(_window->GetSize()));
 		}
 
 		if (_window->IsRunning())
@@ -82,7 +82,7 @@ namespace mint
 
 			const float deltaTime = DeltaTimer::GetInstance().GetDeltaTimeS();
 			const InputContext& inputContext = InputContext::GetInstance();
-			CameraComponent* const cameraComponent = static_cast<CameraComponent*>(_currentCameraObject->GetComponent(ObjectComponentType::CameraComponent));
+			CameraComponent* const cameraComponent = static_cast<CameraComponent*>(_currentCameraObject->GetComponent(SceneObjectComponentType::CameraComponent));
 			cameraComponent->SteerDefault(deltaTime, inputContext, _is3DMode);
 			return true;
 		}
@@ -93,13 +93,13 @@ namespace mint
 	{
 		_graphicsDevice->BeginRendering();
 
-		CameraComponent* const cameraComponent = static_cast<CameraComponent*>(_currentCameraObject->GetComponent(ObjectComponentType::CameraComponent));
+		CameraComponent* const cameraComponent = static_cast<CameraComponent*>(_currentCameraObject->GetComponent(SceneObjectComponentType::CameraComponent));
 		_graphicsDevice->SetViewProjectionMatrix(cameraComponent->GetViewMatrix(), cameraComponent->GetProjectionMatrix());
 	}
 
 	void App::EndRendering()
 	{
-		_objectRenderer->Render(*_objectPool);
+		_sceneObjectRenderer->Render(*_sceneObjectPool);
 
 		_guiSystem->Render(*_graphicsDevice);
 
@@ -116,9 +116,9 @@ namespace mint
 		return *_graphicsDevice;
 	}
 
-	ObjectPool& App::GetObjectPool()
+	SceneObjectPool& App::GetObjectPool()
 	{
-		return *_objectPool;
+		return *_sceneObjectPool;
 	}
 
 	GUI::GUISystem& App::GetGUISystem()

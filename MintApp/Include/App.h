@@ -10,8 +10,8 @@
 
 namespace mint
 {
-	class ObjectPool;
-	class ObjectRenderer;
+	class SceneObjectPool;
+	class SceneObjectRenderer;
 	class Window;
 	struct WindowCreationDesc;
 
@@ -53,22 +53,22 @@ namespace mint
 	public:
 		Window& GetWindow();
 		Rendering::GraphicsDevice& GetGraphicsDevice();
-		ObjectPool& GetObjectPool();
+		SceneObjectPool& GetObjectPool();
 		GUI::GUISystem& GetGUISystem();
-		const SharedPtr<Object>& GetCurrentCameraObject() const { return _currentCameraObject; }
+		const SharedPtr<SceneObject>& GetCurrentCameraObject() const { return _currentCameraObject; }
 
 	protected:
 		OwnPtr<Window> _window;
 		OwnPtr<Rendering::GraphicsDevice> _graphicsDevice;
-		OwnPtr<ObjectPool> _objectPool;
-		OwnPtr<ObjectRenderer> _objectRenderer;
+		OwnPtr<SceneObjectPool> _sceneObjectPool;
+		OwnPtr<SceneObjectRenderer> _sceneObjectRenderer;
 		OwnPtr<GUI::GUISystem> _guiSystem;
 		uint64 _frameNumber;
 
 	protected:
 		bool _is3DMode = true;
-		SharedPtr<Object> _defaultCameraObject;
-		SharedPtr<Object> _currentCameraObject;
+		SharedPtr<SceneObject> _defaultCameraObject;
+		SharedPtr<SceneObject> _currentCameraObject;
 	};
 }
 

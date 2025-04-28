@@ -15,7 +15,7 @@
 namespace mint
 {
 	class MeshComponent;
-	class ObjectPool;
+	class SceneObjectPool;
 
 	namespace Rendering
 	{
@@ -26,14 +26,14 @@ namespace mint
 
 namespace mint
 {
-	class ObjectRenderer final
+	class SceneObjectRenderer final
 	{
 	public:
-		ObjectRenderer(Rendering::GraphicsDevice& graphicsDevice);
-		~ObjectRenderer();
+		SceneObjectRenderer(Rendering::GraphicsDevice& graphicsDevice);
+		~SceneObjectRenderer();
 
 	public:
-		void Render(const ObjectPool& objectPool) noexcept;
+		void Render(const SceneObjectPool& sceneObjectPool) noexcept;
 
 	private:
 		void Initialize() noexcept;
