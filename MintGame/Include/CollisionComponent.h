@@ -8,24 +8,19 @@
 #include <MintCommon/Include/CommonDefinitions.h>
 #include <MintContainer/Include/SharedPtr.h>
 #include <MintPhysics/Include/Intersection.h>
-#include <MintApp/Include/SceneObjectComponent.h>
 
 
 namespace mint
 {
+	namespace Physics
+	{
+		class CollisionShape2D;
+	}
+
 	namespace Game
 	{
-		class Collision2DComponent final : public mint::SceneObjectComponent
+		struct Collision2DComponent
 		{
-		public:
-			Collision2DComponent();
-			virtual ~Collision2DComponent();
-
-		public:
-			void SetCollisionShape2D(const SharedPtr<Physics::CollisionShape2D>& collisionShape2D);
-			const SharedPtr<Physics::CollisionShape2D>& GetCollisionShape2D() const noexcept;
-
-		private:
 			SharedPtr<Physics::CollisionShape2D> _collisionShape2D;
 		};
 	}

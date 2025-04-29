@@ -7,7 +7,6 @@
 
 #include <MintGame/Include/CollisionComponent.h>
 #include <MintGame/Include/TileMap.h>
-#include <MintGame/Include/GameBase.h>
 #include <MintGame/Include/Animation/AnimationCore.h>
 
 

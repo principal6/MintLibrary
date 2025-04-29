@@ -194,6 +194,7 @@
     <ClInclude Include="Include\OwnPtr.h" />
     <ClInclude Include="Include\Queue.h" />
     <ClInclude Include="Include\Queue.hpp" />
+    <ClInclude Include="Include\SerialAndIndex.h" />
     <ClInclude Include="Include\SharedPtr.h" />
     <ClInclude Include="Include\SharedPtr.hpp" />
     <ClInclude Include="Include\ContiguousHashMap.h" />

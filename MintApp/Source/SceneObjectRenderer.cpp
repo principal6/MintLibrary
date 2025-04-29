@@ -30,8 +30,11 @@ namespace mint
 
 		ShaderPool& shaderPool = _graphicsDevice.GetShaderPool();
 		GraphicsResourcePool& resourcePool = _graphicsDevice.GetResourcePool();
-		const Vector<SceneObjectComponent*>& meshComponents = sceneObjectPool.GetMeshComponents();
-		if (meshComponents.IsEmpty() == false)
+
+		SceneObjectComponentPool<TransformComponent>& transformComponentPool = SceneObjectComponentPool<TransformComponent>::GetInstance();
+		SceneObjectComponentPool<MeshComponent>& meshComponentPool = SceneObjectComponentPool<MeshComponent>::GetInstance();
+		ContiguousHashMap<SceneObject, MeshComponent>& meshComponentMap = meshComponentPool.GetComponentMap();
+		if (meshComponentMap.IsEmpty() == false)
 		{
 			shaderPool.BindInputLayoutIfNot(_inputLayoutDefaultID);
 			shaderPool.BindShaderIfNot(GraphicsShaderType::VertexShader, _vsDefaultID);
@@ -44,37 +47,37 @@ namespace mint
 			sbMaterial.BindToShader(GraphicsShaderType::PixelShader, sbMaterial.GetRegisterIndex());
 
 			SB_Material sbMaterialData;
-			const uint32 meshComponentCount = meshComponents.Size();
-			for (uint32 i = 0; i < meshComponentCount; ++i)
+			for (auto iter = meshComponentMap.begin(); iter != meshComponentMap.end(); ++iter)
 			{
-				const MeshComponent* const meshComponent = static_cast<MeshComponent*>(meshComponents[i]);
-
-				_cbTransformData._cbWorldMatrix = meshComponent->GetOwnerObject()->GetObjectTransformMatrix();
+				const SceneObject& sceneObject = iter.GetKey();
+				MeshComponent& meshComponent = iter.GetValue();
+				TransformComponent* transformComponent = transformComponentPool.GetComponent(sceneObject);
+				_cbTransformData._cbWorldMatrix = transformComponent->_transform.ToMatrix();
 				cbTransform.UpdateBuffer(&_cbTransformData, 1);
-
-				_lowLevelRenderer.PushMesh(meshComponent->GetMeshData());
-
+			
+				_lowLevelRenderer.PushMesh(meshComponent._meshData);
+			
 				sbMaterialData._diffuseColor = Color::kBlue;
 				sbMaterial.UpdateBuffer(&sbMaterialData, 1);
-
+			
 				shaderPool.BindShaderIfNot(GraphicsShaderType::PixelShader, _psDefaultID);
 				shaderPool.UnbindShader(GraphicsShaderType::GeometryShader);
 				_lowLevelRenderer.Render(RenderingPrimitive::TriangleList);
-
-				if (meshComponent->ShouldDrawNormals() == true)
+			
+				if (meshComponent._shouldDrawNormals == true)
 				{
 					shaderPool.BindShaderIfNot(GraphicsShaderType::GeometryShader, _gsNormalID);
 					shaderPool.BindShaderIfNot(GraphicsShaderType::PixelShader, _psTexCoordAsColorID);
 					_lowLevelRenderer.Render(RenderingPrimitive::LineList);
 				}
-
-				if (meshComponent->ShouldDrawEdges() == true)
+			
+				if (meshComponent._shouldDrawEdges == true)
 				{
 					shaderPool.BindShaderIfNot(GraphicsShaderType::GeometryShader, _gsTriangleEdgeID);
 					shaderPool.BindShaderIfNot(GraphicsShaderType::PixelShader, _psTexCoordAsColorID);
 					_lowLevelRenderer.Render(RenderingPrimitive::TriangleList);
 				}
-
+			
 				_lowLevelRenderer.Flush();
 			}
 
@@ -86,16 +89,17 @@ namespace mint
 			sbMaterial.UnbindFromShader();
 		}
 
-		const Vector<SceneObjectComponent*>& mesh2DComponents = sceneObjectPool.GetMesh2DComponents();
-		if (mesh2DComponents.IsEmpty() == false)
+		SceneObjectComponentPool<Mesh2DComponent>& mesh2DComponentPool = SceneObjectComponentPool<Mesh2DComponent>::GetInstance();
+		ContiguousHashMap<SceneObject, Mesh2DComponent>& mesh2DComponentMap = mesh2DComponentPool.GetComponentMap();
+		if (mesh2DComponentMap.IsEmpty() == false)
 		{
 			ShapeRenderer& shapeRenderer = _graphicsDevice.GetShapeRenderer();
-			const uint32 mesh2DComponentCount = mesh2DComponents.Size();
-			for (uint32 i = 0; i < mesh2DComponentCount; ++i)
+			for (auto iter = mesh2DComponentMap.begin(); iter != mesh2DComponentMap.end(); ++iter)
 			{
-				const Mesh2DComponent* const mesh2DComponent = static_cast<Mesh2DComponent*>(mesh2DComponents[i]);
-				SceneObject* const sceneObject = mesh2DComponent->GetOwnerObject();
-				shapeRenderer.AddShape(mesh2DComponent->GetShape(), sceneObject->GetObjectTransform());
+				const SceneObject& sceneObject = iter.GetKey();
+				Mesh2DComponent& mesh2DComponent = iter.GetValue();
+				TransformComponent* transformComponent = transformComponentPool.GetComponent(sceneObject);
+				shapeRenderer.AddShape(mesh2DComponent._shape, transformComponent->_transform);
 			}
 			shapeRenderer.Render();
 		}

@@ -21,6 +21,7 @@ namespace mint
 
 	namespace Physics
 	{
+		class CollisionShape2D;
 		class ConvexCollisionShape2D;
 	}
 }

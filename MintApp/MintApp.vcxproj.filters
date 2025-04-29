@@ -20,9 +20,6 @@
     <ClInclude Include="Include\SceneObject.h">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="Include\SceneObjectComponent.h">
-      <Filter>Include</Filter>
-    </ClInclude>
     <ClInclude Include="Include\SceneObjectPool.h">
       <Filter>Include</Filter>
     </ClInclude>
@@ -41,18 +38,15 @@
     <ClInclude Include="Include\App.h">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="Include\SceneObject.hpp">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\SceneObjectSystems.h">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\DeltaTimer.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\MeshComponent.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\SceneObject.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\SceneObjectComponent.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\SceneObjectRenderer.cpp">
@@ -62,6 +56,12 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\App.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\SceneObjectSystems.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\SceneObject.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>

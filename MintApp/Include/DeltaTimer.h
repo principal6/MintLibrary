@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 
-#ifndef _MINT_GAME_DELTA_TIMER_H_
-#define _MINT_GAME_DELTA_TIMER_H_
+#ifndef _MINT_APP_DELTA_TIMER_H_
+#define _MINT_APP_DELTA_TIMER_H_
 
 
 #include <mutex>
@@ -35,4 +35,4 @@ namespace mint
 }
 
 
-#endif // !_MINT_GAME_DELTA_TIMER_H_
+#endif // !_MINT_APP_DELTA_TIMER_H_

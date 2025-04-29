@@ -7,13 +7,10 @@
 
 #include <MintContainer/Include/Vector.h>
 #include <MintContainer/Include/SharedPtr.h>
+#include <MintContainer/Include/SerialAndIndex.h>
 
+#include <MintApp/Include/SceneObject.h>
 
-namespace mint
-{
-	class SceneObject;
-	class SceneObjectComponent;
-}
 
 namespace mint
 {
@@ -24,34 +21,22 @@ namespace mint
 		~SceneObjectPool();
 
 	public:
-		SharedPtr<SceneObject> CreateSceneObject();
-
-	public:
+		SceneObject CreateSceneObject();
+		void DestroySceneObject(SceneObject sceneObject);
 		template<typename ComponentType>
-		ComponentType* CreateSceneObjectComponent();
+		void AttachComponent(const SceneObject& sceneObject, const ComponentType& component);
+		template<typename ComponentType>
+		void AttachComponent(const SceneObject& sceneObject, ComponentType&& component);
+		template<typename ComponentType>
+		ComponentType* GetComponent(const SceneObject& sceneObject);
 
 	public:
-		void UpdateScreenSize(const Float2& screenSize);
-
-	public:
-		const Vector<SceneObjectComponent*>& GetMeshComponents() const noexcept;
-		const Vector<SceneObjectComponent*>& GetMesh2DComponents() const noexcept;
-
-	public:
+		const Vector<SceneObject>& GetSceneObjects() const noexcept;
 		uint32 GetSceneObjectCount() const noexcept;
 
 	private:
-		SharedPtr<SceneObject> CreateSceneObjectInternal(SharedPtr<SceneObject>&& sceneObject);
-		void DestroyObjects();
-		void DestroySceneObjectComponents(SceneObject& sceneObject);
-		void DeregisterComponent(Vector<SceneObjectComponent*>& components, SceneObjectComponent* const component);
-
-	private:
-		Vector<SharedPtr<SceneObject>> _sceneObjects;
-
-	private:
-		Vector<SceneObjectComponent*> _meshComponents;
-		Vector<SceneObjectComponent*> _mesh2DComponents;
+		Vector<SceneObject> _sceneObjects;
+		uint32 _nextEmptySceneObjectIndex{ 0 };
 	};
 }
 

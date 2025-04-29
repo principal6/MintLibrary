@@ -27,9 +27,6 @@
     <ClInclude Include="Include\TileMap.h">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="Include\GameBase.h">
-      <Filter>Include</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Animation\AnimationCore.cpp">
@@ -38,13 +35,7 @@
     <ClCompile Include="Source\_UnityBuild.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Source\CollisionComponent.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="Source\TileMap.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\GameBase.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>

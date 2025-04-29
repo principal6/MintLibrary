@@ -7,148 +7,124 @@
 
 #include <MintApp/Include/SceneObjectPool.h>
 
-#include <MintContainer/Include/Vector.hpp>
+//#include <MintContainer/Include/Vector.hpp>
 
 #include <MintRenderingBase/Include/GraphicsDevice.h>
 #include <MintRenderingBase/Include/LowLevelRenderer.hpp>
 
 #include <MintApp/Include/DeltaTimer.h>
-#include <MintApp/Include/SceneObject.h>
+#include <MintApp/Include/SceneObject.hpp>
 
 
 namespace mint
 {
 	inline SceneObjectPool::SceneObjectPool()
 	{
-		__noop;
+		_nextEmptySceneObjectIndex = 0;
 	}
 
 	inline SceneObjectPool::~SceneObjectPool()
 	{
-		DestroyObjects();
+		// TODO: Destroy 로직???
+		// TODO: Destroy 로직???
+		// TODO: Destroy 로직???
 	}
 
-	MINT_INLINE SharedPtr<SceneObject> SceneObjectPool::CreateSceneObject()
+	MINT_INLINE SceneObject SceneObjectPool::CreateSceneObject()
 	{
-		return CreateSceneObjectInternal(MakeShared<SceneObject>(SceneObject(this)));
-	}
-
-	MINT_INLINE void SceneObjectPool::DestroyObjects()
-	{
-		const uint32 sceneObjectCount = GetSceneObjectCount();
-		for (uint32 sceneObjectIndex = 0; sceneObjectIndex < sceneObjectCount; ++sceneObjectIndex)
+		if (_nextEmptySceneObjectIndex >= _sceneObjects.Size())
 		{
-			if (_sceneObjects[sceneObjectIndex].IsValid())
+			if (_sceneObjects.IsEmpty() == true)
 			{
-				DestroySceneObjectComponents(*_sceneObjects[sceneObjectIndex]);
+				_sceneObjects.Resize(16);
 			}
-		}
-		_sceneObjects.Clear();
-	}
-
-	MINT_INLINE SharedPtr<SceneObject> SceneObjectPool::CreateSceneObjectInternal(SharedPtr<SceneObject>&& sceneObject)
-	{
-		_sceneObjects.PushBack(sceneObject);
-		sceneObject->AttachComponent(MINT_NEW(TransformComponent)); // 모든 SceneObject는 TransformComponent 를 필수로 가집니다.
-		return _sceneObjects.Back();
-	}
-
-	template<typename ComponentType>
-	MINT_INLINE ComponentType* SceneObjectPool::CreateSceneObjectComponent()
-	{
-		ComponentType* component = MINT_NEW(ComponentType);
-		const SceneObjectComponentType type = component->GetType();
-		if (type == SceneObjectComponentType::MeshComponent)
-		{
-			_meshComponents.PushBack(component);
-		}
-		else if (type == SceneObjectComponentType::Mesh2DComponent)
-		{
-			_mesh2DComponents.PushBack(component);
-		}
-		return component;
-	}
-
-	MINT_INLINE void SceneObjectPool::DestroySceneObjectComponents(SceneObject& sceneObject)
-	{
-		const uint32 componentCount = static_cast<uint32>(sceneObject._componentArray.Size());
-		for (uint32 componentIndex = 0; componentIndex < componentCount; ++componentIndex)
-		{
-			SceneObjectComponent*& component = sceneObject._componentArray[componentIndex];
-			if (component != nullptr)
+			else
 			{
-				const SceneObjectComponentType componentType = component->GetType();
-				if (componentType == SceneObjectComponentType::MeshComponent)
-				{
-					DeregisterComponent(_meshComponents, component);
-				}
-				else if (componentType == SceneObjectComponentType::Mesh2DComponent)
-				{
-					DeregisterComponent(_mesh2DComponents, component);
-				}
-
-				MINT_DELETE(component);
+				_sceneObjects.Resize(_sceneObjects.Capacity() * 2);
 			}
 		}
 
-		sceneObject._componentArray.Clear();
-	}
-
-	MINT_INLINE void SceneObjectPool::DeregisterComponent(Vector<SceneObjectComponent*>& components, SceneObjectComponent* const component)
-	{
-		if (component == nullptr)
+		SceneObject& sceneObject = _sceneObjects[_nextEmptySceneObjectIndex];
+		sceneObject.SetSerialAndIndex(sceneObject.GetSerial() + 1, _nextEmptySceneObjectIndex);
+		
+		const uint32 nextEmptySceneObjectIndexCache = _nextEmptySceneObjectIndex;
+		const uint32 poolSize = _sceneObjects.Size();
+		for (uint32 i = _nextEmptySceneObjectIndex + 1; i < poolSize; ++i)
 		{
-			return;
-		}
-
-		int32 foundIndex = -1;
-		const int32 componentCount = static_cast<int32>(components.Size());
-		for (int32 i = 0; i < componentCount; ++i)
-		{
-			if (components[i]->GetID() == component->GetID())
+			if (_sceneObjects[i].IsValid() == false)
 			{
-				foundIndex = i;
+				_nextEmptySceneObjectIndex = i;
 				break;
 			}
 		}
-
-		if (foundIndex >= 0)
+		if (nextEmptySceneObjectIndexCache == _nextEmptySceneObjectIndex)
 		{
-			if (foundIndex < componentCount)
-			{
-				std::swap(components[foundIndex], components.Back());
-			}
-			components.PopBack();
+			_nextEmptySceneObjectIndex = _sceneObjects.Size();
+		}
+
+		// 모든 SceneObject 는 TransformComponent 를 가진다!
+		AttachComponent(sceneObject, TransformComponent());
+
+		return sceneObject;
+	}
+
+	inline void SceneObjectPool::DestroySceneObject(SceneObject sceneObject)
+	{
+		const uint32 index = static_cast<uint32>(sceneObject.GetIndex());
+		MINT_ASSERT(index < _sceneObjects.Size(), "로직 상 반드시 보장되어야 합니다!");
+		_sceneObjects[index].SetInvalid();
+		_nextEmptySceneObjectIndex = Min(index, _nextEmptySceneObjectIndex);
+
+		const Vector<ISceneObjectComponentPool*>& componentPools = SceneObjectComponentPoolRegistry::GetInstance().GetComponentPools();
+		for (ISceneObjectComponentPool* const componentPool : componentPools)
+		{
+			componentPool->RemoveComponentFrom(sceneObject);
 		}
 	}
 
-	MINT_INLINE void SceneObjectPool::UpdateScreenSize(const Float2& screenSize)
-	{
-		const uint32 sceneObjectCount = _sceneObjects.Size();
-		for (uint32 sceneObjectIndex = 0; sceneObjectIndex < sceneObjectCount; ++sceneObjectIndex)
-		{
-			SharedPtr<SceneObject>& sceneObject = _sceneObjects[sceneObjectIndex];
-			CameraComponent* const cameraComponent = static_cast<CameraComponent*>(sceneObject->GetComponent(SceneObjectComponentType::CameraComponent));
-			if (cameraComponent != nullptr)
-			{
-				cameraComponent->UpdateScreenSize(screenSize);
-			}
-		}
-	}
+	// TODO: CameraComponent Pool 만 돌면 된다!!
+	// TODO: CameraComponent Pool 만 돌면 된다!!
+	// TODO: CameraComponent Pool 만 돌면 된다!!
+	//MINT_INLINE void SceneObjectPool::UpdateScreenSize(const Float2& screenSize)
+	//{
+	//	const uint32 sceneObjectCount = _sceneObjects.Size();
+	//	for (uint32 sceneObjectIndex = 0; sceneObjectIndex < sceneObjectCount; ++sceneObjectIndex)
+	//	{
+	//		SharedPtr<SceneObject>& sceneObject = _sceneObjects[sceneObjectIndex];
+	//		CameraComponent* const cameraComponent = static_cast<CameraComponent*>(sceneObject->GetComponent(SceneObjectComponentType::CameraComponent));
+	//		if (cameraComponent != nullptr)
+	//		{
+	//			cameraComponent->UpdateScreenSize(screenSize);
+	//		}
+	//	}
+	//}
 
-	MINT_INLINE const Vector<SceneObjectComponent*>& SceneObjectPool::GetMeshComponents() const noexcept
+	inline const Vector<SceneObject>& SceneObjectPool::GetSceneObjects() const noexcept
 	{
-		return _meshComponents;
-	}
-
-	MINT_INLINE const Vector<SceneObjectComponent*>& SceneObjectPool::GetMesh2DComponents() const noexcept
-	{
-		return _mesh2DComponents;
+		return _sceneObjects;
 	}
 
 	MINT_INLINE uint32 SceneObjectPool::GetSceneObjectCount() const noexcept
 	{
 		return _sceneObjects.Size();
+	}
+
+	template<typename ComponentType>
+	inline void SceneObjectPool::AttachComponent(const SceneObject& sceneObject, const ComponentType& component)
+	{
+		return SceneObjectComponentPool<ComponentType>::GetInstance().AddComponentTo(sceneObject, component);
+	}
+
+	template<typename ComponentType>
+	inline void SceneObjectPool::AttachComponent(const SceneObject& sceneObject, ComponentType&& component)
+	{
+		return SceneObjectComponentPool<ComponentType>::GetInstance().AddComponentTo(sceneObject, std::move(component));
+	}
+
+	template<typename ComponentType>
+	inline ComponentType* SceneObjectPool::GetComponent(const SceneObject& sceneObject)
+	{
+		return SceneObjectComponentPool<ComponentType>::GetInstance().GetComponent(sceneObject);
 	}
 }
 

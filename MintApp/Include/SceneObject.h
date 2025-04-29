@@ -7,56 +7,137 @@
 
 #include <MintCommon/Include/CommonDefinitions.h>
 
-#include <MintContainer/Include/Vector.h>
+#include <MintContainer/Include/ID.h>
+#include <MintContainer/Include/Hash.h>
+#include <MintContainer/Include/ContiguousHashMap.h>
+#include <MintContainer/Include/SerialAndIndex.h>
 
-#include <MintMath/Include/Float4x4.h>
-
-#include <MintApp/Include/SceneObjectComponent.h>
+#include <MintMath/Include/Transform.h>
 
 
 namespace mint
 {
-	class SceneObjectComponent;
-	class TransformComponent;
-	class SceneObjectPool;
-	enum class SceneObjectComponentType;
-	struct Transform;
+	class InputContext;
 }
 
 namespace mint
 {
-	class SceneObject
+	class SceneObject : public SerialAndIndex<uint64, kInvalidIndexUint64, 40>
 	{
-		friend SceneObjectPool;
+	};
+
+	template <>
+	struct Hasher<SceneObject> final
+	{
+		uint64 operator()(const SceneObject& value) const noexcept;
+	};
+
+	// type-erasure for SceneObjectComponentPool
+	class ISceneObjectComponentPool abstract
+	{
+	public:
+		ISceneObjectComponentPool() { __noop; }
+		virtual ~ISceneObjectComponentPool() { __noop; }
 
 	public:
-		virtual ~SceneObject();
+		virtual void RemoveComponentFrom(const SceneObject& entity) = 0;
+		virtual bool HasComponent(const SceneObject& entity) const = 0;
+		virtual void CopyComponent(const SceneObject& sourceEntity, const SceneObject& targetEntity) = 0;
+	};
+
+	template<typename ComponentType>
+	class SceneObjectComponentPool final : public ISceneObjectComponentPool
+	{
+	public:
+		SceneObjectComponentPool();
+		virtual ~SceneObjectComponentPool();
+
+	public:
+		static SceneObjectComponentPool& GetInstance();
+
+	public:
+		void AddComponentTo(const SceneObject& sceneObject, const ComponentType& component);
+		void AddComponentTo(const SceneObject& sceneObject, ComponentType&& component);
+		virtual void RemoveComponentFrom(const SceneObject& sceneObject) override final;
+		virtual bool HasComponent(const SceneObject& sceneObject) const override final;
+		virtual void CopyComponent(const SceneObject& sourceEntity, const SceneObject& targetEntity) override final;
+		ComponentType* GetComponent(const SceneObject& sceneObject);
+		ContiguousHashMap<SceneObject, ComponentType>& GetComponentMap();
 
 	private:
-		SceneObject(const SceneObjectPool* const sceneObjectPool);
+		ContiguousHashMap<SceneObject, ComponentType> _componentMap;
+	};
+
+	class SceneObjectComponentPoolRegistry
+	{
+		SceneObjectComponentPoolRegistry();
+		SceneObjectComponentPoolRegistry(const SceneObjectComponentPoolRegistry& rhs) = delete;
+		SceneObjectComponentPoolRegistry(SceneObjectComponentPoolRegistry&& rhs) noexcept = delete;
 
 	public:
-		void AttachComponent(SceneObjectComponent* const component);
-		void DetachComponent(SceneObjectComponent* const component);
+		~SceneObjectComponentPoolRegistry();
+		static SceneObjectComponentPoolRegistry& GetInstance();
 
 	public:
-		uint32 GetComponentCount() const noexcept;
-		SceneObjectComponent* GetComponent(const SceneObjectComponentType type) const noexcept;
+		void RegisterComponentPool(ISceneObjectComponentPool& componentPool);
+		const Vector<ISceneObjectComponentPool*>& GetComponentPools() const;
 
-	public:
-		void SetObjectTransform(const Transform& transform) noexcept;
-		Transform& GetObjectTransform() noexcept;
-		const Transform& GetObjectTransform() const noexcept;
-		Float4x4 GetObjectTransformMatrix() const noexcept;
+	private:
+		Vector<ISceneObjectComponentPool*> _componentPools;
+#if defined(MINT_DEBUG)
+	private:
+		static SceneObjectComponentPoolRegistry* _sInstance;
+#endif // defined(MINT_DEBUG)
+	};
 
-	protected:
-		TransformComponent* GetObjectTransformComponent() const noexcept;
+	struct TransformComponent
+	{
+		Transform _transform;
+	};
 
-	protected:
-		const SceneObjectPool* const _sceneObjectPool;
-
-	protected:
-		Vector<SceneObjectComponent*> _componentArray;
+	enum class CameraMoveDirection : uint8
+	{
+		Forward,
+		Backward,
+		Leftward,
+		Rightward,
+		Upward,
+		Downward
+	};
+	enum class CameraMoveSpeed : uint8
+	{
+		x0_125,
+		x0_25,
+		x0_5,
+		x1_0,
+		x2_0,
+		x4_0,
+		x8_0,
+		x16_0,
+		COUNT
+	};
+	struct CameraComponent
+	{
+		Float4x4 _projectionMatrix;
+		mutable Float3 _forwardDirection;
+		bool _usePerspectiveProjection = true;
+		bool _isRightHanded = true;
+		float _fov = Math::ToRadian(60.0f);
+		union
+		{
+			struct
+			{
+				float _nearZ;
+				float _farZ;
+			};
+			Float2 _screenSize{ 1.0f, 100.0f };
+		};
+		float _screenRatio = 1.0f;
+		float _pitch = 0.0f;
+		float _yaw = 0.0f;
+		float _roll = 0.0f;
+		CameraMoveSpeed _moveSpeed = CameraMoveSpeed::x8_0;
+		bool _isBoostMode = false;
 	};
 }
 

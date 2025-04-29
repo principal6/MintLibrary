@@ -138,6 +138,9 @@
     <ClInclude Include="Include\ContiguousHashMap.hpp">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="Include\SerialAndIndex.h">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Include\Array.inl">

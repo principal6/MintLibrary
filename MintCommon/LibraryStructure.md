@@ -78,7 +78,6 @@ classDiagram
     class MintApp{
         SceneObjectPool
         SceneObject
-        SceneObjectComponent
         App
         ...
     }

@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 
-#ifndef _MINT_GAME_MESH_RENDERER_H_
-#define _MINT_GAME_MESH_RENDERER_H_
+#ifndef _MINT_APP_SCENE_OBJECT_RENDERER_H_
+#define _MINT_APP_SCENE_OBJECT_RENDERER_H_
 
 
 #include <MintCommon/Include/CommonDefinitions.h>
@@ -14,7 +14,6 @@
 
 namespace mint
 {
-	class MeshComponent;
 	class SceneObjectPool;
 
 	namespace Rendering
@@ -57,4 +56,4 @@ namespace mint
 }
 
 
-#endif // !_MINT_GAME_MESH_RENDERER_H_
+#endif // !_MINT_APP_SCENE_OBJECT_RENDERER_H_

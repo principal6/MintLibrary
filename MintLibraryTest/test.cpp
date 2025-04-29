@@ -334,7 +334,7 @@ bool Run2DTestWindow()
 	using namespace Rendering;
 	using namespace Physics;
 	using namespace Game;
-	
+
 	WindowCreationDesc windowCreationDesc;
 	windowCreationDesc._position.Set(200, 100);
 	windowCreationDesc._size.Set(1024, 768);
@@ -353,39 +353,36 @@ bool Run2DTestWindow()
 	const GraphicsObjectID corgiSpriteSheetTextureID = resourcePool.AddTexture2D(corgiSpriteSheet);
 
 	SceneObjectPool& sceneObjectPool = app.GetObjectPool();
-	SharedPtr<SceneObject> sceneObject0 = sceneObjectPool.CreateSceneObject();
+	SceneObject sceneObject0 = sceneObjectPool.CreateSceneObject();
 	{
-		Mesh2DComponent* mesh2DComponent = sceneObjectPool.CreateSceneObjectComponent<Mesh2DComponent>();
-		Shape shape;
-		ShapeGenerator::GenerateCircle(1.0f, 16, ByteColor(0, 0, 255), shape);
-		mesh2DComponent->SetShape(std::move(shape));
-		sceneObject0->AttachComponent(mesh2DComponent);
+		Mesh2DComponent mesh2DComponent;
+		ShapeGenerator::GenerateCircle(1.0f, 16, ByteColor(0, 0, 255), mesh2DComponent._shape);
+		sceneObjectPool.AttachComponent(sceneObject0, std::move(mesh2DComponent));
 	}
 	{
-		const Shape& shape = ((Mesh2DComponent*)(sceneObject0->GetComponent(SceneObjectComponentType::Mesh2DComponent)))->GetShape();
-		Collision2DComponent* collision2DComponent = sceneObjectPool.CreateSceneObjectComponent<Collision2DComponent>();
+		const Shape& shape = sceneObjectPool.GetComponent<Mesh2DComponent>(sceneObject0)->_shape;
+		Collision2DComponent collision2DComponent;
 		ConvexCollisionShape2D collisionShape2D = ConvexCollisionShape2D::MakeFromRenderingShape(Float2::kZero, shape);
-		collision2DComponent->SetCollisionShape2D(MakeShared<CollisionShape2D>(collisionShape2D));
-		sceneObject0->AttachComponent(collision2DComponent);
+		collision2DComponent._collisionShape2D = MakeShared<CollisionShape2D>(collisionShape2D);
+		sceneObjectPool.AttachComponent(sceneObject0, std::move(collision2DComponent));
 	}
-	SharedPtr<SceneObject> sceneObject1 = sceneObjectPool.CreateSceneObject();
+
+	SceneObject sceneObject1 = sceneObjectPool.CreateSceneObject();
 	{
-		Mesh2DComponent* mesh2DComponent = sceneObjectPool.CreateSceneObjectComponent<Mesh2DComponent>();
-		Shape shape;
+		Mesh2DComponent mesh2DComponent;
 		Vector<Float2> points;
 		points.PushBack(Float2(1, 1));
 		points.PushBack(Float2(1, 0));
 		points.PushBack(Float2(2, 0));
-		ShapeGenerator::GenerateConvexShape(points, ByteColor(0, 128, 255), shape);
-		mesh2DComponent->SetShape(std::move(shape));
-		sceneObject1->AttachComponent(mesh2DComponent);
+		ShapeGenerator::GenerateConvexShape(points, ByteColor(0, 128, 255), mesh2DComponent._shape);
+		sceneObjectPool.AttachComponent(sceneObject1, std::move(mesh2DComponent));
 	}
 	{
-		const Shape& shape = ((Mesh2DComponent*)(sceneObject1->GetComponent(SceneObjectComponentType::Mesh2DComponent)))->GetShape();
-		Collision2DComponent* collision2DComponent = sceneObjectPool.CreateSceneObjectComponent<Collision2DComponent>();
+		const Shape& shape = sceneObjectPool.GetComponent<Mesh2DComponent>(sceneObject1)->_shape;
+		Collision2DComponent collision2DComponent;
 		ConvexCollisionShape2D collisionShape2D = ConvexCollisionShape2D::MakeFromRenderingShape(Float2::kZero, shape);
-		collision2DComponent->SetCollisionShape2D(MakeShared<CollisionShape2D>(collisionShape2D));
-		sceneObject1->AttachComponent(collision2DComponent);
+		collision2DComponent._collisionShape2D = MakeShared<CollisionShape2D>(collisionShape2D);
+		sceneObjectPool.AttachComponent(sceneObject1, std::move(collision2DComponent));
 	}
 
 	SpriteAnimationSet corgiAnimationSet;
@@ -470,11 +467,17 @@ bool Run3DTestWindow()
 
 
 	SceneObjectPool& sceneObjectPool = app.GetObjectPool();
-	SharedPtr<SceneObject> testObject = sceneObjectPool.CreateSceneObject();
+	SceneObject testObject = sceneObjectPool.CreateSceneObject();
 	{
-		testObject->AttachComponent(sceneObjectPool.CreateSceneObjectComponent<MeshComponent>());
+		MeshComponent meshComponent;
+		Rendering::MeshGenerator::GeoSphereParam geosphereParam;
+		geosphereParam._radius = 1.0f;
+		geosphereParam._subdivisionIteration = 3;
+		geosphereParam._smooth = true;
+		Rendering::MeshGenerator::GenerateGeoSphere(geosphereParam, meshComponent._meshData);
+		sceneObjectPool.AttachComponent(testObject, std::move(meshComponent));
 
-		Transform& transform = testObject->GetObjectTransform();
+		Transform& transform = sceneObjectPool.GetComponent<TransformComponent>(testObject)->_transform;
 		transform._translation._z = -1.0f;
 	}
 
@@ -509,12 +512,13 @@ bool Run3DTestWindow()
 	//buttonObject.SetPosition(Float2(100, 100));
 
 	GraphicsDevice& graphicsDevice = app.GetGraphicsDevice();
+	SceneObjectSystems& sceneObjectSystems = app.GetSceneObjectSystems();
 	const InputContext& inputContext = InputContext::GetInstance();
 	while (app.IsRunning() == true)
 	{
 		const float deltaTime = DeltaTimer::GetInstance().GetDeltaTimeS();
-		SharedPtr<SceneObject> currentCameraObject = app.GetCurrentCameraObject();
-		CameraComponent* const cameraComponent = static_cast<CameraComponent*>(currentCameraObject->GetComponent(SceneObjectComponentType::CameraComponent));
+		const SceneObject& currentCameraObject = sceneObjectSystems._cameraSystem.GetCurrentCameraObject();
+		CameraComponent* const cameraComponent = sceneObjectPool.GetComponent<CameraComponent>(currentCameraObject);
 		if (inputContext.IsKeyPressed())
 		{
 			if (inputContext.IsKeyDown(KeyCode::Enter) == true)
@@ -535,24 +539,24 @@ bool Run3DTestWindow()
 			}
 			else if (inputContext.IsKeyDown(KeyCode::Num4) == true)
 			{
-				MeshComponent* const meshComponent = static_cast<MeshComponent*>(testObject->GetComponent(SceneObjectComponentType::MeshComponent));
-				meshComponent->ShouldDrawNormals(!meshComponent->ShouldDrawNormals());
+				MeshComponent* const meshComponent = sceneObjectPool.GetComponent<MeshComponent>(testObject);
+				meshComponent->_shouldDrawNormals = !meshComponent->_shouldDrawNormals;
 			}
 			else if (inputContext.IsKeyDown(KeyCode::Num5) == true)
 			{
-				MeshComponent* const meshComponent = static_cast<MeshComponent*>(testObject->GetComponent(SceneObjectComponentType::MeshComponent));
-				meshComponent->ShouldDrawEdges(!meshComponent->ShouldDrawEdges());
+				MeshComponent* const meshComponent = sceneObjectPool.GetComponent<MeshComponent>(testObject);
+				meshComponent->_shouldDrawEdges = !meshComponent->_shouldDrawEdges;
 			}
 			else if (inputContext.IsKeyDown(KeyCode::Shift) == true)
 			{
-				cameraComponent->SetBoostMode(true);
+				cameraComponent->_isBoostMode = true;
 			}
 		}
 		else if (inputContext.IsKeyReleased())
 		{
 			if (inputContext.IsKeyUp(KeyCode::Shift) == true)
 			{
-				cameraComponent->SetBoostMode(false);
+				cameraComponent->_isBoostMode = false;
 			}
 		}
 		else if (inputContext.IsMouseWheelScrolled())
@@ -560,11 +564,11 @@ bool Run3DTestWindow()
 			const float mouseWheelScroll = inputContext.GetMouseWheelScroll();
 			if (mouseWheelScroll > 0.0f)
 			{
-				cameraComponent->IncreaseMoveSpeed();
+				sceneObjectSystems._cameraSystem.IncreaseCurrentCameraMoveSpeed();
 			}
 			else
 			{
-				cameraComponent->DecreaseMoveSpeed();
+				sceneObjectSystems._cameraSystem.DecreaseCurrentCameraMoveSpeed();
 			}
 		}
 
@@ -586,7 +590,9 @@ bool Run3DTestWindow()
 			}
 			shapeRenderer.Render();
 
-			graphicsDevice.SetViewProjectionMatrix(cameraComponent->GetViewMatrix(), cameraComponent->GetProjectionMatrix());
+			const Float4x4& currentCameraViewMatrix = sceneObjectSystems._cameraSystem.MakeViewMatrix(currentCameraObject);
+			CameraComponent* const cameraComponent = sceneObjectPool.GetComponent<CameraComponent>(currentCameraObject);
+			graphicsDevice.SetViewProjectionMatrix(currentCameraViewMatrix, cameraComponent->_projectionMatrix);
 		}
 		app.EndRendering();
 

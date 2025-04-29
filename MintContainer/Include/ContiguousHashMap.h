@@ -41,6 +41,54 @@ namespace mint
 		bool IsEmpty() const noexcept;
 		const Vector<Value>& GetValues() const noexcept;
 
+	public:
+		class Iterator
+		{
+		public:
+			Iterator(HashMap<Key, IndexType>::Iterator&& keyMapIterator, Vector<Value>& values) : _keyMapIterator{ std::move(keyMapIterator) }, _values{ values } { __noop; }
+			~Iterator() = default;
+		
+		public:
+			bool operator==(const Iterator& rhs) const noexcept
+			{
+				return _keyMapIterator == rhs._keyMapIterator;
+			}
+			bool operator!=(const Iterator& rhs) const noexcept
+			{
+				return !(*this == rhs);
+			}
+			Iterator& operator++() noexcept
+			{
+				++_keyMapIterator;
+				return *this;
+			}
+			Value& operator*() const noexcept
+			{
+				return GetValue();
+			}
+			Key& GetKey() const noexcept
+			{
+				return _keyMapIterator.GetKey();
+			}
+			Value& GetValue() const noexcept
+			{
+				return _values[_keyMapIterator.GetValue()];
+			}
+		
+		private:
+			HashMap<Key, IndexType>::Iterator _keyMapIterator;
+			Vector<Value>& _values;
+		};
+		
+		Iterator begin() noexcept
+		{
+			return Iterator(_keyMap.begin(), _values);
+		}
+		Iterator end() noexcept
+		{
+			return Iterator(_keyMap.end(), _values);
+		}
+
 	private:
 		HashMap<Key, IndexType> _keyMap;
 		Vector<Value> _values;
