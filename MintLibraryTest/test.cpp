@@ -224,9 +224,9 @@ void RunGJKTestWindow()
 
 				shapeRenderer.Render();
 			}
-			{
-				graphicsDevice.SetViewProjectionMatrix(Float4x4::kIdentity, Float4x4::ProjectionMatrix2DFromTopLeft(windowSize._x, windowSize._y));
 
+			app.BeginScreenSpaceRendering();
+			{
 				shapeRenderer.SetTextColor(Color::kBlack);
 				StackStringW<100> buffer;
 				FormatString(buffer, L"GJK Iteration: %d / Max %u (Q/W)", gjk2DInfo._loopCount, gjk2DInfo._maxLoopCount);
@@ -235,9 +235,8 @@ void RunGJKTestWindow()
 				shapeRenderer.DrawDynamicText(buffer.CString(), Float2(10, 30), FontRenderingOption());
 				FormatString(buffer, L"Selected: %s (1: None / 2: A / 3: B)", (selectionMode == SelectionMode::None ? L"None" : (selectionMode == SelectionMode::ShapeA ? L"ShapeA" : L"ShapeB")));
 				shapeRenderer.DrawDynamicText(buffer.CString(), Float2(10, 50), FontRenderingOption());
-
-				shapeRenderer.Render();
 			}
+			app.EndScreenSpaceRendering();
 		}
 		app.EndRendering();
 	}
@@ -307,20 +306,20 @@ void RunSplineTestWindow()
 
 	GraphicsDevice& graphicsDevice = app.GetGraphicsDevice();
 	const InputContext& inputContext = InputContext::GetInstance();
+	ShapeRenderer& shapeRenderer = graphicsDevice.GetShapeRenderer();
 	while (app.IsRunning() == true)
 	{
 		// Rendering
 		app.BeginRendering();
 		{
-			ShapeRenderer& shapeRenderer = graphicsDevice.GetShapeRenderer();
-			graphicsDevice.SetViewProjectionMatrix(Float4x4::kIdentity, graphicsDevice.GetScreenSpace2DProjectionMatrix());
+			app.BeginScreenSpaceRendering();
 			{
 				StackStringW<100> fpsString;
 				FormatString(fpsString, L"FPS: %d", Profiler::FPSCounter::GetFPS());
 				shapeRenderer.SetTextColor(Color::kBlack);
 				shapeRenderer.DrawDynamicText(fpsString.CString(), Float2(10, 10), FontRenderingOption());
 			}
-			shapeRenderer.Render();
+			app.EndScreenSpaceRendering();
 		}
 		app.EndRendering();
 
@@ -360,10 +359,9 @@ bool Run2DTestWindow()
 		sceneObjectPool.AttachComponent(sceneObject0, std::move(mesh2DComponent));
 	}
 	{
-		const Shape& shape = sceneObjectPool.GetComponent<Mesh2DComponent>(sceneObject0)->_shape;
+		const Shape& shape = sceneObjectPool.GetComponentMust<Mesh2DComponent>(sceneObject0)._shape;
 		Collision2DComponent collision2DComponent;
-		ConvexCollisionShape2D collisionShape2D = ConvexCollisionShape2D::MakeFromRenderingShape(Float2::kZero, shape);
-		collision2DComponent._collisionShape2D = MakeShared<CollisionShape2D>(collisionShape2D);
+		collision2DComponent._collisionShape2D = MakeShared<CollisionShape2D>(ConvexCollisionShape2D::MakeFromRenderingShape(Float2::kZero, shape));
 		sceneObjectPool.AttachComponent(sceneObject0, std::move(collision2DComponent));
 	}
 
@@ -378,10 +376,9 @@ bool Run2DTestWindow()
 		sceneObjectPool.AttachComponent(sceneObject1, std::move(mesh2DComponent));
 	}
 	{
-		const Shape& shape = sceneObjectPool.GetComponent<Mesh2DComponent>(sceneObject1)->_shape;
+		const Shape& shape = sceneObjectPool.GetComponentMust<Mesh2DComponent>(sceneObject1)._shape;
 		Collision2DComponent collision2DComponent;
-		ConvexCollisionShape2D collisionShape2D = ConvexCollisionShape2D::MakeFromRenderingShape(Float2::kZero, shape);
-		collision2DComponent._collisionShape2D = MakeShared<CollisionShape2D>(collisionShape2D);
+		collision2DComponent._collisionShape2D = MakeShared<CollisionShape2D>(ConvexCollisionShape2D::MakeFromRenderingShape(Float2::kZero, shape));
 		sceneObjectPool.AttachComponent(sceneObject1, std::move(collision2DComponent));
 	}
 
@@ -405,6 +402,7 @@ bool Run2DTestWindow()
 
 	ImageRenderer imageRenderer{ graphicsDevice, 1 };
 	const InputContext& inputContext = InputContext::GetInstance();
+	ShapeRenderer& shapeRenderer = graphicsDevice.GetShapeRenderer();
 	while (app.IsRunning() == true)
 	{
 		const float deltaTime = DeltaTimer::GetInstance().GetDeltaTimeS();
@@ -424,22 +422,21 @@ bool Run2DTestWindow()
 		// Rendering
 		app.BeginRendering();
 		{
-			graphicsDevice.SetViewProjectionMatrix(Float4x4::kIdentity, graphicsDevice.GetScreenSpace2DProjectionMatrix());
-			resourcePool.GetResource(corgiSpriteSheetTextureID).BindToShader(GraphicsShaderType::PixelShader, 1);
-			//imageRenderer.DrawImageScreenSpace(Float2(0, 0), Float2(800, 512), Float2(0, 0), Float2(1, 1));
-			corgiAnimationSet.Update(deltaTime);
-			const SpriteAnimation& corgiCurrentAnimation = corgiAnimationSet.GetCurrentAnimation();
-			imageRenderer.DrawImageScreenSpace(Float2(64, 64), Float2(128, 128), corgiCurrentAnimation.GetCurrentFrameUV0(), corgiCurrentAnimation.GetCurrentFrameUV1());
-			imageRenderer.Render();
-
-			ShapeRenderer& shapeRenderer = graphicsDevice.GetShapeRenderer();
+			app.BeginScreenSpaceRendering();
 			{
+				resourcePool.GetResource(corgiSpriteSheetTextureID).BindToShader(GraphicsShaderType::PixelShader, 1);
+				//imageRenderer.DrawImageScreenSpace(Float2(0, 0), Float2(800, 512), Float2(0, 0), Float2(1, 1));
+				corgiAnimationSet.Update(deltaTime);
+				const SpriteAnimation& corgiCurrentAnimation = corgiAnimationSet.GetCurrentAnimation();
+				imageRenderer.DrawImageScreenSpace(Float2(64, 64), Float2(128, 128), corgiCurrentAnimation.GetCurrentFrameUV0(), corgiCurrentAnimation.GetCurrentFrameUV1());
+				imageRenderer.Render();
+
 				StackStringW<100> fpsString;
 				FormatString(fpsString, L"FPS: %d", Profiler::FPSCounter::GetFPS());
 				shapeRenderer.SetTextColor(Color::kBlack);
 				shapeRenderer.DrawDynamicText(fpsString.CString(), Float2(10, 10), FontRenderingOption());
 			}
-			shapeRenderer.Render();
+			app.EndScreenSpaceRendering();
 		}
 		app.EndRendering();
 
@@ -482,38 +479,10 @@ bool Run3DTestWindow()
 	}
 
 	GUISystem& guiSystem = app.GetGUISystem();
-	//GUIEntityTemplate roundButton0TemplateID;
-	//{
-	//	GUIEntityTemplate guiObjectTemplate;
-	//	{
-	//		SharedPtr<GUIShapeComponent> guiShapeComponent = MakeShared<GUIShapeComponent>();
-	//		Shape defaultShape;
-	//		Shape hoveredShape;
-	//		Shape pressedShape;
-	//		ShapeGenerator::GenerateCircle(16.0f, 16, ByteColor(255, 0, 0), defaultShape);
-	//		ShapeGenerator::GenerateCircle(17.0f, 16, ByteColor(255, 64, 32), hoveredShape);
-	//		ShapeGenerator::GenerateCircle(17.0f, 16, ByteColor(255, 128, 64), pressedShape);
-	//		guiShapeComponent->SetShape(GUIInteractionState::None, defaultShape);
-	//		guiShapeComponent->SetShape(GUIInteractionState::Hovered, hoveredShape);
-	//		guiShapeComponent->SetShape(GUIInteractionState::Pressed, pressedShape);
-	//		guiObjectTemplate.SetCollisionShape(Physics::ConvexCollisionShape2D::MakeFromRenderingShape(Float2::kZero, defaultShape));
-	//		guiObjectTemplate.AddComponent(guiShapeComponent);
-	//	}
-	//	{
-	//		SharedPtr<GUITextComponent> guiTextComponent = MakeShared<GUITextComponent>();
-	//		guiTextComponent->SetText(L"RoundButton0");
-	//		guiObjectTemplate.AddComponent(guiTextComponent);
-	//	}
-	//	roundButton0TemplateID = guiSystem.RegisterTemplate(u8"RoundButton0", std::move(guiObjectTemplate));
-	//}
-	//const GUIEntity buttonObjectID = guiSystem.AddObject(roundButton0TemplateID);
-	//GUIEntity& buttonObject = guiSystem.AccessObject(buttonObjectID);
-	//buttonObject.AddComponent(MakeShared<GUIDraggableComponent>());
-	//buttonObject.SetPosition(Float2(100, 100));
-
 	GraphicsDevice& graphicsDevice = app.GetGraphicsDevice();
 	SceneObjectSystems& sceneObjectSystems = app.GetSceneObjectSystems();
 	const InputContext& inputContext = InputContext::GetInstance();
+	ShapeRenderer& shapeRenderer = graphicsDevice.GetShapeRenderer();
 	while (app.IsRunning() == true)
 	{
 		const float deltaTime = DeltaTimer::GetInstance().GetDeltaTimeS();
@@ -575,23 +544,15 @@ bool Run3DTestWindow()
 		// Rendering
 		app.BeginRendering();
 		{
-			ShapeRenderer& shapeRenderer = graphicsDevice.GetShapeRenderer();
-			// # ShapeRenderer 테스트
-			//shapeRenderer.TestDraw(Float2(200, 100));
-			//Shape testShapeSet;
-			//ShapeGenerator::GenerateRectangle(Float2(32, 32), ByteColor(0,255,255), testShapeSet);
-			//shapeRenderer.AddShape(testShapeSet);
-			graphicsDevice.SetViewProjectionMatrix(Float4x4::kIdentity, graphicsDevice.GetScreenSpace2DProjectionMatrix());
+			app.BeginScreenSpaceRendering();
 			{
+				// RenderOverlayUI
 				StackStringW<100> fpsString;
 				FormatString(fpsString, L"FPS: %d", Profiler::FPSCounter::GetFPS());
 				shapeRenderer.SetTextColor(Color::kBlack);
 				shapeRenderer.DrawDynamicText(fpsString.CString(), Float2(10, 10), FontRenderingOption());
 			}
-			shapeRenderer.Render();
-
-			const Float4x4& currentCameraViewMatrix = sceneObjectSystems.GetCameraSystem().MakeViewMatrix(currentCameraObject);
-			graphicsDevice.SetViewProjectionMatrix(currentCameraViewMatrix, cameraComponent._projectionMatrix);
+			app.EndScreenSpaceRendering();
 		}
 		app.EndRendering();
 

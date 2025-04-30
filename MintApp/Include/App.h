@@ -50,6 +50,8 @@ namespace mint
 	public:
 		virtual bool IsRunning();
 		void BeginRendering();
+		void BeginScreenSpaceRendering();
+		void EndScreenSpaceRendering();
 		void EndRendering();
 
 	public:
@@ -70,6 +72,8 @@ namespace mint
 
 	protected:
 		bool _is3DMode = true;
+		bool _isInRenderingScope = false;
+		bool _isInScreenSpaceRenderingScope = false;
 		SceneObject _defaultCameraObject;
 	};
 }

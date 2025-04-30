@@ -99,12 +99,38 @@ namespace mint
 
 	void App::BeginRendering()
 	{
+		_isInRenderingScope = true;
+
 		_graphicsDevice->BeginRendering();
 
 		const SceneObject currentCameraObject = _sceneObjectSystems->GetCameraSystem().GetCurrentCameraObject();
 		const Float4x4& viewMatrix = _sceneObjectSystems->GetCameraSystem().MakeViewMatrix(currentCameraObject);
 		CameraComponent* const cameraComponent = _sceneObjectPool->GetComponent<CameraComponent>(currentCameraObject);
 		_graphicsDevice->SetViewProjectionMatrix(viewMatrix, cameraComponent->_projectionMatrix);
+	}
+
+	void App::BeginScreenSpaceRendering()
+	{
+		MINT_ASSERT(_isInRenderingScope == true, "반드시 BeginRendering() 과 EndRendering() 사이에 호출되어야 합니다.");
+		MINT_ASSERT(_isInScreenSpaceRenderingScope == false, "BeginScreenSpaceRendering() 을 두 번 연달아 호출할 수 없습니다. 먼저 EndScreenSpaceRendering() 을 호출해 주세요!");
+
+		_isInScreenSpaceRenderingScope = true;
+		_graphicsDevice->SetViewProjectionMatrix(Float4x4::kIdentity, _graphicsDevice->GetScreenSpace2DProjectionMatrix());
+	}
+
+	void App::EndScreenSpaceRendering()
+	{
+		MINT_ASSERT(_isInRenderingScope == true, "반드시 BeginRendering() 과 EndRendering() 사이에 호출되어야 합니다.");
+		MINT_ASSERT(_isInScreenSpaceRenderingScope == true, "반드시 BeginScreenSpaceRendering() 이후에 호출되어야 합니다.");
+
+		Rendering::ShapeRenderer& shapeRenderer = _graphicsDevice->GetShapeRenderer();
+		shapeRenderer.Render();
+
+		const SceneObject& currentCameraObject = _sceneObjectSystems->GetCameraSystem().GetCurrentCameraObject();
+		CameraComponent& cameraComponent = _sceneObjectPool->GetComponentMust<CameraComponent>(currentCameraObject);
+		const Float4x4& currentCameraViewMatrix = _sceneObjectSystems->GetCameraSystem().MakeViewMatrix(currentCameraObject);
+		_graphicsDevice->SetViewProjectionMatrix(currentCameraViewMatrix, cameraComponent._projectionMatrix);
+		_isInScreenSpaceRenderingScope = false;
 	}
 
 	void App::EndRendering()
@@ -114,6 +140,8 @@ namespace mint
 		_guiSystem->Render(*_graphicsDevice);
 
 		_graphicsDevice->EndRendering();
+
+		_isInRenderingScope = false;
 	}
 
 	Window& App::GetWindow()
@@ -130,7 +158,7 @@ namespace mint
 	{
 		return *_sceneObjectPool;
 	}
-	
+
 	SceneObjectSystems& App::GetSceneObjectSystems()
 	{
 		return *_sceneObjectSystems;
