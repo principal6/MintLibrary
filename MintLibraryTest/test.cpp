@@ -477,7 +477,7 @@ bool Run3DTestWindow()
 		Rendering::MeshGenerator::GenerateGeoSphere(geosphereParam, meshComponent._meshData);
 		sceneObjectPool.AttachComponent(testObject, std::move(meshComponent));
 
-		Transform& transform = sceneObjectPool.GetComponent<TransformComponent>(testObject)->_transform;
+		Transform& transform = sceneObjectPool.GetTransform(testObject);
 		transform._translation._z = -1.0f;
 	}
 
@@ -517,8 +517,8 @@ bool Run3DTestWindow()
 	while (app.IsRunning() == true)
 	{
 		const float deltaTime = DeltaTimer::GetInstance().GetDeltaTimeS();
-		const SceneObject& currentCameraObject = sceneObjectSystems._cameraSystem.GetCurrentCameraObject();
-		CameraComponent* const cameraComponent = sceneObjectPool.GetComponent<CameraComponent>(currentCameraObject);
+		const SceneObject& currentCameraObject = sceneObjectSystems.GetCameraSystem().GetCurrentCameraObject();
+		CameraComponent& cameraComponent = sceneObjectPool.GetComponentMust<CameraComponent>(currentCameraObject);
 		if (inputContext.IsKeyPressed())
 		{
 			if (inputContext.IsKeyDown(KeyCode::Enter) == true)
@@ -549,14 +549,14 @@ bool Run3DTestWindow()
 			}
 			else if (inputContext.IsKeyDown(KeyCode::Shift) == true)
 			{
-				cameraComponent->_isBoostMode = true;
+				cameraComponent._isBoostMode = true;
 			}
 		}
 		else if (inputContext.IsKeyReleased())
 		{
 			if (inputContext.IsKeyUp(KeyCode::Shift) == true)
 			{
-				cameraComponent->_isBoostMode = false;
+				cameraComponent._isBoostMode = false;
 			}
 		}
 		else if (inputContext.IsMouseWheelScrolled())
@@ -564,11 +564,11 @@ bool Run3DTestWindow()
 			const float mouseWheelScroll = inputContext.GetMouseWheelScroll();
 			if (mouseWheelScroll > 0.0f)
 			{
-				sceneObjectSystems._cameraSystem.IncreaseCurrentCameraMoveSpeed();
+				sceneObjectSystems.GetCameraSystem().IncreaseCurrentCameraMoveSpeed();
 			}
 			else
 			{
-				sceneObjectSystems._cameraSystem.DecreaseCurrentCameraMoveSpeed();
+				sceneObjectSystems.GetCameraSystem().DecreaseCurrentCameraMoveSpeed();
 			}
 		}
 
@@ -590,9 +590,8 @@ bool Run3DTestWindow()
 			}
 			shapeRenderer.Render();
 
-			const Float4x4& currentCameraViewMatrix = sceneObjectSystems._cameraSystem.MakeViewMatrix(currentCameraObject);
-			CameraComponent* const cameraComponent = sceneObjectPool.GetComponent<CameraComponent>(currentCameraObject);
-			graphicsDevice.SetViewProjectionMatrix(currentCameraViewMatrix, cameraComponent->_projectionMatrix);
+			const Float4x4& currentCameraViewMatrix = sceneObjectSystems.GetCameraSystem().MakeViewMatrix(currentCameraObject);
+			graphicsDevice.SetViewProjectionMatrix(currentCameraViewMatrix, cameraComponent._projectionMatrix);
 		}
 		app.EndRendering();
 

@@ -13,8 +13,8 @@ namespace mint
 	class SceneObject;
 	class SceneObjectPool;
 	class SceneObjectRenderer;
+	class SceneObjectSystems;
 	class Window;
-	struct SceneObjectSystems;
 	struct WindowCreationDesc;
 
 	namespace Rendering

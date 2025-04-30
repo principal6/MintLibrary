@@ -109,6 +109,19 @@ namespace mint
 	{
 		return SceneObjectComponentPool<ComponentType>::GetInstance().GetComponent(sceneObject);
 	}
+
+	template<typename ComponentType>
+	inline ComponentType& SceneObjectPool::GetComponentMust(const SceneObject& sceneObject)
+	{
+		ComponentType* const component = GetComponent<ComponentType>(sceneObject);
+		MINT_ASSERT(component != nullptr, "해당 Component 가 SceneObject 에 존재하지 않습니다!");
+		return *component;
+	}
+
+	inline Transform& SceneObjectPool::GetTransform(const SceneObject& sceneObject)
+	{
+		return GetComponent<TransformComponent>(sceneObject)->_transform;
+	}
 }
 
 

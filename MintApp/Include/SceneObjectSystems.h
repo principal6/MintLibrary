@@ -64,8 +64,16 @@ namespace mint
 		SceneObject _currentCameraObject;
 	};
 
-	struct SceneObjectSystems
+	class SceneObjectSystems
 	{
+	public:
+		SceneObjectSystems() = default;
+		~SceneObjectSystems() = default;
+
+	public:
+		SceneObjectCameraSystem& GetCameraSystem() { return _cameraSystem; }
+
+	private:
 		SceneObjectCameraSystem _cameraSystem;
 	};
 }

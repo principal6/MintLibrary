@@ -29,6 +29,9 @@ namespace mint
 		void AttachComponent(const SceneObject& sceneObject, ComponentType&& component);
 		template<typename ComponentType>
 		ComponentType* GetComponent(const SceneObject& sceneObject);
+		template<typename ComponentType>
+		ComponentType& GetComponentMust(const SceneObject& sceneObject);
+		Transform& GetTransform(const SceneObject& sceneObject);
 
 	public:
 		const Vector<SceneObject>& GetSceneObjects() const noexcept;
