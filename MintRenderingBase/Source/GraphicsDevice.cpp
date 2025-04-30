@@ -166,6 +166,7 @@ namespace mint
 			{
 				shaderResourceIDs = &_psShaderResourceIDs;
 			}
+			MINT_ASSERT(shaderResourceIDs != nullptr, "로직 상 반드시 보장되어야 합니다!");
 
 			if (resource == nullptr)
 			{
@@ -233,6 +234,7 @@ namespace mint
 			{
 				constantBufferIDs = &_psConstantBufferIDs;
 			}
+			MINT_ASSERT(constantBufferIDs != nullptr, "로직 상 반드시 보장되어야 합니다!");
 
 			if (constantBuffer == nullptr)
 			{
