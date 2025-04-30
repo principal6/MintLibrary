@@ -82,23 +82,6 @@ namespace mint
 		}
 	}
 
-	// TODO: CameraComponent Pool 만 돌면 된다!!
-	// TODO: CameraComponent Pool 만 돌면 된다!!
-	// TODO: CameraComponent Pool 만 돌면 된다!!
-	//MINT_INLINE void SceneObjectPool::UpdateScreenSize(const Float2& screenSize)
-	//{
-	//	const uint32 sceneObjectCount = _sceneObjects.Size();
-	//	for (uint32 sceneObjectIndex = 0; sceneObjectIndex < sceneObjectCount; ++sceneObjectIndex)
-	//	{
-	//		SharedPtr<SceneObject>& sceneObject = _sceneObjects[sceneObjectIndex];
-	//		CameraComponent* const cameraComponent = static_cast<CameraComponent*>(sceneObject->GetComponent(SceneObjectComponentType::CameraComponent));
-	//		if (cameraComponent != nullptr)
-	//		{
-	//			cameraComponent->UpdateScreenSize(screenSize);
-	//		}
-	//	}
-	//}
-
 	inline const Vector<SceneObject>& SceneObjectPool::GetSceneObjects() const noexcept
 	{
 		return _sceneObjects;
