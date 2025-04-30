@@ -492,7 +492,7 @@ namespace mint
 
 	Float3 Float4x4::Mul(const Float3& vec) const noexcept
 	{
-		Float4 v4 = Float4(vec._x, vec._y, vec._z, 0.0f);
+		Float4 v4 = Float4(vec._x, vec._y, vec._z, 1.0f);
 		Float4 r4;
 		Math::Mul(_m, v4._c, r4._c);
 		return r4.GetXYZ();
