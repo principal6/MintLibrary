@@ -345,10 +345,10 @@ namespace mint
 			const uint32 deltaIndexCount = _lowLevelRenderer->GetIndexCount() - indexOffset;
 			_lowLevelRenderer->PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, deltaIndexCount, GetClipRect());
 
-			PushTransformToBuffer(Float2::kOne, 0.0f, _position.GetXYZ());
+			PushTransformToBuffer(Float2::kOne, 0.0f, Float3::kZero);
 		}
 
-		void ShapeRenderer::DrawRectangle(const Float2& size, const float borderThickness, const float rotationAngle)
+		void ShapeRenderer::DrawRectangle(const Float3& position, const Float2& size, const float borderThickness, const float rotationAngle)
 		{
 			const uint32 vertexOffset = _lowLevelRenderer->GetVertexCount();
 			const uint32 indexOffset = _lowLevelRenderer->GetIndexCount();
@@ -370,10 +370,10 @@ namespace mint
 			const uint32 deltaIndexCount = _lowLevelRenderer->GetIndexCount() - indexOffset;
 			_lowLevelRenderer->PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, deltaIndexCount, GetClipRect());
 
-			PushTransformToBuffer(Float2::kOne, 0.0f, _position.GetXYZ());
+			PushTransformToBuffer(Float2::kOne, 0.0f, position);
 		}
 
-		void ShapeRenderer::DrawCircle(const float radius)
+		void ShapeRenderer::DrawCircle(const Float3& position, const float radius)
 		{
 			const uint32 vertexOffset = _lowLevelRenderer->GetVertexCount();
 			const uint32 indexOffset = _lowLevelRenderer->GetIndexCount();
@@ -389,7 +389,7 @@ namespace mint
 			const uint32 deltaIndexCount = _lowLevelRenderer->GetIndexCount() - indexOffset;
 			_lowLevelRenderer->PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, deltaIndexCount, GetClipRect());
 
-			PushTransformToBuffer(Float2::kOne, 0.0f, _position.GetXYZ());
+			PushTransformToBuffer(Float2::kOne, 0.0f, position);
 		}
 
 		void ShapeRenderer::DrawDynamicText(const wchar_t* const wideText, const Float2& position, const FontRenderingOption& fontRenderingOption)
@@ -416,9 +416,9 @@ namespace mint
 			const uint32 indexCount = _lowLevelRenderer->GetIndexCount() - indexOffset;
 			_lowLevelRenderer->PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, indexCount, GetClipRect());
 
-			const Float3& preTranslation = ComputePreTranslation(position);
+			const Float3& preTranslation = ApplyCoordinateSpace(position);
 			const Float3& postTranslation = ComputePostTranslation(wideText, textLength, fontRenderingOption);
-			PushTransformToBuffer(preTranslation, fontRenderingOption._transformMatrix, postTranslation);
+			PushManualTransformToBuffer(preTranslation, fontRenderingOption._transformMatrix, postTranslation);
 		}
 
 		void ShapeRenderer::DrawDynamicTextBitFlagged(const wchar_t* const wideText, const Float3& position, const FontRenderingOption& fontRenderingOption, const BitVector& bitFlags)
@@ -440,9 +440,9 @@ namespace mint
 			const uint32 indexCount = _lowLevelRenderer->GetIndexCount() - indexOffset;
 			_lowLevelRenderer->PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, indexCount, GetClipRect());
 
-			const Float3& preTranslation = ComputePreTranslation(position);
+			const Float3& preTranslation = ApplyCoordinateSpace(position);
 			const Float3& postTranslation = ComputePostTranslation(wideText, textLength, fontRenderingOption);
-			PushTransformToBuffer(preTranslation, fontRenderingOption._transformMatrix, postTranslation);
+			PushManualTransformToBuffer(preTranslation, fontRenderingOption._transformMatrix, postTranslation);
 		}
 
 		void ShapeRenderer::DrawGlyph(const wchar_t wideChar, Float2& glyphPosition, const float scale, const bool drawShade, const bool leaveOnlySpace)
@@ -522,17 +522,6 @@ namespace mint
 			glyphPosition._x += static_cast<float>(glyphInfo._horiAdvance) * scale;
 		}
 
-		Float3 ShapeRenderer::ComputePreTranslation(const Float3& position) const
-		{
-			if (_coordinateSpace == CoordinateSpace::Screen)
-			{
-				Float3 preTranslation = position;
-				preTranslation._y = (static_cast<float>(_graphicsDevice.GetWindowSize()._y) - preTranslation._y);
-				return preTranslation;
-			}
-			return position;
-		}
-
 		Float3 ShapeRenderer::ComputePostTranslation(const wchar_t* const wideText, const uint32 textLength, const FontRenderingOption& fontRenderingOption) const
 		{
 			const float scaledTextWidth = _fontData.ComputeTextWidth(wideText, textLength) * fontRenderingOption._scale;
@@ -563,24 +552,27 @@ namespace mint
 
 		void ShapeRenderer::PushTransformToBuffer(const Transform2D& transform2D)
 		{
-			PushTransformToBuffer(transform2D._scale, transform2D._rotation, Float3(transform2D._translation._x, transform2D._translation._y, 0.0f));
+			PushTransformToBuffer(transform2D._scale, transform2D._rotation, Float3(transform2D._translation));
 		}
 
 		void ShapeRenderer::PushTransformToBuffer(const Float2& scale, const float rotationAngle, const Float3& position)
 		{
+			const Float3& transformedPosition = ApplyCoordinateSpace(position);
 			SB_Transform sbTransform;
-			sbTransform._transformMatrix = Float4x4::SRTMatrix(Float3(scale._x, scale._y, 1.0f), QuaternionF::MakeRotationQuaternion(Float3::kAxisZ, -rotationAngle), position);
+			sbTransform._transformMatrix = Float4x4::SRTMatrix(Float3(scale._x, scale._y, 1.0f), QuaternionF::MakeRotationQuaternion(Float3::kAxisZ, -rotationAngle), transformedPosition);
 			_sbTransformData.PushBack(sbTransform);
 		}
 
 		void ShapeRenderer::PushTransformToBuffer(const Transform& transform)
 		{
+			const Float3& transformedPosition = ApplyCoordinateSpace(transform._translation);
 			SB_Transform sbTransform;
 			sbTransform._transformMatrix = transform.ToMatrix();
+			sbTransform._transformMatrix.SetTranslation(transformedPosition);
 			_sbTransformData.PushBack(sbTransform);
 		}
 
-		void ShapeRenderer::PushTransformToBuffer(const Float3& preTranslation, const Float4x4& transformMatrix, const Float3& postTranslation)
+		void ShapeRenderer::PushManualTransformToBuffer(const Float3& preTranslation, const Float4x4& transformMatrix, const Float3& postTranslation)
 		{
 			SB_Transform sbTransform;
 			sbTransform._transformMatrix.PreTranslate(preTranslation);

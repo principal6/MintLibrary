@@ -20,11 +20,6 @@ namespace mint
 			_coordinateSpace = coordinateSpace;
 		}
 
-		MINT_INLINE void IRenderer::SetPositionZ(const float s) noexcept
-		{
-			_position._z = s;
-		}
-
 		MINT_INLINE void IRenderer::SetColor(const ByteColor& color) noexcept
 		{
 			SetColor(Color(color.R(), color.G(), color.B(), color.A()));

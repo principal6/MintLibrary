@@ -202,10 +202,8 @@ void RunGJKTestWindow()
 					//epa2DInfo._simplex.DebugDrawShape(shapeRenderer, ByteColor(0, 64, 255), Transform2D());
 
 					shapeRenderer.SetColor(ByteColor(0, 64, 255));
-					shapeRenderer.SetPosition(Float4(shapeA.ComputeSupportPoint(+normal)));
-					shapeRenderer.DrawCircle(4.0f);
-					shapeRenderer.SetPosition(Float4(shapeB.ComputeSupportPoint(-normal)));
-					shapeRenderer.DrawCircle(4.0f);
+					shapeRenderer.DrawCircle(Float3(shapeA.ComputeSupportPoint(+normal)), 4.0f);
+					shapeRenderer.DrawCircle(Float3(shapeB.ComputeSupportPoint(-normal)), 4.0f);
 
 					const uint32 pointCount = epa2DInfo._points.Size();
 					for (uint32 i = 1; i < pointCount; ++i)
@@ -218,8 +216,7 @@ void RunGJKTestWindow()
 					}
 
 					shapeRenderer.SetColor(ByteColor(255, 64, 0));
-					shapeRenderer.SetPosition(Float4(normal * distance));
-					shapeRenderer.DrawCircle(4.0f);
+					shapeRenderer.DrawCircle(Float3(normal* distance), 4.0f);
 				}
 
 				shapeRenderer.Render();
@@ -424,11 +421,14 @@ bool Run2DTestWindow()
 		{
 			app.BeginScreenSpaceRendering();
 			{
+				imageRenderer.SetCoordinateSpace(CoordinateSpace::Screen);
+
 				resourcePool.GetResource(corgiSpriteSheetTextureID).BindToShader(GraphicsShaderType::PixelShader, 1);
-				//imageRenderer.DrawImageScreenSpace(Float2(0, 0), Float2(800, 512), Float2(0, 0), Float2(1, 1));
+				//imageRenderer.DrawImage(Float2(0, 0), Float2(800, 512), Float2(0, 0), Float2(1, 1));
+				
 				corgiAnimationSet.Update(deltaTime);
 				const SpriteAnimation& corgiCurrentAnimation = corgiAnimationSet.GetCurrentAnimation();
-				imageRenderer.DrawImageScreenSpace(Float2(64, 64), Float2(128, 128), corgiCurrentAnimation.GetCurrentFrameUV0(), corgiCurrentAnimation.GetCurrentFrameUV1());
+				imageRenderer.DrawImage(Float2(64, 64), Float2(128, 128), corgiCurrentAnimation.GetCurrentFrameUV0(), corgiCurrentAnimation.GetCurrentFrameUV1());
 				imageRenderer.Render();
 
 				StackStringW<100> fpsString;

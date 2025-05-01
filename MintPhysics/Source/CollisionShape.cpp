@@ -89,8 +89,7 @@ namespace mint
 		void PointCollisionShape2D::DebugDrawShape(ShapeRenderer& shapeRenderer, const ByteColor& color, const Transform2D& transform2D) const
 		{
 			shapeRenderer.SetColor(color);
-			shapeRenderer.SetPosition(Float4(_center + transform2D._translation));
-			shapeRenderer.DrawCircle(2.0f);
+			shapeRenderer.DrawCircle(Float3(_center + transform2D._translation), 2.0f);
 		}
 #pragma endregion
 
@@ -716,8 +715,7 @@ namespace mint
 			}
 			shapeRenderer.DrawLine(center + rotationMatrix * _vertices[vertexCount - 1], center + rotationMatrix * _vertices[0], 1.0f);
 
-			shapeRenderer.SetPosition(Float4(center));
-			shapeRenderer.DrawCircle(4.0f);
+			shapeRenderer.DrawCircle(Float3(center), 4.0f);
 		}
 #pragma endregion
 

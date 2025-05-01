@@ -14,6 +14,7 @@ namespace mint
 			: _graphicsDevice{ graphicsDevice }
 			, _lowLevelRenderer{ nullptr }
 			, _ownsLowLevelRenderer{ true }
+			, _coordinateSpace{ CoordinateSpace::World }
 			, _color{ Color::kWhite }
 			, _useMultipleViewports{ false }
 		{
@@ -25,6 +26,7 @@ namespace mint
 			: _graphicsDevice{ graphicsDevice }
 			, _lowLevelRenderer{ nonOwnedLowLevelRenderer }
 			, _ownsLowLevelRenderer{ false }
+			, _coordinateSpace{ CoordinateSpace::World }
 			, _color{ Color::kWhite }
 			, _useMultipleViewports{ false }
 		{
@@ -51,14 +53,14 @@ namespace mint
 			}
 		}
 
-		void IRenderer::SetPosition(const Float4& position) noexcept
+		Float3 IRenderer::ApplyCoordinateSpace(const Float3& position) const
 		{
-			_position = position;
-
+			Float3 outPosition = position;
 			if (_coordinateSpace == CoordinateSpace::Screen)
 			{
-				_position._y = static_cast<float>(_graphicsDevice.GetWindowSize()._y) - _position._y;
+				outPosition._y = static_cast<float>(_graphicsDevice.GetWindowSize()._y) - outPosition._y;
 			}
+			return outPosition;
 		}
 
 		void IRenderer::FlushTransformBuffer() noexcept

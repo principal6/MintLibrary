@@ -50,25 +50,19 @@ namespace mint
 
 			if (GetValidPointCount() == 1)
 			{
-				shapeRenderer.SetPosition(Float4(GetPointA()));
-				shapeRenderer.DrawCircle(kCircleRadius);
+				shapeRenderer.DrawCircle(Float3(GetPointA()), kCircleRadius);
 			}
 			else if (GetValidPointCount() == 2)
 			{
-				shapeRenderer.SetPosition(Float4(GetPointA()));
-				shapeRenderer.DrawCircle(kCircleRadius);
-				shapeRenderer.SetPosition(Float4(GetPointB()));
-				shapeRenderer.DrawCircle(kCircleRadius);
+				shapeRenderer.DrawCircle(Float3(GetPointA()), kCircleRadius);
+				shapeRenderer.DrawCircle(Float3(GetPointB()), kCircleRadius);
 				shapeRenderer.DrawLine(GetPointA(), GetPointB(), kLineThickness);
 			}
 			else if (GetValidPointCount() == 3)
 			{
-				shapeRenderer.SetPosition(Float4(GetPointA()));
-				shapeRenderer.DrawCircle(kCircleRadius);
-				shapeRenderer.SetPosition(Float4(GetPointB()));
-				shapeRenderer.DrawCircle(kCircleRadius);
-				shapeRenderer.SetPosition(Float4(GetPointC()));
-				shapeRenderer.DrawCircle(kCircleRadius);
+				shapeRenderer.DrawCircle(Float3(GetPointA()), kCircleRadius);
+				shapeRenderer.DrawCircle(Float3(GetPointB()), kCircleRadius);
+				shapeRenderer.DrawCircle(Float3(GetPointC()), kCircleRadius);
 
 				shapeRenderer.DrawLine(GetPointA(), GetPointB(), kLineThickness);
 				shapeRenderer.DrawLine(GetPointA(), GetPointC(), kLineThickness);

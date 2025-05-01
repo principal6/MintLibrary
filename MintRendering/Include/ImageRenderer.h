@@ -25,8 +25,8 @@ namespace mint
 			virtual void Flush() noexcept override;
 
 		public:
+			void SetCoordinateSpace(const CoordinateSpace& coordinateSpace) noexcept;
 			void DrawImage(const Float2& position, const Float2& size, const Float2& uv0, const Float2& uv1);
-			void DrawImageScreenSpace(const Float2& position, const Float2& size, const Float2& uv0, const Float2& uv1);
 
 		private:
 			uint32 _psTextureSlot;

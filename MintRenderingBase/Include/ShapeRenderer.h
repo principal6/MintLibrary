@@ -103,8 +103,9 @@ namespace mint
 			void DrawArrow(const Float2& begin, const Float2& end, const float thickness, float headLengthRatio, float headWidthRatio);
 
 			void DrawTriangle(const Float2& pointA, const Float2& pointB, const Float2& pointC);
-			void DrawRectangle(const Float2& size, const float borderThickness, const float rotationAngle);
-			void DrawCircle(const float radius);
+			
+			void DrawRectangle(const Float3& position, const Float2& size, const float borderThickness, const float rotationAngle);
+			void DrawCircle(const Float3& position, const float radius);
 
 			// Font
 		public:
@@ -126,13 +127,13 @@ namespace mint
 			void DrawGlyph(const wchar_t wideChar, Float2& glyphPosition, const float scale, const bool drawShade, const bool leaveOnlySpace);
 
 		protected:
-			Float3 ComputePreTranslation(const Float3& position) const;
 			Float3 ComputePostTranslation(const wchar_t* const wideText, const uint32 textLength, const FontRenderingOption& fontRenderingOption) const;
 			uint32 ComputeVertexInfo(uint32 transformIndex, uint8 type) const;
 			void PushTransformToBuffer(const Transform2D& transform2D);
 			void PushTransformToBuffer(const Float2& scale, const float rotationAngle, const Float3& position);
 			void PushTransformToBuffer(const Transform& transform);
-			void PushTransformToBuffer(const Float3& preTranslation, const Float4x4& transformMatrix, const Float3& postTranslation);
+			// Doesn't apply coordinate space internally!!!
+			void PushManualTransformToBuffer(const Float3& preTranslation, const Float4x4& transformMatrix, const Float3& postTranslation);
 
 		private:
 			void AddShape_Internal(const Shape& shape);

@@ -651,13 +651,11 @@ namespace mint
 			const float kPositionCircleRadius = 4.0f;
 
 			shapeRenderer.SetColor(ByteColor(0, 128, 255));
-			shapeRenderer.SetPosition(Float4(collisionManifold._collisionPosition));
-			shapeRenderer.DrawCircle(kPositionCircleRadius);
+			shapeRenderer.DrawCircle(Float3(collisionManifold._collisionPosition), kPositionCircleRadius);
 			shapeRenderer.DrawLine(collisionManifold._collisionPosition, collisionManifold._collisionPosition + collisionManifold._collisionNormal * kNormalLength, kNormalThickness);
 
 			shapeRenderer.SetColor(ByteColor(128, 0, 255));
-			shapeRenderer.SetPosition(Float4(collisionManifold._collisionPosition + collisionManifold._collisionNormal * ::abs(collisionManifold._signedDistance)));
-			shapeRenderer.DrawCircle(kPositionCircleRadius);
+			shapeRenderer.DrawCircle(Float3(collisionManifold._collisionPosition + collisionManifold._collisionNormal * ::abs(collisionManifold._signedDistance)), kPositionCircleRadius);
 		}
 
 		void World::BeginHistoryRecording()

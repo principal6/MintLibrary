@@ -115,16 +115,16 @@ namespace mint
 		void Plotter::PlotScatter(const PlotType plotType, const float x, const float y, const Color& color)
 		{
 			const Float2 plotPosition2 = ComputePlotPosition(x, y);
+			const Float3 plotPosition = Float3(plotPosition2);
 
 			_shapeRenderer->SetColor(color);
-			_shapeRenderer->SetPosition(Float4(plotPosition2._x, plotPosition2._y, 0.0f, 1.0f));
 
 			switch (plotType)
 			{
 			case Plotter::PlotType::Circle:
 			{
 				const float kRadius = 4.0f;
-				_shapeRenderer->DrawCircle(kRadius);
+				_shapeRenderer->DrawCircle(plotPosition, kRadius);
 				break;
 			}
 			case Plotter::PlotType::X:
@@ -175,8 +175,7 @@ namespace mint
 		void Plotter::DrawFrame(const Float4& frameCenterPosition) noexcept
 		{
 			_shapeRenderer->SetColor(Color::kWhite);
-			_shapeRenderer->SetPosition(frameCenterPosition);
-			_shapeRenderer->DrawRectangle(_size, 1.0f, 0.0f);
+			_shapeRenderer->DrawRectangle(frameCenterPosition.GetXYZ(), _size, 1.0f, 0.0f);
 		}
 
 		void Plotter::DrawLabels(const Float4& frameCenterPosition) noexcept

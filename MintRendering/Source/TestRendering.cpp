@@ -66,8 +66,7 @@ namespace mint
 			for (uint32 sourceControlPointIndex = 0; sourceControlPointIndex < sourceControlPointCount; sourceControlPointIndex++)
 			{
 				const Float2& sourceControlPoint = sourceControlPointSet[sourceControlPointIndex];
-				shapeRenderer.SetPosition(Float4(sourceControlPoint._x, sourceControlPoint._y, 0.0, 1.0f));
-				shapeRenderer.DrawCircle(2.0f);
+				shapeRenderer.DrawCircle(Float3(sourceControlPoint), 2.0f);
 
 				if (sourceControlPointIndex > 0)
 				{

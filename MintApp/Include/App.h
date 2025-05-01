@@ -74,6 +74,7 @@ namespace mint
 		bool _is3DMode = true;
 		bool _isInRenderingScope = false;
 		bool _isInScreenSpaceRenderingScope = false;
+		bool _hasScreenSpaceRenderingScopeInRenderingScope = false;
 		SceneObject _defaultCameraObject;
 	};
 }

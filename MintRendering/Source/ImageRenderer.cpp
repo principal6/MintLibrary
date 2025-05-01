@@ -110,23 +110,19 @@ namespace mint
 			__super::Render();
 		}
 
-		void ImageRenderer::DrawImage(const Float2& position, const Float2& size, const Float2& uv0, const Float2& uv1)
+		void ImageRenderer::SetCoordinateSpace(const CoordinateSpace& coordinateSpace) noexcept
 		{
-			SetPosition(Float4(position));
-			_uv0 = uv0;
-			_uv1 = uv1;
-			DrawRectangle(size, 0.0f, 0.0f);
-			PushTransformToBuffer(Float2::kOne, 0.0f, _position.GetXYZ());
+			__super::SetCoordinateSpace(coordinateSpace);
 		}
 
-		void ImageRenderer::DrawImageScreenSpace(const Float2& position, const Float2& size, const Float2& uv0, const Float2& uv1)
+		void ImageRenderer::DrawImage(const Float2& position, const Float2& size, const Float2& uv0, const Float2& uv1)
 		{
-			const Float2 halfSize = size * 0.5f;
-			SetPosition(Float4(position + halfSize));
 			_uv0 = uv0;
 			_uv1 = uv1;
-			DrawRectangle(Float2(size._x, -size._y), 0.0f, 0.0f);
-			PushTransformToBuffer(Float2::kOne, 0.0f, _position.GetXYZ());
+
+			const Float3 finalPosition(position);
+			DrawRectangle(finalPosition, size, 0.0f, 0.0f);
+			//PushTransformToBuffer(Float2::kOne, 0.0f, finalPosition);
 		}
 	}
 }

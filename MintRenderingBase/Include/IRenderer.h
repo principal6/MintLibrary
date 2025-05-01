@@ -50,8 +50,6 @@ namespace mint
 
 		public:
 			void SetCoordinateSpace(const CoordinateSpace& coordinateSpace) noexcept;
-			void SetPosition(const Float4& position) noexcept;
-			void SetPositionZ(const float s) noexcept;
 			void SetColor(const ByteColor& color) noexcept;
 			void SetColor(const Color& color) noexcept;
 			void SetClipRect(const Rect& clipRect) noexcept;
@@ -63,6 +61,7 @@ namespace mint
 			bool IsUsingMultipleViewports() const noexcept;
 
 		protected:
+			Float3 ApplyCoordinateSpace(const Float3& position) const;
 			void FlushTransformBuffer() noexcept;
 			void PrepareTransformBuffer() noexcept;
 
@@ -75,7 +74,6 @@ namespace mint
 
 		protected:
 			CoordinateSpace _coordinateSpace;
-			Float4 _position;
 			Color _color;
 
 		protected:
