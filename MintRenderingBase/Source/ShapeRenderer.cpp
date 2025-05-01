@@ -348,7 +348,7 @@ namespace mint
 			PushTransformToBuffer(Float2::kOne, 0.0f, Float3::kZero);
 		}
 
-		void ShapeRenderer::DrawRectangle(const Float3& position, const Float2& size, const float borderThickness, const float rotationAngle)
+		void ShapeRenderer::DrawRectangle(const Float3& position, const Float2& size)
 		{
 			const uint32 vertexOffset = _lowLevelRenderer->GetVertexCount();
 			const uint32 indexOffset = _lowLevelRenderer->GetIndexCount();

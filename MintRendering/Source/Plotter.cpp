@@ -175,7 +175,7 @@ namespace mint
 		void Plotter::DrawFrame(const Float4& frameCenterPosition) noexcept
 		{
 			_shapeRenderer->SetColor(Color::kWhite);
-			_shapeRenderer->DrawRectangle(frameCenterPosition.GetXYZ(), _size, 1.0f, 0.0f);
+			_shapeRenderer->DrawRectangle(frameCenterPosition.GetXYZ(), _size);
 		}
 
 		void Plotter::DrawLabels(const Float4& frameCenterPosition) noexcept

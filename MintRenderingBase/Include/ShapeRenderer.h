@@ -104,7 +104,7 @@ namespace mint
 
 			void DrawTriangle(const Float2& pointA, const Float2& pointB, const Float2& pointC);
 			
-			void DrawRectangle(const Float3& position, const Float2& size, const float borderThickness, const float rotationAngle);
+			void DrawRectangle(const Float3& position, const Float2& size);
 			void DrawCircle(const Float3& position, const float radius);
 
 			// Font

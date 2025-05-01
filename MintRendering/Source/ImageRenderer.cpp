@@ -120,9 +120,7 @@ namespace mint
 			_uv0 = uv0;
 			_uv1 = uv1;
 
-			const Float3 finalPosition(position);
-			DrawRectangle(finalPosition, size, 0.0f, 0.0f);
-			//PushTransformToBuffer(Float2::kOne, 0.0f, finalPosition);
+			DrawRectangle(Float3(position), size);
 		}
 	}
 }
