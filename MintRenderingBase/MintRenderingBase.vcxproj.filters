@@ -90,7 +90,9 @@
     <ClInclude Include="Include\SpriteAnimation.h">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="Include\IRenderer.h" />
+    <ClInclude Include="Include\IRenderer.h">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Include\GraphicsDevice.inl">
@@ -99,7 +101,9 @@
     <None Include="Include\CppHlsl\Parser.inl">
       <Filter>Include\CppHlsl</Filter>
     </None>
-    <None Include="Include\IRenderer.inl" />
+    <None Include="Include\IRenderer.inl">
+      <Filter>Include</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\GraphicsResource.cpp">
@@ -150,6 +154,8 @@
     <ClCompile Include="Source\SpriteAnimation.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Source\IRenderer.cpp" />
+    <ClCompile Include="Source\IRenderer.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

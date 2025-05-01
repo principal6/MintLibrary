@@ -126,6 +126,8 @@ namespace mint
 			void DrawGlyph(const wchar_t wideChar, Float2& glyphPosition, const float scale, const bool drawShade, const bool leaveOnlySpace);
 
 		protected:
+			Float3 ComputePreTranslation(const Float3& position) const;
+			Float3 ComputePostTranslation(const wchar_t* const wideText, const uint32 textLength, const FontRenderingOption& fontRenderingOption) const;
 			uint32 ComputeVertexInfo(uint32 transformIndex, uint8 type) const;
 			void PushTransformToBuffer(const Transform2D& transform2D);
 			void PushTransformToBuffer(const Float2& scale, const float rotationAngle, const Float3& position);

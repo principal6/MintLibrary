@@ -15,9 +15,9 @@ namespace mint
 			return _useMultipleViewports;
 		}
 
-		MINT_INLINE void IRenderer::SetPosition(const Float4& position) noexcept
+		MINT_INLINE void IRenderer::SetCoordinateSpace(const CoordinateSpace& coordinateSpace) noexcept
 		{
-			_position = position;
+			_coordinateSpace = coordinateSpace;
 		}
 
 		MINT_INLINE void IRenderer::SetPositionZ(const float s) noexcept

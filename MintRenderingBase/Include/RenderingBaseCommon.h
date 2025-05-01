@@ -32,6 +32,12 @@ namespace mint
 {
 	namespace Rendering
 	{
+		enum class CoordinateSpace : uint8
+		{
+			World,
+			Screen,
+		};
+
 		enum class TextRenderDirectionHorz
 		{
 			Leftward,

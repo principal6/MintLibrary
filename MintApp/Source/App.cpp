@@ -114,8 +114,12 @@ namespace mint
 		MINT_ASSERT(_isInRenderingScope == true, "반드시 BeginRendering() 과 EndRendering() 사이에 호출되어야 합니다.");
 		MINT_ASSERT(_isInScreenSpaceRenderingScope == false, "BeginScreenSpaceRendering() 을 두 번 연달아 호출할 수 없습니다. 먼저 EndScreenSpaceRendering() 을 호출해 주세요!");
 
+		// Before proceeding to ScreenSpace rendering, flush all render commands to the GPU.
+		_graphicsDevice->GetShapeRenderer().Render();
+
 		_isInScreenSpaceRenderingScope = true;
 		_graphicsDevice->SetViewProjectionMatrix(Float4x4::kIdentity, _graphicsDevice->GetScreenSpace2DProjectionMatrix());
+		_graphicsDevice->GetShapeRenderer().SetCoordinateSpace(Rendering::CoordinateSpace::Screen);
 	}
 
 	void App::EndScreenSpaceRendering()
@@ -130,6 +134,7 @@ namespace mint
 		CameraComponent& cameraComponent = _sceneObjectPool->GetComponentMust<CameraComponent>(currentCameraObject);
 		const Float4x4& currentCameraViewMatrix = _sceneObjectSystems->GetCameraSystem().MakeViewMatrix(currentCameraObject);
 		_graphicsDevice->SetViewProjectionMatrix(currentCameraViewMatrix, cameraComponent._projectionMatrix);
+		_graphicsDevice->GetShapeRenderer().SetCoordinateSpace(Rendering::CoordinateSpace::World);
 		_isInScreenSpaceRenderingScope = false;
 	}
 

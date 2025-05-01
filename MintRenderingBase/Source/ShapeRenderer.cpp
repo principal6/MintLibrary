@@ -405,33 +405,19 @@ namespace mint
 
 		void ShapeRenderer::DrawDynamicText(const wchar_t* const wideText, const uint32 textLength, const Float3& position, const FontRenderingOption& fontRenderingOption)
 		{
-			const float scaledTextWidth = _fontData.ComputeTextWidth(wideText, textLength) * fontRenderingOption._scale;
-			const float scaledFontSize = _fontData._fontSize * fontRenderingOption._scale;
-
-			Float3 postTranslation;
-			if (fontRenderingOption._directionHorz != TextRenderDirectionHorz::Rightward)
-			{
-				postTranslation._x -= (fontRenderingOption._directionHorz == TextRenderDirectionHorz::Centered) ? scaledTextWidth * 0.5f : scaledTextWidth;
-			}
-			if (fontRenderingOption._directionVert != TextRenderDirectionVert::Centered)
-			{
-				postTranslation._y += (fontRenderingOption._directionVert == TextRenderDirectionVert::Upward) ? -scaledFontSize * 0.5f : +scaledFontSize * 0.5f;
-			}
-			postTranslation._y += (-scaledFontSize * 0.5f - 1.0f);
-
-			const uint32 vertexOffset = _lowLevelRenderer->GetVertexCount();
 			const uint32 indexOffset = _lowLevelRenderer->GetIndexCount();
 
-			Float2 glyphPosition = Float2(0.0f, 0.0f);
+			Float2 currentGlyphPosition = Float2(0.0f, 0.0f);
 			for (uint32 at = 0; at < textLength; ++at)
 			{
-				DrawGlyph(wideText[at], glyphPosition, fontRenderingOption._scale, fontRenderingOption._drawShade, false);
+				DrawGlyph(wideText[at], currentGlyphPosition, fontRenderingOption._scale, fontRenderingOption._drawShade, false);
 			}
 
 			const uint32 indexCount = _lowLevelRenderer->GetIndexCount() - indexOffset;
 			_lowLevelRenderer->PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, indexCount, GetClipRect());
 
-			const Float3& preTranslation = position;
+			const Float3& preTranslation = ComputePreTranslation(position);
+			const Float3& postTranslation = ComputePostTranslation(wideText, textLength, fontRenderingOption);
 			PushTransformToBuffer(preTranslation, fontRenderingOption._transformMatrix, postTranslation);
 		}
 
@@ -443,33 +429,19 @@ namespace mint
 
 		void ShapeRenderer::DrawDynamicTextBitFlagged(const wchar_t* const wideText, const uint32 textLength, const Float3& position, const FontRenderingOption& fontRenderingOption, const BitVector& bitFlags)
 		{
-			const float scaledTextWidth = _fontData.ComputeTextWidth(wideText, textLength) * fontRenderingOption._scale;
-			const float scaledFontSize = _fontData._fontSize * fontRenderingOption._scale;
-
-			Float3 postTranslation;
-			if (fontRenderingOption._directionHorz != TextRenderDirectionHorz::Rightward)
-			{
-				postTranslation._x -= (fontRenderingOption._directionHorz == TextRenderDirectionHorz::Centered) ? scaledTextWidth * 0.5f : scaledTextWidth;
-			}
-			if (fontRenderingOption._directionVert != TextRenderDirectionVert::Centered)
-			{
-				postTranslation._y += (fontRenderingOption._directionVert == TextRenderDirectionVert::Upward) ? -scaledFontSize * 0.5f : +scaledFontSize * 0.5f;
-			}
-			postTranslation._y += (-scaledFontSize * 0.5f - 1.0f);
-
-			const uint32 vertexOffset = _lowLevelRenderer->GetVertexCount();
 			const uint32 indexOffset = _lowLevelRenderer->GetIndexCount();
 
-			Float2 glyphPosition = Float2(0.0f, 0.0f);
+			Float2 currentGlyphPosition = Float2(0.0f, 0.0f);
 			for (uint32 at = 0; at < textLength; ++at)
 			{
-				DrawGlyph(wideText[at], glyphPosition, fontRenderingOption._scale, fontRenderingOption._drawShade, !bitFlags.Get(at));
+				DrawGlyph(wideText[at], currentGlyphPosition, fontRenderingOption._scale, fontRenderingOption._drawShade, !bitFlags.Get(at));
 			}
 
 			const uint32 indexCount = _lowLevelRenderer->GetIndexCount() - indexOffset;
 			_lowLevelRenderer->PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, indexCount, GetClipRect());
 
-			const Float3& preTranslation = position;
+			const Float3& preTranslation = ComputePreTranslation(position);
+			const Float3& postTranslation = ComputePostTranslation(wideText, textLength, fontRenderingOption);
 			PushTransformToBuffer(preTranslation, fontRenderingOption._transformMatrix, postTranslation);
 		}
 
@@ -484,18 +456,21 @@ namespace mint
 				glyphRect.Left(glyphPosition._x + static_cast<float>(glyphInfo._horiBearingX) * scale);
 				glyphRect.Right(glyphRect.Left() + static_cast<float>(glyphInfo._width) * scale);
 
-				const bool shouldFlipY = _graphicsDevice.GetProjectionMatrix()._22 < 0.0f;
-				if (shouldFlipY)
-				{
-					const float scaledFontHeight = static_cast<float>(_fontData._fontSize) * scale;
-					glyphRect.Top(glyphPosition._y + scaledFontHeight - static_cast<float>(glyphInfo._horiBearingY) * scale);
-					glyphRect.Bottom(glyphRect.Top() + static_cast<float>(glyphInfo._height) * scale);
-				}
-				else
-				{
-					glyphRect.Top(glyphPosition._y + (static_cast<float>(glyphInfo._horiBearingY) * scale));
-					glyphRect.Bottom(glyphRect.Top() - static_cast<float>(glyphInfo._height) * scale);
-				}
+				glyphRect.Top(glyphPosition._y + (static_cast<float>(glyphInfo._horiBearingY) * scale));
+				glyphRect.Bottom(glyphRect.Top() - static_cast<float>(glyphInfo._height) * scale);
+
+				//const bool shouldFlipY = _graphicsDevice.GetProjectionMatrix()._22 < 0.0f;
+				//if (shouldFlipY)
+				//{
+				//	const float scaledFontHeight = static_cast<float>(_fontData._fontSize) * scale;
+				//	glyphRect.Top(glyphPosition._y + scaledFontHeight - static_cast<float>(glyphInfo._horiBearingY) * scale);
+				//	glyphRect.Bottom(glyphRect.Top() + static_cast<float>(glyphInfo._height) * scale);
+				//}
+				//else
+				//{
+				//	glyphRect.Top(glyphPosition._y + (static_cast<float>(glyphInfo._horiBearingY) * scale));
+				//	glyphRect.Bottom(glyphRect.Top() - static_cast<float>(glyphInfo._height) * scale);
+				//}
 
 				{
 					Vector<VS_INPUT_SHAPE>& vertices = _lowLevelRenderer->Vertices();
@@ -545,6 +520,40 @@ namespace mint
 			}
 
 			glyphPosition._x += static_cast<float>(glyphInfo._horiAdvance) * scale;
+		}
+
+		Float3 ShapeRenderer::ComputePreTranslation(const Float3& position) const
+		{
+			if (_coordinateSpace == CoordinateSpace::Screen)
+			{
+				Float3 preTranslation = position;
+				preTranslation._y = (static_cast<float>(_graphicsDevice.GetWindowSize()._y) - preTranslation._y);
+				return preTranslation;
+			}
+			return position;
+		}
+
+		Float3 ShapeRenderer::ComputePostTranslation(const wchar_t* const wideText, const uint32 textLength, const FontRenderingOption& fontRenderingOption) const
+		{
+			const float scaledTextWidth = _fontData.ComputeTextWidth(wideText, textLength) * fontRenderingOption._scale;
+			const float scaledFontSize = _fontData._fontSize * fontRenderingOption._scale;
+
+			Float3 postTranslation;
+			postTranslation._y = (-scaledFontSize * 0.5f - 1.0f);
+			if (fontRenderingOption._directionHorz != TextRenderDirectionHorz::Rightward)
+			{
+				float xOffset = (fontRenderingOption._directionHorz == TextRenderDirectionHorz::Centered) ? -scaledTextWidth * 0.5f : -scaledTextWidth;
+				postTranslation._x += xOffset;
+			}
+			if (fontRenderingOption._directionVert != TextRenderDirectionVert::Centered)
+			{
+				float yOffset = (fontRenderingOption._directionVert == TextRenderDirectionVert::Upward) ? -scaledFontSize * 0.5f : +scaledFontSize * 0.5f;
+				if (_coordinateSpace == CoordinateSpace::Screen)
+					yOffset = -yOffset;
+
+				postTranslation._y += yOffset;
+			}
+			return postTranslation;
 		}
 
 		uint32 ShapeRenderer::ComputeVertexInfo(uint32 transformIndex, uint8 type) const

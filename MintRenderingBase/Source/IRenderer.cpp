@@ -51,6 +51,16 @@ namespace mint
 			}
 		}
 
+		void IRenderer::SetPosition(const Float4& position) noexcept
+		{
+			_position = position;
+
+			if (_coordinateSpace == CoordinateSpace::Screen)
+			{
+				_position._y = static_cast<float>(_graphicsDevice.GetWindowSize()._y) - _position._y;
+			}
+		}
+
 		void IRenderer::FlushTransformBuffer() noexcept
 		{
 			_sbTransformData.Clear();

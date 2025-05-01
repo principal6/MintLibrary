@@ -49,6 +49,7 @@ namespace mint
 			virtual void Flush() noexcept abstract;
 
 		public:
+			void SetCoordinateSpace(const CoordinateSpace& coordinateSpace) noexcept;
 			void SetPosition(const Float4& position) noexcept;
 			void SetPositionZ(const float s) noexcept;
 			void SetColor(const ByteColor& color) noexcept;
@@ -73,6 +74,7 @@ namespace mint
 			bool _ownsLowLevelRenderer;
 
 		protected:
+			CoordinateSpace _coordinateSpace;
 			Float4 _position;
 			Color _color;
 
