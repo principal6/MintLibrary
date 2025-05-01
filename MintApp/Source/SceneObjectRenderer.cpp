@@ -14,7 +14,6 @@ namespace mint
 {
 	SceneObjectRenderer::SceneObjectRenderer(Rendering::GraphicsDevice& graphicsDevice)
 		: _graphicsDevice{ graphicsDevice }
-		, _lowLevelRenderer{ graphicsDevice }
 	{
 		Initialize();
 	}
@@ -62,20 +61,20 @@ namespace mint
 			
 				shaderPool.BindShaderIfNot(GraphicsShaderType::PixelShader, _psDefaultID);
 				shaderPool.UnbindShader(GraphicsShaderType::GeometryShader);
-				_lowLevelRenderer.Render(RenderingPrimitive::TriangleList);
+				_lowLevelRenderer.Render(_graphicsDevice, RenderingPrimitive::TriangleList);
 			
 				if (meshComponent._shouldDrawNormals == true)
 				{
 					shaderPool.BindShaderIfNot(GraphicsShaderType::GeometryShader, _gsNormalID);
 					shaderPool.BindShaderIfNot(GraphicsShaderType::PixelShader, _psTexCoordAsColorID);
-					_lowLevelRenderer.Render(RenderingPrimitive::LineList);
+					_lowLevelRenderer.Render(_graphicsDevice, RenderingPrimitive::LineList);
 				}
 			
 				if (meshComponent._shouldDrawEdges == true)
 				{
 					shaderPool.BindShaderIfNot(GraphicsShaderType::GeometryShader, _gsTriangleEdgeID);
 					shaderPool.BindShaderIfNot(GraphicsShaderType::PixelShader, _psTexCoordAsColorID);
-					_lowLevelRenderer.Render(RenderingPrimitive::TriangleList);
+					_lowLevelRenderer.Render(_graphicsDevice, RenderingPrimitive::TriangleList);
 				}
 			
 				_lowLevelRenderer.Flush();

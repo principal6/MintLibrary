@@ -205,7 +205,7 @@ namespace mint
 			GraphicsResource& sbTransformBuffer = resourcePool.GetResource(_graphicsDevice.GetCommonSBTransformID());
 			sbTransformBuffer.BindToShader(GraphicsShaderType::VertexShader, sbTransformBuffer.GetRegisterIndex());
 
-			_lowLevelRenderer->ExecuteRenderCommands();
+			_lowLevelRenderer->ExecuteRenderCommands(_graphicsDevice);
 
 			if (IsUsingMultipleViewports())
 			{

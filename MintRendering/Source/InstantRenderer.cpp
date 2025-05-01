@@ -15,8 +15,6 @@ namespace mint
 	{
 		InstantRenderer::InstantRenderer(GraphicsDevice& graphicsDevice)
 			: _graphicsDevice{ graphicsDevice }
-			, _lowLevelRendererLine{ graphicsDevice }
-			, _lowLevelRendererMesh{ graphicsDevice }
 		{
 			Initialize();
 		}
@@ -214,11 +212,11 @@ namespace mint
 			}
 
 			shaderPool.BindShaderIfNot(GraphicsShaderType::PixelShader, _psColorID);
-			_lowLevelRendererLine.Render(RenderingPrimitive::LineList);
+			_lowLevelRendererLine.Render(_graphicsDevice, RenderingPrimitive::LineList);
 			_lowLevelRendererLine.Flush();
 
 			shaderPool.BindShaderIfNot(GraphicsShaderType::PixelShader, _psDefaultID);
-			_lowLevelRendererMesh.Render(RenderingPrimitive::TriangleList);
+			_lowLevelRendererMesh.Render(_graphicsDevice, RenderingPrimitive::TriangleList);
 			_lowLevelRendererMesh.Flush();
 
 			_sbMaterialDatas.Clear();

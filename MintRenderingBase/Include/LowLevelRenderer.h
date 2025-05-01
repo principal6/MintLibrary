@@ -94,7 +94,7 @@ namespace mint
 			};
 
 		public:
-			LowLevelRenderer(GraphicsDevice& graphicsDevice);
+			LowLevelRenderer();
 			~LowLevelRenderer() = default;
 
 		public:
@@ -114,22 +114,21 @@ namespace mint
 		public:
 			void Flush() noexcept;
 			bool IsRenderable() const noexcept;
-			void Render(const RenderingPrimitive renderingPrimitive) noexcept;
+			void Render(GraphicsDevice& graphicsDevice, RenderingPrimitive renderingPrimitive) noexcept;
 
 		public:
 			void PushRenderCommandIndexed(const RenderingPrimitive primitive, const uint32 vertexOffset, const uint32 indexOffset, const uint32 indexCount, const Rect& clipRect) noexcept;
 			void BeginOrdinalRenderCommands(const uint64 key) noexcept;
 			void EndOrdinalRenderCommands() noexcept;
 			void SetOrdinalRenderCommandGroupPriority(const uint64 key, const uint32 priority) noexcept;
-			void ExecuteRenderCommands() noexcept;
+			void ExecuteRenderCommands(GraphicsDevice& graphicsDevice) noexcept;
 
 		private:
 			bool MergeNewRenderCommand(const RenderCommand& newRenderCommand) noexcept;
-			void PrepareBuffers() noexcept;
-			void ExecuteRenderCommands_Draw(const RenderCommand& renderCommand) const noexcept;
+			void PrepareBuffers(GraphicsDevice& graphicsDevice) noexcept;
+			void ExecuteRenderCommands_Draw(GraphicsDevice& graphicsDevice, const RenderCommand& renderCommand) const noexcept;
 
 		private:
-			GraphicsDevice& _graphicsDevice;
 			const uint32 _vertexStride;
 
 		private:

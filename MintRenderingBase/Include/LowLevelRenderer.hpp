@@ -15,9 +15,8 @@ namespace mint
 	namespace Rendering
 	{
 		template <typename T>
-		inline LowLevelRenderer<T>::LowLevelRenderer(GraphicsDevice& graphicsDevice)
-			: _graphicsDevice{ graphicsDevice }
-			, _vertexStride{ sizeof(T) }
+		inline LowLevelRenderer<T>::LowLevelRenderer()
+			: _vertexStride{ sizeof(T) }
 			, _vertexBufferID{}
 			, _indexBase{ 0 }
 			, _indexBufferID{}
@@ -119,16 +118,16 @@ namespace mint
 		}
 
 		template <typename T>
-		inline void LowLevelRenderer<T>::Render(const RenderingPrimitive renderingPrimitive) noexcept
+		inline void LowLevelRenderer<T>::Render(GraphicsDevice& graphicsDevice, RenderingPrimitive renderingPrimitive) noexcept
 		{
 			if (IsRenderable() == false)
 			{
 				return;
 			}
 
-			PrepareBuffers();
+			PrepareBuffers(graphicsDevice);
 
-			GraphicsResourcePool& resourcePool = _graphicsDevice.GetResourcePool();
+			GraphicsResourcePool& resourcePool = graphicsDevice.GetResourcePool();
 			GraphicsResource& vertexBuffer = resourcePool.GetResource(_vertexBufferID);
 			GraphicsResource& indexBuffer = resourcePool.GetResource(_indexBufferID);
 			vertexBuffer.BindAsInput();
@@ -137,15 +136,15 @@ namespace mint
 			const uint32 vertexCount = static_cast<uint32>(_vertices.Size());
 			const uint32 indexCount = static_cast<uint32>(_indices.Size());
 
-			_graphicsDevice.GetStateManager().SetIARenderingPrimitive(renderingPrimitive);
+			graphicsDevice.GetStateManager().SetIARenderingPrimitive(renderingPrimitive);
 
 			switch (renderingPrimitive)
 			{
 			case RenderingPrimitive::LineList:
-				_graphicsDevice.Draw(vertexCount, 0);
+				graphicsDevice.Draw(vertexCount, 0);
 				break;
 			case RenderingPrimitive::TriangleList:
-				_graphicsDevice.DrawIndexed(indexCount, 0, 0);
+				graphicsDevice.DrawIndexed(indexCount, 0, 0);
 
 				break;
 			default:
@@ -222,16 +221,16 @@ namespace mint
 		}
 
 		template<typename T>
-		MINT_INLINE void LowLevelRenderer<T>::ExecuteRenderCommands() noexcept
+		MINT_INLINE void LowLevelRenderer<T>::ExecuteRenderCommands(GraphicsDevice& graphicsDevice) noexcept
 		{
 			if (IsRenderable() == false)
 			{
 				return;
 			}
 
-			PrepareBuffers();
+			PrepareBuffers(graphicsDevice);
 
-			GraphicsResourcePool& resourcePool = _graphicsDevice.GetResourcePool();
+			GraphicsResourcePool& resourcePool = graphicsDevice.GetResourcePool();
 			GraphicsResource& vertexBuffer = resourcePool.GetResource(_vertexBufferID);
 			GraphicsResource& indexBuffer = resourcePool.GetResource(_indexBufferID);
 			vertexBuffer.BindAsInput();
@@ -246,7 +245,7 @@ namespace mint
 					continue;
 				}
 
-				ExecuteRenderCommands_Draw(renderCommand);
+				ExecuteRenderCommands_Draw(graphicsDevice, renderCommand);
 			}
 
 			// Ordinal 그릴 차례.
@@ -261,7 +260,7 @@ namespace mint
 					const uint32 end = ordinalRenderCommandGroup._endRenderCommandIndex;
 					for (uint32 renderCommandIndex = start; renderCommandIndex <= end; renderCommandIndex++)
 					{
-						ExecuteRenderCommands_Draw(_renderCommands[renderCommandIndex]);
+						ExecuteRenderCommands_Draw(graphicsDevice, _renderCommands[renderCommandIndex]);
 					}
 				}
 			}
@@ -317,9 +316,9 @@ namespace mint
 		}
 
 		template <typename T>
-		inline void LowLevelRenderer<T>::PrepareBuffers() noexcept
+		inline void LowLevelRenderer<T>::PrepareBuffers(GraphicsDevice& graphicsDevice) noexcept
 		{
-			GraphicsResourcePool& resourcePool = _graphicsDevice.GetResourcePool();
+			GraphicsResourcePool& resourcePool = graphicsDevice.GetResourcePool();
 
 			const uint32 vertexCount = static_cast<uint32>(_vertices.Size());
 			if (_vertexBufferID.IsValid() == false && vertexCount > 0)
@@ -347,20 +346,20 @@ namespace mint
 		}
 
 		template<typename T>
-		inline void LowLevelRenderer<T>::ExecuteRenderCommands_Draw(const RenderCommand& renderCommand) const noexcept
+		inline void LowLevelRenderer<T>::ExecuteRenderCommands_Draw(GraphicsDevice& graphicsDevice, const RenderCommand& renderCommand) const noexcept
 		{
 			D3D11_RECT scissorRect = RectToD3dRect(renderCommand._clipRect);
-			_graphicsDevice.GetStateManager().SetRSScissorRectangle(scissorRect);
+			graphicsDevice.GetStateManager().SetRSScissorRectangle(scissorRect);
 
-			_graphicsDevice.GetStateManager().SetIARenderingPrimitive(renderCommand._primitive);
+			graphicsDevice.GetStateManager().SetIARenderingPrimitive(renderCommand._primitive);
 
 			switch (renderCommand._primitive)
 			{
 			case RenderingPrimitive::LineList:
-				_graphicsDevice.Draw(renderCommand._vertexCount, renderCommand._vertexOffset);
+				graphicsDevice.Draw(renderCommand._vertexCount, renderCommand._vertexOffset);
 				break;
 			case RenderingPrimitive::TriangleList:
-				_graphicsDevice.DrawIndexed(renderCommand._indexCount, renderCommand._indexOffset, renderCommand._vertexOffset);
+				graphicsDevice.DrawIndexed(renderCommand._indexCount, renderCommand._indexOffset, renderCommand._vertexOffset);
 				break;
 			default:
 				break;
