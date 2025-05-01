@@ -173,16 +173,16 @@ void RunGJKTestWindow()
 				const ByteColor kShapeAColor(255, 0, 0);
 				const ByteColor kShapeBColor(64, 128, 0);
 				const ByteColor kIntersectedColor(32, 196, 32);
-				shapeA.DebugDrawShape(shapeRenderer, (intersects ? kIntersectedColor : kShapeAColor), Transform2D());
-				shapeB.DebugDrawShape(shapeRenderer, (intersects ? kIntersectedColor : kShapeBColor), Transform2D());
+				shapeA.DebugDrawShape(shapeRenderer, (intersects ? kIntersectedColor : kShapeAColor), Transform2D::GetIdentity());
+				shapeB.DebugDrawShape(shapeRenderer, (intersects ? kIntersectedColor : kShapeBColor), Transform2D::GetIdentity());
 
 				// Minkowski Difference Shape
 				const ByteColor kShapeMDColor(64, 64, 64);
 				ConvexCollisionShape2D shapeMD{ ConvexCollisionShape2D::MakeMinkowskiDifferenceShape(shapeA, shapeB) };
-				shapeMD.DebugDrawShape(shapeRenderer, kShapeMDColor, Transform2D());
+				shapeMD.DebugDrawShape(shapeRenderer, kShapeMDColor, Transform2D::GetIdentity());
 
 				// Simplex
-				gjk2DInfo._simplex.DebugDrawShape(shapeRenderer, ByteColor(255, 0, 255), Transform2D());
+				gjk2DInfo._simplex.DebugDrawShape(shapeRenderer, ByteColor(255, 0, 255), Transform2D::GetIdentity());
 
 				// Grid
 				shapeRenderer.SetColor(kShapeMDColor);
@@ -199,7 +199,7 @@ void RunGJKTestWindow()
 					Float2 normal = Float2(0, 1);
 					float distance = 0.0f;
 					ComputePenetration_EPA(shapeA, shapeB, gjk2DInfo, normal, distance, epa2DInfo);
-					//epa2DInfo._simplex.DebugDrawShape(shapeRenderer, ByteColor(0, 64, 255), Transform2D());
+					//epa2DInfo._simplex.DebugDrawShape(shapeRenderer, ByteColor(0, 64, 255), Transform2D::GetIdentity());
 
 					shapeRenderer.SetColor(ByteColor(0, 64, 255));
 					shapeRenderer.DrawCircle(Float3(shapeA.ComputeSupportPoint(+normal)), 4.0f);

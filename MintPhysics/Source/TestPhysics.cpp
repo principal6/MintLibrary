@@ -34,7 +34,7 @@ namespace mint
 			}
 
 			{
-				Physics::BoxCollisionShape2D a = Physics::BoxCollisionShape2D(Float2(16, 16), Transform2D());
+				Physics::BoxCollisionShape2D a = Physics::BoxCollisionShape2D(Float2(16, 16), Transform2D::GetIdentity());
 				Physics::CircleCollisionShape2D b = Physics::CircleCollisionShape2D(Float2(0, 0), 1);
 				MINT_ASSURE(Physics::Intersect2D_GJK(a, b) == true);
 			}

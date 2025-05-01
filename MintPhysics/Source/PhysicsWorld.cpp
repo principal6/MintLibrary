@@ -634,7 +634,7 @@ namespace mint
 			MINT_ASSERT(body.IsValid() == true, "Caller must guarantee this!");
 
 			// TEMP
-			//body._bodyAABB->DebugDrawShape(shapeRenderer, ByteColor(255, 255, 0), Transform2D());
+			//body._bodyAABB->DebugDrawShape(shapeRenderer, ByteColor(255, 255, 0), Transform2D::GetIdentity());
 
 			body._shape._collisionShape->DebugDrawShape(shapeRenderer, ByteColor(128, 128, 128), body._transform2D);
 
