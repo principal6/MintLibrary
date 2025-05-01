@@ -313,7 +313,7 @@ namespace mint
 		bool GraphicsDevice::Initialize()
 		{
 			_clearColor = _window.GetBackgroundColor();
-			_lastWindowSize = _window.GetSize();
+			_cachedWindowSize = _window.GetSize();
 
 			CreateDxDevice();
 
@@ -326,7 +326,7 @@ namespace mint
 
 		void GraphicsDevice::UpdateScreenSize()
 		{
-			if (_window.GetSize() == _lastWindowSize)
+			if (_window.GetSize() == _cachedWindowSize)
 			{
 				return;
 			}
@@ -348,7 +348,7 @@ namespace mint
 
 			SetDefaultRenderTargetsAndDepthStencil();
 
-			_lastWindowSize = _window.GetSize();
+			_cachedWindowSize = _window.GetSize();
 		}
 
 		void GraphicsDevice::CreateDxDevice()
@@ -774,7 +774,7 @@ namespace mint
 		Float4x4 GraphicsDevice::GetScreenSpace2DProjectionMatrix() const noexcept
 		{
 			const Float2 windowSize{ GetWindowSize() };
-			return Float4x4::ProjectionMatrix2DFromTopLeft(windowSize._x, windowSize._y);
+			return Float4x4::ProjectionMatrix2DOffCenter(0.0f, windowSize._x, 0.0f, windowSize._y);
 		}
 
 		void GraphicsDevice::SetViewProjectionMatrix(const Float4x4& viewMatrix, const Float4x4& projectionMatrix) noexcept
@@ -795,11 +795,6 @@ namespace mint
 		const Float4x4& GraphicsDevice::GetViewProjectionMatrix() const noexcept
 		{
 			return _cbViewData._cbViewProjectionMatrix;
-		}
-
-		const Int2& GraphicsDevice::GetWindowSize() const noexcept
-		{
-			return _window.GetSize();
 		}
 
 		Window& GraphicsDevice::AccessWindow() noexcept

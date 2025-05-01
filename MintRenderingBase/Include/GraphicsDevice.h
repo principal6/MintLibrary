@@ -189,7 +189,7 @@ namespace mint
 		private:
 			Window& _window;
 			bool _usesMSAA;
-			Int2 _lastWindowSize;
+			Int2 _cachedWindowSize;
 
 		private:
 			Color _clearColor;

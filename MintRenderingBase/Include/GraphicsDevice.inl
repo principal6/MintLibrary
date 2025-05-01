@@ -70,5 +70,10 @@ namespace mint
 		{
 			return _deviceContext.Get();
 		}
+
+		MINT_INLINE const Int2& GraphicsDevice::GetWindowSize() const noexcept
+		{
+			return _cachedWindowSize;
+		}
 	}
 }

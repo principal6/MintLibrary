@@ -49,7 +49,7 @@ namespace mint
 
 		// +X is the right direction for world.
 		static Float4x4 ProjectionMatrixPerspectiveYUP(const bool isRightHanded, const float FOVAngle, const float nearDepth, const float farDepth, const float screenWidthOverHeight) noexcept;
-		static Float4x4 ProjectionMatrix2DFromTopLeft(const float pixelWidth, const float pixelHeight) noexcept;
+		static Float4x4 ProjectionMatrix2DOffCenter(float left, float right, float bottom, float top) noexcept;
 		static Float4x4 ProjectionMatrix2DNormal(const float pixelWidth, const float pixelHeight) noexcept;
 #pragma endregion
 

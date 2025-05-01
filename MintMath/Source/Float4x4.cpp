@@ -180,14 +180,18 @@ namespace mint
 		);
 	}
 
-	Float4x4 Float4x4::ProjectionMatrix2DFromTopLeft(const float pixelWidth, const float pixelHeight) noexcept
+	Float4x4 Float4x4::ProjectionMatrix2DOffCenter(float left, float right, float bottom, float top) noexcept
 	{
+		float l = left;
+		float r = right;
+		float t = top;
+		float b = bottom;
 		return Float4x4
 		(
-			+2.0f / pixelWidth,  0.0f              , 0.0f, -1.0f,
-			 0.0f             , -2.0f / pixelHeight, 0.0f, +1.0f,
-			 0.0f             ,  0.0f              , 0.0f,  0.0f,
-			 0.0f             ,  0.0f              , 0.0f,  1.0f
+			2.0f / (r - l), 0.0f, 0.0f, -(r + l) / (r - l),
+			0.0f, 2.0f / (t - b), 0.0f, -(t + b) / (t - b),
+			0.0f, 0.0f, 1.0f, 0.0f,
+			0.0f, 0.0f, 0.0f, 1.0f
 		);
 	}
 
