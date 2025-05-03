@@ -536,6 +536,12 @@ namespace mint
 			AccessShaders(shaderType)[shaderIndex].Unbind();
 		}
 
+		bool ShaderPool::CheckShaderType(const GraphicsObjectID& objectID, const GraphicsShaderType shaderType) const
+		{
+			const uint32 shaderIndex = GetShaderIndex(shaderType, objectID);
+			return IsValidIndex(shaderIndex);
+		}
+
 		uint32 ShaderPool::GetShaderIndex(const GraphicsShaderType shaderType, const GraphicsObjectID& objectID) const
 		{
 			MINT_ASSERT(shaderType != GraphicsShaderType::COUNT, "Invalid parameter - check ShaderType");

@@ -161,6 +161,7 @@ namespace mint
 			void BindShaderIfNot(const GraphicsShaderType shaderType, const GraphicsObjectID& objectID);
 			void BindInputLayoutIfNot(const GraphicsObjectID& objectID);
 			void UnbindShader(const GraphicsShaderType shaderType);
+			bool CheckShaderType(const GraphicsObjectID& objectID, const GraphicsShaderType shaderType) const;
 
 		private:
 			uint32 GetShaderIndex(const GraphicsShaderType shaderType, const GraphicsObjectID& objectID) const;

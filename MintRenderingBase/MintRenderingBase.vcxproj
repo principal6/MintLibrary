@@ -209,6 +209,7 @@
     <ClInclude Include="Include\IRenderer.h" />
     <ClInclude Include="Include\MeshData.h" />
     <ClInclude Include="Include\AllHeaders.h" />
+    <ClInclude Include="Include\ShaderPipeline.h" />
     <ClInclude Include="Include\ShapeGenerator.h" />
     <ClInclude Include="Include\ShapeRenderer.h" />
     <ClInclude Include="Include\RenderingBaseCommon.h" />
@@ -298,6 +299,12 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Source\ShaderPipeline.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="Source\ShapeGenerator.cpp">

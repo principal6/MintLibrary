@@ -8,6 +8,7 @@
 #include <MintRenderingBase/Include/RenderingBaseCommon.h>
 #include <MintRenderingBase/Include/GraphicsResource.h>
 #include <MintRenderingBase/Include/Shader.h>
+#include <MintRenderingBase/Include/ShaderPipeline.h>
 #include <MintRenderingBase/Include/DxShaderHeaderMemory.h>
 #include <MintRenderingBase/Include/GraphicsDevice.h>
 #include <MintRenderingBase/Include/GraphicsObject.h>
