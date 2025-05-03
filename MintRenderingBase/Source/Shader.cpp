@@ -117,7 +117,7 @@ namespace mint
 
 
 		ShaderPool::ShaderPool(GraphicsDevice& graphicsDevice, DxShaderHeaderMemory* const shaderHeaderMemory, const ShaderVersion shaderVersion)
-			: GraphicsObject(graphicsDevice, GraphicsObjectType::Pool)
+			: _graphicsDevice{ graphicsDevice }
 			, _shaderHeaderMemory{ shaderHeaderMemory }
 			, _shaderVersion{ shaderVersion }
 		{

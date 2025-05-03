@@ -385,7 +385,7 @@ namespace mint
 
 #pragma region GraphicsResourcePool
 		GraphicsResourcePool::GraphicsResourcePool(GraphicsDevice& graphicsDevice)
-			: GraphicsObject(graphicsDevice, GraphicsObjectType::Pool)
+			: _graphicsDevice{ graphicsDevice }
 		{
 			__noop;
 		}

@@ -38,7 +38,6 @@ namespace mint
 		enum class GraphicsObjectType
 		{
 			None,
-			Pool,
 			Resource,
 			InputLayout,
 			Shader,

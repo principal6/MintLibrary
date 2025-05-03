@@ -125,7 +125,7 @@ namespace mint
 		};
 
 
-		class GraphicsResourcePool final : public GraphicsObject
+		class GraphicsResourcePool
 		{
 		public:
 			GraphicsResourcePool(GraphicsDevice& graphicsDevice);
@@ -150,6 +150,7 @@ namespace mint
 			GraphicsResource& GetResource(const GraphicsObjectID& objectID);
 
 		private:
+			GraphicsDevice& _graphicsDevice;
 			Vector<OwnPtr<GraphicsObject>> _resourceArray;
 		};
 	}

@@ -115,7 +115,7 @@ namespace mint
 			const char* _shaderTextContent = nullptr;
 		};
 
-		class ShaderPool final : public GraphicsObject
+		class ShaderPool
 		{
 			template <typename CustomDataType>
 			using TypeMetaData = Language::TypeMetaData<CustomDataType>;
@@ -169,6 +169,7 @@ namespace mint
 			Vector<Shader>& AccessShaders(const GraphicsShaderType shaderType);
 
 		private:
+			GraphicsDevice& _graphicsDevice;
 			ComPtr<ID3DBlob> _errorMessageBlob;
 
 		private:
@@ -182,7 +183,7 @@ namespace mint
 			Vector<Shader> _shadersPerType[static_cast<uint32>(GraphicsShaderType::COUNT)];
 
 		private:
-			GraphicsObjectID	_boundInputLayoutID;
+			GraphicsObjectID _boundInputLayoutID;
 			GraphicsObjectID _boundShaderIDPerType[static_cast<uint32>(GraphicsShaderType::COUNT)];
 		};
 	}
