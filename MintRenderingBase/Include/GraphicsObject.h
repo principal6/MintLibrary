@@ -125,7 +125,7 @@ namespace mint
 		};
 
 
-		class GraphicsObject
+		class GraphicsObject abstract
 		{
 		public:
 			GraphicsObject(GraphicsDevice& graphicsDevice, const GraphicsObjectType objectType)
