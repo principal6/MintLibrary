@@ -20,24 +20,26 @@ namespace mint
 		template <typename CustomDataType>
 		class TypeMetaData;
 
-
 		namespace CppHlsl
 		{
 			class TypeCustomData;
 		}
 	}
 
-
 	namespace Rendering
 	{
 		class DxShaderHeaderMemory;
 		class GraphicsDevice;
 		class ShaderPool;
-
-
 		using Microsoft::WRL::ComPtr;
+	}
+}
 
 
+namespace mint
+{
+	namespace Rendering
+	{
 		struct DxInputElementSet
 		{
 			Vector<StringA> _semanticNameArray;
