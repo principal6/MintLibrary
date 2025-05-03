@@ -64,7 +64,7 @@ namespace mint
 			~ShaderPipelinePool() = default;
 
 		public:
-			GraphicsObjectID CreateShaderPipeline(GraphicsDevice& graphicsDevice);
+			GraphicsObjectID CreateShaderPipeline();
 			ShaderPipeline& AccessShaderPipeline(const GraphicsObjectID& shaderPipelineID);
 			const ShaderPipeline& GetShaderPipeline(const GraphicsObjectID& shaderPipelineID) const;
 

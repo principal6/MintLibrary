@@ -165,14 +165,34 @@ namespace mint
 			using namespace Language;
 
 			ShaderPool& shaderPool = _graphicsDevice.GetShaderPool();
-			_vsDefaultID = shaderPool.AddShader(Path::MakeIncludeAssetPath("Hlsl/"), "VsDefault.hlsl", "main", GraphicsShaderType::VertexShader, Path::MakeIncludeAssetPath("HlslBinary/"));
+			GraphicsObjectID inputLayoutDefaultID;
+			GraphicsObjectID vsDefaultID;
+			GraphicsObjectID psDefaultID;
+			GraphicsObjectID psColorID;
+			vsDefaultID = shaderPool.AddShader(Path::MakeIncludeAssetPath("Hlsl/"), "VsDefault.hlsl", "main", GraphicsShaderType::VertexShader, Path::MakeIncludeAssetPath("HlslBinary/"));
 
 			const CppHlsl::Interpreter& interpreter = _graphicsDevice.GetCppHlslSteamData();
 			const TypeMetaData<CppHlsl::TypeCustomData>& vsInputTypeMetaData = interpreter.GetTypeMetaData(typeid(VS_INPUT));
-			_inputLayoutDefaultID = shaderPool.AddInputLayout(_vsDefaultID, vsInputTypeMetaData);
+			inputLayoutDefaultID = shaderPool.AddInputLayout(vsDefaultID, vsInputTypeMetaData);
 
-			_psDefaultID = shaderPool.AddShader(Path::MakeIncludeAssetPath("Hlsl/"), "PsDefault.hlsl", "main", GraphicsShaderType::PixelShader, Path::MakeIncludeAssetPath("HlslBinary/"));
-			_psColorID = shaderPool.AddShader(Path::MakeIncludeAssetPath("Hlsl/"), "PsColor.hlsl", "main", GraphicsShaderType::PixelShader, Path::MakeIncludeAssetPath("HlslBinary/"));
+			psDefaultID = shaderPool.AddShader(Path::MakeIncludeAssetPath("Hlsl/"), "PsDefault.hlsl", "main", GraphicsShaderType::PixelShader, Path::MakeIncludeAssetPath("HlslBinary/"));
+			psColorID = shaderPool.AddShader(Path::MakeIncludeAssetPath("Hlsl/"), "PsColor.hlsl", "main", GraphicsShaderType::PixelShader, Path::MakeIncludeAssetPath("HlslBinary/"));
+			
+			ShaderPipelinePool& shaderPipelinePool = _graphicsDevice.GetShaderPipelinePool();
+			_shaderPipelineTriangleID = shaderPipelinePool.CreateShaderPipeline();
+			{
+				ShaderPipeline& shaderPipelineDefault = shaderPipelinePool.AccessShaderPipeline(_shaderPipelineTriangleID);
+				shaderPipelineDefault.SetInputLayout(inputLayoutDefaultID);
+				shaderPipelineDefault.SetVertexShader(vsDefaultID);
+				shaderPipelineDefault.SetPixelShader(psDefaultID);
+			}
+			_shaderPipelineLineID = shaderPipelinePool.CreateShaderPipeline();
+			{
+				ShaderPipeline& shaderPipelineLine = shaderPipelinePool.AccessShaderPipeline(_shaderPipelineLineID);
+				shaderPipelineLine.SetInputLayout(inputLayoutDefaultID);
+				shaderPipelineLine.SetVertexShader(vsDefaultID);
+				shaderPipelineLine.SetPixelShader(psColorID);
+			}
 		}
 
 		void InstantRenderer::PushMeshWithMaterial(MeshData& meshData, const Color& diffuseColor) noexcept
@@ -190,9 +210,7 @@ namespace mint
 		void InstantRenderer::Render() noexcept
 		{
 			ShaderPool& shaderPool = _graphicsDevice.GetShaderPool();
-			shaderPool.BindInputLayoutIfNot(_inputLayoutDefaultID);
-			shaderPool.BindShaderIfNot(GraphicsShaderType::VertexShader, _vsDefaultID);
-			shaderPool.UnbindShader(GraphicsShaderType::GeometryShader);
+			ShaderPipelinePool& shaderPipelinePool = _graphicsDevice.GetShaderPipelinePool();
 
 			GraphicsResourcePool& resourcePool = _graphicsDevice.GetResourcePool();
 			GraphicsResource& cbTransform = resourcePool.GetResource(_graphicsDevice.GetCommonCBTransformID());
@@ -211,11 +229,11 @@ namespace mint
 				sbMaterial.UpdateBuffer(&_sbMaterialDatas[0], _sbMaterialDatas.Size());
 			}
 
-			shaderPool.BindShaderIfNot(GraphicsShaderType::PixelShader, _psColorID);
+			shaderPipelinePool.GetShaderPipeline(_shaderPipelineLineID).BindShaderPipeline();
 			_lowLevelRendererLine.Render(_graphicsDevice, RenderingPrimitive::LineList);
 			_lowLevelRendererLine.Flush();
 
-			shaderPool.BindShaderIfNot(GraphicsShaderType::PixelShader, _psDefaultID);
+			shaderPipelinePool.GetShaderPipeline(_shaderPipelineTriangleID).BindShaderPipeline();
 			_lowLevelRendererMesh.Render(_graphicsDevice, RenderingPrimitive::TriangleList);
 			_lowLevelRendererMesh.Flush();
 

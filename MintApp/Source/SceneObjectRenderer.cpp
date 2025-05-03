@@ -128,9 +128,9 @@ namespace mint
 		psTexCoordAsColorID = shaderPool.AddShader(Path::MakeIncludeAssetPath("Hlsl/"), "PsTexCoordAsColor.hlsl", "main", GraphicsShaderType::PixelShader, Path::MakeIncludeAssetPath("HlslBinary/"));
 
 		ShaderPipelinePool& shaderPipelinePool = _graphicsDevice.GetShaderPipelinePool();
-		_shaderPipelineDefaultID = shaderPipelinePool.CreateShaderPipeline(_graphicsDevice);
-		_shaderPipelineDrawNormalsID = shaderPipelinePool.CreateShaderPipeline(_graphicsDevice);
-		_shaderPipelineDrawEdgesID = shaderPipelinePool.CreateShaderPipeline(_graphicsDevice);
+		_shaderPipelineDefaultID = shaderPipelinePool.CreateShaderPipeline();
+		_shaderPipelineDrawNormalsID = shaderPipelinePool.CreateShaderPipeline();
+		_shaderPipelineDrawEdgesID = shaderPipelinePool.CreateShaderPipeline();
 		{
 			ShaderPipeline& shaderPipelineDefault = shaderPipelinePool.AccessShaderPipeline(_shaderPipelineDefaultID);
 			shaderPipelineDefault.SetInputLayout(inputLayoutDefaultID);
