@@ -74,6 +74,8 @@ namespace mint
 
 		public:
 			ShapeRenderer(GraphicsDevice& graphicsDevice);
+			ShapeRenderer(const ShapeRenderer& rhs) = delete;
+			ShapeRenderer(ShapeRenderer&& rhs) = delete;
 			virtual ~ShapeRenderer();
 
 		public:
