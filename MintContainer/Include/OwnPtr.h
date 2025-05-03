@@ -44,6 +44,7 @@ namespace mint
 		void Assign(T*&& rawPointer) noexcept { Release(); _rawPointer = rawPointer; rawPointer = nullptr; }
 		void Release() noexcept { MINT_DELETE(_rawPointer); }
 		T* Get() noexcept { return _rawPointer; }
+		const T* Get() const noexcept { return _rawPointer; }
 		constexpr uint64 Size() { return sizeof(T); }
 
 	private:
