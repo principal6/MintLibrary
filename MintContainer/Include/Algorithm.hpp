@@ -18,18 +18,18 @@ namespace mint
 
 
 	template <typename T>
-	int32 BinarySearch(const Vector<T>& vec, const T& value)
+	uint32 BinarySearch(const Vector<T>& vec, const T& value)
 	{
 		if (vec.IsEmpty() == true)
 		{
-			return kInvalidIndexInt32;
+			return kInvalidIndexUint32;
 		}
 		const int32 resultIndex = BinarySearchInternal(vec, value, 0, static_cast<int32>(vec.Size() - 1));
 		if (vec[resultIndex] == value)
 		{
-			return resultIndex;
+			return static_cast<uint32>(resultIndex);
 		}
-		return kInvalidIndexInt32;
+		return kInvalidIndexUint32;
 	}
 
 	template <typename T>
@@ -56,18 +56,18 @@ namespace mint
 	}
 
 	template<typename T, typename ValueType, typename Evaluator>
-	int32 BinarySearch(const Vector<T>& vec, const ValueType& value, Evaluator evaluator)
+	uint32 BinarySearch(const Vector<T>& vec, const ValueType& value, Evaluator evaluator)
 	{
 		if (vec.IsEmpty() == true)
 		{
-			return kInvalidIndexInt32;
+			return kInvalidIndexUint32;
 		}
 		const int32 resultIndex = BinarySearchInternal(vec, value, evaluator, 0, static_cast<int32>(vec.Size() - 1));
 		if (evaluator(vec[resultIndex]) == value)
 		{
-			return resultIndex;
+			return static_cast<uint32>(resultIndex);
 		}
-		return kInvalidIndexInt32;
+		return kInvalidIndexUint32;
 	}
 
 	template <typename T, typename ValueType, typename Evaluator>

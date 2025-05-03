@@ -211,7 +211,7 @@ namespace mint
 				_isOrdinalRenderCommandGroupsSorted = true;
 			}
 
-			const int32 index = mint::BinarySearch(_ordinalRenderCommandGroups, key, OrdinalRenderCommandGroup::Evaluator());
+			const uint32 index = mint::BinarySearch(_ordinalRenderCommandGroups, key, OrdinalRenderCommandGroup::Evaluator());
 			if (IsValidIndex(index) == false)
 			{
 				return;

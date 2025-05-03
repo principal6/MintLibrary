@@ -20,10 +20,10 @@ namespace mint
 
 
 	template <typename T>
-	int32 BinarySearch(const Vector<T>& vec, const T& value);
+	uint32 BinarySearch(const Vector<T>& vec, const T& value);
 
 	template <typename T, typename ValueType, typename Evaluator>
-	int32 BinarySearch(const Vector<T>& vec, const ValueType& value, Evaluator evaluator);
+	uint32 BinarySearch(const Vector<T>& vec, const ValueType& value, Evaluator evaluator);
 
 	template <typename T, typename Comparator>
 	void QuickSort(Vector<T>& vector, Comparator comparator);

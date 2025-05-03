@@ -174,7 +174,7 @@ namespace mint
 			fileNames.PushBack(StringWithComparator("images\\game\\map\\forest\\forest1\\tile\\t_dg_02.pgf"));
 			fileNames.PushBack(StringWithComparator("images\\game\\map\\forest\\forest1\\tile\\t_dg_03.pgf"));
 			fileNames.PushBack(StringWithComparator("images\\game\\map\\forest\\forest1\\tile\\t_dg_04.pgf"));
-			MINT_ASSURE(BinarySearch(fileNames, StringWithComparator("images\\game\\map\\forest\\forest1\\tile\\t_dg_03.bmp")) < 0);
+			MINT_ASSURE(IsValidIndex(BinarySearch(fileNames, StringWithComparator("images\\game\\map\\forest\\forest1\\tile\\t_dg_03.bmp"))) == false);
 			return true;
 		}
 	}

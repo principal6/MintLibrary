@@ -151,7 +151,7 @@ namespace mint
 
 		GraphicsObjectID ShaderPool::AddInputLayout(const GraphicsObjectID& vertexShaderID, const TypeMetaData<TypeCustomData>& inputElementTypeMetaData)
 		{
-			const int32 vertexShaderIndex = GetShaderIndex(GraphicsShaderType::VertexShader, vertexShaderID);
+			const uint32 vertexShaderIndex = GetShaderIndex(GraphicsShaderType::VertexShader, vertexShaderID);
 			if (IsValidIndex(vertexShaderIndex) == false)
 			{
 				return GraphicsObjectID::kInvalidGraphicsObjectID;
@@ -485,7 +485,7 @@ namespace mint
 				return;
 			}
 
-			const int32 shaderIndex = GetShaderIndex(shaderType, objectID);
+			const uint32 shaderIndex = GetShaderIndex(shaderType, objectID);
 			if (IsValidIndex(shaderIndex) == false)
 			{
 				return;
@@ -525,7 +525,7 @@ namespace mint
 				return;
 			}
 
-			const int32 shaderIndex = GetShaderIndex(shaderType, boundShaderID);
+			const uint32 shaderIndex = GetShaderIndex(shaderType, boundShaderID);
 			if (IsValidIndex(shaderIndex) == false)
 			{
 				MINT_NEVER;
@@ -536,14 +536,14 @@ namespace mint
 			AccessShaders(shaderType)[shaderIndex].Unbind();
 		}
 
-		int32 ShaderPool::GetShaderIndex(const GraphicsShaderType shaderType, const GraphicsObjectID& objectID) const
+		uint32 ShaderPool::GetShaderIndex(const GraphicsShaderType shaderType, const GraphicsObjectID& objectID) const
 		{
 			MINT_ASSERT(shaderType != GraphicsShaderType::COUNT, "Invalid parameter - check ShaderType");
 			MINT_ASSERT(objectID.IsObjectType(GraphicsObjectType::Shader) == true, "Invalid parameter - check ObjectType");
 			return BinarySearch(GetShaders(shaderType), objectID, GraphicsObject::Evaluator());
 		}
 
-		int32 ShaderPool::GetInputLayoutIndex(const GraphicsObjectID& objectID) const
+		uint32 ShaderPool::GetInputLayoutIndex(const GraphicsObjectID& objectID) const
 		{
 			MINT_ASSERT(objectID.IsObjectType(GraphicsObjectType::InputLayout) == true, "Invalid parameter - check ObjectType");
 			return BinarySearch(_inputLayouts, objectID, GraphicsObject::Evaluator());

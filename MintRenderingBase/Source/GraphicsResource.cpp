@@ -508,7 +508,7 @@ namespace mint
 		{
 			MINT_ASSERT(objectID.IsObjectType(GraphicsObjectType::Resource) == true, "Invalid parameter - ObjectType !!");
 
-			const int32 index = BinarySearch(_resourceArray, objectID, GraphicsObject::Evaluator());
+			const uint32 index = BinarySearch(_resourceArray, objectID, GraphicsObject::Evaluator());
 			if (IsValidIndex(index) == false)
 			{
 				MINT_ASSERT(false, "Resource 를 찾지 못했습니다!!!");

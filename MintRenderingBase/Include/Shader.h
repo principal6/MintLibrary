@@ -161,8 +161,8 @@ namespace mint
 			void UnbindShader(const GraphicsShaderType shaderType);
 
 		private:
-			int32 GetShaderIndex(const GraphicsShaderType shaderType, const GraphicsObjectID& objectID) const;
-			int32 GetInputLayoutIndex(const GraphicsObjectID& objectID) const;
+			uint32 GetShaderIndex(const GraphicsShaderType shaderType, const GraphicsObjectID& objectID) const;
+			uint32 GetInputLayoutIndex(const GraphicsObjectID& objectID) const;
 			uint32 GetShaderCount(const GraphicsShaderType shaderType) const;
 			GraphicsObjectID& AccessBoundShaderID(const GraphicsShaderType shaderType);
 			const Vector<Shader>& GetShaders(const GraphicsShaderType shaderType) const;
