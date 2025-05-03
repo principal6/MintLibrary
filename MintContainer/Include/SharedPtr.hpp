@@ -15,17 +15,17 @@ namespace mint
 	template<typename T>
 	void SharedPtr<T>::DecreaseReferenceCount()
 	{
-		if (_referenceCounter != nullptr)
+		if (_sharedRefCounter != nullptr)
 		{
-			_referenceCounter->DecreaseStrongReferenceCount();
+			_sharedRefCounter->DecreaseStrongRefCount();
 
-			if (_referenceCounter->GetStrongReferenceCount() == 0)
+			if (_sharedRefCounter->GetStrongRefCount() == 0)
 			{
 				MINT_DELETE(_rawPtr);
 
-				if (_referenceCounter->GetWeakReferenceCount() == 0)
+				if (_sharedRefCounter->GetWeakRefCount() == 0)
 				{
-					MINT_DELETE(_referenceCounter);
+					MINT_DELETE(_sharedRefCounter);
 				}
 			}
 		}

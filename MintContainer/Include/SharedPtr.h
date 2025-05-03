@@ -23,42 +23,47 @@ namespace mint
 	static SharedPtr<T> MakeShared(T&& rhs);
 
 
-	class ReferenceCounter
+	class SharedRefCounter
 	{
 	public:
-		ReferenceCounter() : _strongReferenceCount{ 0 }, _weakReferenceCount{ 0 } { __noop; }
-		ReferenceCounter(const ReferenceCounter& rhs) = delete;
-		ReferenceCounter(ReferenceCounter&& rhs) noexcept
-			: _strongReferenceCount{ rhs._strongReferenceCount }
-			, _weakReferenceCount{ rhs._weakReferenceCount }
+		SharedRefCounter()
+			: _strongRefCount{ 0 }
+			, _weakRefCount{ 0 }
 		{
-			rhs._strongReferenceCount = 0;
-			rhs._weakReferenceCount = 0;
+			__noop;
 		}
-		~ReferenceCounter() { __noop; }
-		ReferenceCounter& operator=(const ReferenceCounter& rhs) = delete;
-		ReferenceCounter& operator=(ReferenceCounter&& rhs) noexcept
+		SharedRefCounter(const SharedRefCounter& rhs) = delete;
+		SharedRefCounter(SharedRefCounter&& rhs) noexcept
+			: _strongRefCount{ rhs._strongRefCount }
+			, _weakRefCount{ rhs._weakRefCount }
+		{
+			rhs._strongRefCount = 0;
+			rhs._weakRefCount = 0;
+		}
+		~SharedRefCounter() { __noop; }
+		SharedRefCounter& operator=(const SharedRefCounter& rhs) = delete;
+		SharedRefCounter& operator=(SharedRefCounter&& rhs) noexcept
 		{
 			if (this != &rhs)
 			{
-				_strongReferenceCount = rhs._strongReferenceCount;
-				_weakReferenceCount = rhs._weakReferenceCount;
+				_strongRefCount = rhs._strongRefCount;
+				_weakRefCount = rhs._weakRefCount;
 
-				rhs._strongReferenceCount = 0;
-				rhs._weakReferenceCount = 0;
+				rhs._strongRefCount = 0;
+				rhs._weakRefCount = 0;
 			}
 			return *this;
 		}
 	public:
-		MINT_INLINE void IncreaseStrongReferenceCount() { ++_strongReferenceCount; }
-		MINT_INLINE void IncreaseWeakReferenceCount() { ++_weakReferenceCount; }
-		MINT_INLINE void DecreaseStrongReferenceCount() { --_strongReferenceCount; }
-		MINT_INLINE void DecreaseWeakReferenceCount() { --_weakReferenceCount; }
-		MINT_INLINE int32 GetStrongReferenceCount() const { return _strongReferenceCount; }
-		MINT_INLINE int32 GetWeakReferenceCount() const { return _weakReferenceCount; }
+		MINT_INLINE void IncreaseStrongRefCount() { ++_strongRefCount; }
+		MINT_INLINE void IncreaseWeakRefCount() { ++_weakRefCount; }
+		MINT_INLINE void DecreaseStrongRefCount() { --_strongRefCount; }
+		MINT_INLINE void DecreaseWeakRefCount() { --_weakRefCount; }
+		MINT_INLINE int32 GetStrongRefCount() const { return _strongRefCount; }
+		MINT_INLINE int32 GetWeakRefCount() const { return _weakRefCount; }
 	private:
-		int32 _strongReferenceCount;
-		int32 _weakReferenceCount;
+		int32 _strongRefCount;
+		int32 _weakRefCount;
 	};
 
 
@@ -86,29 +91,29 @@ namespace mint
 	public:
 		SharedPtr() = default;
 		SharedPtr(const SharedPtr& rhs)
-			: _referenceCounter{ rhs._referenceCounter }
+			: _sharedRefCounter{ rhs._sharedRefCounter }
 			, _rawPtr{ rhs._rawPtr }
 		{
-			if (_referenceCounter != nullptr)
+			if (_sharedRefCounter != nullptr)
 			{
-				_referenceCounter->IncreaseStrongReferenceCount();
+				_sharedRefCounter->IncreaseStrongRefCount();
 			}
 		}
 		SharedPtr(SharedPtr&& rhs) noexcept
-			: _referenceCounter{ rhs._referenceCounter }
+			: _sharedRefCounter{ rhs._sharedRefCounter }
 			, _rawPtr{ rhs._rawPtr }
 		{
-			rhs._referenceCounter = nullptr;
+			rhs._sharedRefCounter = nullptr;
 			rhs._rawPtr = nullptr;
 		}
 		template<typename U>
 		SharedPtr(const SharedPtr<U>& rhs)
-			: _referenceCounter{ rhs._referenceCounter }
+			: _sharedRefCounter{ rhs._sharedRefCounter }
 			, _rawPtr{ dynamic_cast<T*>(rhs._rawPtr) }
 		{
-			if (_referenceCounter != nullptr)
+			if (_sharedRefCounter != nullptr)
 			{
-				_referenceCounter->IncreaseStrongReferenceCount();
+				_sharedRefCounter->IncreaseStrongRefCount();
 			}
 		}
 		~SharedPtr()
@@ -124,12 +129,12 @@ namespace mint
 
 			DecreaseReferenceCount();
 
-			_referenceCounter = rhs._referenceCounter;
+			_sharedRefCounter = rhs._sharedRefCounter;
 			_rawPtr = rhs._rawPtr;
 
-			if (_referenceCounter != nullptr)
+			if (_sharedRefCounter != nullptr)
 			{
-				_referenceCounter->IncreaseStrongReferenceCount();
+				_sharedRefCounter->IncreaseStrongRefCount();
 			}
 			return *this;
 		}
@@ -142,10 +147,10 @@ namespace mint
 
 			DecreaseReferenceCount();
 
-			_referenceCounter = rhs._referenceCounter;
+			_sharedRefCounter = rhs._sharedRefCounter;
 			_rawPtr = rhs._rawPtr;
 
-			rhs._referenceCounter = nullptr;
+			rhs._sharedRefCounter = nullptr;
 			rhs._rawPtr = nullptr;
 			return *this;
 		}
@@ -159,12 +164,12 @@ namespace mint
 		T* operator->() const noexcept { return _rawPtr; }
 
 	public:
-		bool IsValid() const { return (_referenceCounter == nullptr ? false : _referenceCounter->GetStrongReferenceCount() != 0); }
+		bool IsValid() const { return (_sharedRefCounter == nullptr ? false : _sharedRefCounter->GetStrongRefCount() != 0); }
 		void Clear()
 		{
 			DecreaseReferenceCount();
 
-			_referenceCounter = nullptr;
+			_sharedRefCounter = nullptr;
 			_rawPtr = nullptr;
 		}
 		T* Get() { return _rawPtr; }
@@ -172,16 +177,16 @@ namespace mint
 
 	private:
 		SharedPtr(T* const rawPointer)
-			: _referenceCounter{ MINT_NEW(ReferenceCounter) }
+			: _sharedRefCounter{ MINT_NEW(SharedRefCounter) }
 			, _rawPtr{ rawPointer }
 		{
-			_referenceCounter->IncreaseStrongReferenceCount();
+			_sharedRefCounter->IncreaseStrongRefCount();
 		}
 
 		void DecreaseReferenceCount();
 
 	private:
-		ReferenceCounter* _referenceCounter = nullptr;
+		SharedRefCounter* _sharedRefCounter = nullptr;
 		T* _rawPtr = nullptr;
 	};
 
@@ -191,65 +196,65 @@ namespace mint
 	public:
 		SharedPtrViewer() = default;
 		SharedPtrViewer(const SharedPtr<T>& rhs)
-			: _referenceCounter{ rhs._referenceCounter }
+			: _sharedRefCounter{ rhs._sharedRefCounter }
 			, _rawPtr{ rhs._rawPtr }
 		{
-			if (_referenceCounter != nullptr)
+			if (_sharedRefCounter != nullptr)
 			{
-				_referenceCounter->IncreaseWeakReferenceCount();
+				_sharedRefCounter->IncreaseWeakRefCount();
 			}
 		}
 		SharedPtrViewer(const SharedPtrViewer& rhs)
-			: _referenceCounter{ rhs._referenceCounter }
+			: _sharedRefCounter{ rhs._sharedRefCounter }
 			, _rawPtr{ rhs._rawPtr }
 		{
-			if (_referenceCounter != nullptr)
+			if (_sharedRefCounter != nullptr)
 			{
-				_referenceCounter->IncreaseWeakReferenceCount();
+				_sharedRefCounter->IncreaseWeakRefCount();
 			}
 		}
 		SharedPtrViewer(SharedPtrViewer&& rhs)
-			: _referenceCounter{ rhs._referenceCounter }
+			: _sharedRefCounter{ rhs._sharedRefCounter }
 			, _rawPtr{ rhs._rawPtr }
 		{
-			rhs._referenceCounter = nullptr;
+			rhs._sharedRefCounter = nullptr;
 			rhs._rawPtr = nullptr;
 		}
 		~SharedPtrViewer()
 		{
-			if (_referenceCounter != nullptr)
+			if (_sharedRefCounter != nullptr)
 			{
-				_referenceCounter->DecreaseWeakReferenceCount();
+				_sharedRefCounter->DecreaseWeakRefCount();
 
-				if (_referenceCounter->GetStrongReferenceCount() == 0 && _referenceCounter->GetWeakReferenceCount() == 0)
+				if (_sharedRefCounter->GetStrongRefCount() == 0 && _sharedRefCounter->GetWeakRefCount() == 0)
 				{
-					MINT_DELETE(_referenceCounter);
+					MINT_DELETE(_sharedRefCounter);
 				}
 			}
 		}
 		SharedPtrViewer& operator=(const SharedPtr<T>& rhs) noexcept
 		{
-			if (_referenceCounter == rhs._referenceCounter)
+			if (_sharedRefCounter == rhs._sharedRefCounter)
 			{
 				return *this;
 			}
 
-			if (_referenceCounter != nullptr)
+			if (_sharedRefCounter != nullptr)
 			{
-				_referenceCounter->DecreaseWeakReferenceCount();
+				_sharedRefCounter->DecreaseWeakRefCount();
 
-				if (_referenceCounter->GetStrongReferenceCount() == 0 && _referenceCounter->GetWeakReferenceCount() == 0)
+				if (_sharedRefCounter->GetStrongRefCount() == 0 && _sharedRefCounter->GetWeakRefCount() == 0)
 				{
-					MINT_DELETE(_referenceCounter);
+					MINT_DELETE(_sharedRefCounter);
 				}
 			}
 
-			_referenceCounter = rhs._referenceCounter;
+			_sharedRefCounter = rhs._sharedRefCounter;
 			_rawPtr = rhs._rawPtr;
 
-			if (_referenceCounter != nullptr)
+			if (_sharedRefCounter != nullptr)
 			{
-				_referenceCounter->IncreaseWeakReferenceCount();
+				_sharedRefCounter->IncreaseWeakRefCount();
 			}
 			return *this;
 		}
@@ -260,22 +265,22 @@ namespace mint
 				return *this;
 			}
 
-			if (_referenceCounter != nullptr)
+			if (_sharedRefCounter != nullptr)
 			{
-				_referenceCounter->DecreaseWeakReferenceCount();
+				_sharedRefCounter->DecreaseWeakRefCount();
 
-				if (_referenceCounter->GetStrongReferenceCount() == 0 && _referenceCounter->GetWeakReferenceCount() == 0)
+				if (_sharedRefCounter->GetStrongRefCount() == 0 && _sharedRefCounter->GetWeakRefCount() == 0)
 				{
-					MINT_DELETE(_referenceCounter);
+					MINT_DELETE(_sharedRefCounter);
 				}
 			}
 
-			_referenceCounter = rhs._referenceCounter;
+			_sharedRefCounter = rhs._sharedRefCounter;
 			_rawPtr = rhs._rawPtr;
 
-			if (_referenceCounter != nullptr)
+			if (_sharedRefCounter != nullptr)
 			{
-				_referenceCounter->IncreaseWeakReferenceCount();
+				_sharedRefCounter->IncreaseWeakRefCount();
 			}
 			return *this;
 		}
@@ -286,20 +291,20 @@ namespace mint
 				return *this;
 			}
 
-			if (_referenceCounter != nullptr)
+			if (_sharedRefCounter != nullptr)
 			{
-				_referenceCounter->DecreaseWeakReferenceCount();
+				_sharedRefCounter->DecreaseWeakRefCount();
 
-				if (_referenceCounter->GetStrongReferenceCount() == 0 && _referenceCounter->GetWeakReferenceCount() == 0)
+				if (_sharedRefCounter->GetStrongRefCount() == 0 && _sharedRefCounter->GetWeakRefCount() == 0)
 				{
-					MINT_DELETE(_referenceCounter);
+					MINT_DELETE(_sharedRefCounter);
 				}
 			}
 
-			_referenceCounter = rhs._referenceCounter;
+			_sharedRefCounter = rhs._sharedRefCounter;
 			_rawPtr = rhs._rawPtr;
 
-			rhs._referenceCounter = nullptr;
+			rhs._sharedRefCounter = nullptr;
 			rhs._rawPtr = nullptr;
 			return *this;
 		}
@@ -313,10 +318,10 @@ namespace mint
 		const T* operator->() const noexcept { return _rawPtr; }
 
 	public:
-		bool IsValid() const { return (_referenceCounter == nullptr ? false : _referenceCounter->GetStrongReferenceCount() != 0); }
+		bool IsValid() const { return (_sharedRefCounter == nullptr ? false : _sharedRefCounter->GetStrongRefCount() != 0); }
 
 	private:
-		ReferenceCounter* _referenceCounter;
+		SharedRefCounter* _sharedRefCounter;
 		T* _rawPtr;
 	};
 

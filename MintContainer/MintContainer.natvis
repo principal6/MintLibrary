@@ -4,7 +4,7 @@
 		<DisplayString>{"$T1"} {_rawPtr, na}</DisplayString>
 		<Expand>
 			<ExpandedItem>_rawPtr</ExpandedItem>
-			<Item Name="Reference Counter">_referenceCounter</Item>
+			<Item Name="Shared RefCounter">_sharedRefCounter</Item>
 		</Expand>
 	</Type>
     <Type Name="mint::Vector&lt;*&gt;">
