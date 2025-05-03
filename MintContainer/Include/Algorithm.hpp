@@ -67,7 +67,7 @@ namespace mint
 		{
 			return resultIndex;
 		}
-		return -1;
+		return kInvalidIndexInt32;
 	}
 
 	template <typename T, typename ValueType, typename Evaluator>
