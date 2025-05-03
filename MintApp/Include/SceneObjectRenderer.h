@@ -46,12 +46,9 @@ namespace mint
 		Vector<Rendering::SB_Material> _sbMaterialDatas;
 
 	private:
-		Rendering::GraphicsObjectID _inputLayoutDefaultID;
-		Rendering::GraphicsObjectID _vsDefaultID;
-		Rendering::GraphicsObjectID _gsNormalID;
-		Rendering::GraphicsObjectID _gsTriangleEdgeID;
-		Rendering::GraphicsObjectID _psDefaultID;
-		Rendering::GraphicsObjectID _psTexCoordAsColorID;
+		Rendering::GraphicsObjectID _shaderPipelineDefaultID;
+		Rendering::GraphicsObjectID _shaderPipelineDrawNormalsID;
+		Rendering::GraphicsObjectID _shaderPipelineDrawEdgesID;
 	};
 }
 

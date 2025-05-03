@@ -130,7 +130,7 @@ namespace mint
 		public:
 			GraphicsResourcePool(GraphicsDevice& graphicsDevice);
 			GraphicsResourcePool(const GraphicsResourcePool& rhs) = delete;
-			virtual ~GraphicsResourcePool() = default;
+			~GraphicsResourcePool() = default;
 
 		public:
 			GraphicsObjectID AddConstantBuffer(const void* const resourceContent, const uint32 bufferSize, const uint32 registerIndex);

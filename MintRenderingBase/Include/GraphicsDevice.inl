@@ -21,6 +21,11 @@ namespace mint
 			return _shaderPool;
 		}
 
+		MINT_INLINE ShaderPipelinePool& GraphicsDevice::GetShaderPipelinePool() noexcept
+		{
+			return _shaderPipelinePool;
+		}
+
 		MINT_INLINE GraphicsResourcePool& GraphicsDevice::GetResourcePool() noexcept
 		{
 			return _resourcePool;

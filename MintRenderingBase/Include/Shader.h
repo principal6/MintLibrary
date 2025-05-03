@@ -128,7 +128,7 @@ namespace mint
 		public:
 			ShaderPool(GraphicsDevice& graphicsDevice, DxShaderHeaderMemory* const shaderHeaderMemory, const ShaderVersion shaderVersion);
 			ShaderPool(const ShaderPool& rhs) = delete;
-			virtual ~ShaderPool() = default;
+			~ShaderPool() = default;
 
 		public:
 			GraphicsObjectID AddShaderFromMemory(const char* const shaderIdentifier, const char* const textContent, const char* const entryPoint, const GraphicsShaderType shaderType);
@@ -161,7 +161,8 @@ namespace mint
 			void BindShaderIfNot(const GraphicsShaderType shaderType, const GraphicsObjectID& objectID);
 			void BindInputLayoutIfNot(const GraphicsObjectID& objectID);
 			void UnbindShader(const GraphicsShaderType shaderType);
-			bool CheckShaderType(const GraphicsObjectID& objectID, const GraphicsShaderType shaderType) const;
+			bool ExistsShader(const GraphicsObjectID& shaderID, const GraphicsShaderType shaderType) const;
+			bool ExistsInputLayout(const GraphicsObjectID& inputLayoutID) const;
 
 		private:
 			uint32 GetShaderIndex(const GraphicsShaderType shaderType, const GraphicsObjectID& objectID) const;

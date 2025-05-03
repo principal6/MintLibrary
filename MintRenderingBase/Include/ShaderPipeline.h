@@ -15,6 +15,7 @@ namespace mint
 	namespace Rendering
 	{
 		class ShaderPool;
+		class ShaderPipelinePool;
 	}
 }
 
@@ -25,25 +26,51 @@ namespace mint
 	{
 		class ShaderPipeline final : public GraphicsObject
 		{
+			friend ShaderPipelinePool;
+
 		public:
-			ShaderPipeline(GraphicsDevice& graphicsDevice, ShaderPool& shaderPool);
-			~ShaderPipeline() = default;
+			ShaderPipeline(GraphicsDevice& graphicsDevice);
+			virtual ~ShaderPipeline() = default;
 		
 		public:
+			void SetInputLayout(const GraphicsObjectID& inputLayoutID) noexcept;
 			void SetVertexShader(const GraphicsObjectID& vertexShaderID) noexcept;
 			void SetGeometryShader(const GraphicsObjectID& geometryShaderID) noexcept;
 			void SetPixelShader(const GraphicsObjectID& pixelShaderID) noexcept;
 
 		public:
+			void BindShaderPipeline() const noexcept;
+			//void UnbindShaders() const noexcept;
+
+		public:
+			MINT_INLINE GraphicsObjectID GetInputLayoutID() const noexcept { return _inputLayoutID; }
 			MINT_INLINE GraphicsObjectID GetVertexShaderID() const noexcept { return _vertexShaderID; }
 			MINT_INLINE GraphicsObjectID GetGeometryShaderID() const noexcept { return _geometryShaderID; }
 			MINT_INLINE GraphicsObjectID GetPixelShaderID() const noexcept { return _pixelShaderID; }
 
 		private:
-			ShaderPool& _shaderPool;
+			GraphicsObjectID _inputLayoutID;
 			GraphicsObjectID _vertexShaderID;
 			GraphicsObjectID _geometryShaderID;
 			GraphicsObjectID _pixelShaderID;
+		};
+
+
+		class ShaderPipelinePool final
+		{
+		public:
+			ShaderPipelinePool(GraphicsDevice& graphicsDevice);
+			ShaderPipelinePool(const ShaderPipelinePool& rhs) = delete;
+			~ShaderPipelinePool() = default;
+
+		public:
+			GraphicsObjectID CreateShaderPipeline(GraphicsDevice& graphicsDevice);
+			ShaderPipeline& AccessShaderPipeline(const GraphicsObjectID& shaderPipelineID);
+			const ShaderPipeline& GetShaderPipeline(const GraphicsObjectID& shaderPipelineID) const;
+
+		private:
+			GraphicsDevice& _graphicsDevice;
+			Vector<OwnPtr<GraphicsObject>> _shaderPipelines;
 		};
 	}
 }

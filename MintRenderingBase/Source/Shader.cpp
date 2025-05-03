@@ -536,10 +536,16 @@ namespace mint
 			AccessShaders(shaderType)[shaderIndex].Unbind();
 		}
 
-		bool ShaderPool::CheckShaderType(const GraphicsObjectID& objectID, const GraphicsShaderType shaderType) const
+		bool ShaderPool::ExistsShader(const GraphicsObjectID& shaderID, const GraphicsShaderType shaderType) const
 		{
-			const uint32 shaderIndex = GetShaderIndex(shaderType, objectID);
+			const uint32 shaderIndex = GetShaderIndex(shaderType, shaderID);
 			return IsValidIndex(shaderIndex);
+		}
+
+		bool ShaderPool::ExistsInputLayout(const GraphicsObjectID& inputLayoutID) const
+		{
+			const uint32 inputLayoutIndex = GetInputLayoutIndex(inputLayoutID);
+			return IsValidIndex(inputLayoutIndex);
 		}
 
 		uint32 ShaderPool::GetShaderIndex(const GraphicsShaderType shaderType, const GraphicsObjectID& objectID) const

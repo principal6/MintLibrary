@@ -12,6 +12,7 @@
 
 #include <MintRenderingBase/Include/DxShaderHeaderMemory.h>
 #include <MintRenderingBase/Include/Shader.h>
+#include <MintRenderingBase/Include/ShaderPipeline.h>
 #include <MintRenderingBase/Include/GraphicsResource.h>
 #include <MintRenderingBase/Include/LowLevelRenderer.h>
 #include <MintRenderingBase/Include/ShapeRenderer.h>
@@ -107,6 +108,7 @@ namespace mint
 
 		public:
 			ShaderPool& GetShaderPool() noexcept;
+			ShaderPipelinePool& GetShaderPipelinePool() noexcept;
 			GraphicsResourcePool& GetResourcePool() noexcept;
 			ShapeRenderer& GetShapeRenderer() noexcept;
 			const Language::CppHlsl::Interpreter& GetCppHlslSteamData() const noexcept;
@@ -220,6 +222,7 @@ namespace mint
 		private:
 			DxShaderHeaderMemory _shaderHeaderMemory;
 			ShaderPool _shaderPool;
+			ShaderPipelinePool _shaderPipelinePool;
 			GraphicsResourcePool _resourcePool;
 
 		private:

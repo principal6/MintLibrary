@@ -302,6 +302,7 @@ namespace mint
 			, _currentRasterizerFor3D{ nullptr }
 			, _fullScreenViewport{}
 			, _shaderPool{ *this, &_shaderHeaderMemory, ShaderVersion::v_5_0 }
+			, _shaderPipelinePool{ *this }
 			, _resourcePool{ *this }
 			, _stateManager{ *this }
 			, _shapeRenderer{ *this }
