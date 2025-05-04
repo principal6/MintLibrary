@@ -21,7 +21,7 @@ namespace mint
 
 		InstantRenderer::~InstantRenderer()
 		{
-			__noop;
+			Terminate();
 		}
 
 		void InstantRenderer::TestDraw(const Float3& worldOffset) noexcept
@@ -192,6 +192,19 @@ namespace mint
 				shaderPipelineLine.SetInputLayout(inputLayoutDefaultID);
 				shaderPipelineLine.SetVertexShader(vsDefaultID);
 				shaderPipelineLine.SetPixelShader(psColorID);
+			}
+		}
+
+		void InstantRenderer::Terminate() noexcept
+		{
+			ShaderPipelinePool& shaderPipelinePool = _graphicsDevice.GetShaderPipelinePool();
+			if (_shaderPipelineTriangleID.IsValid())
+			{
+				shaderPipelinePool.DestroyShaderPipeline(_shaderPipelineTriangleID);
+			}
+			if (_shaderPipelineLineID.IsValid())
+			{
+				shaderPipelinePool.DestroyShaderPipeline(_shaderPipelineLineID);
 			}
 		}
 
