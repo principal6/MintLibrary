@@ -27,6 +27,7 @@ namespace mint
 		if (_refCount == 0)
 		{
 			MINT_DELETE(_resource);
+			MINT_ASSERT(IsValid() == false, "This must be invalid after deleting _resource!");
 		}
 	}
 }
