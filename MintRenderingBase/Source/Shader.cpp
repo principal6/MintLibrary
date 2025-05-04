@@ -124,7 +124,7 @@ namespace mint
 			__noop;
 		}
 
-		GraphicsObjectID ShaderPool::AddShaderFromMemory(const char* const shaderIdentifier, const char* const textContent, const char* const entryPoint, const GraphicsShaderType shaderType)
+		GraphicsObjectID ShaderPool::CreateShaderFromMemory(const char* const shaderIdentifier, const char* const textContent, const char* const entryPoint, const GraphicsShaderType shaderType)
 		{
 			Shader shader(_graphicsDevice, shaderType);
 			ShaderCompileParam compileParam;
@@ -136,20 +136,20 @@ namespace mint
 			}
 			shader._hlslFileName = shaderIdentifier;
 
-			return AddShaderInternal(shaderType, shader);
+			return CreateShaderInternal(shaderType, shader);
 		}
 
-		GraphicsObjectID ShaderPool::AddShader(const char* const inputDirectory, const char* const inputShaderFileName, const char* const entryPoint, const GraphicsShaderType shaderType, const char* const outputDirectory)
+		GraphicsObjectID ShaderPool::CreateShader(const char* const inputDirectory, const char* const inputShaderFileName, const char* const entryPoint, const GraphicsShaderType shaderType, const char* const outputDirectory)
 		{
 			Shader shader(_graphicsDevice, shaderType);
 			if (CompileShaderFromFile(inputDirectory, inputShaderFileName, entryPoint, outputDirectory, shaderType, false, shader) == false)
 			{
 				return GraphicsObjectID::kInvalidGraphicsObjectID;
 			}
-			return AddShaderInternal(shaderType, shader);
+			return CreateShaderInternal(shaderType, shader);
 		}
 
-		GraphicsObjectID ShaderPool::AddInputLayout(const GraphicsObjectID& vertexShaderID, const TypeMetaData<TypeCustomData>& inputElementTypeMetaData)
+		GraphicsObjectID ShaderPool::CreateInputLayout(const GraphicsObjectID& vertexShaderID, const TypeMetaData<TypeCustomData>& inputElementTypeMetaData)
 		{
 			const uint32 vertexShaderIndex = GetShaderIndex(GraphicsShaderType::VertexShader, vertexShaderID);
 			if (IsValidIndex(vertexShaderIndex) == false)
@@ -158,10 +158,10 @@ namespace mint
 			}
 
 			const Shader& vertexShader = AccessShaders(GraphicsShaderType::VertexShader)[vertexShaderIndex];
-			return AddInputLayoutInternal(vertexShader, inputElementTypeMetaData);
+			return CreateInputLayoutInternal(vertexShader, inputElementTypeMetaData);
 		}
 		
-		void ShaderPool::RemoveShader(const GraphicsObjectID& shaderID)
+		void ShaderPool::DestroyShader(const GraphicsObjectID& shaderID)
 		{
 			if (shaderID.IsValid() == false)
 			{
@@ -183,9 +183,9 @@ namespace mint
 			}
 		}
 		
-		void ShaderPool::RemoveInputLayout(const GraphicsObjectID& shaderID)
+		void ShaderPool::DestroyInputLayout(const GraphicsObjectID& inputLayoutID)
 		{
-			if (shaderID.IsValid() == false)
+			if (inputLayoutID.IsValid() == false)
 			{
 				MINT_NEVER;
 				return;
@@ -194,7 +194,7 @@ namespace mint
 			const uint32 inputLayoutCount = _inputLayouts.Size();
 			for (uint32 inputLayoutIndex = 0; inputLayoutIndex < inputLayoutCount; ++inputLayoutIndex)
 			{
-				if (_inputLayouts[inputLayoutIndex] == shaderID)
+				if (_inputLayouts[inputLayoutIndex] == inputLayoutID)
 				{
 					_inputLayouts.Erase(inputLayoutIndex);
 					break;
@@ -202,9 +202,9 @@ namespace mint
 			}
 		}
 
-		GraphicsObjectID ShaderPool::AddShaderInternal(const GraphicsShaderType shaderType, Shader& shader)
+		GraphicsObjectID ShaderPool::CreateShaderInternal(const GraphicsShaderType shaderType, Shader& shader)
 		{
-			if (CreateShaderInternal(shaderType, shader) == false)
+			if (CreateLowLevelShader(shaderType, shader) == false)
 			{
 				return GraphicsObjectID::kInvalidGraphicsObjectID;
 			}
@@ -216,10 +216,10 @@ namespace mint
 			return graphicsObjectID;
 		}
 
-		GraphicsObjectID ShaderPool::AddInputLayoutInternal(const Shader& vertexShader, const TypeMetaData<TypeCustomData>& inputElementTypeMetaData)
+		GraphicsObjectID ShaderPool::CreateInputLayoutInternal(const Shader& vertexShader, const TypeMetaData<TypeCustomData>& inputElementTypeMetaData)
 		{
 			GraphicsInputLayout inputLayout(_graphicsDevice);
-			if (CreateInputLayoutInternal(vertexShader, inputElementTypeMetaData, inputLayout) == false)
+			if (CreateLowLevelInputLayout(vertexShader, inputElementTypeMetaData, inputLayout) == false)
 			{
 				return GraphicsObjectID::kInvalidGraphicsObjectID;
 			}
@@ -231,7 +231,7 @@ namespace mint
 			return graphicsObjectID;
 		}
 
-		bool ShaderPool::CreateShaderInternal(const GraphicsShaderType shaderType, Shader& shader)
+		bool ShaderPool::CreateLowLevelShader(const GraphicsShaderType shaderType, Shader& shader)
 		{
 			switch (shaderType)
 			{
@@ -267,7 +267,7 @@ namespace mint
 			return false;
 		}
 
-		bool ShaderPool::CreateInputLayoutInternal(const Shader& vertexShader, const TypeMetaData<TypeCustomData>& inputElementTypeMetaData, GraphicsInputLayout& outInputLayout)
+		bool ShaderPool::CreateLowLevelInputLayout(const Shader& vertexShader, const TypeMetaData<TypeCustomData>& inputElementTypeMetaData, GraphicsInputLayout& outInputLayout)
 		{
 			outInputLayout._inputElementSet._semanticNameArray.Clear();
 			outInputLayout._inputElementSet._inputElementDescriptorArray.Clear();
@@ -450,7 +450,7 @@ namespace mint
 				{
 					Shader& shader = AccessShaders(shaderType)[shaderIndex];
 					CompileShaderFromFile(shader._hlslFileName.CString(), shader._entryPoint.CString(), shader._hlslBinaryFileName.CString(), shader._shaderType, true, shader);
-					CreateShaderInternal(shaderType, shader);
+					CreateLowLevelShader(shaderType, shader);
 				}
 			}
 

@@ -169,14 +169,14 @@ namespace mint
 			GraphicsObjectID vsDefaultID;
 			GraphicsObjectID psDefaultID;
 			GraphicsObjectID psColorID;
-			vsDefaultID = shaderPool.AddShader(Path::MakeIncludeAssetPath("Hlsl/"), "VsDefault.hlsl", "main", GraphicsShaderType::VertexShader, Path::MakeIncludeAssetPath("HlslBinary/"));
+			vsDefaultID = shaderPool.CreateShader(Path::MakeIncludeAssetPath("Hlsl/"), "VsDefault.hlsl", "main", GraphicsShaderType::VertexShader, Path::MakeIncludeAssetPath("HlslBinary/"));
 
 			const CppHlsl::Interpreter& interpreter = _graphicsDevice.GetCppHlslSteamData();
 			const TypeMetaData<CppHlsl::TypeCustomData>& vsInputTypeMetaData = interpreter.GetTypeMetaData(typeid(VS_INPUT));
-			inputLayoutDefaultID = shaderPool.AddInputLayout(vsDefaultID, vsInputTypeMetaData);
+			inputLayoutDefaultID = shaderPool.CreateInputLayout(vsDefaultID, vsInputTypeMetaData);
 
-			psDefaultID = shaderPool.AddShader(Path::MakeIncludeAssetPath("Hlsl/"), "PsDefault.hlsl", "main", GraphicsShaderType::PixelShader, Path::MakeIncludeAssetPath("HlslBinary/"));
-			psColorID = shaderPool.AddShader(Path::MakeIncludeAssetPath("Hlsl/"), "PsColor.hlsl", "main", GraphicsShaderType::PixelShader, Path::MakeIncludeAssetPath("HlslBinary/"));
+			psDefaultID = shaderPool.CreateShader(Path::MakeIncludeAssetPath("Hlsl/"), "PsDefault.hlsl", "main", GraphicsShaderType::PixelShader, Path::MakeIncludeAssetPath("HlslBinary/"));
+			psColorID = shaderPool.CreateShader(Path::MakeIncludeAssetPath("Hlsl/"), "PsColor.hlsl", "main", GraphicsShaderType::PixelShader, Path::MakeIncludeAssetPath("HlslBinary/"));
 			
 			ShaderPipelinePool& shaderPipelinePool = _graphicsDevice.GetShaderPipelinePool();
 			_shaderPipelineTriangleID = shaderPipelinePool.CreateShaderPipeline();

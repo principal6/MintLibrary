@@ -131,19 +131,19 @@ namespace mint
 			~ShaderPool() = default;
 
 		public:
-			GraphicsObjectID AddShaderFromMemory(const char* const shaderIdentifier, const char* const textContent, const char* const entryPoint, const GraphicsShaderType shaderType);
-			GraphicsObjectID AddShader(const char* const inputDirectory, const char* const inputShaderFileName, const char* const entryPoint, const GraphicsShaderType shaderType, const char* const outputDirectory = nullptr);
-			GraphicsObjectID AddInputLayout(const GraphicsObjectID& vertexShaderID, const TypeMetaData<TypeCustomData>& inputElementTypeMetaData);
-			void RemoveShader(const GraphicsObjectID& shaderID);
-			void RemoveInputLayout(const GraphicsObjectID& shaderID);
+			GraphicsObjectID CreateShaderFromMemory(const char* const shaderIdentifier, const char* const textContent, const char* const entryPoint, const GraphicsShaderType shaderType);
+			GraphicsObjectID CreateShader(const char* const inputDirectory, const char* const inputShaderFileName, const char* const entryPoint, const GraphicsShaderType shaderType, const char* const outputDirectory = nullptr);
+			GraphicsObjectID CreateInputLayout(const GraphicsObjectID& vertexShaderID, const TypeMetaData<TypeCustomData>& inputElementTypeMetaData);
+			void DestroyShader(const GraphicsObjectID& shaderID);
+			void DestroyInputLayout(const GraphicsObjectID& inputLayoutID);
 
 		private:
-			GraphicsObjectID AddShaderInternal(const GraphicsShaderType shaderType, Shader& shader);
-			GraphicsObjectID AddInputLayoutInternal(const Shader& vertexShader, const TypeMetaData<TypeCustomData>& inputElementTypeMetaData);
+			GraphicsObjectID CreateShaderInternal(const GraphicsShaderType shaderType, Shader& shader);
+			GraphicsObjectID CreateInputLayoutInternal(const Shader& vertexShader, const TypeMetaData<TypeCustomData>& inputElementTypeMetaData);
 
 		private:
-			bool CreateShaderInternal(const GraphicsShaderType shaderType, Shader& shader);
-			bool CreateInputLayoutInternal(const Shader& vertexShader, const TypeMetaData<TypeCustomData>& inputElementTypeMetaData, GraphicsInputLayout& outInputLayout);
+			bool CreateLowLevelShader(const GraphicsShaderType shaderType, Shader& shader);
+			bool CreateLowLevelInputLayout(const Shader& vertexShader, const TypeMetaData<TypeCustomData>& inputElementTypeMetaData, GraphicsInputLayout& outInputLayout);
 			void PushInputElement(DxInputElementSet& inputElementSet, const TypeMetaData<TypeCustomData>& outerDataTypeMetaData, const TypeMetaData<TypeCustomData>& memberTypeMetaData);
 
 		private:

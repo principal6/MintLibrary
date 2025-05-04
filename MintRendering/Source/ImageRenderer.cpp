@@ -29,25 +29,25 @@ namespace mint
 			{
 				if (_vertexShaderID.IsValid())
 				{
-					shaderPool.RemoveShader(_vertexShaderID);
+					shaderPool.DestroyShader(_vertexShaderID);
 				}
-				_vertexShaderID = shaderPool.AddShaderFromMemory("ImageRendererVS", GetDefaultVertexShaderString(), "main_shape", GraphicsShaderType::VertexShader);
+				_vertexShaderID = shaderPool.CreateShaderFromMemory("ImageRendererVS", GetDefaultVertexShaderString(), "main_shape", GraphicsShaderType::VertexShader);
 
 				if (_inputLayoutID.IsValid())
 				{
-					shaderPool.RemoveInputLayout(_inputLayoutID);
+					shaderPool.DestroyInputLayout(_inputLayoutID);
 				}
 				using namespace Language;
 				const TypeMetaData<CppHlsl::TypeCustomData>& typeMetaData = _graphicsDevice.GetCppHlslSteamData().GetTypeMetaData(typeid(VS_INPUT_SHAPE));
-				_inputLayoutID = shaderPool.AddInputLayout(_vertexShaderID, typeMetaData);
+				_inputLayoutID = shaderPool.CreateInputLayout(_vertexShaderID, typeMetaData);
 			}
 
 			{
 				if (_geometryShaderID.IsValid())
 				{
-					shaderPool.RemoveShader(_geometryShaderID);
+					shaderPool.DestroyShader(_geometryShaderID);
 				}
-				_geometryShaderID = shaderPool.AddShaderFromMemory("ImageRendererGS", GetDefaultGeometryShaderString(), "main_shape", GraphicsShaderType::GeometryShader);
+				_geometryShaderID = shaderPool.CreateShaderFromMemory("ImageRendererGS", GetDefaultGeometryShaderString(), "main_shape", GraphicsShaderType::GeometryShader);
 			}
 
 			{
@@ -94,9 +94,9 @@ namespace mint
 
 				if (_pixelShaderID.IsValid())
 				{
-					shaderPool.RemoveShader(_pixelShaderID);
+					shaderPool.DestroyShader(_pixelShaderID);
 				}
-				_pixelShaderID = shaderPool.AddShaderFromMemory("ImageRendererPS", shaderString.CString(), "main_image", GraphicsShaderType::PixelShader);
+				_pixelShaderID = shaderPool.CreateShaderFromMemory("ImageRendererPS", shaderString.CString(), "main_image", GraphicsShaderType::PixelShader);
 			}
 		}
 
