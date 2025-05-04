@@ -9,6 +9,7 @@
 
 #include <MintRenderingBase/Include/RenderingBaseCommon.h>
 
+
 namespace mint
 {
 	template<typename T>
