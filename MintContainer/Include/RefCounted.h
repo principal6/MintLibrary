@@ -17,13 +17,38 @@ namespace mint
 	public:
 		RefCounted() : RefCounted(nullptr) { __noop; }
 		explicit RefCounted(T* resource)
-			: _resource(resource)
+			: _resource{ resource }
 			// _refCount must be 0 here in case of when the user doesn't call any IncreaseRefCount() and DecreaseRefCount() until destruction.
-			, _refCount(0)
+			, _refCount{ 0 }
 		{
 			__noop;
 		}
+		RefCounted(const RefCounted& rhs) = delete;
+		RefCounted(RefCounted&& rhs)
+			: _resource{ rhs._resource }
+			, _refCount{ rhs._refCount }
+		{
+			rhs._resource = nullptr;
+			rhs._refCount = 0;
+		}
 		~RefCounted();
+
+	public:
+		RefCounted& operator=(const RefCounted& rhs) = delete;
+		RefCounted& operator=(RefCounted&& rhs)
+		{
+			if (this != &rhs)
+			{
+				MINT_ASSERT(_refCount == 0 && _resource == nullptr, "This must not be a valid RefCounted object!");
+
+				_resource = rhs._resource;
+				_refCount = rhs._refCount;
+
+				rhs._resource = nullptr;
+				rhs._refCount = 0;
+			}
+			return *this;
+		}
 
 	public:
 		MINT_INLINE void IncreaseRefCount() { ++_refCount; }
