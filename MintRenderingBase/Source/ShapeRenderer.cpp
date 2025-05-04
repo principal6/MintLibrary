@@ -25,7 +25,7 @@ namespace mint
 
 		ShapeRenderer::~ShapeRenderer()
 		{
-			__noop;
+			Terminate();
 		}
 
 		const char* ShapeRenderer::GetDefaultVertexShaderString() const
@@ -128,16 +128,51 @@ namespace mint
 		{
 			SetClipRect(_graphicsDevice.GetFullScreenClipRect());
 
+			ShaderPipelinePool& shaderPipelinePool = _graphicsDevice.GetShaderPipelinePool();
+			_shaderPipelineDefaultID = shaderPipelinePool.CreateShaderPipeline();
+			_shaderPipelineMultipleViewportID = shaderPipelinePool.CreateShaderPipeline();
+
 			ShaderPool& shaderPool = _graphicsDevice.GetShaderPool();
-			_vertexShaderID = shaderPool.CreateShaderFromMemory("ShapeRendererVS", GetDefaultVertexShaderString(), "main_shape", GraphicsShaderType::VertexShader);
+			GraphicsObjectID inputLayoutID;
+			GraphicsObjectID vertexShaderID;
+			GraphicsObjectID geometryShaderID;
+			GraphicsObjectID pixelShaderID;
+			vertexShaderID = shaderPool.CreateShaderFromMemory("ShapeRendererVS", GetDefaultVertexShaderString(), "main_shape", GraphicsShaderType::VertexShader);
 
 			using namespace Language;
 			const TypeMetaData<CppHlsl::TypeCustomData>& typeMetaData = _graphicsDevice.GetCppHlslSteamData().GetTypeMetaData(typeid(VS_INPUT_SHAPE));
-			_inputLayoutID = shaderPool.CreateInputLayout(_vertexShaderID, typeMetaData);
+			inputLayoutID = shaderPool.CreateInputLayout(vertexShaderID, typeMetaData);
 
-			_geometryShaderID = shaderPool.CreateShaderFromMemory("ShapeRendererGS", GetDefaultGeometryShaderString(), "main_shape", GraphicsShaderType::GeometryShader);
+			geometryShaderID = shaderPool.CreateShaderFromMemory("ShapeRendererGS", GetDefaultGeometryShaderString(), "main_shape", GraphicsShaderType::GeometryShader);
 
-			_pixelShaderID = shaderPool.CreateShaderFromMemory("ShapeRendererPS", GetPixelShaderString(), GetPixelShaderEntryPoint(), GraphicsShaderType::PixelShader);
+			pixelShaderID = shaderPool.CreateShaderFromMemory("ShapeRendererPS", GetPixelShaderString(), GetPixelShaderEntryPoint(), GraphicsShaderType::PixelShader);
+
+			{
+				ShaderPipeline& shaderPipelineDefault = shaderPipelinePool.AccessShaderPipeline(_shaderPipelineDefaultID);
+				shaderPipelineDefault.SetInputLayout(inputLayoutID);
+				shaderPipelineDefault.SetVertexShader(vertexShaderID);
+				shaderPipelineDefault.SetPixelShader(pixelShaderID);
+			}
+			{
+				ShaderPipeline& shaderPipelineMultipleViewport = shaderPipelinePool.AccessShaderPipeline(_shaderPipelineMultipleViewportID);
+				shaderPipelineMultipleViewport.SetInputLayout(inputLayoutID);
+				shaderPipelineMultipleViewport.SetVertexShader(vertexShaderID);
+				shaderPipelineMultipleViewport.SetGeometryShader(geometryShaderID);
+				shaderPipelineMultipleViewport.SetPixelShader(pixelShaderID);
+			}
+		}
+
+		void ShapeRenderer::Terminate() noexcept
+		{
+			ShaderPipelinePool& shaderPipelinePool = _graphicsDevice.GetShaderPipelinePool();
+			if (_shaderPipelineDefaultID.IsValid())
+			{
+				shaderPipelinePool.DestroyShaderPipeline(_shaderPipelineDefaultID);
+			}
+			if (_shaderPipelineMultipleViewportID.IsValid())
+			{
+				shaderPipelinePool.DestroyShaderPipeline(_shaderPipelineMultipleViewportID);
+			}
 		}
 
 		bool ShapeRenderer::IsEmpty() const noexcept
@@ -167,16 +202,17 @@ namespace mint
 				_graphicsDevice.GetResourcePool().BindToShader(_fontData._fontTextureID, GraphicsShaderType::PixelShader, 0);
 			}
 
-			ShaderPool& shaderPool = _graphicsDevice.GetShaderPool();
-			shaderPool.BindInputLayoutIfNot(_inputLayoutID);
-			shaderPool.BindShaderIfNot(GraphicsShaderType::VertexShader, _vertexShaderID);
-
+			ShaderPipelinePool& shaderPipelinePool = _graphicsDevice.GetShaderPipelinePool();
+			const ShaderPipeline& shaderPipelineDefault = shaderPipelinePool.GetShaderPipeline(_shaderPipelineDefaultID);
+			const ShaderPipeline& shaderPipelineMultipleViewport = shaderPipelinePool.GetShaderPipeline(_shaderPipelineMultipleViewportID);
 			if (IsUsingMultipleViewports())
 			{
-				shaderPool.BindShaderIfNot(GraphicsShaderType::GeometryShader, _geometryShaderID);
+				shaderPipelineMultipleViewport.BindShaderPipeline();
 			}
-
-			shaderPool.BindShaderIfNot(GraphicsShaderType::PixelShader, _pixelShaderID);
+			else
+			{
+				shaderPipelineDefault.BindShaderPipeline();
+			}
 
 			GraphicsResourcePool& resourcePool = _graphicsDevice.GetResourcePool();
 			GraphicsResource& sbTransformBuffer = resourcePool.GetResource(_graphicsDevice.GetCommonSBTransformID());
@@ -186,6 +222,7 @@ namespace mint
 
 			if (IsUsingMultipleViewports())
 			{
+				ShaderPool& shaderPool = _graphicsDevice.GetShaderPool();
 				shaderPool.UnbindShader(GraphicsShaderType::GeometryShader);
 			}
 
@@ -499,12 +536,12 @@ namespace mint
 			glyphPosition._x += static_cast<float>(glyphInfo._horiAdvance) * scale;
 		}
 
-		const char* ShapeRenderer::GetPixelShaderString() const noexcept 
+		const char* ShapeRenderer::GetPixelShaderString() const noexcept
 		{
 			return GetDefaultPixelShaderString();
 		}
-		
-		const char* ShapeRenderer::GetPixelShaderEntryPoint() const noexcept 
+
+		const char* ShapeRenderer::GetPixelShaderEntryPoint() const noexcept
 		{
 			return "main_shape";
 		}

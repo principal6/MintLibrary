@@ -80,6 +80,7 @@ namespace mint
 
 		public:
 			virtual void InitializeShaders() noexcept override;
+			void Terminate() noexcept;
 			virtual void Render() noexcept override;
 			virtual void Flush() noexcept override;
 
@@ -143,10 +144,8 @@ namespace mint
 			void AddShape_Internal(const Shape& shape);
 
 		protected:
-			GraphicsObjectID _inputLayoutID;
-			GraphicsObjectID _vertexShaderID;
-			GraphicsObjectID _geometryShaderID;
-			GraphicsObjectID _pixelShaderID;
+			GraphicsObjectID _shaderPipelineDefaultID;
+			GraphicsObjectID _shaderPipelineMultipleViewportID;
 
 			Color _textColor;
 			FontData _fontData;
