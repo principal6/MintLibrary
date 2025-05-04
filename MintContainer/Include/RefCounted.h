@@ -53,10 +53,11 @@ namespace mint
 	public:
 		MINT_INLINE void IncreaseRefCount() { ++_refCount; }
 		void DecreaseRefCount();
+		MINT_INLINE bool IsValid() const noexcept { return _resource != nullptr; }
+		MINT_INLINE int32 GetRefCount() const noexcept { return _refCount; }
 		MINT_INLINE T* Get() const noexcept { return _resource; }
 		MINT_INLINE T* operator->() const noexcept { return _resource; }
 		MINT_INLINE T& operator*() const noexcept { return *_resource; }
-		MINT_INLINE int32 GetRefCount() const noexcept { return _refCount; }
 
 	private:
 		T* _resource = nullptr;
