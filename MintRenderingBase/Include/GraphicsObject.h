@@ -27,7 +27,7 @@ namespace mint
 {
 	namespace Rendering
 	{
-		enum class GraphicsShaderType
+		enum class GraphicsShaderType : uint8
 		{
 			VertexShader,
 			GeometryShader,
