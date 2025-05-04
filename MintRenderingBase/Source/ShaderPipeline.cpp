@@ -127,11 +127,6 @@ namespace mint
 			_shaderPipelines.Erase(index);
 		}
 
-		ShaderPipeline& ShaderPipelinePool::AccessShaderPipeline(const GraphicsObjectID& shaderPipelineID)
-		{
-			return const_cast<ShaderPipeline&>(GetShaderPipeline(shaderPipelineID));
-		}
-
 		const ShaderPipeline& ShaderPipelinePool::GetShaderPipeline(const GraphicsObjectID& shaderPipelineID) const
 		{
 			const uint32 index = BinarySearch(_shaderPipelines, shaderPipelineID, GraphicsObject::Evaluator());

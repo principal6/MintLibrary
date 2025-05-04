@@ -74,7 +74,6 @@ namespace mint
 		public:
 			GraphicsObjectID CreateShaderPipeline(const ShaderPipelineDesc& shaderPipelineDesc);
 			void DestroyShaderPipeline(const GraphicsObjectID& shaderPipelineID);
-			ShaderPipeline& AccessShaderPipeline(const GraphicsObjectID& shaderPipelineID);
 			const ShaderPipeline& GetShaderPipeline(const GraphicsObjectID& shaderPipelineID) const;
 
 		private:

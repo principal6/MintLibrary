@@ -36,9 +36,9 @@ namespace mint
 		ContiguousHashMap<SceneObject, MeshComponent>& meshComponentMap = meshComponentPool.GetComponentMap();
 		if (meshComponentMap.IsEmpty() == false)
 		{
-			ShaderPipeline& shaderPipelineDefault = shaderPipelinePool.AccessShaderPipeline(_shaderPipelineDefaultID);
-			ShaderPipeline& shaderPipelineDrawEdges = shaderPipelinePool.AccessShaderPipeline(_shaderPipelineDrawEdgesID);
-			ShaderPipeline& shaderPipelineDrawNormals = shaderPipelinePool.AccessShaderPipeline(_shaderPipelineDrawNormalsID);
+			const ShaderPipeline& shaderPipelineDefault = shaderPipelinePool.GetShaderPipeline(_shaderPipelineDefaultID);
+			const ShaderPipeline& shaderPipelineDrawEdges = shaderPipelinePool.GetShaderPipeline(_shaderPipelineDrawEdgesID);
+			const ShaderPipeline& shaderPipelineDrawNormals = shaderPipelinePool.GetShaderPipeline(_shaderPipelineDrawNormalsID);
 
 			GraphicsResource& cbTransform = resourcePool.GetResource(_graphicsDevice.GetCommonCBTransformID());
 			cbTransform.BindToShader(GraphicsShaderType::VertexShader, cbTransform.GetRegisterIndex());
