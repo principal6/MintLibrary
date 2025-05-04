@@ -114,8 +114,8 @@ namespace mint
 
 		GraphicsObjectID ShaderPipelinePool::CreateShaderPipeline()
 		{
-			OwnPtr<GraphicsObject> shaderPipeline{ MINT_NEW(ShaderPipeline, _graphicsDevice) };
-			static_cast<ShaderPipeline*>(shaderPipeline.Get())->AssignIDXXX();
+			OwnPtr<ShaderPipeline> shaderPipeline{ MINT_NEW(ShaderPipeline, _graphicsDevice) };
+			shaderPipeline->AssignIDXXX();
 			_shaderPipelines.PushBack(std::move(shaderPipeline));
 			return _shaderPipelines.Back()->GetID();
 		}

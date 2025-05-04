@@ -151,7 +151,7 @@ namespace mint
 
 		private:
 			GraphicsDevice& _graphicsDevice;
-			Vector<OwnPtr<GraphicsObject>> _resourceArray;
+			Vector<OwnPtr<GraphicsResource>> _resourceArray;
 		};
 	}
 }

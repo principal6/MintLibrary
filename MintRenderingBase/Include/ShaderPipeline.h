@@ -28,8 +28,10 @@ namespace mint
 		{
 			friend ShaderPipelinePool;
 
-		public:
+		private:
 			ShaderPipeline(GraphicsDevice& graphicsDevice);
+
+		public:
 			virtual ~ShaderPipeline();
 		
 		public:
@@ -71,7 +73,7 @@ namespace mint
 
 		private:
 			GraphicsDevice& _graphicsDevice;
-			Vector<OwnPtr<GraphicsObject>> _shaderPipelines;
+			Vector<OwnPtr<ShaderPipeline>> _shaderPipelines;
 		};
 	}
 }

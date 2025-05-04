@@ -400,7 +400,7 @@ namespace mint
 				resource._registerIndex = registerIndex;
 
 				const GraphicsObjectID graphicsObjectID = resource.GetID();
-				_resourceArray.PushBack(static_cast<GraphicsObject*>(MINT_NEW(GraphicsResource, std::move(resource))));
+				_resourceArray.PushBack(MINT_NEW(GraphicsResource, std::move(resource)));
 				QuickSort(_resourceArray, GraphicsObject::AscendingComparator());
 				return graphicsObjectID;
 			}
@@ -417,7 +417,7 @@ namespace mint
 				resource.AssignIDXXX();
 
 				const GraphicsObjectID graphicsObjectID = resource.GetID();
-				_resourceArray.PushBack(static_cast<GraphicsObject*>(MINT_NEW(GraphicsResource, std::move(resource))));
+				_resourceArray.PushBack(MINT_NEW(GraphicsResource, std::move(resource)));
 				QuickSort(_resourceArray, GraphicsObject::AscendingComparator());
 				return graphicsObjectID;
 			}
@@ -435,7 +435,7 @@ namespace mint
 				resource.AssignIDXXX();
 
 				const GraphicsObjectID graphicsObjectID = resource.GetID();
-				_resourceArray.PushBack(static_cast<GraphicsObject*>(MINT_NEW(GraphicsResource, std::move(resource))));
+				_resourceArray.PushBack(MINT_NEW(GraphicsResource, std::move(resource)));
 				QuickSort(_resourceArray, GraphicsObject::AscendingComparator());
 				return graphicsObjectID;
 			}
@@ -454,7 +454,7 @@ namespace mint
 				resource._registerIndex = registerIndex;
 
 				const GraphicsObjectID graphicsObjectID = resource.GetID();
-				_resourceArray.PushBack(static_cast<GraphicsObject*>(MINT_NEW(GraphicsResource, std::move(resource))));
+				_resourceArray.PushBack(MINT_NEW(GraphicsResource, std::move(resource)));
 				QuickSort(_resourceArray, GraphicsObject::AscendingComparator());
 				return graphicsObjectID;
 			}
@@ -477,7 +477,7 @@ namespace mint
 				resource.AssignIDXXX();
 
 				const GraphicsObjectID graphicsObjectID = resource.GetID();
-				_resourceArray.PushBack(static_cast<GraphicsObject*>(MINT_NEW(GraphicsResource, std::move(resource))));
+				_resourceArray.PushBack(MINT_NEW(GraphicsResource, std::move(resource)));
 				QuickSort(_resourceArray, GraphicsObject::AscendingComparator());
 				return graphicsObjectID;
 			}
