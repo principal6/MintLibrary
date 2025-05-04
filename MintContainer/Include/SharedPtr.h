@@ -118,7 +118,7 @@ namespace mint
 		}
 		~SharedPtr()
 		{
-			DecreaseReferenceCount();
+			DecreaseRefCount();
 		}
 		SharedPtr& operator=(const SharedPtr& rhs)
 		{
@@ -127,7 +127,7 @@ namespace mint
 				return *this;
 			}
 
-			DecreaseReferenceCount();
+			DecreaseRefCount();
 
 			_sharedRefCounter = rhs._sharedRefCounter;
 			_rawPtr = rhs._rawPtr;
@@ -145,7 +145,7 @@ namespace mint
 				return *this;
 			}
 
-			DecreaseReferenceCount();
+			DecreaseRefCount();
 
 			_sharedRefCounter = rhs._sharedRefCounter;
 			_rawPtr = rhs._rawPtr;
@@ -167,7 +167,7 @@ namespace mint
 		bool IsValid() const { return (_sharedRefCounter == nullptr ? false : _sharedRefCounter->GetStrongRefCount() != 0); }
 		void Clear()
 		{
-			DecreaseReferenceCount();
+			DecreaseRefCount();
 
 			_sharedRefCounter = nullptr;
 			_rawPtr = nullptr;
@@ -183,7 +183,7 @@ namespace mint
 			_sharedRefCounter->IncreaseStrongRefCount();
 		}
 
-		void DecreaseReferenceCount();
+		void DecreaseRefCount();
 
 	private:
 		SharedRefCounter* _sharedRefCounter = nullptr;

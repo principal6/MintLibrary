@@ -13,7 +13,7 @@ namespace mint
 	// In order to allow the forward declaration of T when using SharedPtr class,
 	// we must delete _rawPtr in a separate file, which is not the header file.
 	template<typename T>
-	void SharedPtr<T>::DecreaseReferenceCount()
+	void SharedPtr<T>::DecreaseRefCount()
 	{
 		if (_sharedRefCounter != nullptr)
 		{

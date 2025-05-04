@@ -18,7 +18,7 @@ namespace mint
 		RefCounted() : RefCounted(nullptr) { __noop; }
 		explicit RefCounted(T* resource)
 			: _resource(resource)
-			// _refCount must be 0 here in case of when the user doesn't call any IncreaseReference() and DecreaseReference() until destruction.
+			// _refCount must be 0 here in case of when the user doesn't call any IncreaseRefCount() and DecreaseRefCount() until destruction.
 			, _refCount(0)
 		{
 			__noop;
@@ -26,8 +26,8 @@ namespace mint
 		~RefCounted();
 
 	public:
-		MINT_INLINE void IncreaseReference() { ++_refCount; }
-		void DecreaseReference();
+		MINT_INLINE void IncreaseRefCount() { ++_refCount; }
+		void DecreaseRefCount();
 		MINT_INLINE T* Get() const noexcept { return _resource; }
 		MINT_INLINE T* operator->() const noexcept { return _resource; }
 		MINT_INLINE T& operator*() const noexcept { return *_resource; }

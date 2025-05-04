@@ -19,7 +19,7 @@ namespace mint
 	}
 
 	template<typename T>
-	MINT_INLINE void RefCounted<T>::DecreaseReference()
+	MINT_INLINE void RefCounted<T>::DecreaseRefCount()
 	{
 		MINT_ASSERT(_refCount > 0, "RefCount must be greater than 0!");
 		--_refCount;
