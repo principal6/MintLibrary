@@ -161,8 +161,15 @@ namespace mint
 		public:
 			struct Evaluator
 			{
-				const GraphicsObjectID& operator()(const GraphicsObject& rhs) const noexcept;
-				const GraphicsObjectID& operator()(const OwnPtr<GraphicsObject>& rhs) const noexcept;
+				const GraphicsObjectID& operator()(const GraphicsObject& rhs) const noexcept
+				{
+					return rhs._objectID;
+				}
+				template<typename T>
+				const GraphicsObjectID& operator()(const OwnPtr<T>& rhs) const noexcept
+				{
+					return operator()(static_cast<const GraphicsObject&>(*rhs));
+				}
 				template<typename T>
 				const GraphicsObjectID& operator()(const RefCounted<T>& rhs) const noexcept
 				{
@@ -172,8 +179,15 @@ namespace mint
 
 			struct AscendingComparator
 			{
-				bool operator()(const GraphicsObject& lhs, const GraphicsObject& rhs) const noexcept;
-				bool operator()(const OwnPtr<GraphicsObject>& lhs, const OwnPtr<GraphicsObject>& rhs) const noexcept;
+				bool operator()(const GraphicsObject& lhs, const GraphicsObject& rhs) const noexcept
+				{
+					return lhs._objectID < rhs._objectID;
+				}
+				template<typename T>
+				bool operator()(const OwnPtr<T>& lhs, const OwnPtr<T>& rhs) const noexcept
+				{
+					return operator()(static_cast<const GraphicsObject&>(*lhs), static_cast<const GraphicsObject&>(*rhs));
+				}
 				template<typename T>
 				bool operator()(const RefCounted<T>& lhs, const RefCounted<T>& rhs) const noexcept
 				{
