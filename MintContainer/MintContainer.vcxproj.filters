@@ -144,6 +144,9 @@
     <ClInclude Include="Include\RefCounted.h">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="Include\RefCounted.hpp">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Include\Array.inl">

@@ -16,6 +16,7 @@
 #include <MintContainer/Include/Vector.hpp>
 #include <MintContainer/Include/HashMap.hpp>
 #include <MintContainer/Include/Queue.hpp>
+#include <MintContainer/Include/RefCounted.hpp>
 #include <MintContainer/Include/SharedPtr.hpp>
 #include <MintContainer/Include/String.hpp>
 #include <MintContainer/Include/StringView.hpp>

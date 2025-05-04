@@ -23,29 +23,11 @@ namespace mint
 		{
 			__noop;
 		}
-		~RefCounted()
-		{
-			MINT_ASSERT(_refCount == 0, "RefCount must be decreased before the destruction!");
-			// If the user creates RefCounted and does nothing until destruction, then the resource must be deleted here.
-			MINT_DELETE(_resource);
-		}
+		~RefCounted();
 
 	public:
-		MINT_INLINE void IncreaseReference()
-		{
-			++_refCount;
-		}
-
-		MINT_INLINE void DecreaseReference()
-		{
-			MINT_ASSERT(_refCount > 0, "RefCount must be greater than 0!");
-			--_refCount;
-
-			if (_refCount == 0)
-			{
-				MINT_DELETE(_resource);
-			}
-		}
+		MINT_INLINE void IncreaseReference() { ++_refCount; }
+		void DecreaseReference();
 		MINT_INLINE T* Get() const noexcept { return _resource; }
 		MINT_INLINE T* operator->() const noexcept { return _resource; }
 		MINT_INLINE T& operator*() const noexcept { return *_resource; }
