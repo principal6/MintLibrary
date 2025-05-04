@@ -167,6 +167,69 @@ namespace mint
 			return CreateInputLayoutInternal(vertexShader, inputElementTypeMetaData);
 		}
 
+		void ShaderPool::IncreaseShaderRefCount(const GraphicsObjectID& shaderID)
+		{
+			for (uint8 shaderTypeRaw = 0; shaderTypeRaw < static_cast<uint8>(GraphicsShaderType::COUNT); ++shaderTypeRaw)
+			{
+				const GraphicsShaderType shaderType = static_cast<GraphicsShaderType>(shaderTypeRaw);
+				const uint32 shaderIndex = GetShaderIndex(shaderType, shaderID);
+				if (IsValidIndex(shaderIndex) == false)
+				{
+					continue;
+				}
+
+				AccessShaders(shaderType)[shaderIndex].IncreaseRefCount();
+			}
+		}
+
+		void ShaderPool::DecreaseShaderRefCount(const GraphicsObjectID& shaderID)
+		{
+			for (uint8 shaderTypeRaw = 0; shaderTypeRaw < static_cast<uint8>(GraphicsShaderType::COUNT); ++shaderTypeRaw)
+			{
+				const GraphicsShaderType shaderType = static_cast<GraphicsShaderType>(shaderTypeRaw);
+				const uint32 shaderIndex = GetShaderIndex(shaderType, shaderID);
+				if (IsValidIndex(shaderIndex) == false)
+				{
+					continue;
+				}
+
+				Vector<RefCounted<Shader>>& shaders = AccessShaders(shaderType);
+				shaders[shaderIndex].DecreaseRefCount();
+
+				if (shaders[shaderIndex].IsValid() == false)
+				{
+					shaders.Erase(shaderIndex);
+				}
+			}
+		}
+
+		void ShaderPool::IncreaseInputLayoutRefCount(const GraphicsObjectID& inputLayoutID)
+		{
+			const uint32 inputLayoutIndex = GetInputLayoutIndex(inputLayoutID);
+			if (IsValidIndex(inputLayoutIndex) == false)
+			{
+				return;
+			}
+
+			_inputLayouts[inputLayoutIndex].IncreaseRefCount();
+		}
+
+		void ShaderPool::DecreaseInputLayoutRefCount(const GraphicsObjectID& inputLayoutID)
+		{
+			const uint32 inputLayoutIndex = GetInputLayoutIndex(inputLayoutID);
+			if (IsValidIndex(inputLayoutIndex) == false)
+			{
+				return;
+			}
+
+			_inputLayouts[inputLayoutIndex].DecreaseRefCount();
+
+			if (_inputLayouts[inputLayoutIndex].IsValid() == false)
+			{
+				_inputLayouts.Erase(inputLayoutIndex);
+			}
+		}
+
 		GraphicsObjectID ShaderPool::CreateShaderInternal(const GraphicsShaderType shaderType, Shader& shader)
 		{
 			if (CreateLowLevelShader(shaderType, shader) == false)

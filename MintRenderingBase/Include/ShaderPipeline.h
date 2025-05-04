@@ -30,7 +30,7 @@ namespace mint
 
 		public:
 			ShaderPipeline(GraphicsDevice& graphicsDevice);
-			virtual ~ShaderPipeline() = default;
+			virtual ~ShaderPipeline();
 		
 		public:
 			void SetInputLayout(const GraphicsObjectID& inputLayoutID) noexcept;

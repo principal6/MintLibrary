@@ -135,6 +135,12 @@ namespace mint
 			GraphicsObjectID CreateShader(const char* const inputDirectory, const char* const inputShaderFileName, const char* const entryPoint, const GraphicsShaderType shaderType, const char* const outputDirectory = nullptr);
 			GraphicsObjectID CreateInputLayout(const GraphicsObjectID& vertexShaderID, const TypeMetaData<TypeCustomData>& inputElementTypeMetaData);
 
+		public:
+			void IncreaseShaderRefCount(const GraphicsObjectID& shaderID);
+			void DecreaseShaderRefCount(const GraphicsObjectID& shaderID);
+			void IncreaseInputLayoutRefCount(const GraphicsObjectID& inputLayoutID);
+			void DecreaseInputLayoutRefCount(const GraphicsObjectID& inputLayoutID);
+
 		private:
 			GraphicsObjectID CreateShaderInternal(const GraphicsShaderType shaderType, Shader& shader);
 			GraphicsObjectID CreateInputLayoutInternal(const Shader& vertexShader, const TypeMetaData<TypeCustomData>& inputElementTypeMetaData);

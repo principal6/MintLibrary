@@ -13,32 +13,60 @@ namespace mint
 			__noop;
 		}
 
+		ShaderPipeline::~ShaderPipeline()
+		{
+			ShaderPool& shaderPool = _graphicsDevice.GetShaderPool();
+			if (_inputLayoutID.IsValid())
+			{
+				shaderPool.DecreaseInputLayoutRefCount(_inputLayoutID);
+			}
+
+			if (_vertexShaderID.IsValid())
+			{
+				shaderPool.DecreaseShaderRefCount(_vertexShaderID);
+			}
+
+			if (_geometryShaderID.IsValid())
+			{
+				shaderPool.DecreaseShaderRefCount(_geometryShaderID);
+			}
+
+			if (_pixelShaderID.IsValid())
+			{
+				shaderPool.DecreaseShaderRefCount(_pixelShaderID);
+			}
+		}
+
 		void ShaderPipeline::SetInputLayout(const GraphicsObjectID& inputLayoutID) noexcept
 		{
-			const ShaderPool& shaderPool = _graphicsDevice.GetShaderPool();
+			ShaderPool& shaderPool = _graphicsDevice.GetShaderPool();
 			MINT_ASSERT(shaderPool.ExistsInputLayout(inputLayoutID) == true, "Invalid parameter - check InputLayoutID");
 			_inputLayoutID = inputLayoutID;
+			shaderPool.IncreaseInputLayoutRefCount(_inputLayoutID);
 		}
 
 		void ShaderPipeline::SetVertexShader(const GraphicsObjectID& vertexShaderID) noexcept
 		{
-			const ShaderPool& shaderPool = _graphicsDevice.GetShaderPool();
+			ShaderPool& shaderPool = _graphicsDevice.GetShaderPool();
 			MINT_ASSERT(shaderPool.ExistsShader(vertexShaderID, GraphicsShaderType::VertexShader) == true, "Invalid parameter - check ShaderType");
 			_vertexShaderID = vertexShaderID;
+			shaderPool.IncreaseShaderRefCount(_vertexShaderID);
 		}
 
 		void ShaderPipeline::SetGeometryShader(const GraphicsObjectID& geometryShaderID) noexcept
 		{
-			const ShaderPool& shaderPool = _graphicsDevice.GetShaderPool();
+			ShaderPool& shaderPool = _graphicsDevice.GetShaderPool();
 			MINT_ASSERT(shaderPool.ExistsShader(geometryShaderID, GraphicsShaderType::GeometryShader) == true, "Invalid parameter - check ShaderType");
 			_geometryShaderID = geometryShaderID;
+			shaderPool.IncreaseShaderRefCount(_geometryShaderID);
 		}
 
 		void ShaderPipeline::SetPixelShader(const GraphicsObjectID& pixelShaderID) noexcept
 		{
-			const ShaderPool& shaderPool = _graphicsDevice.GetShaderPool();
+			ShaderPool& shaderPool = _graphicsDevice.GetShaderPool();
 			MINT_ASSERT(shaderPool.ExistsShader(pixelShaderID, GraphicsShaderType::PixelShader) == true, "Invalid parameter - check ShaderType");
 			_pixelShaderID = pixelShaderID;
+			shaderPool.IncreaseShaderRefCount(_pixelShaderID);
 		}
 
 		void ShaderPipeline::BindShaderPipeline() const noexcept
