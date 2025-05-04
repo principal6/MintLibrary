@@ -56,7 +56,6 @@ namespace mint
 
 
 #pragma region GraphicsInputLayout
-		const GraphicsInputLayout GraphicsInputLayout::kNullInstance{ GraphicsDevice::GetInvalidInstance() };
 		GraphicsInputLayout::GraphicsInputLayout(GraphicsDevice& graphicsDevice)
 			: GraphicsObject(graphicsDevice, GraphicsObjectType::InputLayout)
 		{
@@ -76,7 +75,6 @@ namespace mint
 
 
 #pragma region Shader
-		const Shader Shader::kNullInstance{ GraphicsDevice::GetInvalidInstance(), GraphicsShaderType::VertexShader };
 		Shader::Shader(GraphicsDevice& graphicsDevice, const GraphicsShaderType shaderType)
 			: GraphicsObject(graphicsDevice, GraphicsObjectType::Shader), _shaderType{ shaderType }
 		{

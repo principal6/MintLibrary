@@ -58,13 +58,7 @@ namespace mint
 			friend ShaderPool;
 
 		public:
-			static const GraphicsInputLayout kNullInstance;
-
-		private:
-			GraphicsInputLayout(GraphicsDevice& graphicsDevice);
-
-		public:
-			GraphicsInputLayout(GraphicsInputLayout&& rhs) noexcept = default;
+			~GraphicsInputLayout() = default;
 		
 		public:
 			GraphicsInputLayout& operator=(GraphicsInputLayout&& rhs) noexcept = default;
@@ -72,6 +66,10 @@ namespace mint
 		public:
 			void Bind() const;
 			void Unbind() const;
+
+		private:
+			GraphicsInputLayout(GraphicsDevice& graphicsDevice);
+			GraphicsInputLayout(GraphicsInputLayout&& rhs) noexcept = default;
 
 		private:
 			DxInputElementSet _inputElementSet;
@@ -82,11 +80,7 @@ namespace mint
 		{
 			friend ShaderPool;
 
-		private:
-			Shader(GraphicsDevice& graphicsDevice, const GraphicsShaderType shaderType);
-
 		public:
-			Shader(Shader&& rhs) noexcept = default;
 			virtual ~Shader() = default;
 
 		public:
@@ -97,15 +91,16 @@ namespace mint
 			void Unbind() const noexcept;
 
 		private:
+			Shader(GraphicsDevice& graphicsDevice, const GraphicsShaderType shaderType);
+			Shader(Shader&& rhs) noexcept = default;
+
+		private:
 			ComPtr<ID3D10Blob> _shaderBlob;
 			ComPtr<ID3D11DeviceChild> _shader;
 			GraphicsShaderType _shaderType;
 			StringA _hlslFileName;
 			StringA _hlslBinaryFileName;
 			StringA _entryPoint;
-
-		public:
-			static const Shader kNullInstance;
 		};
 
 
@@ -119,6 +114,7 @@ namespace mint
 
 		class ShaderPool
 		{
+			friend GraphicsDevice;
 			template <typename CustomDataType>
 			using TypeMetaData = Language::TypeMetaData<CustomDataType>;
 			using TypeCustomData = Language::CppHlsl::TypeCustomData;
@@ -126,8 +122,6 @@ namespace mint
 			static constexpr const char* const kCompiledShaderFileExtension = ".hlslbin";
 
 		public:
-			ShaderPool(GraphicsDevice& graphicsDevice, DxShaderHeaderMemory* const shaderHeaderMemory, const ShaderVersion shaderVersion);
-			ShaderPool(const ShaderPool& rhs) = delete;
 			~ShaderPool();
 
 		public:
@@ -140,6 +134,20 @@ namespace mint
 			void DecreaseShaderRefCount(const GraphicsObjectID& shaderID);
 			void IncreaseInputLayoutRefCount(const GraphicsObjectID& inputLayoutID);
 			void DecreaseInputLayoutRefCount(const GraphicsObjectID& inputLayoutID);
+
+		public:
+			void RecompileAllShaders();
+
+		public:
+			void BindShaderIfNot(const GraphicsShaderType shaderType, const GraphicsObjectID& objectID);
+			void BindInputLayoutIfNot(const GraphicsObjectID& objectID);
+			void UnbindShader(const GraphicsShaderType shaderType);
+			bool ExistsShader(const GraphicsObjectID& shaderID, const GraphicsShaderType shaderType) const;
+			bool ExistsInputLayout(const GraphicsObjectID& inputLayoutID) const;
+
+		private:
+			ShaderPool(GraphicsDevice& graphicsDevice, DxShaderHeaderMemory* const shaderHeaderMemory, const ShaderVersion shaderVersion);
+			ShaderPool(const ShaderPool& rhs) = delete;
 
 		private:
 			GraphicsObjectID CreateShaderInternal(const GraphicsShaderType shaderType, Shader& shader);
@@ -155,18 +163,8 @@ namespace mint
 			bool CompileShaderFromFile(const char* const inputShaderFilePath, const char* const entryPoint, const char* const outputShaderFilePath, const GraphicsShaderType shaderType, const bool forceCompilation, Shader& inoutShader);
 			bool CompileShaderInternalXXX(const GraphicsShaderType shaderType, const ShaderCompileParam& compileParam, const char* const entryPoint, ID3D10Blob** outBlob);
 
-		public:
-			void RecompileAllShaders();
-
 		private:
 			void ReportCompileError();
-
-		public:
-			void BindShaderIfNot(const GraphicsShaderType shaderType, const GraphicsObjectID& objectID);
-			void BindInputLayoutIfNot(const GraphicsObjectID& objectID);
-			void UnbindShader(const GraphicsShaderType shaderType);
-			bool ExistsShader(const GraphicsObjectID& shaderID, const GraphicsShaderType shaderType) const;
-			bool ExistsInputLayout(const GraphicsObjectID& inputLayoutID) const;
 
 		private:
 			uint32 GetShaderIndex(const GraphicsShaderType shaderType, const GraphicsObjectID& objectID) const;
