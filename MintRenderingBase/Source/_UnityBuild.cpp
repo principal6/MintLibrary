@@ -3,6 +3,7 @@
 #include <MintRenderingBase/Source/ShaderPipeline.cpp>
 #include <MintRenderingBase/Source/DxShaderHeaderMemory.cpp>
 #include <MintRenderingBase/Source/ImageLoader.cpp>
+#include <MintRenderingBase/Source/ImageRenderer.cpp>
 #include <MintRenderingBase/Source/FontLoader.cpp>
 #include <MintRenderingBase/Source/GraphicsDevice.cpp>
 #include <MintRenderingBase/Source/GraphicsObject.cpp>

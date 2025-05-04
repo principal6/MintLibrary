@@ -30,9 +30,6 @@
     <ClInclude Include="Include\SplineGenerator.h">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="Include\ImageRenderer.h">
-      <Filter>Include</Filter>
-    </ClInclude>
     <ClInclude Include="Include\TestRendering.h">
       <Filter>Include</Filter>
     </ClInclude>
@@ -54,9 +51,6 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\SplineGenerator.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\ImageRenderer.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\TestRendering.cpp">

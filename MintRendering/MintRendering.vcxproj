@@ -25,7 +25,6 @@
     <ClInclude Include="Include\AllHeaders.h" />
     <ClInclude Include="Include\Plotter.h" />
     <ClInclude Include="Include\SplineGenerator.h" />
-    <ClInclude Include="Include\ImageRenderer.h" />
     <ClInclude Include="Include\TestRendering.h" />
   </ItemGroup>
   <ItemGroup>
@@ -59,13 +58,12 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="Source\ImageRenderer.cpp">
+    <ClCompile Include="Source\TestRendering.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="Source\TestRendering.cpp" />
     <ClCompile Include="Source\_UnityBuild.cpp" />
   </ItemGroup>
   <ItemGroup>

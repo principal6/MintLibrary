@@ -17,6 +17,7 @@
 #include <MintRenderingBase/Include/ShapeRenderer.h>
 #include <MintRenderingBase/Include/LowLevelRenderer.h>
 #include <MintRenderingBase/Include/ImageLoader.h>
+#include <MintRenderingBase/Include/ImageRenderer.h>
 #include <MintRenderingBase/Include/SpriteAnimation.h>
 
 

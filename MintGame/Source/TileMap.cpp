@@ -3,7 +3,7 @@
 #include <MintContainer/Include/StringUtil.hpp>
 #include <MintMath/Include/Float2.h>
 #include <MintMath/Include/Transform.h>
-#include <MintRendering/Include/ImageRenderer.h>
+#include <MintRenderingBase/Include/ImageRenderer.h>
 #include <MintPlatform/Include/XML.h>
 #include <MintPhysics/Include/CollisionShape.h>
 

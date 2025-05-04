@@ -1,4 +1,4 @@
-﻿#include <MintRendering/Include/ImageRenderer.h>
+﻿#include <MintRenderingBase/Include/ImageRenderer.h>
 #include <MintRenderingBase/Include/GraphicsDevice.h>
 #include <MintContainer/Include/StringUtil.hpp>
 

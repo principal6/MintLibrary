@@ -96,6 +96,9 @@
     <ClInclude Include="Include\ShaderPipeline.h">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="Include\ImageRenderer.h">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Include\GraphicsDevice.inl">
@@ -161,6 +164,9 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\ShaderPipeline.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ImageRenderer.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
