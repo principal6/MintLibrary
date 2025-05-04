@@ -128,37 +128,30 @@ namespace mint
 		{
 			SetClipRect(_graphicsDevice.GetFullScreenClipRect());
 
-			ShaderPipelinePool& shaderPipelinePool = _graphicsDevice.GetShaderPipelinePool();
-			_shaderPipelineDefaultID = shaderPipelinePool.CreateShaderPipeline();
-			_shaderPipelineMultipleViewportID = shaderPipelinePool.CreateShaderPipeline();
 
 			ShaderPool& shaderPool = _graphicsDevice.GetShaderPool();
-			GraphicsObjectID inputLayoutID;
-			GraphicsObjectID vertexShaderID;
-			GraphicsObjectID geometryShaderID;
-			GraphicsObjectID pixelShaderID;
-			vertexShaderID = shaderPool.CreateShaderFromMemory("ShapeRendererVS", GetDefaultVertexShaderString(), "main_shape", GraphicsShaderType::VertexShader);
-
+			GraphicsObjectID vertexShaderID = shaderPool.CreateShaderFromMemory("ShapeRendererVS", GetDefaultVertexShaderString(), "main_shape", GraphicsShaderType::VertexShader);
 			using namespace Language;
 			const TypeMetaData<CppHlsl::TypeCustomData>& typeMetaData = _graphicsDevice.GetCppHlslSteamData().GetTypeMetaData(typeid(VS_INPUT_SHAPE));
-			inputLayoutID = shaderPool.CreateInputLayout(vertexShaderID, typeMetaData);
+			GraphicsObjectID inputLayoutID = shaderPool.CreateInputLayout(vertexShaderID, typeMetaData);
+			GraphicsObjectID geometryShaderID = shaderPool.CreateShaderFromMemory("ShapeRendererGS", GetDefaultGeometryShaderString(), "main_shape", GraphicsShaderType::GeometryShader);
+			GraphicsObjectID pixelShaderID = shaderPool.CreateShaderFromMemory("ShapeRendererPS", GetPixelShaderString(), GetPixelShaderEntryPoint(), GraphicsShaderType::PixelShader);
 
-			geometryShaderID = shaderPool.CreateShaderFromMemory("ShapeRendererGS", GetDefaultGeometryShaderString(), "main_shape", GraphicsShaderType::GeometryShader);
-
-			pixelShaderID = shaderPool.CreateShaderFromMemory("ShapeRendererPS", GetPixelShaderString(), GetPixelShaderEntryPoint(), GraphicsShaderType::PixelShader);
-
+			ShaderPipelinePool& shaderPipelinePool = _graphicsDevice.GetShaderPipelinePool();
 			{
-				ShaderPipeline& shaderPipelineDefault = shaderPipelinePool.AccessShaderPipeline(_shaderPipelineDefaultID);
-				shaderPipelineDefault.SetInputLayout(inputLayoutID);
-				shaderPipelineDefault.SetVertexShader(vertexShaderID);
-				shaderPipelineDefault.SetPixelShader(pixelShaderID);
+				ShaderPipelineDesc shaderPipelineDesc;
+				shaderPipelineDesc._inputLayoutID = inputLayoutID;
+				shaderPipelineDesc._vertexShaderID = vertexShaderID;
+				shaderPipelineDesc._pixelShaderID = pixelShaderID;
+				_shaderPipelineDefaultID = shaderPipelinePool.CreateShaderPipeline(shaderPipelineDesc);
 			}
 			{
-				ShaderPipeline& shaderPipelineMultipleViewport = shaderPipelinePool.AccessShaderPipeline(_shaderPipelineMultipleViewportID);
-				shaderPipelineMultipleViewport.SetInputLayout(inputLayoutID);
-				shaderPipelineMultipleViewport.SetVertexShader(vertexShaderID);
-				shaderPipelineMultipleViewport.SetGeometryShader(geometryShaderID);
-				shaderPipelineMultipleViewport.SetPixelShader(pixelShaderID);
+				ShaderPipelineDesc shaderPipelineDesc;
+				shaderPipelineDesc._inputLayoutID = inputLayoutID;
+				shaderPipelineDesc._vertexShaderID = vertexShaderID;
+				shaderPipelineDesc._geometryShaderID = geometryShaderID;
+				shaderPipelineDesc._pixelShaderID = pixelShaderID;
+				_shaderPipelineMultipleViewportID = shaderPipelinePool.CreateShaderPipeline(shaderPipelineDesc);
 			}
 		}
 

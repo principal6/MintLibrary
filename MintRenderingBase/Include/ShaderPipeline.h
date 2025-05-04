@@ -24,31 +24,33 @@ namespace mint
 {
 	namespace Rendering
 	{
+		struct ShaderPipelineDesc
+		{
+			GraphicsObjectID _inputLayoutID;
+			GraphicsObjectID _vertexShaderID;
+			GraphicsObjectID _geometryShaderID;
+			GraphicsObjectID _pixelShaderID;
+		};
+
 		class ShaderPipeline final : public GraphicsObject
 		{
 			friend ShaderPipelinePool;
 
 		private:
-			ShaderPipeline(GraphicsDevice& graphicsDevice);
+			ShaderPipeline(GraphicsDevice& graphicsDevice, const ShaderPipelineDesc& shaderPipelineDesc);
 			ShaderPipeline(const ShaderPipeline& rhs) = delete;
 
 		public:
 			virtual ~ShaderPipeline();
 		
 		public:
+			void BindShaderPipeline() const noexcept;
+
+		private:
 			void SetInputLayout(const GraphicsObjectID& inputLayoutID) noexcept;
 			void SetVertexShader(const GraphicsObjectID& vertexShaderID) noexcept;
 			void SetGeometryShader(const GraphicsObjectID& geometryShaderID) noexcept;
 			void SetPixelShader(const GraphicsObjectID& pixelShaderID) noexcept;
-
-		public:
-			void BindShaderPipeline() const noexcept;
-
-		public:
-			MINT_INLINE GraphicsObjectID GetInputLayoutID() const noexcept { return _inputLayoutID; }
-			MINT_INLINE GraphicsObjectID GetVertexShaderID() const noexcept { return _vertexShaderID; }
-			MINT_INLINE GraphicsObjectID GetGeometryShaderID() const noexcept { return _geometryShaderID; }
-			MINT_INLINE GraphicsObjectID GetPixelShaderID() const noexcept { return _pixelShaderID; }
 
 		private:
 			GraphicsObjectID _inputLayoutID;
@@ -70,7 +72,7 @@ namespace mint
 			~ShaderPipelinePool() = default;
 
 		public:
-			GraphicsObjectID CreateShaderPipeline();
+			GraphicsObjectID CreateShaderPipeline(const ShaderPipelineDesc& shaderPipelineDesc);
 			void DestroyShaderPipeline(const GraphicsObjectID& shaderPipelineID);
 			ShaderPipeline& AccessShaderPipeline(const GraphicsObjectID& shaderPipelineID);
 			const ShaderPipeline& GetShaderPipeline(const GraphicsObjectID& shaderPipelineID) const;

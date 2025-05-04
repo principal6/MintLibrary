@@ -121,35 +121,35 @@ namespace mint
 		const TypeMetaData<CppHlsl::TypeCustomData>& vsInputTypeMetaData = interpreter.GetTypeMetaData(typeid(VS_INPUT));
 		inputLayoutDefaultID = shaderPool.CreateInputLayout(vsDefaultID, vsInputTypeMetaData);
 
-		psDefaultID = shaderPool.CreateShader(Path::MakeIncludeAssetPath("Hlsl/"), "PsDefault.hlsl", "main", GraphicsShaderType::PixelShader, Path::MakeIncludeAssetPath("HlslBinary/"));
-
 		gsNormalID = shaderPool.CreateShader(Path::MakeIncludeAssetPath("Hlsl/"), "GsNormal.hlsl", "main", GraphicsShaderType::GeometryShader, Path::MakeIncludeAssetPath("HlslBinary/"));
 		gsTriangleEdgeID = shaderPool.CreateShader(Path::MakeIncludeAssetPath("Hlsl/"), "GsTriangleEdge.hlsl", "main", GraphicsShaderType::GeometryShader, Path::MakeIncludeAssetPath("HlslBinary/"));
+		
+		psDefaultID = shaderPool.CreateShader(Path::MakeIncludeAssetPath("Hlsl/"), "PsDefault.hlsl", "main", GraphicsShaderType::PixelShader, Path::MakeIncludeAssetPath("HlslBinary/"));
 		psTexCoordAsColorID = shaderPool.CreateShader(Path::MakeIncludeAssetPath("Hlsl/"), "PsTexCoordAsColor.hlsl", "main", GraphicsShaderType::PixelShader, Path::MakeIncludeAssetPath("HlslBinary/"));
 
 		ShaderPipelinePool& shaderPipelinePool = _graphicsDevice.GetShaderPipelinePool();
-		_shaderPipelineDefaultID = shaderPipelinePool.CreateShaderPipeline();
-		_shaderPipelineDrawNormalsID = shaderPipelinePool.CreateShaderPipeline();
-		_shaderPipelineDrawEdgesID = shaderPipelinePool.CreateShaderPipeline();
 		{
-			ShaderPipeline& shaderPipelineDefault = shaderPipelinePool.AccessShaderPipeline(_shaderPipelineDefaultID);
-			shaderPipelineDefault.SetInputLayout(inputLayoutDefaultID);
-			shaderPipelineDefault.SetVertexShader(vsDefaultID);
-			shaderPipelineDefault.SetPixelShader(psDefaultID);
+			ShaderPipelineDesc shaderPipelineDesc;
+			shaderPipelineDesc._inputLayoutID = inputLayoutDefaultID;
+			shaderPipelineDesc._vertexShaderID = vsDefaultID;
+			shaderPipelineDesc._pixelShaderID = psDefaultID;
+			_shaderPipelineDefaultID = shaderPipelinePool.CreateShaderPipeline(shaderPipelineDesc);
 		}
 		{
-			ShaderPipeline& shaderPipelineDrawNormals = shaderPipelinePool.AccessShaderPipeline(_shaderPipelineDrawNormalsID);
-			shaderPipelineDrawNormals.SetInputLayout(inputLayoutDefaultID);
-			shaderPipelineDrawNormals.SetVertexShader(vsDefaultID);
-			shaderPipelineDrawNormals.SetGeometryShader(gsNormalID);
-			shaderPipelineDrawNormals.SetPixelShader(psTexCoordAsColorID);
+			ShaderPipelineDesc shaderPipelineDesc;
+			shaderPipelineDesc._inputLayoutID = inputLayoutDefaultID;
+			shaderPipelineDesc._vertexShaderID = vsDefaultID;
+			shaderPipelineDesc._geometryShaderID = gsNormalID;
+			shaderPipelineDesc._pixelShaderID = psTexCoordAsColorID;
+			_shaderPipelineDrawNormalsID = shaderPipelinePool.CreateShaderPipeline(shaderPipelineDesc);
 		}
 		{
-			ShaderPipeline& shaderPipelineDrawEdges = shaderPipelinePool.AccessShaderPipeline(_shaderPipelineDrawEdgesID);
-			shaderPipelineDrawEdges.SetInputLayout(inputLayoutDefaultID);
-			shaderPipelineDrawEdges.SetVertexShader(vsDefaultID);
-			shaderPipelineDrawEdges.SetGeometryShader(gsTriangleEdgeID);
-			shaderPipelineDrawEdges.SetPixelShader(psTexCoordAsColorID);
+			ShaderPipelineDesc shaderPipelineDesc;
+			shaderPipelineDesc._inputLayoutID = inputLayoutDefaultID;
+			shaderPipelineDesc._vertexShaderID = vsDefaultID;
+			shaderPipelineDesc._geometryShaderID = gsTriangleEdgeID;
+			shaderPipelineDesc._pixelShaderID = psTexCoordAsColorID;
+			_shaderPipelineDrawEdgesID = shaderPipelinePool.CreateShaderPipeline(shaderPipelineDesc);
 		}
 	}
 

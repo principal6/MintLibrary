@@ -7,10 +7,17 @@ namespace mint
 	namespace Rendering
 	{
 #pragma region ShaderPipeline
-		ShaderPipeline::ShaderPipeline(GraphicsDevice& graphicsDevice)
+		ShaderPipeline::ShaderPipeline(GraphicsDevice& graphicsDevice, const ShaderPipelineDesc& shaderPipelineDesc)
 			: GraphicsObject{ graphicsDevice, GraphicsObjectType::ShaderPipeline }
 		{
-			__noop;
+			SetInputLayout(shaderPipelineDesc._inputLayoutID);
+			SetVertexShader(shaderPipelineDesc._vertexShaderID);
+			SetPixelShader(shaderPipelineDesc._pixelShaderID);
+			
+			if (shaderPipelineDesc._geometryShaderID.IsValid())
+			{
+				SetGeometryShader(shaderPipelineDesc._geometryShaderID);
+			}
 		}
 
 		ShaderPipeline::~ShaderPipeline()
@@ -99,9 +106,9 @@ namespace mint
 			__noop;
 		}
 
-		GraphicsObjectID ShaderPipelinePool::CreateShaderPipeline()
+		GraphicsObjectID ShaderPipelinePool::CreateShaderPipeline(const ShaderPipelineDesc& shaderPipelineDesc)
 		{
-			OwnPtr<ShaderPipeline> shaderPipeline{ MINT_NEW(ShaderPipeline, _graphicsDevice) };
+			OwnPtr<ShaderPipeline> shaderPipeline{ MINT_NEW(ShaderPipeline, _graphicsDevice, shaderPipelineDesc) };
 			shaderPipeline->AssignIDXXX();
 			_shaderPipelines.PushBack(std::move(shaderPipeline));
 			return _shaderPipelines.Back()->GetID();
@@ -131,7 +138,7 @@ namespace mint
 			if (IsValidIndex(index) == false)
 			{
 				MINT_ASSERT(false, "ShaderPipeline 를 찾지 못했습니다!!!");
-				static ShaderPipeline s_invalidInstance{ GraphicsDevice::GetInvalidInstance() };
+				static ShaderPipeline s_invalidInstance{ GraphicsDevice::GetInvalidInstance(), ShaderPipelineDesc() };
 				return s_invalidInstance;
 			}
 			return static_cast<const ShaderPipeline&>(*_shaderPipelines[index].Get());
