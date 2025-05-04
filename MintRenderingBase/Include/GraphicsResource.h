@@ -58,19 +58,8 @@ namespace mint
 			static constexpr uint32 kIndexBufferElementStride = sizeof(IndexElementType);
 			static constexpr DXGI_FORMAT kIndexBufferFormat = DXGI_FORMAT::DXGI_FORMAT_R16_UINT;
 
-		private:
-			static DXGI_FORMAT GetDXGIFormat(const TextureFormat format);
-			static uint32 GetColorCount(const TextureFormat format);
-
-		private:
-			GraphicsResource(GraphicsDevice& graphicsDevice);
-
 		public:
-			GraphicsResource(GraphicsResource&& rhs) noexcept = default;
 			virtual ~GraphicsResource() = default;
-
-		public:
-			GraphicsResource& operator=(GraphicsResource&& rhs) noexcept = default;
 
 		public:
 			bool IsValid() const noexcept;
@@ -90,6 +79,17 @@ namespace mint
 			void BindAsInput() const noexcept;
 			void BindToShader(const GraphicsShaderType shaderType, const uint32 bindingSlot) const noexcept;
 			void UnbindFromShader() const noexcept;
+
+		private:
+			static DXGI_FORMAT GetDXGIFormat(const TextureFormat format);
+			static uint32 GetColorCount(const TextureFormat format);
+
+		private:
+			GraphicsResource(GraphicsDevice& graphicsDevice);
+			GraphicsResource(GraphicsResource&& rhs) noexcept = default;
+
+		private:
+			GraphicsResource& operator=(GraphicsResource&& rhs) noexcept = default;
 
 		private:
 			bool CreateBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount);
@@ -127,9 +127,9 @@ namespace mint
 
 		class GraphicsResourcePool
 		{
+			friend GraphicsDevice;
+
 		public:
-			GraphicsResourcePool(GraphicsDevice& graphicsDevice);
-			GraphicsResourcePool(const GraphicsResourcePool& rhs) = delete;
 			~GraphicsResourcePool() = default;
 
 		public:
@@ -148,6 +148,10 @@ namespace mint
 
 		public:
 			GraphicsResource& GetResource(const GraphicsObjectID& objectID);
+
+		private:
+			GraphicsResourcePool(GraphicsDevice& graphicsDevice);
+			GraphicsResourcePool(const GraphicsResourcePool& rhs) = delete;
 
 		private:
 			GraphicsDevice& _graphicsDevice;
