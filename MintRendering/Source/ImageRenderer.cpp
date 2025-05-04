@@ -23,81 +23,7 @@ namespace mint
 
 		void ImageRenderer::InitializeShaders() noexcept
 		{
-			SetClipRect(_graphicsDevice.GetFullScreenClipRect());
-
-			ShaderPool& shaderPool = _graphicsDevice.GetShaderPool();
-			{
-				if (_vertexShaderID.IsValid())
-				{
-					shaderPool.DestroyShader(_vertexShaderID);
-				}
-				_vertexShaderID = shaderPool.CreateShaderFromMemory("ImageRendererVS", GetDefaultVertexShaderString(), "main_shape", GraphicsShaderType::VertexShader);
-
-				if (_inputLayoutID.IsValid())
-				{
-					shaderPool.DestroyInputLayout(_inputLayoutID);
-				}
-				using namespace Language;
-				const TypeMetaData<CppHlsl::TypeCustomData>& typeMetaData = _graphicsDevice.GetCppHlslSteamData().GetTypeMetaData(typeid(VS_INPUT_SHAPE));
-				_inputLayoutID = shaderPool.CreateInputLayout(_vertexShaderID, typeMetaData);
-			}
-
-			{
-				if (_geometryShaderID.IsValid())
-				{
-					shaderPool.DestroyShader(_geometryShaderID);
-				}
-				_geometryShaderID = shaderPool.CreateShaderFromMemory("ImageRendererGS", GetDefaultGeometryShaderString(), "main_shape", GraphicsShaderType::GeometryShader);
-			}
-
-			{
-				static constexpr const char kShaderStringInclude[]
-				{
-					R"(
-					#include <ShaderStructDefinitions>
-					#include <ShaderConstantBuffers>
-					)"
-				};
-				StackStringA<256> textBuffer;
-				StringUtil::ToString(_psTextureSlot, textBuffer);
-				StackStringA<1024> shaderString = kShaderStringInclude;
-				shaderString += "sampler g_linearSampler : register(s0);\n";
-				shaderString += "sampler g_pointSampler : register(s1);\n";
-				shaderString += "Texture2D<float4> g_texture0 : register(t";
-				shaderString += textBuffer.CString();
-				shaderString += ");\n";
-
-				bool usesTransparentColor = (_transparentColor != ByteColor(0, 0, 0, 0));
-				if (usesTransparentColor)
-				{
-					StackStringA<256> transparentColorString;
-					FormatString(transparentColorString, "float4(%.1f, %.1f, %.1f, %.1f);\n", _transparentColor.RAsFloat(), _transparentColor.GAsFloat(), _transparentColor.BAsFloat(), _transparentColor.AAsFloat());
-
-					shaderString += "float4 main_image(VS_OUTPUT_SHAPE input) : SV_Target\n";
-					shaderString += "{\n";
-					shaderString += "	const float4 kTransparentColor = ";
-					shaderString += transparentColorString;
-					shaderString += "	const float4 sampledColor = g_texture0.Sample(g_pointSampler, input._texCoord.xy);\n";
-					shaderString += "	const float alpha = clamp(distance(sampledColor.rgb, kTransparentColor.rgb), 0.0, 1.0);\n";
-					shaderString += "	float4 result = float4(sampledColor.rgb * alpha, alpha);\n";
-					shaderString += "	return result;\n";
-					shaderString += "}";
-				}
-				else
-				{
-					shaderString += "float4 main_image(VS_OUTPUT_SHAPE input) : SV_Target\n";
-					shaderString += "{\n";
-					shaderString += "	const float4 sampledColor = g_texture0.Sample(g_pointSampler, input._texCoord.xy);\n";
-					shaderString += "	return sampledColor;\n";
-					shaderString += "}";
-				}
-
-				if (_pixelShaderID.IsValid())
-				{
-					shaderPool.DestroyShader(_pixelShaderID);
-				}
-				_pixelShaderID = shaderPool.CreateShaderFromMemory("ImageRendererPS", shaderString.CString(), "main_image", GraphicsShaderType::PixelShader);
-			}
+			__super::InitializeShaders();
 		}
 
 		void ImageRenderer::Flush() noexcept
@@ -121,6 +47,56 @@ namespace mint
 			_uv1 = uv1;
 
 			DrawRectangle(Float3(position), size);
+		}
+
+		const char* ImageRenderer::GetPixelShaderString() const noexcept
+		{
+			static constexpr const char kShaderStringInclude[]
+			{
+				R"(
+					#include <ShaderStructDefinitions>
+					#include <ShaderConstantBuffers>
+					)"
+			};
+			StackStringA<256> textBuffer;
+			StringUtil::ToString(_psTextureSlot, textBuffer);
+			static StackStringA<1024> shaderString = kShaderStringInclude;
+			shaderString += "sampler g_linearSampler : register(s0);\n";
+			shaderString += "sampler g_pointSampler : register(s1);\n";
+			shaderString += "Texture2D<float4> g_texture0 : register(t";
+			shaderString += textBuffer.CString();
+			shaderString += ");\n";
+
+			bool usesTransparentColor = (_transparentColor != ByteColor(0, 0, 0, 0));
+			if (usesTransparentColor)
+			{
+				StackStringA<256> transparentColorString;
+				FormatString(transparentColorString, "float4(%.1f, %.1f, %.1f, %.1f);\n", _transparentColor.RAsFloat(), _transparentColor.GAsFloat(), _transparentColor.BAsFloat(), _transparentColor.AAsFloat());
+
+				shaderString += "float4 main_image(VS_OUTPUT_SHAPE input) : SV_Target\n";
+				shaderString += "{\n";
+				shaderString += "	const float4 kTransparentColor = ";
+				shaderString += transparentColorString;
+				shaderString += "	const float4 sampledColor = g_texture0.Sample(g_pointSampler, input._texCoord.xy);\n";
+				shaderString += "	const float alpha = clamp(distance(sampledColor.rgb, kTransparentColor.rgb), 0.0, 1.0);\n";
+				shaderString += "	float4 result = float4(sampledColor.rgb * alpha, alpha);\n";
+				shaderString += "	return result;\n";
+				shaderString += "}";
+			}
+			else
+			{
+				shaderString += "float4 main_image(VS_OUTPUT_SHAPE input) : SV_Target\n";
+				shaderString += "{\n";
+				shaderString += "	const float4 sampledColor = g_texture0.Sample(g_pointSampler, input._texCoord.xy);\n";
+				shaderString += "	return sampledColor;\n";
+				shaderString += "}";
+			}
+			return shaderString.CString();
+		}
+
+		const char* ImageRenderer::GetPixelShaderEntryPoint() const noexcept
+		{
+			return "main_image";
 		}
 	}
 }

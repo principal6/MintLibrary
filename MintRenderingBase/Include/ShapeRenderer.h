@@ -120,15 +120,17 @@ namespace mint
 		public:
 			virtual bool IsEmpty() const noexcept override;
 			const FontData& GetFontData() const noexcept { return _fontData; }
-			const char* GetDefaultVertexShaderString() const;
-			const char* GetDefaultGeometryShaderString() const;
-			const char* GetDefaultPixelShaderString() const;
 
 			// Font
 		protected:
 			void DrawGlyph(const wchar_t wideChar, Float2& glyphPosition, const float scale, const bool drawShade, const bool leaveOnlySpace);
 
 		protected:
+			const char* GetDefaultVertexShaderString() const;
+			const char* GetDefaultGeometryShaderString() const;
+			const char* GetDefaultPixelShaderString() const;
+			virtual const char* GetPixelShaderString() const noexcept;
+			virtual const char* GetPixelShaderEntryPoint() const noexcept;
 			Float3 ComputePostTranslation(const wchar_t* const wideText, const uint32 textLength, const FontRenderingOption& fontRenderingOption) const;
 			uint32 ComputeVertexInfo(uint32 transformIndex, uint8 type) const;
 			void PushTransformToBuffer(const Transform2D& transform2D);

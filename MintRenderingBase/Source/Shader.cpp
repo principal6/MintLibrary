@@ -167,47 +167,6 @@ namespace mint
 			return CreateInputLayoutInternal(vertexShader, inputElementTypeMetaData);
 		}
 
-		void ShaderPool::DestroyShader(const GraphicsObjectID& shaderID)
-		{
-			if (shaderID.IsValid() == false)
-			{
-				MINT_NEVER;
-				return;
-			}
-
-			for (auto& shaders : _shadersPerType)
-			{
-				const uint32 shaderCount = shaders.Size();
-				for (uint32 shaderIndex = 0; shaderIndex < shaderCount; ++shaderIndex)
-				{
-					if (*shaders[shaderIndex] == shaderID)
-					{
-						shaders.Erase(shaderIndex);
-						break;
-					}
-				}
-			}
-		}
-
-		void ShaderPool::DestroyInputLayout(const GraphicsObjectID& inputLayoutID)
-		{
-			if (inputLayoutID.IsValid() == false)
-			{
-				MINT_NEVER;
-				return;
-			}
-
-			const uint32 inputLayoutCount = _inputLayouts.Size();
-			for (uint32 inputLayoutIndex = 0; inputLayoutIndex < inputLayoutCount; ++inputLayoutIndex)
-			{
-				if (*_inputLayouts[inputLayoutIndex] == inputLayoutID)
-				{
-					_inputLayouts.Erase(inputLayoutIndex);
-					break;
-				}
-			}
-		}
-
 		GraphicsObjectID ShaderPool::CreateShaderInternal(const GraphicsShaderType shaderType, Shader& shader)
 		{
 			if (CreateLowLevelShader(shaderType, shader) == false)

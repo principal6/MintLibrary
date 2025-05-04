@@ -129,38 +129,15 @@ namespace mint
 			SetClipRect(_graphicsDevice.GetFullScreenClipRect());
 
 			ShaderPool& shaderPool = _graphicsDevice.GetShaderPool();
+			_vertexShaderID = shaderPool.CreateShaderFromMemory("ShapeRendererVS", GetDefaultVertexShaderString(), "main_shape", GraphicsShaderType::VertexShader);
 
-			{
-				if (_vertexShaderID.IsValid())
-				{
-					shaderPool.DestroyShader(_vertexShaderID);
-				}
-				_vertexShaderID = shaderPool.CreateShaderFromMemory("ShapeRendererVS", GetDefaultVertexShaderString(), "main_shape", GraphicsShaderType::VertexShader);
+			using namespace Language;
+			const TypeMetaData<CppHlsl::TypeCustomData>& typeMetaData = _graphicsDevice.GetCppHlslSteamData().GetTypeMetaData(typeid(VS_INPUT_SHAPE));
+			_inputLayoutID = shaderPool.CreateInputLayout(_vertexShaderID, typeMetaData);
 
-				if (_inputLayoutID.IsValid())
-				{
-					shaderPool.DestroyInputLayout(_inputLayoutID);
-				}
-				using namespace Language;
-				const TypeMetaData<CppHlsl::TypeCustomData>& typeMetaData = _graphicsDevice.GetCppHlslSteamData().GetTypeMetaData(typeid(VS_INPUT_SHAPE));
-				_inputLayoutID = shaderPool.CreateInputLayout(_vertexShaderID, typeMetaData);
-			}
+			_geometryShaderID = shaderPool.CreateShaderFromMemory("ShapeRendererGS", GetDefaultGeometryShaderString(), "main_shape", GraphicsShaderType::GeometryShader);
 
-			{
-				if (_geometryShaderID.IsValid())
-				{
-					shaderPool.DestroyShader(_geometryShaderID);
-				}
-				_geometryShaderID = shaderPool.CreateShaderFromMemory("ShapeRendererGS", GetDefaultGeometryShaderString(), "main_shape", GraphicsShaderType::GeometryShader);
-			}
-
-			{
-				if (_pixelShaderID.IsValid())
-				{
-					shaderPool.DestroyShader(_pixelShaderID);
-				}
-				_pixelShaderID = shaderPool.CreateShaderFromMemory("ShapeRendererPS", GetDefaultPixelShaderString(), "main_shape", GraphicsShaderType::PixelShader);
-			}
+			_pixelShaderID = shaderPool.CreateShaderFromMemory("ShapeRendererPS", GetPixelShaderString(), GetPixelShaderEntryPoint(), GraphicsShaderType::PixelShader);
 		}
 
 		bool ShapeRenderer::IsEmpty() const noexcept
@@ -520,6 +497,16 @@ namespace mint
 			}
 
 			glyphPosition._x += static_cast<float>(glyphInfo._horiAdvance) * scale;
+		}
+
+		const char* ShapeRenderer::GetPixelShaderString() const noexcept 
+		{
+			return GetDefaultPixelShaderString();
+		}
+		
+		const char* ShapeRenderer::GetPixelShaderEntryPoint() const noexcept 
+		{
+			return "main_shape";
 		}
 
 		Float3 ShapeRenderer::ComputePostTranslation(const wchar_t* const wideText, const uint32 textLength, const FontRenderingOption& fontRenderingOption) const
