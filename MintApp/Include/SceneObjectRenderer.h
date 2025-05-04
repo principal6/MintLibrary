@@ -36,6 +36,7 @@ namespace mint
 
 	private:
 		void Initialize() noexcept;
+		void Terminate() noexcept;
 
 	private:
 		Rendering::GraphicsDevice& _graphicsDevice;

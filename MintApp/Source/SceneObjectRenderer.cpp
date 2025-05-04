@@ -20,7 +20,7 @@ namespace mint
 
 	SceneObjectRenderer::~SceneObjectRenderer()
 	{
-		__noop;
+		Terminate();
 	}
 
 	void SceneObjectRenderer::Render(const SceneObjectPool& sceneObjectPool) noexcept
@@ -151,5 +151,15 @@ namespace mint
 			shaderPipelineDrawEdges.SetGeometryShader(gsTriangleEdgeID);
 			shaderPipelineDrawEdges.SetPixelShader(psTexCoordAsColorID);
 		}
+	}
+
+	void SceneObjectRenderer::Terminate() noexcept
+	{
+		using namespace Rendering;
+
+		ShaderPipelinePool& shaderPipelinePool = _graphicsDevice.GetShaderPipelinePool();
+		shaderPipelinePool.DestroyShaderPipeline(_shaderPipelineDefaultID);
+		shaderPipelinePool.DestroyShaderPipeline(_shaderPipelineDrawNormalsID);
+		shaderPipelinePool.DestroyShaderPipeline(_shaderPipelineDrawEdgesID);
 	}
 }

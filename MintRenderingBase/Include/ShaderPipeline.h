@@ -65,6 +65,7 @@ namespace mint
 
 		public:
 			GraphicsObjectID CreateShaderPipeline();
+			void DestroyShaderPipeline(const GraphicsObjectID& shaderPipelineID);
 			ShaderPipeline& AccessShaderPipeline(const GraphicsObjectID& shaderPipelineID);
 			const ShaderPipeline& GetShaderPipeline(const GraphicsObjectID& shaderPipelineID) const;
 

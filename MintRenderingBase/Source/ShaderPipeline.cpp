@@ -92,6 +92,19 @@ namespace mint
 			return _shaderPipelines.Back()->GetID();
 		}
 
+		void ShaderPipelinePool::DestroyShaderPipeline(const GraphicsObjectID& shaderPipelineID)
+		{
+			const uint32 index = BinarySearch(_shaderPipelines, shaderPipelineID, GraphicsObject::Evaluator());
+			if (IsValidIndex(index) == false)
+			{
+				MINT_ASSERT(false, "Could not find the ShaderPipeline!");
+				return;
+			}
+
+			_shaderPipelines[index].Release();
+			_shaderPipelines.Erase(index);
+		}
+
 		ShaderPipeline& ShaderPipelinePool::AccessShaderPipeline(const GraphicsObjectID& shaderPipelineID)
 		{
 			return const_cast<ShaderPipeline&>(GetShaderPipeline(shaderPipelineID));
