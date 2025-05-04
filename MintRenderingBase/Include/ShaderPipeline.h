@@ -30,6 +30,7 @@ namespace mint
 
 		private:
 			ShaderPipeline(GraphicsDevice& graphicsDevice);
+			ShaderPipeline(const ShaderPipeline& rhs) = delete;
 
 		public:
 			virtual ~ShaderPipeline();
@@ -42,7 +43,6 @@ namespace mint
 
 		public:
 			void BindShaderPipeline() const noexcept;
-			//void UnbindShaders() const noexcept;
 
 		public:
 			MINT_INLINE GraphicsObjectID GetInputLayoutID() const noexcept { return _inputLayoutID; }
@@ -60,9 +60,13 @@ namespace mint
 
 		class ShaderPipelinePool final
 		{
-		public:
+			friend GraphicsDevice;
+
+		private:
 			ShaderPipelinePool(GraphicsDevice& graphicsDevice);
 			ShaderPipelinePool(const ShaderPipelinePool& rhs) = delete;
+		
+		public:
 			~ShaderPipelinePool() = default;
 
 		public:

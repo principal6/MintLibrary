@@ -89,19 +89,6 @@ namespace mint
 				shaderPool.UnbindShader(GraphicsShaderType::GeometryShader);
 			}
 		}
-
-		//void ShaderPipeline::UnbindShaders() const noexcept
-		//{
-		//	ShaderPool& shaderPool = _graphicsDevice.GetShaderPool();
-		//	//shaderPool.UnbindInputLayout(_inputLayoutID);
-		//	shaderPool.UnbindShader(GraphicsShaderType::VertexShader);
-		//	shaderPool.UnbindShader(GraphicsShaderType::PixelShader);
-		//	
-		//	if (_geometryShaderID.IsValid())
-		//	{
-		//		shaderPool.UnbindShader(GraphicsShaderType::GeometryShader);
-		//	}
-		//}
 #pragma endregion
 
 
