@@ -13,6 +13,8 @@ namespace mint
 {
 	template<typename T>
 	class OwnPtr;
+	template<typename T>
+	class RefCounted;
 
 	namespace Rendering
 	{
@@ -160,12 +162,22 @@ namespace mint
 			{
 				const GraphicsObjectID& operator()(const GraphicsObject& rhs) const noexcept;
 				const GraphicsObjectID& operator()(const OwnPtr<GraphicsObject>& rhs) const noexcept;
+				template<typename T>
+				const GraphicsObjectID& operator()(const RefCounted<T>& rhs) const noexcept
+				{
+					return operator()(static_cast<const GraphicsObject&>(*rhs));
+				}
 			};
 
 			struct AscendingComparator
 			{
 				bool operator()(const GraphicsObject& lhs, const GraphicsObject& rhs) const noexcept;
 				bool operator()(const OwnPtr<GraphicsObject>& lhs, const OwnPtr<GraphicsObject>& rhs) const noexcept;
+				template<typename T>
+				bool operator()(const RefCounted<T>& lhs, const RefCounted<T>& rhs) const noexcept
+				{
+					return operator()(static_cast<const GraphicsObject&>(*lhs), static_cast<const GraphicsObject&>(*rhs));
+				}
 			};
 
 			MINT_INLINE bool operator==(const GraphicsObjectID& objectID) const noexcept

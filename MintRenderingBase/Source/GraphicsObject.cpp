@@ -1,5 +1,6 @@
 ﻿#include <MintRenderingBase/Include/GraphicsObject.h>
 #include <MintContainer/Include/OwnPtr.h>
+#include <MintContainer/Include/RefCounted.hpp>
 
 
 namespace mint

@@ -128,7 +128,7 @@ namespace mint
 		public:
 			ShaderPool(GraphicsDevice& graphicsDevice, DxShaderHeaderMemory* const shaderHeaderMemory, const ShaderVersion shaderVersion);
 			ShaderPool(const ShaderPool& rhs) = delete;
-			~ShaderPool() = default;
+			~ShaderPool();
 
 		public:
 			GraphicsObjectID CreateShaderFromMemory(const char* const shaderIdentifier, const char* const textContent, const char* const entryPoint, const GraphicsShaderType shaderType);
@@ -169,8 +169,8 @@ namespace mint
 			uint32 GetInputLayoutIndex(const GraphicsObjectID& objectID) const;
 			uint32 GetShaderCount(const GraphicsShaderType shaderType) const;
 			GraphicsObjectID& AccessBoundShaderID(const GraphicsShaderType shaderType);
-			const Vector<Shader>& GetShaders(const GraphicsShaderType shaderType) const;
-			Vector<Shader>& AccessShaders(const GraphicsShaderType shaderType);
+			const Vector<RefCounted<Shader>>& GetShaders(const GraphicsShaderType shaderType) const;
+			Vector<RefCounted<Shader>>& AccessShaders(const GraphicsShaderType shaderType);
 
 		private:
 			GraphicsDevice& _graphicsDevice;
@@ -183,8 +183,8 @@ namespace mint
 			ShaderVersion _shaderVersion;
 
 		private:
-			Vector<GraphicsInputLayout> _inputLayouts;
-			Vector<Shader> _shadersPerType[static_cast<uint32>(GraphicsShaderType::COUNT)];
+			Vector<RefCounted<GraphicsInputLayout>> _inputLayouts;
+			Vector<RefCounted<Shader>> _shadersPerType[static_cast<uint32>(GraphicsShaderType::COUNT)];
 
 		private:
 			GraphicsObjectID _boundInputLayoutID;

@@ -2,6 +2,7 @@
 
 #include <d3dcompiler.h>
 
+#include <MintContainer/Include/RefCounted.hpp>
 #include <MintContainer/Include/StackString.hpp>
 #include <MintContainer/Include/StringUtil.hpp>
 #include <MintContainer/Include/Vector.hpp>
@@ -124,6 +125,11 @@ namespace mint
 			__noop;
 		}
 
+		ShaderPool::~ShaderPool()
+		{
+			__noop;
+		}
+
 		GraphicsObjectID ShaderPool::CreateShaderFromMemory(const char* const shaderIdentifier, const char* const textContent, const char* const entryPoint, const GraphicsShaderType shaderType)
 		{
 			Shader shader(_graphicsDevice, shaderType);
@@ -157,10 +163,10 @@ namespace mint
 				return GraphicsObjectID::kInvalidGraphicsObjectID;
 			}
 
-			const Shader& vertexShader = AccessShaders(GraphicsShaderType::VertexShader)[vertexShaderIndex];
+			const Shader& vertexShader = *AccessShaders(GraphicsShaderType::VertexShader)[vertexShaderIndex];
 			return CreateInputLayoutInternal(vertexShader, inputElementTypeMetaData);
 		}
-		
+
 		void ShaderPool::DestroyShader(const GraphicsObjectID& shaderID)
 		{
 			if (shaderID.IsValid() == false)
@@ -174,7 +180,7 @@ namespace mint
 				const uint32 shaderCount = shaders.Size();
 				for (uint32 shaderIndex = 0; shaderIndex < shaderCount; ++shaderIndex)
 				{
-					if (shaders[shaderIndex] == shaderID)
+					if (*shaders[shaderIndex] == shaderID)
 					{
 						shaders.Erase(shaderIndex);
 						break;
@@ -182,7 +188,7 @@ namespace mint
 				}
 			}
 		}
-		
+
 		void ShaderPool::DestroyInputLayout(const GraphicsObjectID& inputLayoutID)
 		{
 			if (inputLayoutID.IsValid() == false)
@@ -194,7 +200,7 @@ namespace mint
 			const uint32 inputLayoutCount = _inputLayouts.Size();
 			for (uint32 inputLayoutIndex = 0; inputLayoutIndex < inputLayoutCount; ++inputLayoutIndex)
 			{
-				if (_inputLayouts[inputLayoutIndex] == inputLayoutID)
+				if (*_inputLayouts[inputLayoutIndex] == inputLayoutID)
 				{
 					_inputLayouts.Erase(inputLayoutIndex);
 					break;
@@ -211,7 +217,7 @@ namespace mint
 
 			shader.AssignIDXXX();
 			const GraphicsObjectID graphicsObjectID = shader.GetID();
-			AccessShaders(shaderType).PushBack(std::move(shader));
+			AccessShaders(shaderType).PushBack(RefCounted<Shader>(MINT_NEW(Shader, std::move(shader))));
 			QuickSort(AccessShaders(shaderType), GraphicsObject::AscendingComparator());
 			return graphicsObjectID;
 		}
@@ -226,7 +232,7 @@ namespace mint
 
 			inputLayout.AssignIDXXX();
 			const GraphicsObjectID graphicsObjectID = inputLayout.GetID();
-			_inputLayouts.PushBack(std::move(inputLayout));
+			_inputLayouts.PushBack(RefCounted<GraphicsInputLayout>(MINT_NEW(GraphicsInputLayout, std::move(inputLayout))));
 			QuickSort(_inputLayouts, GraphicsObject::AscendingComparator());
 			return graphicsObjectID;
 		}
@@ -442,13 +448,13 @@ namespace mint
 				if (boundShaderID.IsValid())
 				{
 					const int32 boundShaderIndex = GetShaderIndex(shaderType, boundShaderID);
-					AccessShaders(shaderType)[boundShaderIndex].Unbind();
+					AccessShaders(shaderType)[boundShaderIndex]->Unbind();
 				}
 
 				const uint32 shaderCount = GetShaderCount(shaderType);
 				for (uint32 shaderIndex = 0; shaderIndex < shaderCount; ++shaderIndex)
 				{
-					Shader& shader = AccessShaders(shaderType)[shaderIndex];
+					Shader& shader = *AccessShaders(shaderType)[shaderIndex];
 					CompileShaderFromFile(shader._hlslFileName.CString(), shader._entryPoint.CString(), shader._hlslBinaryFileName.CString(), shader._shaderType, true, shader);
 					CreateLowLevelShader(shaderType, shader);
 				}
@@ -461,7 +467,7 @@ namespace mint
 				if (boundShaderID.IsValid())
 				{
 					const int32 boundShaderIndex = GetShaderIndex(shaderType, boundShaderID);
-					AccessShaders(shaderType)[boundShaderIndex].Bind();
+					AccessShaders(shaderType)[boundShaderIndex]->Bind();
 				}
 			}
 		}
@@ -492,7 +498,7 @@ namespace mint
 			}
 
 			boundShaderID = objectID;
-			AccessShaders(shaderType)[shaderIndex].Bind();
+			AccessShaders(shaderType)[shaderIndex]->Bind();
 		}
 
 		void ShaderPool::BindInputLayoutIfNot(const GraphicsObjectID& objectID)
@@ -508,7 +514,7 @@ namespace mint
 				return;
 			}
 
-			_inputLayouts[inputLayoutIndex].Bind();
+			_inputLayouts[inputLayoutIndex]->Bind();
 			_boundInputLayoutID = objectID;
 		}
 
@@ -533,7 +539,7 @@ namespace mint
 			}
 
 			boundShaderID.Invalidate();
-			AccessShaders(shaderType)[shaderIndex].Unbind();
+			AccessShaders(shaderType)[shaderIndex]->Unbind();
 		}
 
 		bool ShaderPool::ExistsShader(const GraphicsObjectID& shaderID, const GraphicsShaderType shaderType) const
@@ -574,16 +580,16 @@ namespace mint
 			return _boundShaderIDPerType[shaderTypeIndex];
 		}
 
-		const Vector<Shader>& ShaderPool::GetShaders(const GraphicsShaderType shaderType) const
+		const Vector<RefCounted<Shader>>& ShaderPool::GetShaders(const GraphicsShaderType shaderType) const
 		{
 			MINT_ASSERT(shaderType != GraphicsShaderType::COUNT, "Invalid parameter - check ShaderType");
 			const uint32 shaderTypeIndex = static_cast<uint32>(shaderType);
 			return _shadersPerType[shaderTypeIndex];
 		}
 
-		Vector<Shader>& ShaderPool::AccessShaders(const GraphicsShaderType shaderType)
+		Vector<RefCounted<Shader>>& ShaderPool::AccessShaders(const GraphicsShaderType shaderType)
 		{
-			return const_cast<Vector<Shader>&>(GetShaders(shaderType));
+			return const_cast<Vector<RefCounted<Shader>>&>(GetShaders(shaderType));
 		}
 	}
 }
