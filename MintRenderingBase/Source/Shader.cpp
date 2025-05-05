@@ -76,7 +76,9 @@ namespace mint
 
 #pragma region Shader
 		Shader::Shader(GraphicsDevice& graphicsDevice, const GraphicsShaderType shaderType)
-			: GraphicsObject(graphicsDevice, GraphicsObjectType::Shader), _shaderType{ shaderType }
+			: GraphicsObject(graphicsDevice, GraphicsObjectType::Shader)
+			, _shaderHashKey{ 0 }
+			, _shaderType{ shaderType }
 		{
 			__noop;
 		}
@@ -130,6 +132,14 @@ namespace mint
 
 		GraphicsObjectID ShaderPool::CreateShaderFromMemory(const char* const shaderIdentifier, const char* const textContent, const char* const entryPoint, const GraphicsShaderType shaderType)
 		{
+			const char* const shaderName = shaderIdentifier;
+			const uint64 shaderHashKey = ComputeHash(textContent);
+			const GraphicsObjectID existingShaderID = GetExistingShader(shaderType, shaderName, shaderHashKey, entryPoint);
+			if (existingShaderID.IsValid() == true)
+			{
+				return existingShaderID;
+			}
+
 			Shader shader(_graphicsDevice, shaderType);
 			ShaderCompileParam compileParam;
 			compileParam._shaderIdentifier = shaderIdentifier;
@@ -138,25 +148,44 @@ namespace mint
 			{
 				return GraphicsObjectID::kInvalidGraphicsObjectID;
 			}
-			shader._shaderName = shaderIdentifier;
+			shader._shaderName = shaderName;
+			shader._shaderHashKey = shaderHashKey;
 
 			return CreateShaderInternal(shaderType, shader);
 		}
 
 		GraphicsObjectID ShaderPool::CreateShader(const char* const inputDirectory, const char* const inputShaderFileName, const char* const entryPoint, const GraphicsShaderType shaderType, const char* const outputDirectory)
 		{
+			StringA shaderName{ inputDirectory };
+			shaderName += inputShaderFileName;
+			const uint64 shaderHashKey = ComputeHash(outputDirectory);
+			const GraphicsObjectID existingShaderID = GetExistingShader(shaderType, shaderName.CString(), shaderHashKey, entryPoint);
+			if (existingShaderID.IsValid() == true)
+			{
+				return existingShaderID;
+			}
+
 			Shader shader(_graphicsDevice, shaderType);
 			if (CompileShaderFromFile(inputDirectory, inputShaderFileName, entryPoint, outputDirectory, shaderType, false, shader) == false)
 			{
 				return GraphicsObjectID::kInvalidGraphicsObjectID;
 			}
-			shader._shaderName = inputShaderFileName;
+			shader._shaderName = shaderName.CString();
+			shader._shaderHashKey = ComputeHash(outputDirectory);
 
 			return CreateShaderInternal(shaderType, shader);
 		}
 
 		GraphicsObjectID ShaderPool::CreateInputLayout(const GraphicsObjectID& vertexShaderID, const TypeMetaData<TypeCustomData>& inputElementTypeMetaData)
 		{
+			for (const RefCounted<GraphicsInputLayout>& inputLayout : _inputLayouts)
+			{
+				if (inputLayout->_vertexShaderID == vertexShaderID && inputLayout->_inputLayoutName == inputElementTypeMetaData.GetTypeName())
+				{
+					return inputLayout->GetID();
+				}
+			}
+
 			const uint32 vertexShaderIndex = GetShaderIndex(GraphicsShaderType::VertexShader, vertexShaderID);
 			if (IsValidIndex(vertexShaderIndex) == false)
 			{
@@ -230,6 +259,21 @@ namespace mint
 			}
 		}
 
+		GraphicsObjectID ShaderPool::GetExistingShader(const GraphicsShaderType shaderType, const char* const shaderName, const uint64 shaderHashKey, const char* const entryPoint) const
+		{
+			const Vector<RefCounted<Shader>>& shaders = GetShaders(shaderType);
+			for (const RefCounted<Shader>& shader : shaders)
+			{
+				if (shader->_shaderName.Equals(shaderName))
+				{
+					MINT_ASSERT(shader->_entryPoint == entryPoint, "Shader with same name has different entry point!");
+					MINT_ASSERT(shader->_shaderHashKey == shaderHashKey, "Shader with same name has different shader hash key!");
+					return shader->GetID();
+				}
+			}
+			return GraphicsObjectID::kInvalidGraphicsObjectID;
+		}
+
 		GraphicsObjectID ShaderPool::CreateShaderInternal(const GraphicsShaderType shaderType, Shader& shader)
 		{
 			if (CreateLowLevelShader(shaderType, shader) == false)
@@ -253,6 +297,7 @@ namespace mint
 			}
 
 			inputLayout.AssignIDXXX();
+			inputLayout._vertexShaderID = vertexShader.GetID();
 			inputLayout._inputLayoutName = inputElementTypeMetaData.GetTypeName();
 			const GraphicsObjectID graphicsObjectID = inputLayout.GetID();
 			_inputLayouts.PushBack(RefCounted<GraphicsInputLayout>(MINT_NEW(GraphicsInputLayout, std::move(inputLayout))));
@@ -378,10 +423,10 @@ namespace mint
 			}
 			outputShaderFilePath.Append(kCompiledShaderFileExtension);
 
-			return CompileShaderFromFile(inputShaderFilePath.CString(), entryPoint, outputShaderFilePath.CString(), shaderType, forceCompilation, inoutShader);
+			return CompileShaderFromFileInternal(inputShaderFilePath.CString(), entryPoint, outputShaderFilePath.CString(), shaderType, forceCompilation, inoutShader);
 		}
 
-		bool ShaderPool::CompileShaderFromFile(const char* const inputShaderFilePath, const char* const entryPoint, const char* const outputShaderFilePath, const GraphicsShaderType shaderType, const bool forceCompilation, Shader& inoutShader)
+		bool ShaderPool::CompileShaderFromFileInternal(const char* const inputShaderFilePath, const char* const entryPoint, const char* const outputShaderFilePath, const GraphicsShaderType shaderType, const bool forceCompilation, Shader& inoutShader)
 		{
 			if (StringUtil::Contains(inputShaderFilePath, ".hlsl") == false)
 			{
@@ -478,7 +523,7 @@ namespace mint
 				for (uint32 shaderIndex = 0; shaderIndex < shaderCount; ++shaderIndex)
 				{
 					Shader& shader = *AccessShaders(shaderType)[shaderIndex];
-					CompileShaderFromFile(shader._hlslFileName.CString(), shader._entryPoint.CString(), shader._hlslBinaryFileName.CString(), shader._shaderType, true, shader);
+					CompileShaderFromFileInternal(shader._hlslFileName.CString(), shader._entryPoint.CString(), shader._hlslBinaryFileName.CString(), shader._shaderType, true, shader);
 					CreateLowLevelShader(shaderType, shader);
 				}
 			}

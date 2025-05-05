@@ -72,6 +72,7 @@ namespace mint
 			GraphicsInputLayout(GraphicsInputLayout&& rhs) noexcept = default;
 
 		private:
+			GraphicsObjectID _vertexShaderID;
 			StringA _inputLayoutName;
 			DxInputElementSet _inputElementSet;
 			ComPtr<ID3D11InputLayout> _inputLayout;
@@ -90,13 +91,14 @@ namespace mint
 		public:
 			void Bind() const noexcept;
 			void Unbind() const noexcept;
-
+		
 		private:
 			Shader(GraphicsDevice& graphicsDevice, const GraphicsShaderType shaderType);
 			Shader(Shader&& rhs) noexcept = default;
 
 		private:
 			StringA _shaderName;
+			uint64 _shaderHashKey;
 			ComPtr<ID3D10Blob> _shaderBlob;
 			ComPtr<ID3D11DeviceChild> _shader;
 			GraphicsShaderType _shaderType;
@@ -152,6 +154,7 @@ namespace mint
 			ShaderPool(const ShaderPool& rhs) = delete;
 
 		private:
+			GraphicsObjectID GetExistingShader(const GraphicsShaderType shaderType, const char* const shaderName, const uint64 shaderHashKey, const char* const entryPoint) const;
 			GraphicsObjectID CreateShaderInternal(const GraphicsShaderType shaderType, Shader& shader);
 			GraphicsObjectID CreateInputLayoutInternal(const Shader& vertexShader, const TypeMetaData<TypeCustomData>& inputElementTypeMetaData);
 
@@ -162,7 +165,7 @@ namespace mint
 
 		private:
 			bool CompileShaderFromFile(const char* const inputDirectory, const char* const inputShaderFileName, const char* const entryPoint, const char* const outputDirectory, const GraphicsShaderType shaderType, const bool forceCompilation, Shader& inoutShader);
-			bool CompileShaderFromFile(const char* const inputShaderFilePath, const char* const entryPoint, const char* const outputShaderFilePath, const GraphicsShaderType shaderType, const bool forceCompilation, Shader& inoutShader);
+			bool CompileShaderFromFileInternal(const char* const inputShaderFilePath, const char* const entryPoint, const char* const outputShaderFilePath, const GraphicsShaderType shaderType, const bool forceCompilation, Shader& inoutShader);
 			bool CompileShaderInternalXXX(const GraphicsShaderType shaderType, const ShaderCompileParam& compileParam, const char* const entryPoint, ID3D10Blob** outBlob);
 
 		private:
