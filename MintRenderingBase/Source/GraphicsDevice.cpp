@@ -304,6 +304,7 @@ namespace mint
 			, _shaderPool{ *this, &_shaderHeaderMemory, ShaderVersion::v_5_0 }
 			, _shaderPipelinePool{ *this }
 			, _resourcePool{ *this }
+			, _materialPool{ *this }
 			, _stateManager{ *this }
 			, _shapeRenderer{ *this }
 			, _isInRenderingScope{ false }

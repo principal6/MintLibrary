@@ -10,6 +10,7 @@
 #include <MintContainer/Include/OwnPtr.h>
 #include <MintContainer/Include/SharedPtr.h>
 #include <MintRenderingBase/Include/RenderingBaseCommon.h>
+#include <MintRenderingBase/Include/GraphicsObject.h>
 #include <MintGUI/Include/GUIComponents.h>
 
 
@@ -28,7 +29,7 @@ namespace mint
 		class GUISystem
 		{
 		public:
-			GUISystem();
+			GUISystem(Rendering::GraphicsDevice& graphicsDevice);
 			~GUISystem();
 
 		public:
@@ -47,11 +48,17 @@ namespace mint
 			ComponentType* GetComponent(const GUIEntity& entity);
 
 			void Update();
-			void Render(Rendering::GraphicsDevice& graphicsDevice);
+			void Render();
 
 		private:
+			void Initialize();
+			void Terminate();
 			void InputSystem(const Vector<GUIEntity>& entities);
 			void RenderSystem(const Vector<GUIEntity>& entities, Rendering::GraphicsDevice& graphicsDevice);
+
+		private:
+			Rendering::GraphicsDevice& _graphicsDevice;
+			Rendering::GraphicsObjectID _defaultMaterialID;
 
 		private:
 			uint32 _nextEntityID;

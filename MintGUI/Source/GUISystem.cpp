@@ -16,15 +16,17 @@ namespace mint
 	namespace GUI
 	{
 #pragma region GUISystem
-		GUISystem::GUISystem()
-			: _nextEntityID{ 0 }
+		GUISystem::GUISystem(Rendering::GraphicsDevice& graphicsDevice)
+			: _graphicsDevice{ graphicsDevice }
+			, _nextEntityID{ 0 }
+			, _nextEntityTemplateID{ 0 }
 		{
-			__noop;
+			Initialize();
 		}
 
 		GUISystem::~GUISystem()
 		{
-			__noop;
+			Terminate();
 		}
 
 		GUIEntity GUISystem::CreateEntity()
@@ -83,9 +85,28 @@ namespace mint
 			InputSystem(_entities);
 		}
 
-		void GUISystem::Render(Rendering::GraphicsDevice& graphicsDevice)
+		void GUISystem::Render()
 		{
-			RenderSystem(_entities, graphicsDevice);
+			RenderSystem(_entities, _graphicsDevice);
+		}
+
+		void GUISystem::Initialize()
+		{
+			using namespace Rendering;
+			MaterialPool& materialPool = _graphicsDevice.GetMaterialPool();
+			MaterialDesc materialDesc;
+			materialDesc._materialName = "GUI";
+			materialDesc._shaderPipelineID = _graphicsDevice.GetShapeRenderer().GetDefaultShaderPipelineID();
+			materialDesc._textureID;
+			materialDesc._textureSlot;
+			_defaultMaterialID = materialPool.CreateMaterial(materialDesc);
+		}
+
+		void GUISystem::Terminate()
+		{
+			using namespace Rendering;
+			MaterialPool& materialPool = _graphicsDevice.GetMaterialPool();
+			materialPool.DestroyMaterial(_defaultMaterialID);
 		}
 
 		void GUISystem::InputSystem(const Vector<GUIEntity>& entities)
@@ -158,6 +179,8 @@ namespace mint
 			graphicsDevice.SetViewProjectionMatrix(Float4x4::kIdentity, graphicsDevice.GetScreenSpace2DProjectionMatrix());
 
 			Rendering::ShapeRenderer& shapeRenderer = graphicsDevice.GetShapeRenderer();
+			shapeRenderer.SetMaterial(_defaultMaterialID);
+
 			for (const GUIEntity& entity : entities)
 			{
 				GUITransform2DComponent* const transform2DComponent = GetComponent<GUITransform2DComponent>(entity);

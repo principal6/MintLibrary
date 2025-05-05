@@ -135,7 +135,7 @@ namespace mint
 			const TypeMetaData<CppHlsl::TypeCustomData>& typeMetaData = _graphicsDevice.GetCppHlslSteamData().GetTypeMetaData(typeid(VS_INPUT_SHAPE));
 			GraphicsObjectID inputLayoutID = shaderPool.CreateInputLayout(vertexShaderID, typeMetaData);
 			GraphicsObjectID geometryShaderID = shaderPool.CreateShaderFromMemory("ShapeRendererGS", GetDefaultGeometryShaderString(), "main_shape", GraphicsShaderType::GeometryShader);
-			GraphicsObjectID pixelShaderID = shaderPool.CreateShaderFromMemory("ShapeRendererPS", GetPixelShaderString(), GetPixelShaderEntryPoint(), GraphicsShaderType::PixelShader);
+			GraphicsObjectID pixelShaderID = shaderPool.CreateShaderFromMemory(GetPixelShaderName(), GetPixelShaderString(), GetPixelShaderEntryPoint(), GraphicsShaderType::PixelShader);
 
 			ShaderPipelinePool& shaderPipelinePool = _graphicsDevice.GetShaderPipelinePool();
 			{
@@ -246,6 +246,11 @@ namespace mint
 			_textColor = textColor;
 		}
 
+		void ShapeRenderer::SetMaterial(const GraphicsObjectID& materialID) noexcept
+		{
+			_currentMaterialID = materialID;
+		}
+
 		void ShapeRenderer::AddShape(const Shape& shape, const Transform& transform)
 		{
 			AddShape_Internal(shape);
@@ -277,7 +282,7 @@ namespace mint
 				_lowLevelRenderer->Vertices()[vertexOffset + i]._info = ComputeVertexInfo(transformIndex, 0);
 			}
 			const uint32 deltaIndexCount = _lowLevelRenderer->GetIndexCount() - indexOffset;
-			_lowLevelRenderer->PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, deltaIndexCount, GetClipRect());
+			_lowLevelRenderer->PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, deltaIndexCount, GetClipRect(), _currentMaterialID);
 
 			PushTransformToBuffer(Float2::kOne, 0.0f, Float3::kZero);
 		}
@@ -331,7 +336,7 @@ namespace mint
 				_lowLevelRenderer->Vertices()[vertexOffset + i]._info = ComputeVertexInfo(transformIndex, 0);
 			}
 			const uint32 deltaIndexCount = _lowLevelRenderer->GetIndexCount() - indexOffset;
-			_lowLevelRenderer->PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, deltaIndexCount, GetClipRect());
+			_lowLevelRenderer->PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, deltaIndexCount, GetClipRect(), _currentMaterialID);
 
 			PushTransformToBuffer(Float2::kOne, 0.0f, Float3::kZero);
 		}
@@ -350,7 +355,7 @@ namespace mint
 				_lowLevelRenderer->Vertices()[vertexOffset + i]._info = ComputeVertexInfo(transformIndex, 0);
 			}
 			const uint32 deltaIndexCount = _lowLevelRenderer->GetIndexCount() - indexOffset;
-			_lowLevelRenderer->PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, deltaIndexCount, GetClipRect());
+			_lowLevelRenderer->PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, deltaIndexCount, GetClipRect(), _currentMaterialID);
 
 			PushTransformToBuffer(Float2::kOne, 0.0f, Float3::kZero);
 		}
@@ -375,7 +380,7 @@ namespace mint
 			_lowLevelRenderer->Vertices()[vertexOffset + 3]._texCoord = Float2(_uv1._x, _uv0._y);
 
 			const uint32 deltaIndexCount = _lowLevelRenderer->GetIndexCount() - indexOffset;
-			_lowLevelRenderer->PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, deltaIndexCount, GetClipRect());
+			_lowLevelRenderer->PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, deltaIndexCount, GetClipRect(), _currentMaterialID);
 
 			PushTransformToBuffer(Float2::kOne, 0.0f, position);
 		}
@@ -394,7 +399,7 @@ namespace mint
 				_lowLevelRenderer->Vertices()[vertexOffset + i]._info = ComputeVertexInfo(transformIndex, 0);
 			}
 			const uint32 deltaIndexCount = _lowLevelRenderer->GetIndexCount() - indexOffset;
-			_lowLevelRenderer->PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, deltaIndexCount, GetClipRect());
+			_lowLevelRenderer->PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, deltaIndexCount, GetClipRect(), _currentMaterialID);
 
 			PushTransformToBuffer(Float2::kOne, 0.0f, position);
 		}
@@ -421,7 +426,7 @@ namespace mint
 			}
 
 			const uint32 indexCount = _lowLevelRenderer->GetIndexCount() - indexOffset;
-			_lowLevelRenderer->PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, indexCount, GetClipRect());
+			_lowLevelRenderer->PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, indexCount, GetClipRect(), _currentMaterialID);
 
 			const Float3& preTranslation = ApplyCoordinateSpace(position);
 			const Float3& postTranslation = ComputePostTranslation(wideText, textLength, fontRenderingOption);
@@ -445,7 +450,7 @@ namespace mint
 			}
 
 			const uint32 indexCount = _lowLevelRenderer->GetIndexCount() - indexOffset;
-			_lowLevelRenderer->PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, indexCount, GetClipRect());
+			_lowLevelRenderer->PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, indexCount, GetClipRect(), _currentMaterialID);
 
 			const Float3& preTranslation = ApplyCoordinateSpace(position);
 			const Float3& postTranslation = ComputePostTranslation(wideText, textLength, fontRenderingOption);
@@ -527,6 +532,11 @@ namespace mint
 			}
 
 			glyphPosition._x += static_cast<float>(glyphInfo._horiAdvance) * scale;
+		}
+
+		const char* ShapeRenderer::GetPixelShaderName() const noexcept
+		{
+			return "ShapeRendererPS";
 		}
 
 		const char* ShapeRenderer::GetPixelShaderString() const noexcept
@@ -620,7 +630,7 @@ namespace mint
 				indices.PushBack(vertexOffset + index);
 			}
 
-			_lowLevelRenderer->PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, shape._indices.Size(), GetClipRect());
+			_lowLevelRenderer->PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, shape._indices.Size(), GetClipRect(), _currentMaterialID);
 		}
 	}
 }

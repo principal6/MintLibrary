@@ -153,7 +153,7 @@ namespace mint
 		}
 
 		template<typename T>
-		MINT_INLINE void LowLevelRenderer<T>::PushRenderCommandIndexed(const RenderingPrimitive primitive, const uint32 vertexOffset, const uint32 indexOffset, const uint32 indexCount, const Rect& clipRect) noexcept
+		inline void LowLevelRenderer<T>::PushRenderCommandIndexed(const RenderingPrimitive primitive, const uint32 vertexOffset, const uint32 indexOffset, const uint32 indexCount, const Rect& clipRect, const GraphicsObjectID& materialID) noexcept
 		{
 			RenderCommand newRenderCommand;
 			newRenderCommand._isOrdinal = _isOrdinalMode;
@@ -163,6 +163,8 @@ namespace mint
 			newRenderCommand._vertexCount = 0;
 			newRenderCommand._indexOffset = indexOffset;
 			newRenderCommand._indexCount = indexCount;
+			newRenderCommand._materialID = materialID;
+
 			if (MergeNewRenderCommand(newRenderCommand) == false)
 			{
 				_renderCommands.PushBack(newRenderCommand);
@@ -285,6 +287,11 @@ namespace mint
 				return false;
 			}
 
+			if (mergeDestRenderCommand._materialID != newRenderCommand._materialID)
+			{
+				return false;
+			}
+
 			if (_isOrdinalMode == true && _renderCommands.Size() <= _ordinalRenderCommandGroups.Back()._startRenderCommandIndex)
 			{
 				return false;
@@ -352,6 +359,14 @@ namespace mint
 			graphicsDevice.GetStateManager().SetRSScissorRectangle(scissorRect);
 
 			graphicsDevice.GetStateManager().SetIARenderingPrimitive(renderCommand._primitive);
+
+			// ##########
+			// ##########
+			// ##########
+			graphicsDevice.GetMaterialPool().BindMaterial(renderCommand._materialID);
+			// ##########
+			// ##########
+			// ##########
 
 			switch (renderCommand._primitive)
 			{

@@ -14,6 +14,7 @@
 #include <MintRenderingBase/Include/Shader.h>
 #include <MintRenderingBase/Include/ShaderPipeline.h>
 #include <MintRenderingBase/Include/GraphicsResource.h>
+#include <MintRenderingBase/Include/Material.h>
 #include <MintRenderingBase/Include/LowLevelRenderer.h>
 #include <MintRenderingBase/Include/ShapeRenderer.h>
 
@@ -110,6 +111,7 @@ namespace mint
 			ShaderPool& GetShaderPool() noexcept;
 			ShaderPipelinePool& GetShaderPipelinePool() noexcept;
 			GraphicsResourcePool& GetResourcePool() noexcept;
+			MaterialPool& GetMaterialPool() noexcept;
 			ShapeRenderer& GetShapeRenderer() noexcept;
 			const Language::CppHlsl::Interpreter& GetCppHlslSteamData() const noexcept;
 			const Language::CppHlsl::Interpreter& GetCppHlslConstantBuffers() const noexcept;
@@ -224,6 +226,7 @@ namespace mint
 			ShaderPool _shaderPool;
 			ShaderPipelinePool _shaderPipelinePool;
 			GraphicsResourcePool _resourcePool;
+			MaterialPool _materialPool;
 
 		private:
 			CB_View _cbViewData;

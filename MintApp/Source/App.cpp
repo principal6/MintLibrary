@@ -14,7 +14,6 @@ namespace mint
 		: _window{ MINT_NEW(Window) }
 		, _sceneObjectPool{ MINT_NEW(SceneObjectPool) }
 		, _sceneObjectSystems{ MINT_NEW(SceneObjectSystems) }
-		, _guiSystem{ MINT_NEW(GUI::GUISystem) }
 		, _frameNumber{ 0 }
 	{
 		if (_window->Create(windowCreationDesc) == false)
@@ -29,6 +28,7 @@ namespace mint
 			MINT_NEVER;
 			return;
 		}
+		_guiSystem.Assign(MINT_NEW(GUI::GUISystem, *_graphicsDevice));
 
 		_sceneObjectRenderer.Assign(MINT_NEW(SceneObjectRenderer, *_graphicsDevice));
 
@@ -130,7 +130,7 @@ namespace mint
 		MINT_ASSERT(_isInRenderingScope == true, "반드시 BeginRendering() 과 EndRendering() 사이에 호출되어야 합니다.");
 		MINT_ASSERT(_isInScreenSpaceRenderingScope == true, "반드시 BeginScreenSpaceRendering() 이후에 호출되어야 합니다.");
 
-		_guiSystem->Render(*_graphicsDevice);
+		_guiSystem->Render();
 
 		_graphicsDevice->GetShapeRenderer().Render();
 
@@ -150,7 +150,7 @@ namespace mint
 		{
 			BeginScreenSpaceRendering();
 
-			_guiSystem->Render(*_graphicsDevice);
+			_guiSystem->Render();
 			
 			EndScreenSpaceRendering();
 		}

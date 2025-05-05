@@ -8,6 +8,7 @@
 #include <MintRenderingBase/Source/GraphicsDevice.cpp>
 #include <MintRenderingBase/Source/GraphicsObject.cpp>
 #include <MintRenderingBase/Source/IRenderer.cpp>
+#include <MintRenderingBase/Source/Material.cpp>
 #include <MintRenderingBase/Source/MeshData.cpp>
 #include <MintRenderingBase/Source/RenderingBaseCommon.cpp>
 #include <MintRenderingBase/Source/ShapeRenderer.cpp>

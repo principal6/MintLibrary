@@ -45,6 +45,7 @@ namespace mint
 			InputLayout,
 			Shader,
 			ShaderPipeline,
+			Material,
 		};
 
 

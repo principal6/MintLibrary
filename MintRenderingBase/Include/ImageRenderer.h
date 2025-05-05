@@ -25,10 +25,15 @@ namespace mint
 			virtual void Flush() noexcept override;
 
 		public:
+			MINT_INLINE GraphicsObjectID GetDefaultShaderPipelineID() const noexcept { return __super::GetDefaultShaderPipelineID(); }
+
+		public:
 			void SetCoordinateSpace(const CoordinateSpace& coordinateSpace) noexcept;
+			void SetMaterial(const GraphicsObjectID& materialID) noexcept;
 			void DrawImage(const Float2& position, const Float2& size, const Float2& uv0, const Float2& uv1);
 
 		protected:
+			virtual const char* GetPixelShaderName() const noexcept override final;
 			virtual const char* GetPixelShaderString() const noexcept override final;
 			virtual const char* GetPixelShaderEntryPoint() const noexcept override final;
 

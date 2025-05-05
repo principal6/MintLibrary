@@ -51,6 +51,7 @@ namespace mint
 				uint32 _vertexCount = 0;
 				uint32 _indexOffset = 0;
 				uint32 _indexCount = 0;
+				GraphicsObjectID _materialID = GraphicsObjectID::kInvalidGraphicsObjectID;
 			};
 
 			struct OrdinalRenderCommandGroup
@@ -117,7 +118,7 @@ namespace mint
 			void Render(GraphicsDevice& graphicsDevice, RenderingPrimitive renderingPrimitive) noexcept;
 
 		public:
-			void PushRenderCommandIndexed(const RenderingPrimitive primitive, const uint32 vertexOffset, const uint32 indexOffset, const uint32 indexCount, const Rect& clipRect) noexcept;
+			void PushRenderCommandIndexed(const RenderingPrimitive primitive, const uint32 vertexOffset, const uint32 indexOffset, const uint32 indexCount, const Rect& clipRect, const GraphicsObjectID& materialID) noexcept;
 			void BeginOrdinalRenderCommands(const uint64 key) noexcept;
 			void EndOrdinalRenderCommands() noexcept;
 			void SetOrdinalRenderCommandGroupPriority(const uint64 key, const uint32 priority) noexcept;

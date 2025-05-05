@@ -41,12 +41,22 @@ namespace mint
 			__super::SetCoordinateSpace(coordinateSpace);
 		}
 
+		void ImageRenderer::SetMaterial(const GraphicsObjectID& materialID) noexcept
+		{
+			__super::SetMaterial(materialID);
+		}
+
 		void ImageRenderer::DrawImage(const Float2& position, const Float2& size, const Float2& uv0, const Float2& uv1)
 		{
 			_uv0 = uv0;
 			_uv1 = uv1;
 
 			DrawRectangle(Float3(position), size);
+		}
+
+		const char* ImageRenderer::GetPixelShaderName() const noexcept
+		{
+			return "ImageRendererPS";
 		}
 
 		const char* ImageRenderer::GetPixelShaderString() const noexcept

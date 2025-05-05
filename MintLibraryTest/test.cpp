@@ -70,6 +70,15 @@ void RunGJKTestWindow()
 	EPA2DInfo epa2DInfo;
 	GraphicsDevice& graphicsDevice = app.GetGraphicsDevice();
 	ShapeRenderer& shapeRenderer = graphicsDevice.GetShapeRenderer();
+	MaterialPool& materialPool = graphicsDevice.GetMaterialPool();
+	GraphicsObjectID defaultMaterialID;
+	{
+		MaterialDesc materialDesc;
+		materialDesc._materialName = "Default";
+		materialDesc._shaderPipelineID = shapeRenderer.GetDefaultShaderPipelineID();
+		defaultMaterialID = materialPool.CreateMaterial(materialDesc);
+	}
+
 	const InputContext& inputContext = InputContext::GetInstance();
 	enum class SelectionMode
 	{
@@ -163,6 +172,8 @@ void RunGJKTestWindow()
 		{
 			{
 				graphicsDevice.SetViewProjectionMatrix(Float4x4::kIdentity, Float4x4::ProjectionMatrix2DNormal(windowSize._x, windowSize._y));
+				
+				shapeRenderer.SetMaterial(defaultMaterialID);
 
 				CircleCollisionShape2D shapeA = CircleCollisionShape2D(64, shapeATransform2D);
 				//EdgeCollisionShape2D shapeB = EdgeCollisionShape2D(Float2(-64, 0), Float2(64, 0), shapeBTransform2D);
@@ -304,6 +315,15 @@ void RunSplineTestWindow()
 	GraphicsDevice& graphicsDevice = app.GetGraphicsDevice();
 	const InputContext& inputContext = InputContext::GetInstance();
 	ShapeRenderer& shapeRenderer = graphicsDevice.GetShapeRenderer();
+	MaterialPool& materialPool = graphicsDevice.GetMaterialPool();
+	GraphicsObjectID defaultMaterialID;
+	{
+		MaterialDesc materialDesc;
+		materialDesc._materialName = "Default";
+		materialDesc._shaderPipelineID = shapeRenderer.GetDefaultShaderPipelineID();
+		defaultMaterialID = materialPool.CreateMaterial(materialDesc);
+	}
+
 	while (app.IsRunning() == true)
 	{
 		// Rendering
@@ -313,6 +333,7 @@ void RunSplineTestWindow()
 			{
 				StackStringW<100> fpsString;
 				FormatString(fpsString, L"FPS: %d", Profiler::FPSCounter::GetFPS());
+				shapeRenderer.SetMaterial(defaultMaterialID);
 				shapeRenderer.SetTextColor(Color::kBlack);
 				shapeRenderer.DrawDynamicText(fpsString.CString(), Float2(10, 10), FontRenderingOption());
 			}
@@ -341,13 +362,33 @@ bool Run2DTestWindow()
 	appCreationDesc._appType = AppType::Default2D;
 	mint::App app{ windowCreationDesc, appCreationDesc };
 
+	GraphicsDevice& graphicsDevice = app.GetGraphicsDevice();
+	GraphicsResourcePool& resourcePool = graphicsDevice.GetResourcePool();
+	MaterialPool& materialPool = graphicsDevice.GetMaterialPool();
+	ShapeRenderer& shapeRenderer = graphicsDevice.GetShapeRenderer();
+	GraphicsObjectID defaultMaterialID;
+	{
+		MaterialDesc materialDesc;
+		materialDesc._materialName = "Default";
+		materialDesc._shaderPipelineID = shapeRenderer.GetDefaultShaderPipelineID();
+		defaultMaterialID = materialPool.CreateMaterial(materialDesc);
+	}
+
 	ByteColorImage corgiSpriteSheet;
 	ImageLoader imageLoader;
 	imageLoader.LoadImage_("Assets/corgi-asset_Miniyeti.png", corgiSpriteSheet);
-	GraphicsDevice& graphicsDevice = app.GetGraphicsDevice();
-	GraphicsResourcePool& resourcePool = graphicsDevice.GetResourcePool();
 	const GraphicsObjectID corgiSpriteSheetTextureID = resourcePool.AddTexture2D(corgiSpriteSheet);
-
+	ImageRenderer imageRenderer{ graphicsDevice, 1 };
+	GraphicsObjectID corgiMaterialID;
+	{
+		MaterialDesc materialDesc;
+		materialDesc._materialName = "Corgi";
+		materialDesc._shaderPipelineID = imageRenderer.GetDefaultShaderPipelineID();
+		materialDesc._textureID = corgiSpriteSheetTextureID;
+		materialDesc._textureSlot = 1;
+		corgiMaterialID = materialPool.CreateMaterial(materialDesc);
+	}
+	
 	SceneObjectPool& sceneObjectPool = app.GetObjectPool();
 	SceneObject sceneObject0 = sceneObjectPool.CreateSceneObject();
 	{
@@ -361,7 +402,7 @@ bool Run2DTestWindow()
 		collision2DComponent._collisionShape2D = MakeShared<CollisionShape2D>(ConvexCollisionShape2D::MakeFromRenderingShape(Float2::kZero, shape));
 		sceneObjectPool.AttachComponent(sceneObject0, std::move(collision2DComponent));
 	}
-
+	
 	SceneObject sceneObject1 = sceneObjectPool.CreateSceneObject();
 	{
 		Mesh2DComponent mesh2DComponent;
@@ -397,9 +438,7 @@ bool Run2DTestWindow()
 	}
 
 
-	ImageRenderer imageRenderer{ graphicsDevice, 1 };
 	const InputContext& inputContext = InputContext::GetInstance();
-	ShapeRenderer& shapeRenderer = graphicsDevice.GetShapeRenderer();
 	while (app.IsRunning() == true)
 	{
 		const float deltaTime = DeltaTimer::GetInstance().GetDeltaTimeS();
@@ -422,6 +461,7 @@ bool Run2DTestWindow()
 			app.BeginScreenSpaceRendering();
 			{
 				imageRenderer.SetCoordinateSpace(CoordinateSpace::Screen);
+				imageRenderer.SetMaterial(corgiMaterialID);
 
 				resourcePool.GetResource(corgiSpriteSheetTextureID).BindToShader(GraphicsShaderType::PixelShader, 1);
 				//imageRenderer.DrawImage(Float2(0, 0), Float2(800, 512), Float2(0, 0), Float2(1, 1));
@@ -433,6 +473,7 @@ bool Run2DTestWindow()
 
 				StackStringW<100> fpsString;
 				FormatString(fpsString, L"FPS: %d", Profiler::FPSCounter::GetFPS());
+				shapeRenderer.SetMaterial(defaultMaterialID);
 				shapeRenderer.SetTextColor(Color::kBlack);
 				shapeRenderer.DrawDynamicText(fpsString.CString(), Float2(10, 10), FontRenderingOption());
 			}
@@ -483,6 +524,15 @@ bool Run3DTestWindow()
 	SceneObjectSystems& sceneObjectSystems = app.GetSceneObjectSystems();
 	const InputContext& inputContext = InputContext::GetInstance();
 	ShapeRenderer& shapeRenderer = graphicsDevice.GetShapeRenderer();
+	MaterialPool& materialPool = graphicsDevice.GetMaterialPool();
+	GraphicsObjectID defaultMaterialID;
+	{
+		MaterialDesc materialDesc;
+		materialDesc._materialName = "Default";
+		materialDesc._shaderPipelineID = shapeRenderer.GetDefaultShaderPipelineID();
+		defaultMaterialID = materialPool.CreateMaterial(materialDesc);
+	}
+
 	while (app.IsRunning() == true)
 	{
 		const float deltaTime = DeltaTimer::GetInstance().GetDeltaTimeS();
@@ -549,6 +599,7 @@ bool Run3DTestWindow()
 				// RenderOverlayUI
 				StackStringW<100> fpsString;
 				FormatString(fpsString, L"FPS: %d", Profiler::FPSCounter::GetFPS());
+				shapeRenderer.SetMaterial(defaultMaterialID);
 				shapeRenderer.SetTextColor(Color::kBlack);
 				shapeRenderer.DrawDynamicText(fpsString.CString(), Float2(10, 10), FontRenderingOption());
 			}

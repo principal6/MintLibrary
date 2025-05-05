@@ -85,8 +85,12 @@ namespace mint
 			virtual void Flush() noexcept override;
 
 		public:
+			MINT_INLINE GraphicsObjectID GetDefaultShaderPipelineID() const noexcept { return _shaderPipelineDefaultID; }
+
+		public:
 			bool InitializeFontData(const FontData& fontData);
 			void SetTextColor(const Color& textColor) noexcept;
+			void SetMaterial(const GraphicsObjectID& materialID) noexcept;
 
 		public:
 			void AddShape(const Shape& shape);
@@ -130,6 +134,7 @@ namespace mint
 			const char* GetDefaultVertexShaderString() const;
 			const char* GetDefaultGeometryShaderString() const;
 			const char* GetDefaultPixelShaderString() const;
+			virtual const char* GetPixelShaderName() const noexcept;
 			virtual const char* GetPixelShaderString() const noexcept;
 			virtual const char* GetPixelShaderEntryPoint() const noexcept;
 			Float3 ComputePostTranslation(const wchar_t* const wideText, const uint32 textLength, const FontRenderingOption& fontRenderingOption) const;
@@ -148,6 +153,7 @@ namespace mint
 			GraphicsObjectID _shaderPipelineMultipleViewportID;
 
 			Color _textColor;
+			GraphicsObjectID _currentMaterialID;
 			FontData _fontData;
 
 			Float2 _uv0 = Float2(0, 0);

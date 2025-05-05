@@ -31,6 +31,11 @@ namespace mint
 			return _resourcePool;
 		}
 
+		MINT_INLINE MaterialPool& GraphicsDevice::GetMaterialPool() noexcept
+		{
+			return _materialPool;
+		}
+
 		MINT_INLINE ShapeRenderer& GraphicsDevice::GetShapeRenderer() noexcept
 		{
 			return _shapeRenderer;
