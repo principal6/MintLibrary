@@ -72,6 +72,7 @@ namespace mint
 			GraphicsInputLayout(GraphicsInputLayout&& rhs) noexcept = default;
 
 		private:
+			StringA _inputLayoutName;
 			DxInputElementSet _inputElementSet;
 			ComPtr<ID3D11InputLayout> _inputLayout;
 		};
@@ -95,6 +96,7 @@ namespace mint
 			Shader(Shader&& rhs) noexcept = default;
 
 		private:
+			StringA _shaderName;
 			ComPtr<ID3D10Blob> _shaderBlob;
 			ComPtr<ID3D11DeviceChild> _shader;
 			GraphicsShaderType _shaderType;

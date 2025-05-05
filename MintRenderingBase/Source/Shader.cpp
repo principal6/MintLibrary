@@ -138,7 +138,7 @@ namespace mint
 			{
 				return GraphicsObjectID::kInvalidGraphicsObjectID;
 			}
-			shader._hlslFileName = shaderIdentifier;
+			shader._shaderName = shaderIdentifier;
 
 			return CreateShaderInternal(shaderType, shader);
 		}
@@ -150,6 +150,8 @@ namespace mint
 			{
 				return GraphicsObjectID::kInvalidGraphicsObjectID;
 			}
+			shader._shaderName = inputShaderFileName;
+
 			return CreateShaderInternal(shaderType, shader);
 		}
 
@@ -251,6 +253,7 @@ namespace mint
 			}
 
 			inputLayout.AssignIDXXX();
+			inputLayout._inputLayoutName = inputElementTypeMetaData.GetTypeName();
 			const GraphicsObjectID graphicsObjectID = inputLayout.GetID();
 			_inputLayouts.PushBack(RefCounted<GraphicsInputLayout>(MINT_NEW(GraphicsInputLayout, std::move(inputLayout))));
 			QuickSort(_inputLayouts, GraphicsObject::AscendingComparator());
