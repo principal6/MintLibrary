@@ -150,6 +150,7 @@ namespace mint
 			}
 			shader._shaderName = shaderName;
 			shader._shaderHashKey = shaderHashKey;
+			shader._entryPoint = entryPoint;
 
 			return CreateShaderInternal(shaderType, shader);
 		}
@@ -172,6 +173,7 @@ namespace mint
 			}
 			shader._shaderName = shaderName.CString();
 			shader._shaderHashKey = ComputeHash(outputDirectory);
+			shader._entryPoint = entryPoint;
 
 			return CreateShaderInternal(shaderType, shader);
 		}
