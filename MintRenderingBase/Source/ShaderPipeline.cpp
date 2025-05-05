@@ -129,8 +129,10 @@ namespace mint
 			RefCounted<ShaderPipeline> shaderPipeline{ MINT_NEW(ShaderPipeline, _graphicsDevice, shaderPipelineDesc) };
 			shaderPipeline->AssignIDXXX();
 			shaderPipeline.IncreaseRefCount();
+			const GraphicsObjectID graphicsObjectID = shaderPipeline->GetID();
 			_shaderPipelines.PushBack(std::move(shaderPipeline));
-			return _shaderPipelines.Back()->GetID();
+			QuickSort(_shaderPipelines, GraphicsObject::AscendingComparator());
+			return graphicsObjectID;
 		}
 
 		void ShaderPipelinePool::DestroyShaderPipeline(const GraphicsObjectID& shaderPipelineID)
