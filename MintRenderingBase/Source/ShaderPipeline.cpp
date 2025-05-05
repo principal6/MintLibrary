@@ -1,4 +1,5 @@
 #include <MintRenderingBase/Include/ShaderPipeline.h>
+#include <MintContainer/Include/RefCounted.hpp>
 #include <MintRenderingBase/Include/Shader.h>
 
 
@@ -106,10 +107,28 @@ namespace mint
 			__noop;
 		}
 
+		ShaderPipelinePool::~ShaderPipelinePool()
+		{
+			MINT_ASSERT(_shaderPipelines.IsEmpty() == true, "All ShaderPipelines must be destroyed before destroying ShaderPipelinePool!");
+		}
+
 		GraphicsObjectID ShaderPipelinePool::CreateShaderPipeline(const ShaderPipelineDesc& shaderPipelineDesc)
 		{
-			OwnPtr<ShaderPipeline> shaderPipeline{ MINT_NEW(ShaderPipeline, _graphicsDevice, shaderPipelineDesc) };
+			for (RefCounted<ShaderPipeline>& shaderPipeline : _shaderPipelines)
+			{
+				if (shaderPipeline->_inputLayoutID == shaderPipelineDesc._inputLayoutID &&
+					shaderPipeline->_vertexShaderID == shaderPipelineDesc._vertexShaderID &&
+					shaderPipeline->_geometryShaderID == shaderPipelineDesc._geometryShaderID &&
+					shaderPipeline->_pixelShaderID == shaderPipelineDesc._pixelShaderID)
+				{
+					shaderPipeline.IncreaseRefCount();
+					return shaderPipeline->GetID();
+				}
+			}
+
+			RefCounted<ShaderPipeline> shaderPipeline{ MINT_NEW(ShaderPipeline, _graphicsDevice, shaderPipelineDesc) };
 			shaderPipeline->AssignIDXXX();
+			shaderPipeline.IncreaseRefCount();
 			_shaderPipelines.PushBack(std::move(shaderPipeline));
 			return _shaderPipelines.Back()->GetID();
 		}
@@ -123,8 +142,12 @@ namespace mint
 				return;
 			}
 
-			_shaderPipelines[index].Release();
-			_shaderPipelines.Erase(index);
+			_shaderPipelines[index].DecreaseRefCount();
+
+			if (_shaderPipelines[index].IsValid() == false)
+			{
+				_shaderPipelines.Erase(index);
+			}
 		}
 
 		const ShaderPipeline& ShaderPipelinePool::GetShaderPipeline(const GraphicsObjectID& shaderPipelineID) const

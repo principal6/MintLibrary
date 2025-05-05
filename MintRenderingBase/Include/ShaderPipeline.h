@@ -6,7 +6,7 @@
 
 
 #include <MintCommon/Include/CommonDefinitions.h>
-
+#include <MintContainer/Include/RefCounted.h>
 #include <MintRenderingBase/Include/GraphicsObject.h>
 
 
@@ -65,7 +65,7 @@ namespace mint
 			friend GraphicsDevice;
 
 		public:
-			~ShaderPipelinePool() = default;
+			~ShaderPipelinePool();
 
 		public:
 			GraphicsObjectID CreateShaderPipeline(const ShaderPipelineDesc& shaderPipelineDesc);
@@ -78,7 +78,7 @@ namespace mint
 
 		private:
 			GraphicsDevice& _graphicsDevice;
-			Vector<OwnPtr<ShaderPipeline>> _shaderPipelines;
+			Vector<RefCounted<ShaderPipeline>> _shaderPipelines;
 		};
 	}
 }
