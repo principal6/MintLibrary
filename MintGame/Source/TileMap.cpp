@@ -3,7 +3,7 @@
 #include <MintContainer/Include/StringUtil.hpp>
 #include <MintMath/Include/Float2.h>
 #include <MintMath/Include/Transform.h>
-#include <MintRenderingBase/Include/ImageRenderer.h>
+#include <MintRenderingBase/Include/SpriteRenderer.h>
 #include <MintPlatform/Include/XML.h>
 #include <MintPhysics/Include/CollisionShape.h>
 
@@ -207,7 +207,7 @@ namespace mint
 			return true;
 		}
 
-		void TileMap::Draw(ImageRenderer& imageRenderer) const
+		void TileMap::Draw(SpriteRenderer& spriteRenderer) const
 		{
 			const Vector<uint32>& tiles = GetTiles();
 			if (tiles.IsEmpty() == true)
@@ -244,7 +244,7 @@ namespace mint
 					tileV0 /= tileSet.GetImageHeight();
 					tileV1 /= tileSet.GetImageHeight();
 
-					imageRenderer.DrawImage(Float2(tileHalfWidth + tileWidth * x, -tileHalfHeight + yOffset + -tileHeight * y), Float2(tileWidth, tileHeight)
+					spriteRenderer.DrawImage(Float2(tileHalfWidth + tileWidth * x, -tileHalfHeight + yOffset + -tileHeight * y), Float2(tileWidth, tileHeight)
 						, Float2(tileU0, tileV0), Float2(tileU1, tileV1));
 				}
 			}

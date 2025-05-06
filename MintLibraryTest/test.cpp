@@ -378,12 +378,12 @@ bool Run2DTestWindow()
 	ImageLoader imageLoader;
 	imageLoader.LoadImage_("Assets/corgi-asset_Miniyeti.png", corgiSpriteSheet);
 	const GraphicsObjectID corgiSpriteSheetTextureID = resourcePool.AddTexture2D(corgiSpriteSheet);
-	ImageRenderer imageRenderer{ graphicsDevice, 1 };
+	SpriteRenderer spriteRenderer{ graphicsDevice, 1 };
 	GraphicsObjectID corgiMaterialID;
 	{
 		MaterialDesc materialDesc;
 		materialDesc._materialName = "Corgi";
-		materialDesc._shaderPipelineID = imageRenderer.GetDefaultShaderPipelineID();
+		materialDesc._shaderPipelineID = spriteRenderer.GetDefaultShaderPipelineID();
 		materialDesc._textureID = corgiSpriteSheetTextureID;
 		materialDesc._textureSlot = 1;
 		corgiMaterialID = materialPool.CreateMaterial(materialDesc);
@@ -460,16 +460,16 @@ bool Run2DTestWindow()
 		{
 			app.BeginScreenSpaceRendering();
 			{
-				imageRenderer.SetCoordinateSpace(CoordinateSpace::Screen);
-				imageRenderer.SetMaterial(corgiMaterialID);
+				spriteRenderer.SetCoordinateSpace(CoordinateSpace::Screen);
+				spriteRenderer.SetMaterial(corgiMaterialID);
 
 				resourcePool.GetResource(corgiSpriteSheetTextureID).BindToShader(GraphicsShaderType::PixelShader, 1);
-				//imageRenderer.DrawImage(Float2(0, 0), Float2(800, 512), Float2(0, 0), Float2(1, 1));
+				//spriteRenderer.DrawImage(Float2(0, 0), Float2(800, 512), Float2(0, 0), Float2(1, 1));
 				
 				corgiAnimationSet.Update(deltaTime);
 				const SpriteAnimation& corgiCurrentAnimation = corgiAnimationSet.GetCurrentAnimation();
-				imageRenderer.DrawImage(Float2(64, 64), Float2(128, 128), corgiCurrentAnimation.GetCurrentFrameUV0(), corgiCurrentAnimation.GetCurrentFrameUV1());
-				imageRenderer.Render();
+				spriteRenderer.DrawImage(Float2(64, 64), Float2(128, 128), corgiCurrentAnimation.GetCurrentFrameUV0(), corgiCurrentAnimation.GetCurrentFrameUV1());
+				spriteRenderer.Render();
 
 				StackStringW<100> fpsString;
 				FormatString(fpsString, L"FPS: %d", Profiler::FPSCounter::GetFPS());

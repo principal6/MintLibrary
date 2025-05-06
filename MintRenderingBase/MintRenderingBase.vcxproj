@@ -200,7 +200,7 @@
     <ClInclude Include="Include\CppHlsl\Parser.h" />
     <ClInclude Include="Include\CppHlsl\CppHlslTypes.h" />
     <ClInclude Include="Include\GraphicsResource.h" />
-    <ClInclude Include="Include\ImageRenderer.h" />
+    <ClInclude Include="Include\SpriteRenderer.h" />
     <ClInclude Include="Include\Material.h" />
     <ClInclude Include="Include\Shader.h" />
     <ClInclude Include="Include\DxShaderHeaderMemory.h" />
@@ -249,7 +249,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="Source\ImageRenderer.cpp">
+    <ClCompile Include="Source\SpriteRenderer.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>

@@ -96,7 +96,7 @@
     <ClInclude Include="Include\ShaderPipeline.h">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="Include\ImageRenderer.h">
+    <ClInclude Include="Include\SpriteRenderer.h">
       <Filter>Include</Filter>
     </ClInclude>
     <ClInclude Include="Include\Material.h">
@@ -169,7 +169,7 @@
     <ClCompile Include="Source\ShaderPipeline.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Source\ImageRenderer.cpp">
+    <ClCompile Include="Source\SpriteRenderer.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\Material.cpp">

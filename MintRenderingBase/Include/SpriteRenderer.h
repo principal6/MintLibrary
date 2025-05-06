@@ -12,12 +12,12 @@ namespace mint
 {
 	namespace Rendering
 	{
-		class ImageRenderer : protected ShapeRenderer
+		class SpriteRenderer : protected ShapeRenderer
 		{
 		public:
-			ImageRenderer(GraphicsDevice& graphicsDevice, const uint32 psTextureSlot);
-			ImageRenderer(GraphicsDevice& graphicsDevice, const uint32 psTextureSlot, const ByteColor& transparentColor);
-			virtual ~ImageRenderer() = default;
+			SpriteRenderer(GraphicsDevice& graphicsDevice, const uint32 psTextureSlot);
+			SpriteRenderer(GraphicsDevice& graphicsDevice, const uint32 psTextureSlot, const ByteColor& transparentColor);
+			virtual ~SpriteRenderer() = default;
 
 		public:
 			virtual void InitializeShaders() noexcept override;

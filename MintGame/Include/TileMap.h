@@ -15,7 +15,7 @@ namespace mint
 {
 	namespace Rendering
 	{
-		class ImageRenderer;
+		class SpriteRenderer;
 		class ShapeRenderer;
 	}
 
@@ -64,7 +64,7 @@ namespace mint
 			using Vector = mint::Vector<T>;
 			using StringA = mint::StringA;
 			using StringReferenceA = mint::StringReferenceA;
-			using ImageRenderer = mint::Rendering::ImageRenderer;
+			using SpriteRenderer = mint::Rendering::SpriteRenderer;
 
 		public:
 			TileMap();
@@ -72,7 +72,7 @@ namespace mint
 
 		public:
 			bool Load(const StringA& tileMapFileName);
-			void Draw(ImageRenderer& imageRenderer) const;
+			void Draw(SpriteRenderer& spriteRenderer) const;
 			void DrawCollisions(Rendering::ShapeRenderer& shapeRenderer) const;
 
 		public:

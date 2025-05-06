@@ -63,7 +63,7 @@ classDiagram
         ...
     }
     class MintRendering{
-        ImageRenderer
+        SpriteRenderer
         InstantRenderer
         MeshGenerator
         SplineGenerator

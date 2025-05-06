@@ -1,4 +1,4 @@
-﻿#include <MintRenderingBase/Include/ImageRenderer.h>
+﻿#include <MintRenderingBase/Include/SpriteRenderer.h>
 #include <MintRenderingBase/Include/GraphicsDevice.h>
 #include <MintContainer/Include/StringUtil.hpp>
 
@@ -7,13 +7,13 @@ namespace mint
 {
 	namespace Rendering
 	{
-		ImageRenderer::ImageRenderer(GraphicsDevice& graphicsDevice, const uint32 psTextureSlot)
-			: ImageRenderer(graphicsDevice, psTextureSlot, ByteColor(0, 0, 0, 0))
+		SpriteRenderer::SpriteRenderer(GraphicsDevice& graphicsDevice, const uint32 psTextureSlot)
+			: SpriteRenderer(graphicsDevice, psTextureSlot, ByteColor(0, 0, 0, 0))
 		{
 			__noop;
 		}
 
-		ImageRenderer::ImageRenderer(GraphicsDevice& graphicsDevice, const uint32 psTextureSlot, const ByteColor& transparentColor)
+		SpriteRenderer::SpriteRenderer(GraphicsDevice& graphicsDevice, const uint32 psTextureSlot, const ByteColor& transparentColor)
 			: ShapeRenderer(graphicsDevice)
 			, _psTextureSlot{ psTextureSlot }
 			, _transparentColor{ transparentColor }
@@ -21,32 +21,32 @@ namespace mint
 			InitializeShaders();
 		}
 
-		void ImageRenderer::InitializeShaders() noexcept
+		void SpriteRenderer::InitializeShaders() noexcept
 		{
 			__super::InitializeShaders();
 		}
 
-		void ImageRenderer::Flush() noexcept
+		void SpriteRenderer::Flush() noexcept
 		{
 			__super::Flush();
 		}
 
-		void ImageRenderer::Render() noexcept
+		void SpriteRenderer::Render() noexcept
 		{
 			__super::Render();
 		}
 
-		void ImageRenderer::SetCoordinateSpace(const CoordinateSpace& coordinateSpace) noexcept
+		void SpriteRenderer::SetCoordinateSpace(const CoordinateSpace& coordinateSpace) noexcept
 		{
 			__super::SetCoordinateSpace(coordinateSpace);
 		}
 
-		void ImageRenderer::SetMaterial(const GraphicsObjectID& materialID) noexcept
+		void SpriteRenderer::SetMaterial(const GraphicsObjectID& materialID) noexcept
 		{
 			__super::SetMaterial(materialID);
 		}
 
-		void ImageRenderer::DrawImage(const Float2& position, const Float2& size, const Float2& uv0, const Float2& uv1)
+		void SpriteRenderer::DrawImage(const Float2& position, const Float2& size, const Float2& uv0, const Float2& uv1)
 		{
 			_uv0 = uv0;
 			_uv1 = uv1;
@@ -54,12 +54,12 @@ namespace mint
 			DrawRectangle(Float3(position), size);
 		}
 
-		const char* ImageRenderer::GetPixelShaderName() const noexcept
+		const char* SpriteRenderer::GetPixelShaderName() const noexcept
 		{
-			return "ImageRendererPS";
+			return "SpriteRendererPS";
 		}
 
-		const char* ImageRenderer::GetPixelShaderString() const noexcept
+		const char* SpriteRenderer::GetPixelShaderString() const noexcept
 		{
 			static constexpr const char kShaderStringInclude[]
 			{
@@ -104,7 +104,7 @@ namespace mint
 			return shaderString.CString();
 		}
 
-		const char* ImageRenderer::GetPixelShaderEntryPoint() const noexcept
+		const char* SpriteRenderer::GetPixelShaderEntryPoint() const noexcept
 		{
 			return "main_image";
 		}
