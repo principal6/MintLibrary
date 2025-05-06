@@ -1,4 +1,6 @@
 ﻿# TODO
+## Renderer - FontRenderer 추가( ShapeRenederer 에서 분리 )
+## Renderer - MeshRenderer 추가
 ## GUI 개편
 ### Manager classes for GUI system
 ControlRegistry
