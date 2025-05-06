@@ -12,6 +12,11 @@
 
 namespace mint
 {
+	class BinaryFileWriter;
+}
+
+namespace mint
+{
 	namespace Rendering
 	{
 		class ImageLoader
