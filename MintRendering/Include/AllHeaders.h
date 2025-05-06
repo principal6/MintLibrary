@@ -7,7 +7,6 @@
 
 #include <MintRendering/Include/InstantRenderer.h>
 #include <MintRendering/Include/Plotter.h>
-#include <MintRendering/Include/MathExpRenderer.h>
 #include <MintRendering/Include/SplineGenerator.h>
 
 

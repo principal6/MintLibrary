@@ -62,6 +62,8 @@ namespace mint
 		// All draw functions use LowLevelRenderer::PushRenderCommandIndexed()
 		class ShapeRenderer : public IRenderer
 		{
+			friend GraphicsDevice;
+
 		public:
 			struct Split
 			{
@@ -73,9 +75,6 @@ namespace mint
 			};
 
 		public:
-			ShapeRenderer(GraphicsDevice& graphicsDevice);
-			ShapeRenderer(const ShapeRenderer& rhs) = delete;
-			ShapeRenderer(ShapeRenderer&& rhs) = delete;
 			virtual ~ShapeRenderer();
 
 		public:
@@ -125,6 +124,11 @@ namespace mint
 		public:
 			virtual bool IsEmpty() const noexcept override;
 			const FontData& GetFontData() const noexcept { return _fontData; }
+
+		protected:
+			ShapeRenderer(GraphicsDevice& graphicsDevice);
+			ShapeRenderer(const ShapeRenderer& rhs) = delete;
+			ShapeRenderer(ShapeRenderer&& rhs) = delete;
 
 			// Font
 		protected:

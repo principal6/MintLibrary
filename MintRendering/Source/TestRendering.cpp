@@ -111,14 +111,5 @@ namespace mint
 			plotter.Render();
 			return true;
 		}
-
-		bool Test_MathExpressionRenderer(Rendering::MathExpressionRenderer& mathExpressionRenderer)
-		{
-			using namespace Rendering;
-
-			mathExpressionRenderer.DrawMathExpression(MathExpression(L"\\bold{aba} is it even possibile? AB=C"), Float2(100, 100));
-			mathExpressionRenderer.Render();
-			return true;
-		}
 	}
 }
