@@ -325,10 +325,12 @@ namespace mint
 
 			CreateDxDevice();
 
-			_shapeRenderer.Assign(MINT_NEW(ShapeRenderer, *this));
+			_lowLevelRendererForShapeAndFont.Assign(MINT_NEW(LowLevelRenderer<VS_INPUT_SHAPE>));
+			_shapeRenderer.Assign(MINT_NEW(ShapeRenderer, *this, *_lowLevelRendererForShapeAndFont));
 			_shapeRenderer->InitializeShaders();
 
-			_spriteRenderer.Assign(MINT_NEW(SpriteRenderer, *this, 1, ByteColor(0, 0, 0, 0)));
+			_lowLevelRendererForSprite.Assign(MINT_NEW(LowLevelRenderer<VS_INPUT_SHAPE>));
+			_spriteRenderer.Assign(MINT_NEW(SpriteRenderer, *this, *_lowLevelRendererForSprite, 1, ByteColor(0, 0, 0, 0)));
 
 			if (LoadFontData() == false)
 			{

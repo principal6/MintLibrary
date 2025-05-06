@@ -10,22 +10,9 @@ namespace mint
 {
 	namespace Rendering
 	{
-		IRenderer::IRenderer(GraphicsDevice& graphicsDevice)
+		IRenderer::IRenderer(GraphicsDevice& graphicsDevice, LowLevelRenderer<VS_INPUT_SHAPE>& lowLevelRenderer)
 			: _graphicsDevice{ graphicsDevice }
-			, _lowLevelRenderer{ nullptr }
-			, _ownsLowLevelRenderer{ true }
-			, _coordinateSpace{ CoordinateSpace::World }
-			, _color{ Color::kWhite }
-			, _useMultipleViewports{ false }
-		{
-			LowLevelRenderer<VS_INPUT_SHAPE>*& lowLevelRendererCasted = const_cast<LowLevelRenderer<VS_INPUT_SHAPE>*&>(_lowLevelRenderer);
-			lowLevelRendererCasted = MINT_NEW(LowLevelRenderer<VS_INPUT_SHAPE>);
-		}
-
-		IRenderer::IRenderer(GraphicsDevice& graphicsDevice, LowLevelRenderer<VS_INPUT_SHAPE>* const nonOwnedLowLevelRenderer)
-			: _graphicsDevice{ graphicsDevice }
-			, _lowLevelRenderer{ nonOwnedLowLevelRenderer }
-			, _ownsLowLevelRenderer{ false }
+			, _lowLevelRenderer{ lowLevelRenderer }
 			, _coordinateSpace{ CoordinateSpace::World }
 			, _color{ Color::kWhite }
 			, _useMultipleViewports{ false }
@@ -33,24 +20,9 @@ namespace mint
 			__noop;
 		}
 
-		IRenderer::IRenderer(const IRenderer& rhs)
-			: _graphicsDevice{ rhs._graphicsDevice }
-			, _lowLevelRenderer{ nullptr }
-			, _ownsLowLevelRenderer{ true }
-			, _color{ Color::kWhite }
-			, _useMultipleViewports{ false }
+		IRenderer::~IRenderer()
 		{
-			LowLevelRenderer<VS_INPUT_SHAPE>*& lowLevelRendererCasted = const_cast<LowLevelRenderer<VS_INPUT_SHAPE>*&>(_lowLevelRenderer);
-			lowLevelRendererCasted = MINT_NEW(LowLevelRenderer<VS_INPUT_SHAPE>);
-		}
-
-		inline IRenderer::~IRenderer()
-		{
-			if (_ownsLowLevelRenderer)
-			{
-				LowLevelRenderer<VS_INPUT_SHAPE>*& lowLevelRendererCasted = const_cast<LowLevelRenderer<VS_INPUT_SHAPE>*&>(_lowLevelRenderer);
-				MINT_DELETE(lowLevelRendererCasted);
-			}
+			__noop;
 		}
 
 		Float3 IRenderer::ApplyCoordinateSpace(const Float3& position) const

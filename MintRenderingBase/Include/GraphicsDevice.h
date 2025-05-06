@@ -259,6 +259,8 @@ namespace mint
 			Language::CppHlsl::Interpreter _cppHlslStructuredBuffers;
 
 		private:
+			OwnPtr<LowLevelRenderer<VS_INPUT_SHAPE>> _lowLevelRendererForShapeAndFont;
+			OwnPtr<LowLevelRenderer<VS_INPUT_SHAPE>> _lowLevelRendererForSprite;
 			OwnPtr<ShapeRenderer> _shapeRenderer;
 			OwnPtr<SpriteRenderer> _spriteRenderer;
 			bool _isInRenderingScope;

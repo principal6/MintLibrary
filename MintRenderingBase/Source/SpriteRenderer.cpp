@@ -7,8 +7,8 @@ namespace mint
 {
 	namespace Rendering
 	{
-		SpriteRenderer::SpriteRenderer(GraphicsDevice& graphicsDevice, const uint32 psTextureSlot, const ByteColor& transparentColor)
-			: ShapeRenderer(graphicsDevice)
+		SpriteRenderer::SpriteRenderer(GraphicsDevice& graphicsDevice, LowLevelRenderer<VS_INPUT_SHAPE>& lowLevelRenderer, const uint32 psTextureSlot, const ByteColor& transparentColor)
+			: ShapeRenderer(graphicsDevice, lowLevelRenderer)
 			, _psTextureSlot{ psTextureSlot }
 			, _transparentColor{ transparentColor }
 		{

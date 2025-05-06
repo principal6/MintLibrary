@@ -126,7 +126,7 @@ namespace mint
 			const FontData& GetFontData() const noexcept { return _fontData; }
 
 		protected:
-			ShapeRenderer(GraphicsDevice& graphicsDevice);
+			ShapeRenderer(GraphicsDevice& graphicsDevice, LowLevelRenderer<VS_INPUT_SHAPE>& lowLevelRenderer);
 			ShapeRenderer(const ShapeRenderer& rhs) = delete;
 			ShapeRenderer(ShapeRenderer&& rhs) = delete;
 

@@ -38,9 +38,8 @@ namespace mint
 		class IRenderer abstract
 		{
 		public:
-			IRenderer(GraphicsDevice& graphicsDevice);
-			IRenderer(GraphicsDevice& graphicsDevice, LowLevelRenderer<VS_INPUT_SHAPE>* const nonOwnedLowLevelRenderer);
-			IRenderer(const IRenderer& rhs);
+			IRenderer(GraphicsDevice& graphicsDevice, LowLevelRenderer<VS_INPUT_SHAPE>& lowLevelRenderer);
+			IRenderer(const IRenderer& rhs) = delete;
 			virtual ~IRenderer();
 
 		public:
@@ -67,10 +66,7 @@ namespace mint
 
 		protected:
 			GraphicsDevice& _graphicsDevice;
-			LowLevelRenderer<VS_INPUT_SHAPE>* const _lowLevelRenderer;
-
-		private:
-			bool _ownsLowLevelRenderer;
+			LowLevelRenderer<VS_INPUT_SHAPE>& _lowLevelRenderer;
 
 		protected:
 			CoordinateSpace _coordinateSpace;

@@ -17,8 +17,8 @@ namespace mint
 {
 	namespace Rendering
 	{
-		ShapeRenderer::ShapeRenderer(GraphicsDevice& graphicsDevice)
-			: IRenderer(graphicsDevice)
+		ShapeRenderer::ShapeRenderer(GraphicsDevice& graphicsDevice, LowLevelRenderer<VS_INPUT_SHAPE>& lowLevelRenderer)
+			: IRenderer(graphicsDevice, lowLevelRenderer)
 		{
 			__noop;
 		}
@@ -170,19 +170,19 @@ namespace mint
 
 		bool ShapeRenderer::IsEmpty() const noexcept
 		{
-			return _lowLevelRenderer->IsRenderable() == false;
+			return _lowLevelRenderer.IsRenderable() == false;
 		}
 
 		void ShapeRenderer::Flush() noexcept
 		{
-			_lowLevelRenderer->Flush();
+			_lowLevelRenderer.Flush();
 
 			FlushTransformBuffer();
 		}
 
 		void ShapeRenderer::Render() noexcept
 		{
-			if (_lowLevelRenderer->IsRenderable() == false)
+			if (_lowLevelRenderer.IsRenderable() == false)
 			{
 				return;
 			}
@@ -211,7 +211,7 @@ namespace mint
 			GraphicsResource& sbTransformBuffer = resourcePool.GetResource(_graphicsDevice.GetCommonSBTransformID());
 			sbTransformBuffer.BindToShader(GraphicsShaderType::VertexShader, sbTransformBuffer.GetRegisterIndex());
 
-			_lowLevelRenderer->ExecuteRenderCommands(_graphicsDevice);
+			_lowLevelRenderer.ExecuteRenderCommands(_graphicsDevice);
 
 			if (IsUsingMultipleViewports())
 			{
@@ -270,19 +270,19 @@ namespace mint
 
 		void ShapeRenderer::DrawLine(const Float2& p0, const Float2& p1, const float thickness)
 		{
-			const uint32 vertexOffset = _lowLevelRenderer->GetVertexCount();
-			const uint32 indexOffset = _lowLevelRenderer->GetIndexCount();
+			const uint32 vertexOffset = _lowLevelRenderer.GetVertexCount();
+			const uint32 indexOffset = _lowLevelRenderer.GetIndexCount();
 			const uint32 transformIndex = _sbTransformData.Size();
 
-			ShapeGenerator::GenerateLine(p0, p1, thickness, 8, _color, _lowLevelRenderer->Vertices(), _lowLevelRenderer->Indices(), Transform2D::GetIdentity());
+			ShapeGenerator::GenerateLine(p0, p1, thickness, 8, _color, _lowLevelRenderer.Vertices(), _lowLevelRenderer.Indices(), Transform2D::GetIdentity());
 
-			const uint32 deltaVertexCount = _lowLevelRenderer->GetVertexCount() - vertexOffset;
+			const uint32 deltaVertexCount = _lowLevelRenderer.GetVertexCount() - vertexOffset;
 			for (uint32 i = 0; i < deltaVertexCount; i++)
 			{
-				_lowLevelRenderer->Vertices()[vertexOffset + i]._info = ComputeVertexInfo(transformIndex, 0);
+				_lowLevelRenderer.Vertices()[vertexOffset + i]._info = ComputeVertexInfo(transformIndex, 0);
 			}
-			const uint32 deltaIndexCount = _lowLevelRenderer->GetIndexCount() - indexOffset;
-			_lowLevelRenderer->PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, deltaIndexCount, GetClipRect(), _currentMaterialID);
+			const uint32 deltaIndexCount = _lowLevelRenderer.GetIndexCount() - indexOffset;
+			_lowLevelRenderer.PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, deltaIndexCount, GetClipRect(), _currentMaterialID);
 
 			PushTransformToBuffer(Float2::kOne, 0.0f, Float3::kZero);
 		}
@@ -305,11 +305,11 @@ namespace mint
 				return;
 			}
 
-			const uint32 vertexOffset = _lowLevelRenderer->GetVertexCount();
-			const uint32 indexOffset = _lowLevelRenderer->GetIndexCount();
+			const uint32 vertexOffset = _lowLevelRenderer.GetVertexCount();
+			const uint32 indexOffset = _lowLevelRenderer.GetIndexCount();
 			const uint32 transformIndex = _sbTransformData.Size();
 
-			ShapeGenerator::GenerateLine(begin, end, thickness, 8, _color, _lowLevelRenderer->Vertices(), _lowLevelRenderer->Indices(), Transform2D::GetIdentity());
+			ShapeGenerator::GenerateLine(begin, end, thickness, 8, _color, _lowLevelRenderer.Vertices(), _lowLevelRenderer.Indices(), Transform2D::GetIdentity());
 			{
 				const float headLength = length * headLengthRatio;
 				const float headWidth = thickness * headWidthRatio;
@@ -326,80 +326,80 @@ namespace mint
 					point0 = transform2D * point0;
 					point1 = transform2D * point1;
 					point2 = transform2D * point2;
-					ShapeGenerator::GenerateConvexShape({ point0, point1, point2 }, _color, _lowLevelRenderer->Vertices(), _lowLevelRenderer->Indices(), Transform2D::GetIdentity());
+					ShapeGenerator::GenerateConvexShape({ point0, point1, point2 }, _color, _lowLevelRenderer.Vertices(), _lowLevelRenderer.Indices(), Transform2D::GetIdentity());
 				}
 			}
 
-			const uint32 deltaVertexCount = _lowLevelRenderer->GetVertexCount() - vertexOffset;
+			const uint32 deltaVertexCount = _lowLevelRenderer.GetVertexCount() - vertexOffset;
 			for (uint32 i = 0; i < deltaVertexCount; i++)
 			{
-				_lowLevelRenderer->Vertices()[vertexOffset + i]._info = ComputeVertexInfo(transformIndex, 0);
+				_lowLevelRenderer.Vertices()[vertexOffset + i]._info = ComputeVertexInfo(transformIndex, 0);
 			}
-			const uint32 deltaIndexCount = _lowLevelRenderer->GetIndexCount() - indexOffset;
-			_lowLevelRenderer->PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, deltaIndexCount, GetClipRect(), _currentMaterialID);
+			const uint32 deltaIndexCount = _lowLevelRenderer.GetIndexCount() - indexOffset;
+			_lowLevelRenderer.PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, deltaIndexCount, GetClipRect(), _currentMaterialID);
 
 			PushTransformToBuffer(Float2::kOne, 0.0f, Float3::kZero);
 		}
 
 		void ShapeRenderer::DrawTriangle(const Float2& pointA, const Float2& pointB, const Float2& pointC)
 		{
-			const uint32 vertexOffset = _lowLevelRenderer->GetVertexCount();
-			const uint32 indexOffset = _lowLevelRenderer->GetIndexCount();
+			const uint32 vertexOffset = _lowLevelRenderer.GetVertexCount();
+			const uint32 indexOffset = _lowLevelRenderer.GetIndexCount();
 			const uint32 transformIndex = _sbTransformData.Size();
 
-			ShapeGenerator::GenerateConvexShape({ pointA, pointB, pointC }, _color, _lowLevelRenderer->Vertices(), _lowLevelRenderer->Indices(), Transform2D::GetIdentity());
+			ShapeGenerator::GenerateConvexShape({ pointA, pointB, pointC }, _color, _lowLevelRenderer.Vertices(), _lowLevelRenderer.Indices(), Transform2D::GetIdentity());
 
-			const uint32 deltaVertexCount = _lowLevelRenderer->GetVertexCount() - vertexOffset;
+			const uint32 deltaVertexCount = _lowLevelRenderer.GetVertexCount() - vertexOffset;
 			for (uint32 i = 0; i < deltaVertexCount; i++)
 			{
-				_lowLevelRenderer->Vertices()[vertexOffset + i]._info = ComputeVertexInfo(transformIndex, 0);
+				_lowLevelRenderer.Vertices()[vertexOffset + i]._info = ComputeVertexInfo(transformIndex, 0);
 			}
-			const uint32 deltaIndexCount = _lowLevelRenderer->GetIndexCount() - indexOffset;
-			_lowLevelRenderer->PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, deltaIndexCount, GetClipRect(), _currentMaterialID);
+			const uint32 deltaIndexCount = _lowLevelRenderer.GetIndexCount() - indexOffset;
+			_lowLevelRenderer.PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, deltaIndexCount, GetClipRect(), _currentMaterialID);
 
 			PushTransformToBuffer(Float2::kOne, 0.0f, Float3::kZero);
 		}
 
 		void ShapeRenderer::DrawRectangle(const Float3& position, const Float2& size)
 		{
-			const uint32 vertexOffset = _lowLevelRenderer->GetVertexCount();
-			const uint32 indexOffset = _lowLevelRenderer->GetIndexCount();
+			const uint32 vertexOffset = _lowLevelRenderer.GetVertexCount();
+			const uint32 indexOffset = _lowLevelRenderer.GetIndexCount();
 			const uint32 transformIndex = _sbTransformData.Size();
 
-			ShapeGenerator::GenerateRectangle(size, _color, _lowLevelRenderer->Vertices(), _lowLevelRenderer->Indices(), Transform2D::GetIdentity());
+			ShapeGenerator::GenerateRectangle(size, _color, _lowLevelRenderer.Vertices(), _lowLevelRenderer.Indices(), Transform2D::GetIdentity());
 
-			const uint32 deltaVertexCount = _lowLevelRenderer->GetVertexCount() - vertexOffset;
+			const uint32 deltaVertexCount = _lowLevelRenderer.GetVertexCount() - vertexOffset;
 			for (uint32 i = 0; i < deltaVertexCount; i++)
 			{
-				_lowLevelRenderer->Vertices()[vertexOffset + i]._info = ComputeVertexInfo(transformIndex, 0);
+				_lowLevelRenderer.Vertices()[vertexOffset + i]._info = ComputeVertexInfo(transformIndex, 0);
 			}
 
-			_lowLevelRenderer->Vertices()[vertexOffset + 0]._texCoord = Float2(_uv0._x, _uv0._y);
-			_lowLevelRenderer->Vertices()[vertexOffset + 1]._texCoord = Float2(_uv0._x, _uv1._y);
-			_lowLevelRenderer->Vertices()[vertexOffset + 2]._texCoord = Float2(_uv1._x, _uv1._y);
-			_lowLevelRenderer->Vertices()[vertexOffset + 3]._texCoord = Float2(_uv1._x, _uv0._y);
+			_lowLevelRenderer.Vertices()[vertexOffset + 0]._texCoord = Float2(_uv0._x, _uv0._y);
+			_lowLevelRenderer.Vertices()[vertexOffset + 1]._texCoord = Float2(_uv0._x, _uv1._y);
+			_lowLevelRenderer.Vertices()[vertexOffset + 2]._texCoord = Float2(_uv1._x, _uv1._y);
+			_lowLevelRenderer.Vertices()[vertexOffset + 3]._texCoord = Float2(_uv1._x, _uv0._y);
 
-			const uint32 deltaIndexCount = _lowLevelRenderer->GetIndexCount() - indexOffset;
-			_lowLevelRenderer->PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, deltaIndexCount, GetClipRect(), _currentMaterialID);
+			const uint32 deltaIndexCount = _lowLevelRenderer.GetIndexCount() - indexOffset;
+			_lowLevelRenderer.PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, deltaIndexCount, GetClipRect(), _currentMaterialID);
 
 			PushTransformToBuffer(Float2::kOne, 0.0f, position);
 		}
 
 		void ShapeRenderer::DrawCircle(const Float3& position, const float radius)
 		{
-			const uint32 vertexOffset = _lowLevelRenderer->GetVertexCount();
-			const uint32 indexOffset = _lowLevelRenderer->GetIndexCount();
+			const uint32 vertexOffset = _lowLevelRenderer.GetVertexCount();
+			const uint32 indexOffset = _lowLevelRenderer.GetIndexCount();
 			const uint32 transformIndex = _sbTransformData.Size();
 
-			ShapeGenerator::GenerateCircle(radius, 32, _color, _lowLevelRenderer->Vertices(), _lowLevelRenderer->Indices(), Transform2D::GetIdentity());
+			ShapeGenerator::GenerateCircle(radius, 32, _color, _lowLevelRenderer.Vertices(), _lowLevelRenderer.Indices(), Transform2D::GetIdentity());
 
-			const uint32 deltaVertexCount = _lowLevelRenderer->GetVertexCount() - vertexOffset;
+			const uint32 deltaVertexCount = _lowLevelRenderer.GetVertexCount() - vertexOffset;
 			for (uint32 i = 0; i < deltaVertexCount; i++)
 			{
-				_lowLevelRenderer->Vertices()[vertexOffset + i]._info = ComputeVertexInfo(transformIndex, 0);
+				_lowLevelRenderer.Vertices()[vertexOffset + i]._info = ComputeVertexInfo(transformIndex, 0);
 			}
-			const uint32 deltaIndexCount = _lowLevelRenderer->GetIndexCount() - indexOffset;
-			_lowLevelRenderer->PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, deltaIndexCount, GetClipRect(), _currentMaterialID);
+			const uint32 deltaIndexCount = _lowLevelRenderer.GetIndexCount() - indexOffset;
+			_lowLevelRenderer.PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, deltaIndexCount, GetClipRect(), _currentMaterialID);
 
 			PushTransformToBuffer(Float2::kOne, 0.0f, position);
 		}
@@ -417,7 +417,7 @@ namespace mint
 
 		void ShapeRenderer::DrawDynamicText(const wchar_t* const wideText, const uint32 textLength, const Float3& position, const FontRenderingOption& fontRenderingOption)
 		{
-			const uint32 indexOffset = _lowLevelRenderer->GetIndexCount();
+			const uint32 indexOffset = _lowLevelRenderer.GetIndexCount();
 
 			Float2 currentGlyphPosition = Float2(0.0f, 0.0f);
 			for (uint32 at = 0; at < textLength; ++at)
@@ -425,8 +425,8 @@ namespace mint
 				DrawGlyph(wideText[at], currentGlyphPosition, fontRenderingOption._scale, fontRenderingOption._drawShade, false);
 			}
 
-			const uint32 indexCount = _lowLevelRenderer->GetIndexCount() - indexOffset;
-			_lowLevelRenderer->PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, indexCount, GetClipRect(), _currentMaterialID);
+			const uint32 indexCount = _lowLevelRenderer.GetIndexCount() - indexOffset;
+			_lowLevelRenderer.PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, indexCount, GetClipRect(), _currentMaterialID);
 
 			const Float3& preTranslation = ApplyCoordinateSpace(position);
 			const Float3& postTranslation = ComputePostTranslation(wideText, textLength, fontRenderingOption);
@@ -441,7 +441,7 @@ namespace mint
 
 		void ShapeRenderer::DrawDynamicTextBitFlagged(const wchar_t* const wideText, const uint32 textLength, const Float3& position, const FontRenderingOption& fontRenderingOption, const BitVector& bitFlags)
 		{
-			const uint32 indexOffset = _lowLevelRenderer->GetIndexCount();
+			const uint32 indexOffset = _lowLevelRenderer.GetIndexCount();
 
 			Float2 currentGlyphPosition = Float2(0.0f, 0.0f);
 			for (uint32 at = 0; at < textLength; ++at)
@@ -449,8 +449,8 @@ namespace mint
 				DrawGlyph(wideText[at], currentGlyphPosition, fontRenderingOption._scale, fontRenderingOption._drawShade, !bitFlags.Get(at));
 			}
 
-			const uint32 indexCount = _lowLevelRenderer->GetIndexCount() - indexOffset;
-			_lowLevelRenderer->PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, indexCount, GetClipRect(), _currentMaterialID);
+			const uint32 indexCount = _lowLevelRenderer.GetIndexCount() - indexOffset;
+			_lowLevelRenderer.PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, indexCount, GetClipRect(), _currentMaterialID);
 
 			const Float3& preTranslation = ApplyCoordinateSpace(position);
 			const Float3& postTranslation = ComputePostTranslation(wideText, textLength, fontRenderingOption);
@@ -485,7 +485,7 @@ namespace mint
 				//}
 
 				{
-					Vector<VS_INPUT_SHAPE>& vertices = _lowLevelRenderer->Vertices();
+					Vector<VS_INPUT_SHAPE>& vertices = _lowLevelRenderer.Vertices();
 
 					// Vertices
 					{
@@ -518,7 +518,7 @@ namespace mint
 
 					// Indices
 					{
-						Vector<IndexElementType>& indices = _lowLevelRenderer->Indices();
+						Vector<IndexElementType>& indices = _lowLevelRenderer.Indices();
 						const uint32 currentTotalTriangleVertexCount = static_cast<uint32>(vertices.Size());
 						indices.PushBack((currentTotalTriangleVertexCount - 4) + 0);
 						indices.PushBack((currentTotalTriangleVertexCount - 4) + 1);
@@ -610,13 +610,13 @@ namespace mint
 
 		void ShapeRenderer::AddShape_Internal(const Shape& shape)
 		{
-			const uint32 vertexOffset = _lowLevelRenderer->GetVertexCount();
-			const uint32 indexOffset = _lowLevelRenderer->GetIndexCount();
+			const uint32 vertexOffset = _lowLevelRenderer.GetVertexCount();
+			const uint32 indexOffset = _lowLevelRenderer.GetIndexCount();
 			const uint32 transformIndex = _sbTransformData.Size();
 
 			VS_INPUT_SHAPE v;
 			v._info = ComputeVertexInfo(transformIndex, 0);
-			auto& vertices = _lowLevelRenderer->Vertices();
+			auto& vertices = _lowLevelRenderer.Vertices();
 			for (const VS_INPUT_SHAPE& vertex : shape._vertices)
 			{
 				v._color = vertex._color;
@@ -624,13 +624,13 @@ namespace mint
 				vertices.PushBack(v);
 			}
 
-			auto& indices = _lowLevelRenderer->Indices();
+			auto& indices = _lowLevelRenderer.Indices();
 			for (const IndexElementType index : shape._indices)
 			{
 				indices.PushBack(vertexOffset + index);
 			}
 
-			_lowLevelRenderer->PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, shape._indices.Size(), GetClipRect(), _currentMaterialID);
+			_lowLevelRenderer.PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, shape._indices.Size(), GetClipRect(), _currentMaterialID);
 		}
 	}
 }
