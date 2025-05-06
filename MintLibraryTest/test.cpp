@@ -44,8 +44,8 @@ int main()
 
 	//RunGJKTestWindow();
 	//RunSplineTestWindow();
-	Run2DTestWindow();
-	//Run3DTestWindow();
+	//Run2DTestWindow();
+	Run3DTestWindow();
 	return 0;
 }
 
