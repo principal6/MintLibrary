@@ -2,6 +2,8 @@
 
 #include <MintPlatform/Include/Window.h>
 #include <MintRenderingBase/Include/GraphicsDevice.h>
+#include <MintRenderingBase/Include/ShapeRenderer.h>
+#include <MintRenderingBase/Include/SpriteRenderer.h>
 #include <MintGUI/Include/GUISystem.h>
 #include <MintApp/Include/SceneObjectPool.hpp>
 #include <MintApp/Include/SceneObjectRenderer.h>
@@ -122,6 +124,7 @@ namespace mint
 
 		_isInScreenSpaceRenderingScope = true;
 		_graphicsDevice->SetViewProjectionMatrix(Float4x4::kIdentity, _graphicsDevice->GetScreenSpace2DProjectionMatrix());
+		_graphicsDevice->GetSpriteRenderer().SetCoordinateSpace(Rendering::CoordinateSpace::Screen);
 		_graphicsDevice->GetShapeRenderer().SetCoordinateSpace(Rendering::CoordinateSpace::Screen);
 	}
 
@@ -132,6 +135,7 @@ namespace mint
 
 		_guiSystem->Render();
 
+		_graphicsDevice->GetSpriteRenderer().Render();
 		_graphicsDevice->GetShapeRenderer().Render();
 
 		const SceneObject& currentCameraObject = _sceneObjectSystems->GetCameraSystem().GetCurrentCameraObject();

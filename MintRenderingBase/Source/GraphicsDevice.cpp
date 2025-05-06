@@ -11,6 +11,8 @@
 #include <MintContainer/Include/Algorithm.hpp>
 
 #include <MintRenderingBase/Include/LowLevelRenderer.hpp>
+#include <MintRenderingBase/Include/ShapeRenderer.h>
+#include <MintRenderingBase/Include/SpriteRenderer.h>
 
 
 #pragma comment(lib, "d3d11.lib")
@@ -306,8 +308,12 @@ namespace mint
 			, _resourcePool{ *this }
 			, _materialPool{ *this }
 			, _stateManager{ *this }
-			, _shapeRenderer{ *this }
 			, _isInRenderingScope{ false }
+		{
+			__noop;
+		}
+
+		GraphicsDevice::~GraphicsDevice()
 		{
 			__noop;
 		}
@@ -318,6 +324,11 @@ namespace mint
 			_cachedWindowSize = _window.GetSize();
 
 			CreateDxDevice();
+
+			_shapeRenderer.Assign(MINT_NEW(ShapeRenderer, *this));
+			_shapeRenderer->InitializeShaders();
+
+			_spriteRenderer.Assign(MINT_NEW(SpriteRenderer, *this, 1, ByteColor(0, 0, 0, 0)));
 
 			if (LoadFontData() == false)
 			{
@@ -375,7 +386,6 @@ namespace mint
 
 			InitializeFullScreenData(windowSize);
 			InitializeDxShaderHeaderMemory();
-			InitializeShaders();
 			InitializeSamplerStates();
 			InitializeBlendStates();
 
@@ -402,11 +412,11 @@ namespace mint
 				rasterizerDescriptor.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
 				rasterizerDescriptor.CullMode = D3D11_CULL_MODE::D3D11_CULL_BACK;
 				_device->CreateRasterizerState(&rasterizerDescriptor, _rasterizerStateSolidCullBack.ReleaseAndGetAddressOf());
-				
+
 				rasterizerDescriptor.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
 				rasterizerDescriptor.CullMode = D3D11_CULL_MODE::D3D11_CULL_FRONT;
 				_device->CreateRasterizerState(&rasterizerDescriptor, _rasterizerStateSolidCullFront.ReleaseAndGetAddressOf());
-				
+
 				rasterizerDescriptor.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
 				rasterizerDescriptor.CullMode = D3D11_CULL_MODE::D3D11_CULL_NONE;
 				_device->CreateRasterizerState(&rasterizerDescriptor, _rasterizerStateSolidCullNone.ReleaseAndGetAddressOf());
@@ -443,7 +453,7 @@ namespace mint
 				return false;
 			}
 
-			_shapeRenderer.InitializeFontData(fontLoader.GetFontData());
+			_shapeRenderer->InitializeFontData(fontLoader.GetFontData());
 
 			return true;
 		}
@@ -597,11 +607,6 @@ namespace mint
 			}
 		}
 
-		void GraphicsDevice::InitializeShaders()
-		{
-			_shapeRenderer.InitializeShaders();
-		}
-
 		void GraphicsDevice::InitializeSamplerStates()
 		{
 			{
@@ -693,7 +698,7 @@ namespace mint
 
 			UseFullScreenViewport();
 
-			MINT_ASSERT(_shapeRenderer.IsEmpty(), "BeginRendering() 호출 전에 채우면 안 됩니다!");
+			MINT_ASSERT(_shapeRenderer->IsEmpty(), "BeginRendering() 호출 전에 채우면 안 됩니다!");
 		}
 
 		void GraphicsDevice::Draw(const uint32 vertexCount, const uint32 vertexOffset) noexcept
@@ -714,12 +719,12 @@ namespace mint
 				return;
 			}
 
-			if (_shapeRenderer.IsEmpty() == false)
+			if (_shapeRenderer->IsEmpty() == false)
 			{
-				_shapeRenderer.Render();
+				_shapeRenderer->Render();
 			}
 
-			MINT_ASSERT(_shapeRenderer.IsEmpty(), "EndRendering() 호출 전에 Flush() 해야 합니다!");
+			MINT_ASSERT(_shapeRenderer->IsEmpty(), "EndRendering() 호출 전에 Flush() 해야 합니다!");
 
 			_swapChain->Present(0, 0);
 
@@ -747,12 +752,12 @@ namespace mint
 		{
 			_currentRasterizerFor3D = _rasterizerStateWireFrameCullBack.Get();
 		}
-		
+
 		void GraphicsDevice::UseSolidCullBackRasterizer() noexcept
 		{
 			_currentRasterizerFor3D = _rasterizerStateSolidCullBack.Get();
 		}
-		
+
 		void GraphicsDevice::SetSolidCullBackRasterizer() noexcept
 		{
 			_stateManager.SetRSRasterizerState(_rasterizerStateSolidCullBack.Get());
@@ -771,6 +776,36 @@ namespace mint
 		const Rect& GraphicsDevice::GetFullScreenClipRect() const noexcept
 		{
 			return _fullScreenClipRect;
+		}
+
+		ShaderPool& GraphicsDevice::GetShaderPool() noexcept
+		{
+			return _shaderPool;
+		}
+
+		ShaderPipelinePool& GraphicsDevice::GetShaderPipelinePool() noexcept
+		{
+			return _shaderPipelinePool;
+		}
+
+		GraphicsResourcePool& GraphicsDevice::GetResourcePool() noexcept
+		{
+			return _resourcePool;
+		}
+
+		MaterialPool& GraphicsDevice::GetMaterialPool() noexcept
+		{
+			return _materialPool;
+		}
+
+		ShapeRenderer& GraphicsDevice::GetShapeRenderer() noexcept
+		{
+			return *_shapeRenderer;
+		}
+
+		SpriteRenderer& GraphicsDevice::GetSpriteRenderer() noexcept
+		{
+			return *_spriteRenderer;
 		}
 
 		Float4x4 GraphicsDevice::GetScreenSpace2DProjectionMatrix() const noexcept

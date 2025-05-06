@@ -7,6 +7,7 @@
 
 #include <MintCommon/Include/CommonDefinitions.h>
 
+#include <MintContainer/Include/OwnPtr.h>
 #include <MintContainer/Include/Array.h>
 #include <MintContainer/Include/StackString.h>
 
@@ -16,7 +17,6 @@
 #include <MintRenderingBase/Include/GraphicsResource.h>
 #include <MintRenderingBase/Include/Material.h>
 #include <MintRenderingBase/Include/LowLevelRenderer.h>
-#include <MintRenderingBase/Include/ShapeRenderer.h>
 
 #include <MintRenderingBase/Include/CppHlsl/Interpreter.h>
 
@@ -33,9 +33,16 @@ namespace mint
 
 	namespace Rendering
 	{
+		class ShapeRenderer;
+		class SpriteRenderer;
 		using Microsoft::WRL::ComPtr;
+	}
+}
 
-
+namespace mint
+{
+	namespace Rendering
+	{
 		D3D11_RECT RectToD3dRect(const Rect& rect) noexcept;
 
 
@@ -68,7 +75,7 @@ namespace mint
 
 		public:
 			GraphicsDevice(Window& window, bool usesMSAA);
-			~GraphicsDevice() = default;
+			~GraphicsDevice();
 
 		public:
 			bool Initialize();
@@ -84,7 +91,6 @@ namespace mint
 			bool InitializeDepthStencilBufferAndView(const Int2& windowSize);
 			bool InitializeDepthStencilStates();
 			void InitializeDxShaderHeaderMemory();
-			void InitializeShaders();
 			void InitializeSamplerStates();
 			void InitializeBlendStates();
 			void InitializeFullScreenData(const Int2& windowSize);
@@ -113,6 +119,7 @@ namespace mint
 			GraphicsResourcePool& GetResourcePool() noexcept;
 			MaterialPool& GetMaterialPool() noexcept;
 			ShapeRenderer& GetShapeRenderer() noexcept;
+			SpriteRenderer& GetSpriteRenderer() noexcept;
 			const Language::CppHlsl::Interpreter& GetCppHlslSteamData() const noexcept;
 			const Language::CppHlsl::Interpreter& GetCppHlslConstantBuffers() const noexcept;
 
@@ -252,7 +259,8 @@ namespace mint
 			Language::CppHlsl::Interpreter _cppHlslStructuredBuffers;
 
 		private:
-			ShapeRenderer _shapeRenderer;
+			OwnPtr<ShapeRenderer> _shapeRenderer;
+			OwnPtr<SpriteRenderer> _spriteRenderer;
 			bool _isInRenderingScope;
 		};
 	}

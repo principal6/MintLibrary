@@ -15,32 +15,6 @@ namespace mint
 			return result;
 		}
 
-
-		MINT_INLINE ShaderPool& GraphicsDevice::GetShaderPool() noexcept
-		{
-			return _shaderPool;
-		}
-
-		MINT_INLINE ShaderPipelinePool& GraphicsDevice::GetShaderPipelinePool() noexcept
-		{
-			return _shaderPipelinePool;
-		}
-
-		MINT_INLINE GraphicsResourcePool& GraphicsDevice::GetResourcePool() noexcept
-		{
-			return _resourcePool;
-		}
-
-		MINT_INLINE MaterialPool& GraphicsDevice::GetMaterialPool() noexcept
-		{
-			return _materialPool;
-		}
-
-		MINT_INLINE ShapeRenderer& GraphicsDevice::GetShapeRenderer() noexcept
-		{
-			return _shapeRenderer;
-		}
-		
 		MINT_INLINE const Language::CppHlsl::Interpreter& GraphicsDevice::GetCppHlslSteamData() const noexcept
 		{
 			return _cppHlslStreamData;

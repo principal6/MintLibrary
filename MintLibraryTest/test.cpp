@@ -44,8 +44,8 @@ int main()
 
 	//RunGJKTestWindow();
 	//RunSplineTestWindow();
-	//Run2DTestWindow();
-	Run3DTestWindow();
+	Run2DTestWindow();
+	//Run3DTestWindow();
 	return 0;
 }
 
@@ -172,7 +172,7 @@ void RunGJKTestWindow()
 		{
 			{
 				graphicsDevice.SetViewProjectionMatrix(Float4x4::kIdentity, Float4x4::ProjectionMatrix2DNormal(windowSize._x, windowSize._y));
-				
+
 				shapeRenderer.SetMaterial(defaultMaterialID);
 
 				CircleCollisionShape2D shapeA = CircleCollisionShape2D(64, shapeATransform2D);
@@ -227,7 +227,7 @@ void RunGJKTestWindow()
 					}
 
 					shapeRenderer.SetColor(ByteColor(255, 64, 0));
-					shapeRenderer.DrawCircle(Float3(normal* distance), 4.0f);
+					shapeRenderer.DrawCircle(Float3(normal * distance), 4.0f);
 				}
 
 				shapeRenderer.Render();
@@ -366,6 +366,7 @@ bool Run2DTestWindow()
 	GraphicsResourcePool& resourcePool = graphicsDevice.GetResourcePool();
 	MaterialPool& materialPool = graphicsDevice.GetMaterialPool();
 	ShapeRenderer& shapeRenderer = graphicsDevice.GetShapeRenderer();
+	SpriteRenderer& spriteRenderer = graphicsDevice.GetSpriteRenderer();
 	GraphicsObjectID defaultMaterialID;
 	{
 		MaterialDesc materialDesc;
@@ -378,7 +379,6 @@ bool Run2DTestWindow()
 	ImageLoader imageLoader;
 	imageLoader.LoadImage_("Assets/corgi-asset_Miniyeti.png", corgiSpriteSheet);
 	const GraphicsObjectID corgiSpriteSheetTextureID = resourcePool.AddTexture2D(corgiSpriteSheet);
-	SpriteRenderer spriteRenderer{ graphicsDevice, 1 };
 	GraphicsObjectID corgiMaterialID;
 	{
 		MaterialDesc materialDesc;
@@ -388,7 +388,7 @@ bool Run2DTestWindow()
 		materialDesc._textureSlot = 1;
 		corgiMaterialID = materialPool.CreateMaterial(materialDesc);
 	}
-	
+
 	SceneObjectPool& sceneObjectPool = app.GetObjectPool();
 	SceneObject sceneObject0 = sceneObjectPool.CreateSceneObject();
 	{
@@ -402,7 +402,7 @@ bool Run2DTestWindow()
 		collision2DComponent._collisionShape2D = MakeShared<CollisionShape2D>(ConvexCollisionShape2D::MakeFromRenderingShape(Float2::kZero, shape));
 		sceneObjectPool.AttachComponent(sceneObject0, std::move(collision2DComponent));
 	}
-	
+
 	SceneObject sceneObject1 = sceneObjectPool.CreateSceneObject();
 	{
 		Mesh2DComponent mesh2DComponent;
@@ -460,16 +460,10 @@ bool Run2DTestWindow()
 		{
 			app.BeginScreenSpaceRendering();
 			{
-				spriteRenderer.SetCoordinateSpace(CoordinateSpace::Screen);
 				spriteRenderer.SetMaterial(corgiMaterialID);
-
-				resourcePool.GetResource(corgiSpriteSheetTextureID).BindToShader(GraphicsShaderType::PixelShader, 1);
-				//spriteRenderer.DrawImage(Float2(0, 0), Float2(800, 512), Float2(0, 0), Float2(1, 1));
-				
 				corgiAnimationSet.Update(deltaTime);
 				const SpriteAnimation& corgiCurrentAnimation = corgiAnimationSet.GetCurrentAnimation();
 				spriteRenderer.DrawImage(Float2(64, 64), Float2(128, 128), corgiCurrentAnimation.GetCurrentFrameUV0(), corgiCurrentAnimation.GetCurrentFrameUV1());
-				spriteRenderer.Render();
 
 				StackStringW<100> fpsString;
 				FormatString(fpsString, L"FPS: %d", Profiler::FPSCounter::GetFPS());
