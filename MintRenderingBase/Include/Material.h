@@ -28,7 +28,7 @@ namespace mint
 			StackStringA<128> _materialName;
 			GraphicsObjectID _shaderPipelineID;
 			GraphicsObjectID _textureID;
-			uint32 _textureSlot;
+			uint32 _textureSlot = 0;
 		};
 
 		class Material : public GraphicsObject
