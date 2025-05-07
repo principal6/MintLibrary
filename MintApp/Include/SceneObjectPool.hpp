@@ -25,9 +25,15 @@ namespace mint
 
 	inline SceneObjectPool::~SceneObjectPool()
 	{
-		// TODO: Destroy 로직???
-		// TODO: Destroy 로직???
-		// TODO: Destroy 로직???
+		for (const SceneObject& s : _sceneObjects)
+		{
+			if (s.IsValid() == false)
+			{
+				continue;
+			}
+
+			DestroySceneObject(s);
+		}
 	}
 
 	MINT_INLINE SceneObject SceneObjectPool::CreateSceneObject()
