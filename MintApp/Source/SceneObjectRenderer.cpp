@@ -80,10 +80,6 @@ namespace mint
 				_lowLevelRenderer.Flush();
 			}
 
-			shaderPool.UnbindShader(GraphicsShaderType::VertexShader);
-			shaderPool.UnbindShader(GraphicsShaderType::GeometryShader);
-			shaderPool.UnbindShader(GraphicsShaderType::PixelShader);
-
 			cbTransform.UnbindFromShader();
 			sbMaterial.UnbindFromShader();
 		}

@@ -157,12 +157,6 @@ namespace mint
 			}
 
 			_lowLevelRenderer.ExecuteRenderCommands(_graphicsDevice);
-
-			if (IsUsingMultipleViewports())
-			{
-				ShaderPool& shaderPool = _graphicsDevice.GetShaderPool();
-				shaderPool.UnbindShader(GraphicsShaderType::GeometryShader);
-			}
 		}
 
 		void ShapeRenderer::SetMaterial(const GraphicsObjectID& materialID) noexcept
