@@ -98,24 +98,7 @@ namespace mint
 							// Textured triangle
 							return g_texture0.Sample(g_sampler0, input._texCoord.xy);
 						}
-						else if (input._info == 2)
-						{
-							// Font triangle
-							const float sampled = g_texture0.Sample(g_sampler0, input._texCoord.xy);
-							const float4 sampled4 = float4(input._color.xyz * ((sampled > 0.0) ? 1.0 : 0.0), sampled * input._color.a);
-							const bool drawShade = false;
-							if (drawShade)
-							{
-								const float2 rbCoord = input._texCoord - float2(ddx(input._texCoord.x), ddy(input._texCoord.y));
-								const float rbSampled = g_texture0.Sample(g_sampler0, rbCoord);
-								if (rbSampled > 0.0)
-								{
-									const float3 rbColor = lerp(sampled4.xyz * 0.25 * max(rbSampled, 0.25), sampled4.xyz, sampled);
-									return float4(rbColor, saturate(sampled + rbSampled));
-								}
-							}
-							return sampled4;
-						}
+						// Just use color
 						return input._color;
 					}
 					)"

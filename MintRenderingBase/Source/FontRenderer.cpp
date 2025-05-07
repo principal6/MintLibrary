@@ -41,14 +41,6 @@ namespace mint
 				shaderPipelineDesc._pixelShaderID = pixelShaderID;
 				_shaderPipelineMultipleViewportID = shaderPipelinePool.CreateShaderPipeline(shaderPipelineDesc);
 			}
-
-			MaterialPool& materialPool = _graphicsDevice.GetMaterialPool();
-			{
-				MaterialDesc materialDesc;
-				materialDesc._materialName = "DefaultFont";
-				materialDesc._shaderPipelineID = _shaderPipelineMultipleViewportID;
-				_defaultMaterialID = materialPool.CreateMaterial(materialDesc);
-			}
 		}
 
 		void FontRenderer::Terminate() noexcept
@@ -76,6 +68,15 @@ namespace mint
 
 			_fontData = fontData;
 
+			MaterialPool& materialPool = _graphicsDevice.GetMaterialPool();
+			{
+				MaterialDesc materialDesc;
+				materialDesc._materialName = "DefaultFontMaterial";
+				materialDesc._shaderPipelineID = _shaderPipelineMultipleViewportID;
+				materialDesc._textureID = fontData._fontTextureID;
+				materialDesc._textureSlot = 0;
+				_defaultMaterialID = materialPool.CreateMaterial(materialDesc);
+			}
 			return true;
 		}
 
@@ -91,16 +92,7 @@ namespace mint
 				return;
 			}
 
-			// TODO : Slot Ã³¸®...
-			if (_fontData._fontTextureID.IsValid())
-			{
-				_graphicsDevice.GetResourcePool().BindToShader(_fontData._fontTextureID, GraphicsShaderType::PixelShader, 0);
-			}
-
 			_lowLevelRenderer.ExecuteRenderCommands(_graphicsDevice);
-
-			//ShaderPool& shaderPool = _graphicsDevice.GetShaderPool();
-			//shaderPool.UnbindShader(GraphicsShaderType::GeometryShader);
 		}
 
 		void FontRenderer::Flush() noexcept
@@ -203,19 +195,6 @@ namespace mint
 				glyphRect.Top(glyphPosition._y + (static_cast<float>(glyphInfo._horiBearingY) * scale));
 				glyphRect.Bottom(glyphRect.Top() - static_cast<float>(glyphInfo._height) * scale);
 
-				//const bool shouldFlipY = _graphicsDevice.GetProjectionMatrix()._22 < 0.0f;
-				//if (shouldFlipY)
-				//{
-				//	const float scaledFontHeight = static_cast<float>(_fontData._fontSize) * scale;
-				//	glyphRect.Top(glyphPosition._y + scaledFontHeight - static_cast<float>(glyphInfo._horiBearingY) * scale);
-				//	glyphRect.Bottom(glyphRect.Top() + static_cast<float>(glyphInfo._height) * scale);
-				//}
-				//else
-				//{
-				//	glyphRect.Top(glyphPosition._y + (static_cast<float>(glyphInfo._horiBearingY) * scale));
-				//	glyphRect.Bottom(glyphRect.Top() - static_cast<float>(glyphInfo._height) * scale);
-				//}
-
 				{
 					Vector<VS_INPUT_SHAPE>& vertices = _lowLevelRenderer.Vertices();
 
@@ -228,7 +207,7 @@ namespace mint
 						v._color = _textColor;
 						v._texCoord._x = glyphInfo._uv0._x;
 						v._texCoord._y = glyphInfo._uv0._y;
-						v._info = ComputeVertexInfo(transformIndex, 2);
+						v._info = transformIndex;
 						vertices.PushBack(v);
 
 						v._position._y = glyphRect.Bottom();
@@ -266,11 +245,6 @@ namespace mint
 			glyphPosition._x += static_cast<float>(glyphInfo._horiAdvance) * scale;
 		}
 
-		uint32 FontRenderer::ComputeVertexInfo(uint32 transformIndex, uint8 type) const
-		{
-			return (type << 30) | (transformIndex & 0x3FFFFFFF);
-		}
-
 		void FontRenderer::PushManualTransformToBuffer(const Float3& preTranslation, const Float4x4& transformMatrix, const Float3& postTranslation)
 		{
 			SB_Transform sbTransform;
@@ -293,8 +267,8 @@ namespace mint
 					
 				VS_OUTPUT_SHAPE main_font(VS_INPUT_SHAPE input)
 				{
-					uint transformIndex = input._info & 0x3FFFFFFF;
-					uint info = input._info >> 30;
+					uint transformIndex = input._info;
+					uint info = 0;
 					
 					float4 transformedPosition = float4(input._position.xyz, 1.0);
 					transformedPosition = mul(transformedPosition, sbTransform[transformIndex]._transformMatrix);
@@ -346,30 +320,21 @@ namespace mint
 					
 					float4 main_font(VS_OUTPUT_SHAPE input) : SV_Target
 					{
-						if (input._info == 1)
+						// Font triangle
+						const float sampled = g_texture0.Sample(g_sampler0, input._texCoord.xy);
+						const float4 sampled4 = float4(input._color.xyz * ((sampled > 0.0) ? 1.0 : 0.0), sampled * input._color.a);
+						const bool drawShade = false;
+						if (drawShade)
 						{
-							// Textured triangle
-							return g_texture0.Sample(g_sampler0, input._texCoord.xy);
-						}
-						else if (input._info == 2)
-						{
-							// Font triangle
-							const float sampled = g_texture0.Sample(g_sampler0, input._texCoord.xy);
-							const float4 sampled4 = float4(input._color.xyz * ((sampled > 0.0) ? 1.0 : 0.0), sampled * input._color.a);
-							const bool drawShade = false;
-							if (drawShade)
+							const float2 rbCoord = input._texCoord - float2(ddx(input._texCoord.x), ddy(input._texCoord.y));
+							const float rbSampled = g_texture0.Sample(g_sampler0, rbCoord);
+							if (rbSampled > 0.0)
 							{
-								const float2 rbCoord = input._texCoord - float2(ddx(input._texCoord.x), ddy(input._texCoord.y));
-								const float rbSampled = g_texture0.Sample(g_sampler0, rbCoord);
-								if (rbSampled > 0.0)
-								{
-									const float3 rbColor = lerp(sampled4.xyz * 0.25 * max(rbSampled, 0.25), sampled4.xyz, sampled);
-									return float4(rbColor, saturate(sampled + rbSampled));
-								}
+								const float3 rbColor = lerp(sampled4.xyz * 0.25 * max(rbSampled, 0.25), sampled4.xyz, sampled);
+								return float4(rbColor, saturate(sampled + rbSampled));
 							}
-							return sampled4;
 						}
-						return input._color;
+						return sampled4;
 					}
 					)"
 			};

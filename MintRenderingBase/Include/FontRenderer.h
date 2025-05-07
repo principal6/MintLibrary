@@ -82,7 +82,6 @@ namespace mint
 		private:
 			Float3 ComputePostTranslation(const wchar_t* const wideText, const uint32 textLength, const FontRenderingOption& fontRenderingOption) const;
 			void DrawGlyph(const wchar_t wideChar, Float2& glyphPosition, const float scale, const bool drawShade, const bool leaveOnlySpace);
-			uint32 ComputeVertexInfo(uint32 transformIndex, uint8 type) const;
 			// Doesn't apply coordinate space internally!!!
 			void PushManualTransformToBuffer(const Float3& preTranslation, const Float4x4& transformMatrix, const Float3& postTranslation);
 			const char* GetDefaultVertexShaderString() const;
