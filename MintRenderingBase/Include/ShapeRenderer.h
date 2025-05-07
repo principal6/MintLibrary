@@ -11,7 +11,6 @@
 #include <MintContainer/Include/StackVector.h>
 
 #include <MintRenderingBase/Include/IRenderer.h>
-#include <MintRenderingBase/Include/FontLoader.h>
 
 
 namespace mint
@@ -30,36 +29,6 @@ namespace mint
 {
 	namespace Rendering
 	{
-		struct FontRenderingOption
-		{
-			FontRenderingOption()
-				: FontRenderingOption(TextRenderDirectionHorz::Rightward, TextRenderDirectionVert::Downward, 1.0f)
-			{
-				__noop;
-			}
-			FontRenderingOption(const TextRenderDirectionHorz directionHorz, const TextRenderDirectionVert directionVert)
-				: FontRenderingOption(directionHorz, directionVert, 1.0f)
-			{
-				__noop;
-			}
-			FontRenderingOption(const TextRenderDirectionHorz directionHorz, const TextRenderDirectionVert directionVert, const float scale)
-				: _directionHorz{ directionHorz }
-				, _directionVert{ directionVert }
-				, _scale{ scale }
-				, _drawShade{ false }
-			{
-				__noop;
-			}
-
-			TextRenderDirectionHorz _directionHorz;
-			TextRenderDirectionVert _directionVert;
-			float _scale;
-			bool _drawShade;
-			Float4x4 _transformMatrix;
-		};
-
-
-		// All draw functions use LowLevelRenderer::PushRenderCommandIndexed()
 		class ShapeRenderer : public IRenderer
 		{
 			friend GraphicsDevice;
@@ -84,11 +53,9 @@ namespace mint
 			virtual void Flush() noexcept override;
 
 		public:
-			MINT_INLINE GraphicsObjectID GetDefaultShaderPipelineID() const noexcept { return _shaderPipelineDefaultID; }
+			MINT_INLINE GraphicsObjectID GetDefaultShaderPipelineID() const noexcept { return _shaderPipelineMultipleViewportID; }
 
 		public:
-			bool InitializeFontData(const FontData& fontData);
-			void SetTextColor(const Color& textColor) noexcept;
 			void SetMaterial(const GraphicsObjectID& materialID) noexcept;
 
 		public:
@@ -113,26 +80,13 @@ namespace mint
 			void DrawRectangle(const Float3& position, const Float2& size);
 			void DrawCircle(const Float3& position, const float radius);
 
-			// Font
-		public:
-			void DrawDynamicText(const wchar_t* const wideText, const Float2& position, const FontRenderingOption& fontRenderingOption);
-			void DrawDynamicText(const wchar_t* const wideText, const Float3& position, const FontRenderingOption& fontRenderingOption);
-			void DrawDynamicText(const wchar_t* const wideText, const uint32 textLength, const Float3& position, const FontRenderingOption& fontRenderingOption);
-			void DrawDynamicTextBitFlagged(const wchar_t* const wideText, const Float3& position, const FontRenderingOption& fontRenderingOption, const BitVector& bitFlags);
-			void DrawDynamicTextBitFlagged(const wchar_t* const wideText, const uint32 textLength, const Float3& position, const FontRenderingOption& fontRenderingOption, const BitVector& bitFlags);
-
 		public:
 			virtual bool IsEmpty() const noexcept override;
-			const FontData& GetFontData() const noexcept { return _fontData; }
 
 		protected:
-			ShapeRenderer(GraphicsDevice& graphicsDevice, LowLevelRenderer<VS_INPUT_SHAPE>& lowLevelRenderer);
+			ShapeRenderer(GraphicsDevice& graphicsDevice, LowLevelRenderer<VS_INPUT_SHAPE>& lowLevelRenderer, Vector<SB_Transform>& sbTransformData);
 			ShapeRenderer(const ShapeRenderer& rhs) = delete;
 			ShapeRenderer(ShapeRenderer&& rhs) = delete;
-
-			// Font
-		protected:
-			void DrawGlyph(const wchar_t wideChar, Float2& glyphPosition, const float scale, const bool drawShade, const bool leaveOnlySpace);
 
 		protected:
 			const char* GetDefaultVertexShaderString() const;
@@ -141,7 +95,6 @@ namespace mint
 			virtual const char* GetPixelShaderName() const noexcept;
 			virtual const char* GetPixelShaderString() const noexcept;
 			virtual const char* GetPixelShaderEntryPoint() const noexcept;
-			Float3 ComputePostTranslation(const wchar_t* const wideText, const uint32 textLength, const FontRenderingOption& fontRenderingOption) const;
 			uint32 ComputeVertexInfo(uint32 transformIndex, uint8 type) const;
 			void PushTransformToBuffer(const Transform2D& transform2D);
 			void PushTransformToBuffer(const Float2& scale, const float rotationAngle, const Float3& position);
@@ -153,13 +106,8 @@ namespace mint
 			void AddShape_Internal(const Shape& shape);
 
 		protected:
-			GraphicsObjectID _shaderPipelineDefaultID;
 			GraphicsObjectID _shaderPipelineMultipleViewportID;
-
-			Color _textColor;
 			GraphicsObjectID _currentMaterialID;
-			FontData _fontData;
-
 			Float2 _uv0 = Float2(0, 0);
 			Float2 _uv1 = Float2(1, 1);
 		};

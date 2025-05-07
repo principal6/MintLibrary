@@ -10,6 +10,7 @@
 #include <MintRenderingBase/Include/Shader.h>
 #include <MintRenderingBase/Include/ShaderPipeline.h>
 #include <MintRenderingBase/Include/DxShaderHeaderMemory.h>
+#include <MintRenderingBase/Include/FontRenderer.h>
 #include <MintRenderingBase/Include/GraphicsDevice.h>
 #include <MintRenderingBase/Include/GraphicsObject.h>
 #include <MintRenderingBase/Include/IRenderer.h>

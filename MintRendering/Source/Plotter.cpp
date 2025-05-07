@@ -4,6 +4,7 @@
 
 #include <MintContainer/Include/StringUtil.hpp>
 
+#include <MintRenderingBase/Include/FontRenderer.h>
 #include <MintRenderingBase/Include/ShapeRenderer.h>
 
 
@@ -11,8 +12,9 @@ namespace mint
 {
 	namespace Rendering
 	{
-		Plotter::Plotter(ShapeRenderer& shapeRenderer)
-			: _shapeRenderer{ &shapeRenderer }
+		Plotter::Plotter(FontRenderer& fontRenderer, ShapeRenderer& shapeRenderer)
+			: _fontRenderer{ &fontRenderer }
+			, _shapeRenderer{ &shapeRenderer }
 			, _nextPlotType{ PlotType::Circle }
 			, _size{ kDefaultSize }
 			, _frameOffset{ 100.0f, 100.0f }
@@ -184,14 +186,14 @@ namespace mint
 			Float3 labelPosition = Float3(frameCenterPosition._x, frameCenterPosition._y + _size._y * 0.5f + paddingY, 0.0f);
 			FontRenderingOption labelRenderingOption;
 			labelRenderingOption._directionHorz = TextRenderDirectionHorz::Centered;
-			_shapeRenderer->SetTextColor(Color::kBlack);
-			_shapeRenderer->DrawDynamicText(_xLabel.c_str(), static_cast<uint32>(_xLabel.length()), labelPosition, labelRenderingOption);
+			_fontRenderer->SetTextColor(Color::kBlack);
+			_fontRenderer->DrawDynamicText(_xLabel.c_str(), static_cast<uint32>(_xLabel.length()), labelPosition, labelRenderingOption);
 
 			const float paddingX = -2.0f;
-			const float textWidth = _shapeRenderer->GetFontData().ComputeTextWidth(_yLabel.c_str(), static_cast<uint32>(_yLabel.length()));
+			const float textWidth = _fontRenderer->GetFontData().ComputeTextWidth(_yLabel.c_str(), static_cast<uint32>(_yLabel.length()));
 			labelPosition = Float3(frameCenterPosition._x - _size._x * 0.5f - paddingX, frameCenterPosition._y + textWidth * 0.5f, 0.0f);
 			labelRenderingOption._transformMatrix = Float4x4::RotationMatrixZ(-Math::kPiOverTwo);
-			_shapeRenderer->DrawDynamicText(_yLabel.c_str(), static_cast<uint32>(_yLabel.length()), labelPosition, labelRenderingOption);
+			_fontRenderer->DrawDynamicText(_yLabel.c_str(), static_cast<uint32>(_yLabel.length()), labelPosition, labelRenderingOption);
 		}
 	}
 }

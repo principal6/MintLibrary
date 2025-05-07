@@ -1,5 +1,6 @@
 ﻿# TODO
-## Renderer - FontRenderer 추가( ShapeRenederer 에서 분리 )
+## Renderer - ShapeRenderer 에 DefaultMaterial 추가??
+## Renderer - Rendering Phase/Order 관리!!! World => Screen 순서가 보장되도록!!!
 ## Renderer - MeshRenderer 추가
 ## GUI 개편
 ### Manager classes for GUI system

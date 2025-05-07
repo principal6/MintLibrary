@@ -5,6 +5,7 @@
 #include <MintRenderingBase/Source/ImageLoader.cpp>
 #include <MintRenderingBase/Source/SpriteRenderer.cpp>
 #include <MintRenderingBase/Source/FontLoader.cpp>
+#include <MintRenderingBase/Source/FontRenderer.cpp>
 #include <MintRenderingBase/Source/GraphicsDevice.cpp>
 #include <MintRenderingBase/Source/GraphicsObject.cpp>
 #include <MintRenderingBase/Source/IRenderer.cpp>

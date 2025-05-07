@@ -38,7 +38,7 @@ namespace mint
 		class IRenderer abstract
 		{
 		public:
-			IRenderer(GraphicsDevice& graphicsDevice, LowLevelRenderer<VS_INPUT_SHAPE>& lowLevelRenderer);
+			IRenderer(GraphicsDevice& graphicsDevice, LowLevelRenderer<VS_INPUT_SHAPE>& lowLevelRenderer, Vector<SB_Transform>& sbTransformData);
 			IRenderer(const IRenderer& rhs) = delete;
 			virtual ~IRenderer();
 
@@ -67,13 +67,13 @@ namespace mint
 		protected:
 			GraphicsDevice& _graphicsDevice;
 			LowLevelRenderer<VS_INPUT_SHAPE>& _lowLevelRenderer;
+			Vector<SB_Transform>& _sbTransformData;
 
 		protected:
 			CoordinateSpace _coordinateSpace;
 			Color _color;
 
 		protected:
-			Vector<SB_Transform> _sbTransformData;
 
 		private:
 			Rect _clipRect;

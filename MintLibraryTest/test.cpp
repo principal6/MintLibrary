@@ -69,6 +69,7 @@ void RunGJKTestWindow()
 	GJK2DInfo gjk2DInfo;
 	EPA2DInfo epa2DInfo;
 	GraphicsDevice& graphicsDevice = app.GetGraphicsDevice();
+	FontRenderer& fontRenderer = graphicsDevice.GetFontRenderer();
 	ShapeRenderer& shapeRenderer = graphicsDevice.GetShapeRenderer();
 	MaterialPool& materialPool = graphicsDevice.GetMaterialPool();
 	GraphicsObjectID defaultMaterialID;
@@ -235,14 +236,14 @@ void RunGJKTestWindow()
 
 			app.BeginScreenSpaceRendering();
 			{
-				shapeRenderer.SetTextColor(Color::kBlack);
+				fontRenderer.SetTextColor(Color::kBlack);
 				StackStringW<100> buffer;
 				FormatString(buffer, L"GJK Iteration: %d / Max %u (Q/W)", gjk2DInfo._loopCount, gjk2DInfo._maxLoopCount);
-				shapeRenderer.DrawDynamicText(buffer.CString(), Float2(10, 10), FontRenderingOption());
+				fontRenderer.DrawDynamicText(buffer.CString(), Float2(10, 10), FontRenderingOption());
 				FormatString(buffer, L"EPA Iteration: %d / Max %u (A/S)", epa2DInfo._iteration, epa2DInfo._maxIterationCount);
-				shapeRenderer.DrawDynamicText(buffer.CString(), Float2(10, 30), FontRenderingOption());
+				fontRenderer.DrawDynamicText(buffer.CString(), Float2(10, 30), FontRenderingOption());
 				FormatString(buffer, L"Selected: %s (1: None / 2: A / 3: B)", (selectionMode == SelectionMode::None ? L"None" : (selectionMode == SelectionMode::ShapeA ? L"ShapeA" : L"ShapeB")));
-				shapeRenderer.DrawDynamicText(buffer.CString(), Float2(10, 50), FontRenderingOption());
+				fontRenderer.DrawDynamicText(buffer.CString(), Float2(10, 50), FontRenderingOption());
 			}
 			app.EndScreenSpaceRendering();
 		}
@@ -314,6 +315,7 @@ void RunSplineTestWindow()
 
 	GraphicsDevice& graphicsDevice = app.GetGraphicsDevice();
 	const InputContext& inputContext = InputContext::GetInstance();
+	FontRenderer& fontRenderer = graphicsDevice.GetFontRenderer();
 	ShapeRenderer& shapeRenderer = graphicsDevice.GetShapeRenderer();
 	MaterialPool& materialPool = graphicsDevice.GetMaterialPool();
 	GraphicsObjectID defaultMaterialID;
@@ -331,11 +333,12 @@ void RunSplineTestWindow()
 		{
 			app.BeginScreenSpaceRendering();
 			{
+				shapeRenderer.SetMaterial(defaultMaterialID);
+
 				StackStringW<100> fpsString;
 				FormatString(fpsString, L"FPS: %d", Profiler::FPSCounter::GetFPS());
-				shapeRenderer.SetMaterial(defaultMaterialID);
-				shapeRenderer.SetTextColor(Color::kBlack);
-				shapeRenderer.DrawDynamicText(fpsString.CString(), Float2(10, 10), FontRenderingOption());
+				fontRenderer.SetTextColor(Color::kBlack);
+				fontRenderer.DrawDynamicText(fpsString.CString(), Float2(10, 10), FontRenderingOption());
 			}
 			app.EndScreenSpaceRendering();
 		}
@@ -365,6 +368,7 @@ bool Run2DTestWindow()
 	GraphicsDevice& graphicsDevice = app.GetGraphicsDevice();
 	GraphicsResourcePool& resourcePool = graphicsDevice.GetResourcePool();
 	MaterialPool& materialPool = graphicsDevice.GetMaterialPool();
+	FontRenderer& fontRenderer = graphicsDevice.GetFontRenderer();
 	ShapeRenderer& shapeRenderer = graphicsDevice.GetShapeRenderer();
 	SpriteRenderer& spriteRenderer = graphicsDevice.GetSpriteRenderer();
 	GraphicsObjectID defaultMaterialID;
@@ -458,6 +462,8 @@ bool Run2DTestWindow()
 		// Rendering
 		app.BeginRendering();
 		{
+			shapeRenderer.SetMaterial(defaultMaterialID);
+
 			app.BeginScreenSpaceRendering();
 			{
 				spriteRenderer.SetMaterial(corgiMaterialID);
@@ -465,11 +471,11 @@ bool Run2DTestWindow()
 				const SpriteAnimation& corgiCurrentAnimation = corgiAnimationSet.GetCurrentAnimation();
 				spriteRenderer.DrawImage(Float2(64, 64), Float2(128, 128), corgiCurrentAnimation.GetCurrentFrameUV0(), corgiCurrentAnimation.GetCurrentFrameUV1());
 
+
 				StackStringW<100> fpsString;
 				FormatString(fpsString, L"FPS: %d", Profiler::FPSCounter::GetFPS());
-				shapeRenderer.SetMaterial(defaultMaterialID);
-				shapeRenderer.SetTextColor(Color::kBlack);
-				shapeRenderer.DrawDynamicText(fpsString.CString(), Float2(10, 10), FontRenderingOption());
+				fontRenderer.SetTextColor(Color::kBlack);
+				fontRenderer.DrawDynamicText(fpsString.CString(), Float2(10, 10), FontRenderingOption());
 			}
 			app.EndScreenSpaceRendering();
 		}
@@ -517,6 +523,7 @@ bool Run3DTestWindow()
 	GraphicsDevice& graphicsDevice = app.GetGraphicsDevice();
 	SceneObjectSystems& sceneObjectSystems = app.GetSceneObjectSystems();
 	const InputContext& inputContext = InputContext::GetInstance();
+	FontRenderer& fontRenderer = graphicsDevice.GetFontRenderer();
 	ShapeRenderer& shapeRenderer = graphicsDevice.GetShapeRenderer();
 	MaterialPool& materialPool = graphicsDevice.GetMaterialPool();
 	GraphicsObjectID defaultMaterialID;
@@ -591,11 +598,11 @@ bool Run3DTestWindow()
 			app.BeginScreenSpaceRendering();
 			{
 				// RenderOverlayUI
+				shapeRenderer.SetMaterial(defaultMaterialID);
 				StackStringW<100> fpsString;
 				FormatString(fpsString, L"FPS: %d", Profiler::FPSCounter::GetFPS());
-				shapeRenderer.SetMaterial(defaultMaterialID);
-				shapeRenderer.SetTextColor(Color::kBlack);
-				shapeRenderer.DrawDynamicText(fpsString.CString(), Float2(10, 10), FontRenderingOption());
+				fontRenderer.SetTextColor(Color::kBlack);
+				fontRenderer.DrawDynamicText(fpsString.CString(), Float2(10, 10), FontRenderingOption());
 			}
 			app.EndScreenSpaceRendering();
 		}

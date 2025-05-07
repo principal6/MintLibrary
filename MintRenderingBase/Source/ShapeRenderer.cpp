@@ -3,7 +3,6 @@
 #include <MintContainer/Include/Vector.hpp>
 #include <MintContainer/Include/BitVector.hpp>
 #include <MintContainer/Include/StackVector.hpp>
-#include <MintContainer/Include/StringUtil.hpp>
 
 #include <MintRenderingBase/Include/GraphicsDevice.h>
 #include <MintRenderingBase/Include/LowLevelRenderer.hpp>
@@ -17,8 +16,8 @@ namespace mint
 {
 	namespace Rendering
 	{
-		ShapeRenderer::ShapeRenderer(GraphicsDevice& graphicsDevice, LowLevelRenderer<VS_INPUT_SHAPE>& lowLevelRenderer)
-			: IRenderer(graphicsDevice, lowLevelRenderer)
+		ShapeRenderer::ShapeRenderer(GraphicsDevice& graphicsDevice, LowLevelRenderer<VS_INPUT_SHAPE>& lowLevelRenderer, Vector<SB_Transform>& sbTransformData)
+			: IRenderer(graphicsDevice, lowLevelRenderer, sbTransformData)
 		{
 			__noop;
 		}
@@ -142,13 +141,6 @@ namespace mint
 				ShaderPipelineDesc shaderPipelineDesc;
 				shaderPipelineDesc._inputLayoutID = inputLayoutID;
 				shaderPipelineDesc._vertexShaderID = vertexShaderID;
-				shaderPipelineDesc._pixelShaderID = pixelShaderID;
-				_shaderPipelineDefaultID = shaderPipelinePool.CreateShaderPipeline(shaderPipelineDesc);
-			}
-			{
-				ShaderPipelineDesc shaderPipelineDesc;
-				shaderPipelineDesc._inputLayoutID = inputLayoutID;
-				shaderPipelineDesc._vertexShaderID = vertexShaderID;
 				shaderPipelineDesc._geometryShaderID = geometryShaderID;
 				shaderPipelineDesc._pixelShaderID = pixelShaderID;
 				_shaderPipelineMultipleViewportID = shaderPipelinePool.CreateShaderPipeline(shaderPipelineDesc);
@@ -158,10 +150,6 @@ namespace mint
 		void ShapeRenderer::Terminate() noexcept
 		{
 			ShaderPipelinePool& shaderPipelinePool = _graphicsDevice.GetShaderPipelinePool();
-			if (_shaderPipelineDefaultID.IsValid())
-			{
-				shaderPipelinePool.DestroyShaderPipeline(_shaderPipelineDefaultID);
-			}
 			if (_shaderPipelineMultipleViewportID.IsValid())
 			{
 				shaderPipelinePool.DestroyShaderPipeline(_shaderPipelineMultipleViewportID);
@@ -175,9 +163,7 @@ namespace mint
 
 		void ShapeRenderer::Flush() noexcept
 		{
-			_lowLevelRenderer.Flush();
-
-			FlushTransformBuffer();
+			__noop;
 		}
 
 		void ShapeRenderer::Render() noexcept
@@ -187,30 +173,6 @@ namespace mint
 				return;
 			}
 
-			PrepareTransformBuffer();
-
-			// TODO : Slot 처리...
-			if (_fontData._fontTextureID.IsValid())
-			{
-				_graphicsDevice.GetResourcePool().BindToShader(_fontData._fontTextureID, GraphicsShaderType::PixelShader, 0);
-			}
-
-			ShaderPipelinePool& shaderPipelinePool = _graphicsDevice.GetShaderPipelinePool();
-			const ShaderPipeline& shaderPipelineDefault = shaderPipelinePool.GetShaderPipeline(_shaderPipelineDefaultID);
-			const ShaderPipeline& shaderPipelineMultipleViewport = shaderPipelinePool.GetShaderPipeline(_shaderPipelineMultipleViewportID);
-			if (IsUsingMultipleViewports())
-			{
-				shaderPipelineMultipleViewport.BindShaderPipeline();
-			}
-			else
-			{
-				shaderPipelineDefault.BindShaderPipeline();
-			}
-
-			GraphicsResourcePool& resourcePool = _graphicsDevice.GetResourcePool();
-			GraphicsResource& sbTransformBuffer = resourcePool.GetResource(_graphicsDevice.GetCommonSBTransformID());
-			sbTransformBuffer.BindToShader(GraphicsShaderType::VertexShader, sbTransformBuffer.GetRegisterIndex());
-
 			_lowLevelRenderer.ExecuteRenderCommands(_graphicsDevice);
 
 			if (IsUsingMultipleViewports())
@@ -218,32 +180,6 @@ namespace mint
 				ShaderPool& shaderPool = _graphicsDevice.GetShaderPool();
 				shaderPool.UnbindShader(GraphicsShaderType::GeometryShader);
 			}
-
-			Flush();
-		}
-
-		bool ShapeRenderer::InitializeFontData(const FontData& fontData)
-		{
-			if (fontData._fontTextureID.IsValid() == false)
-			{
-				MINT_LOG_ERROR("FontData 의 FontTexture 가 Invalid 합니다!");
-				return false;
-			}
-
-			if (fontData._glyphInfoArray.IsEmpty() == true)
-			{
-				MINT_LOG_ERROR("FontData 의 GlyphInfo 가 비어 있습니다!");
-				return false;
-			}
-
-			_fontData = fontData;
-
-			return true;
-		}
-
-		void ShapeRenderer::SetTextColor(const Color& textColor) noexcept
-		{
-			_textColor = textColor;
 		}
 
 		void ShapeRenderer::SetMaterial(const GraphicsObjectID& materialID) noexcept
@@ -404,136 +340,6 @@ namespace mint
 			PushTransformToBuffer(Float2::kOne, 0.0f, position);
 		}
 
-		void ShapeRenderer::DrawDynamicText(const wchar_t* const wideText, const Float2& position, const FontRenderingOption& fontRenderingOption)
-		{
-			DrawDynamicText(wideText, Float3(position._x, position._y, 0.0f), fontRenderingOption);
-		}
-
-		void ShapeRenderer::DrawDynamicText(const wchar_t* const wideText, const Float3& position, const FontRenderingOption& fontRenderingOption)
-		{
-			const uint32 textLength = StringUtil::Length(wideText);
-			DrawDynamicText(wideText, textLength, position, fontRenderingOption);
-		}
-
-		void ShapeRenderer::DrawDynamicText(const wchar_t* const wideText, const uint32 textLength, const Float3& position, const FontRenderingOption& fontRenderingOption)
-		{
-			const uint32 indexOffset = _lowLevelRenderer.GetIndexCount();
-
-			Float2 currentGlyphPosition = Float2(0.0f, 0.0f);
-			for (uint32 at = 0; at < textLength; ++at)
-			{
-				DrawGlyph(wideText[at], currentGlyphPosition, fontRenderingOption._scale, fontRenderingOption._drawShade, false);
-			}
-
-			const uint32 indexCount = _lowLevelRenderer.GetIndexCount() - indexOffset;
-			_lowLevelRenderer.PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, indexCount, GetClipRect(), _currentMaterialID);
-
-			const Float3& preTranslation = ApplyCoordinateSpace(position);
-			const Float3& postTranslation = ComputePostTranslation(wideText, textLength, fontRenderingOption);
-			PushManualTransformToBuffer(preTranslation, fontRenderingOption._transformMatrix, postTranslation);
-		}
-
-		void ShapeRenderer::DrawDynamicTextBitFlagged(const wchar_t* const wideText, const Float3& position, const FontRenderingOption& fontRenderingOption, const BitVector& bitFlags)
-		{
-			const uint32 textLength = StringUtil::Length(wideText);
-			DrawDynamicTextBitFlagged(wideText, textLength, position, fontRenderingOption, bitFlags);
-		}
-
-		void ShapeRenderer::DrawDynamicTextBitFlagged(const wchar_t* const wideText, const uint32 textLength, const Float3& position, const FontRenderingOption& fontRenderingOption, const BitVector& bitFlags)
-		{
-			const uint32 indexOffset = _lowLevelRenderer.GetIndexCount();
-
-			Float2 currentGlyphPosition = Float2(0.0f, 0.0f);
-			for (uint32 at = 0; at < textLength; ++at)
-			{
-				DrawGlyph(wideText[at], currentGlyphPosition, fontRenderingOption._scale, fontRenderingOption._drawShade, !bitFlags.Get(at));
-			}
-
-			const uint32 indexCount = _lowLevelRenderer.GetIndexCount() - indexOffset;
-			_lowLevelRenderer.PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, indexCount, GetClipRect(), _currentMaterialID);
-
-			const Float3& preTranslation = ApplyCoordinateSpace(position);
-			const Float3& postTranslation = ComputePostTranslation(wideText, textLength, fontRenderingOption);
-			PushManualTransformToBuffer(preTranslation, fontRenderingOption._transformMatrix, postTranslation);
-		}
-
-		void ShapeRenderer::DrawGlyph(const wchar_t wideChar, Float2& glyphPosition, const float scale, const bool drawShade, const bool leaveOnlySpace)
-		{
-			const uint32 transformIndex = _sbTransformData.Size();
-			const uint32 glyphIndex = _fontData.GetSafeGlyphIndex(wideChar);
-			const GlyphInfo& glyphInfo = _fontData._glyphInfoArray[glyphIndex];
-			if (leaveOnlySpace == false)
-			{
-				Rect glyphRect;
-				glyphRect.Left(glyphPosition._x + static_cast<float>(glyphInfo._horiBearingX) * scale);
-				glyphRect.Right(glyphRect.Left() + static_cast<float>(glyphInfo._width) * scale);
-
-				glyphRect.Top(glyphPosition._y + (static_cast<float>(glyphInfo._horiBearingY) * scale));
-				glyphRect.Bottom(glyphRect.Top() - static_cast<float>(glyphInfo._height) * scale);
-
-				//const bool shouldFlipY = _graphicsDevice.GetProjectionMatrix()._22 < 0.0f;
-				//if (shouldFlipY)
-				//{
-				//	const float scaledFontHeight = static_cast<float>(_fontData._fontSize) * scale;
-				//	glyphRect.Top(glyphPosition._y + scaledFontHeight - static_cast<float>(glyphInfo._horiBearingY) * scale);
-				//	glyphRect.Bottom(glyphRect.Top() + static_cast<float>(glyphInfo._height) * scale);
-				//}
-				//else
-				//{
-				//	glyphRect.Top(glyphPosition._y + (static_cast<float>(glyphInfo._horiBearingY) * scale));
-				//	glyphRect.Bottom(glyphRect.Top() - static_cast<float>(glyphInfo._height) * scale);
-				//}
-
-				{
-					Vector<VS_INPUT_SHAPE>& vertices = _lowLevelRenderer.Vertices();
-
-					// Vertices
-					{
-						VS_INPUT_SHAPE v;
-						v._position._x = glyphRect.Left();
-						v._position._y = glyphRect.Top();
-						v._position._z = 0.0f;
-						v._color = _textColor;
-						v._texCoord._x = glyphInfo._uv0._x;
-						v._texCoord._y = glyphInfo._uv0._y;
-						v._info = ComputeVertexInfo(transformIndex, 2);
-						vertices.PushBack(v);
-
-						v._position._y = glyphRect.Bottom();
-						v._texCoord._x = glyphInfo._uv0._x;
-						v._texCoord._y = glyphInfo._uv1._y;
-						vertices.PushBack(v);
-
-						v._position._x = glyphRect.Right();
-						v._position._y = glyphRect.Bottom();
-						v._texCoord._x = glyphInfo._uv1._x;
-						v._texCoord._y = glyphInfo._uv1._y;
-						vertices.PushBack(v);
-
-						v._position._y = glyphRect.Top();
-						v._texCoord._x = glyphInfo._uv1._x;
-						v._texCoord._y = glyphInfo._uv0._y;
-						vertices.PushBack(v);
-					}
-
-					// Indices
-					{
-						Vector<IndexElementType>& indices = _lowLevelRenderer.Indices();
-						const uint32 currentTotalTriangleVertexCount = static_cast<uint32>(vertices.Size());
-						indices.PushBack((currentTotalTriangleVertexCount - 4) + 0);
-						indices.PushBack((currentTotalTriangleVertexCount - 4) + 1);
-						indices.PushBack((currentTotalTriangleVertexCount - 4) + 2);
-
-						indices.PushBack((currentTotalTriangleVertexCount - 4) + 0);
-						indices.PushBack((currentTotalTriangleVertexCount - 4) + 2);
-						indices.PushBack((currentTotalTriangleVertexCount - 4) + 3);
-					}
-				}
-			}
-
-			glyphPosition._x += static_cast<float>(glyphInfo._horiAdvance) * scale;
-		}
-
 		const char* ShapeRenderer::GetPixelShaderName() const noexcept
 		{
 			return "ShapeRendererPS";
@@ -547,29 +353,6 @@ namespace mint
 		const char* ShapeRenderer::GetPixelShaderEntryPoint() const noexcept
 		{
 			return "main_shape";
-		}
-
-		Float3 ShapeRenderer::ComputePostTranslation(const wchar_t* const wideText, const uint32 textLength, const FontRenderingOption& fontRenderingOption) const
-		{
-			const float scaledTextWidth = _fontData.ComputeTextWidth(wideText, textLength) * fontRenderingOption._scale;
-			const float scaledFontSize = _fontData._fontSize * fontRenderingOption._scale;
-
-			Float3 postTranslation;
-			postTranslation._y = (-scaledFontSize * 0.5f - 1.0f);
-			if (fontRenderingOption._directionHorz != TextRenderDirectionHorz::Rightward)
-			{
-				float xOffset = (fontRenderingOption._directionHorz == TextRenderDirectionHorz::Centered) ? -scaledTextWidth * 0.5f : -scaledTextWidth;
-				postTranslation._x += xOffset;
-			}
-			if (fontRenderingOption._directionVert != TextRenderDirectionVert::Centered)
-			{
-				float yOffset = (fontRenderingOption._directionVert == TextRenderDirectionVert::Upward) ? -scaledFontSize * 0.5f : +scaledFontSize * 0.5f;
-				if (_coordinateSpace == CoordinateSpace::Screen)
-					yOffset = -yOffset;
-
-				postTranslation._y += yOffset;
-			}
-			return postTranslation;
 		}
 
 		uint32 ShapeRenderer::ComputeVertexInfo(uint32 transformIndex, uint8 type) const

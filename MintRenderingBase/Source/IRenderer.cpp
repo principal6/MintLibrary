@@ -10,9 +10,10 @@ namespace mint
 {
 	namespace Rendering
 	{
-		IRenderer::IRenderer(GraphicsDevice& graphicsDevice, LowLevelRenderer<VS_INPUT_SHAPE>& lowLevelRenderer)
+		IRenderer::IRenderer(GraphicsDevice& graphicsDevice, LowLevelRenderer<VS_INPUT_SHAPE>& lowLevelRenderer, Vector<SB_Transform>& sbTransformData)
 			: _graphicsDevice{ graphicsDevice }
 			, _lowLevelRenderer{ lowLevelRenderer }
+			, _sbTransformData{ sbTransformData }
 			, _coordinateSpace{ CoordinateSpace::World }
 			, _color{ Color::kWhite }
 			, _useMultipleViewports{ false }

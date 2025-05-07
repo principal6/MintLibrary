@@ -33,7 +33,7 @@ namespace mint
 			void DrawImage(const Float2& position, const Float2& size, const Float2& uv0, const Float2& uv1);
 
 		private:
-			SpriteRenderer(GraphicsDevice& graphicsDevice, LowLevelRenderer<VS_INPUT_SHAPE>& lowLevelRenderer, const uint32 psTextureSlot, const ByteColor& transparentColor);
+			SpriteRenderer(GraphicsDevice& graphicsDevice, LowLevelRenderer<VS_INPUT_SHAPE>& lowLevelRenderer, Vector<SB_Transform>& sbTransformData, const uint32 psTextureSlot, const ByteColor& transparentColor);
 
 		private:
 			virtual const char* GetPixelShaderName() const noexcept override final;

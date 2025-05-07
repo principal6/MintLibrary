@@ -102,6 +102,9 @@
     <ClInclude Include="Include\Material.h">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="Include\FontRenderer.h">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Include\GraphicsDevice.inl">
@@ -173,6 +176,9 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\Material.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\FontRenderer.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>

@@ -3,6 +3,7 @@
 #include <MintPlatform/Include/Window.h>
 #include <MintRenderingBase/Include/GraphicsDevice.h>
 #include <MintRenderingBase/Include/ShapeRenderer.h>
+#include <MintRenderingBase/Include/FontRenderer.h>
 #include <MintRenderingBase/Include/SpriteRenderer.h>
 #include <MintGUI/Include/GUISystem.h>
 #include <MintApp/Include/SceneObjectPool.hpp>
@@ -119,13 +120,11 @@ namespace mint
 
 		_hasScreenSpaceRenderingScopeInRenderingScope = true;
 
-		// Before proceeding to ScreenSpace rendering, flush all render commands to the GPU.
-		_graphicsDevice->GetShapeRenderer().Render();
+		_sceneObjectRenderer->Render(*_sceneObjectPool);
+
+		_graphicsDevice->BeginScreenSpaceRendering();
 
 		_isInScreenSpaceRenderingScope = true;
-		_graphicsDevice->SetViewProjectionMatrix(Float4x4::kIdentity, _graphicsDevice->GetScreenSpace2DProjectionMatrix());
-		_graphicsDevice->GetSpriteRenderer().SetCoordinateSpace(Rendering::CoordinateSpace::Screen);
-		_graphicsDevice->GetShapeRenderer().SetCoordinateSpace(Rendering::CoordinateSpace::Screen);
 	}
 
 	void App::EndScreenSpaceRendering()
@@ -135,21 +134,13 @@ namespace mint
 
 		_guiSystem->Render();
 
-		_graphicsDevice->GetSpriteRenderer().Render();
-		_graphicsDevice->GetShapeRenderer().Render();
+		_graphicsDevice->EndScreenSpaceRendering();
 
-		const SceneObject& currentCameraObject = _sceneObjectSystems->GetCameraSystem().GetCurrentCameraObject();
-		CameraComponent& cameraComponent = _sceneObjectPool->GetComponentMust<CameraComponent>(currentCameraObject);
-		const Float4x4& currentCameraViewMatrix = _sceneObjectSystems->GetCameraSystem().MakeViewMatrix(currentCameraObject);
-		_graphicsDevice->SetViewProjectionMatrix(currentCameraViewMatrix, cameraComponent._projectionMatrix);
-		_graphicsDevice->GetShapeRenderer().SetCoordinateSpace(Rendering::CoordinateSpace::World);
 		_isInScreenSpaceRenderingScope = false;
 	}
 
 	void App::EndRendering()
 	{
-		_sceneObjectRenderer->Render(*_sceneObjectPool);
-
 		if (_hasScreenSpaceRenderingScopeInRenderingScope == false)
 		{
 			BeginScreenSpaceRendering();

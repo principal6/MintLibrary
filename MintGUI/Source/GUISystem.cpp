@@ -4,6 +4,7 @@
 #include <MintContainer/Include/StringReference.hpp>
 #include <MintContainer/Include/Algorithm.hpp>
 #include <MintRenderingBase/Include/GraphicsDevice.h>
+#include <MintRenderingBase/Include/FontRenderer.h>
 #include <MintRenderingBase/Include/ShapeRenderer.h>
 #include <MintPlatform/Include/InputContext.h>
 #include <MintPhysics/Include/CollisionShape.h>
@@ -178,6 +179,7 @@ namespace mint
 			graphicsDevice.SetSolidCullNoneRasterizer();
 			graphicsDevice.SetViewProjectionMatrix(Float4x4::kIdentity, graphicsDevice.GetScreenSpace2DProjectionMatrix());
 
+			Rendering::FontRenderer& fontRenderer = graphicsDevice.GetFontRenderer();
 			Rendering::ShapeRenderer& shapeRenderer = graphicsDevice.GetShapeRenderer();
 			shapeRenderer.SetMaterial(_defaultMaterialID);
 
@@ -192,7 +194,7 @@ namespace mint
 					FontRenderingOption fontRenderingOption;
 					fontRenderingOption._directionHorz = TextRenderDirectionHorz::Centered;
 					fontRenderingOption._directionVert = TextRenderDirectionVert::Centered;
-					shapeRenderer.DrawDynamicText(textComponent->_text.CString(), transform2DComponent->_transform2D._translation + textComponent->_offset, fontRenderingOption);
+					fontRenderer.DrawDynamicText(textComponent->_text.CString(), transform2DComponent->_transform2D._translation + textComponent->_offset, fontRenderingOption);
 				}
 
 				GUIShapeComponent* const shapeComponent = GetComponent<GUIShapeComponent>(entity);

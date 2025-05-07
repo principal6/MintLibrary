@@ -14,6 +14,7 @@ namespace mint
 {
 	namespace Rendering
 	{
+		class FontRenderer;
 		class ShapeRenderer;
 
 
@@ -37,7 +38,7 @@ namespace mint
 			};
 
 		public:
-			Plotter(ShapeRenderer& shapeRenderer);
+			Plotter(FontRenderer& fontRenderer, ShapeRenderer& shapeRenderer);
 			~Plotter() = default;
 
 		public:
@@ -62,6 +63,7 @@ namespace mint
 			void DrawLabels(const Float4& frameCenterPosition) noexcept;
 
 		private:
+			FontRenderer* const _fontRenderer;
 			ShapeRenderer* const _shapeRenderer;
 
 		private:

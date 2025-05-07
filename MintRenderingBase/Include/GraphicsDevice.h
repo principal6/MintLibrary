@@ -33,9 +33,11 @@ namespace mint
 
 	namespace Rendering
 	{
+		class FontRenderer;
 		class ShapeRenderer;
 		class SpriteRenderer;
 		using Microsoft::WRL::ComPtr;
+		struct SB_Transform;
 	}
 }
 
@@ -66,9 +68,10 @@ namespace mint
 
 		class GraphicsDevice final
 		{
+			friend SafeResourceMapper;
+
 		public:
 			class StateManager;
-			friend SafeResourceMapper;
 
 		public:
 			static GraphicsDevice& GetInvalidInstance();
@@ -98,9 +101,12 @@ namespace mint
 
 		public:
 			void BeginRendering();
+			void BeginScreenSpaceRendering();
+			void EndScreenSpaceRendering();
+			void EndRendering();
+
 			void Draw(const uint32 vertexCount, const uint32 vertexOffset) noexcept;
 			void DrawIndexed(const uint32 indexCount, const uint32 indexOffset, const uint32 vertexOffset) noexcept;
-			void EndRendering();
 
 		public:
 			void UseScissorRectangles() noexcept;
@@ -118,6 +124,7 @@ namespace mint
 			ShaderPipelinePool& GetShaderPipelinePool() noexcept;
 			GraphicsResourcePool& GetResourcePool() noexcept;
 			MaterialPool& GetMaterialPool() noexcept;
+			FontRenderer& GetFontRenderer() noexcept;
 			ShapeRenderer& GetShapeRenderer() noexcept;
 			SpriteRenderer& GetSpriteRenderer() noexcept;
 			const Language::CppHlsl::Interpreter& GetCppHlslSteamData() const noexcept;
@@ -237,6 +244,8 @@ namespace mint
 
 		private:
 			CB_View _cbViewData;
+			float4x4 _viewMatrixCache;
+			float4x4 _projectionMatrixCache;
 			GraphicsObjectID _cbViewID;
 
 		private: // Common buffers
@@ -261,6 +270,9 @@ namespace mint
 		private:
 			OwnPtr<LowLevelRenderer<VS_INPUT_SHAPE>> _lowLevelRendererForShapeAndFont;
 			OwnPtr<LowLevelRenderer<VS_INPUT_SHAPE>> _lowLevelRendererForSprite;
+			Vector<SB_Transform> _sbTransformDataForShapeAndFont;
+			Vector<SB_Transform> _sbTransformDataForSprite;
+			OwnPtr<FontRenderer> _fontRenderer;
 			OwnPtr<ShapeRenderer> _shapeRenderer;
 			OwnPtr<SpriteRenderer> _spriteRenderer;
 			bool _isInRenderingScope;
