@@ -177,7 +177,6 @@ namespace mint
 			using namespace Rendering;
 
 			graphicsDevice.SetSolidCullNoneRasterizer();
-			graphicsDevice.SetViewProjectionMatrix(Float4x4::kIdentity, graphicsDevice.GetScreenSpace2DProjectionMatrix());
 
 			Rendering::FontRenderer& fontRenderer = graphicsDevice.GetFontRenderer();
 			Rendering::ShapeRenderer& shapeRenderer = graphicsDevice.GetShapeRenderer();
@@ -209,8 +208,6 @@ namespace mint
 					shapeRenderer.AddShape(shapeComponent->_shapes[shapeIndex], transform2DComponent->_transform2D);
 				}
 			}
-
-			shapeRenderer.Render();
 		}
 #pragma endregion
 	}

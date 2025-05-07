@@ -19,7 +19,7 @@ namespace mint
 			Terminate();
 		}
 
-		void FontRenderer::InitializeShaders() noexcept
+		void FontRenderer::Initialize() noexcept
 		{
 			SetClipRect(_graphicsDevice.GetFullScreenClipRect());
 
@@ -83,21 +83,6 @@ namespace mint
 		void FontRenderer::SetTextColor(const Color& textColor) noexcept
 		{
 			_textColor = textColor;
-		}
-
-		void FontRenderer::Render() noexcept
-		{
-			if (_lowLevelRenderer.IsRenderable() == false)
-			{
-				return;
-			}
-
-			_lowLevelRenderer.ExecuteRenderCommands(_graphicsDevice);
-		}
-
-		void FontRenderer::Flush() noexcept
-		{
-			__noop;
 		}
 
 		void FontRenderer::DrawDynamicText(const wchar_t* const wideText, const Float2& position, const FontRenderingOption& fontRenderingOption)

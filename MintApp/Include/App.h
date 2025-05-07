@@ -50,6 +50,8 @@ namespace mint
 	public:
 		virtual bool IsRunning();
 		void BeginRendering();
+		void BeginWorldSpaceRendering();
+		void EndWorldSpaceRendering();
 		void BeginScreenSpaceRendering();
 		void EndScreenSpaceRendering();
 		void EndRendering();

@@ -96,7 +96,6 @@ namespace mint
 				TransformComponent* transformComponent = transformComponentPool.GetComponent(sceneObject);
 				shapeRenderer.AddShape(mesh2DComponent._shape, transformComponent->_transform);
 			}
-			shapeRenderer.Render();
 		}
 	}
 

@@ -20,9 +20,7 @@ namespace mint
 			virtual ~SpriteRenderer() = default;
 
 		public:
-			virtual void InitializeShaders() noexcept override;
-			virtual void Render() noexcept override;
-			virtual void Flush() noexcept override;
+			virtual void Initialize() noexcept override final;
 
 		public:
 			MINT_INLINE GraphicsObjectID GetDefaultShaderPipelineID() const noexcept { return __super::GetDefaultShaderPipelineID(); }

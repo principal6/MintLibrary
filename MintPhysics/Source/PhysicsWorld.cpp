@@ -625,8 +625,6 @@ namespace mint
 					}
 				}
 			}
-
-			shapeRenderer.Render();
 		}
 
 		void World::RenderDebugBody(Rendering::ShapeRenderer& shapeRenderer, const Body2D& body) const

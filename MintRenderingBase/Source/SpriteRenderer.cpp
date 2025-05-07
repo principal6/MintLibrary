@@ -12,22 +12,12 @@ namespace mint
 			, _psTextureSlot{ psTextureSlot }
 			, _transparentColor{ transparentColor }
 		{
-			InitializeShaders();
+			__noop;
 		}
 
-		void SpriteRenderer::InitializeShaders() noexcept
+		void SpriteRenderer::Initialize() noexcept
 		{
-			__super::InitializeShaders();
-		}
-
-		void SpriteRenderer::Flush() noexcept
-		{
-			__super::Flush();
-		}
-
-		void SpriteRenderer::Render() noexcept
-		{
-			__super::Render();
+			InitializeCommon();
 		}
 
 		void SpriteRenderer::SetCoordinateSpace(const CoordinateSpace& coordinateSpace) noexcept
@@ -64,7 +54,8 @@ namespace mint
 			};
 			StackStringA<256> textBuffer;
 			StringUtil::ToString(_psTextureSlot, textBuffer);
-			static StackStringA<1024> shaderString = kShaderStringInclude;
+			static StackStringA<1024> shaderString;
+			shaderString = kShaderStringInclude;
 			shaderString += "sampler g_linearSampler : register(s0);\n";
 			shaderString += "sampler g_pointSampler : register(s1);\n";
 			shaderString += "Texture2D<float4> g_texture0 : register(t";

@@ -327,12 +327,13 @@ namespace mint
 
 			_lowLevelRendererForShapeAndFont.Assign(MINT_NEW(LowLevelRenderer<VS_INPUT_SHAPE>));
 			_fontRenderer.Assign(MINT_NEW(FontRenderer, *this, *_lowLevelRendererForShapeAndFont, _sbTransformDataForShapeAndFont));
-			_fontRenderer->InitializeShaders();
+			_fontRenderer->Initialize();
 			_shapeRenderer.Assign(MINT_NEW(ShapeRenderer, *this, *_lowLevelRendererForShapeAndFont, _sbTransformDataForShapeAndFont));
-			_shapeRenderer->InitializeShaders();
+			_shapeRenderer->Initialize();
 
 			_lowLevelRendererForSprite.Assign(MINT_NEW(LowLevelRenderer<VS_INPUT_SHAPE>));
 			_spriteRenderer.Assign(MINT_NEW(SpriteRenderer, *this, *_lowLevelRendererForSprite, _sbTransformDataForSprite, 1, ByteColor(0, 0, 0, 0)));
+			_spriteRenderer->Initialize();
 
 			if (LoadFontData() == false)
 			{
@@ -702,7 +703,19 @@ namespace mint
 
 			UseFullScreenViewport();
 
+			MINT_ASSERT(_fontRenderer->IsEmpty(), "BeginRendering() 호출 전에 채우면 안 됩니다!");
 			MINT_ASSERT(_shapeRenderer->IsEmpty(), "BeginRendering() 호출 전에 채우면 안 됩니다!");
+			MINT_ASSERT(_spriteRenderer->IsEmpty(), "BeginRendering() 호출 전에 채우면 안 됩니다!");
+		}
+
+		void GraphicsDevice::BeginWorldSpaceRendering()
+		{
+			_shapeRenderer->SetMaterial(_shapeRenderer->GetDefaultMaterialID());
+		}
+
+		void GraphicsDevice::EndWorldSpaceRendering()
+		{
+			Render();
 		}
 
 		void GraphicsDevice::BeginScreenSpaceRendering()
@@ -710,50 +723,22 @@ namespace mint
 			_viewMatrixCache = _cbViewData._cbViewMatrix;
 			_projectionMatrixCache = _cbViewData._cbProjectionMatrix;
 
-			//// Before proceeding to ScreenSpace rendering, flush all render commands to the GPU.
-			//GetShapeRenderer().Render();
-
 			GetSpriteRenderer().SetCoordinateSpace(Rendering::CoordinateSpace::Screen);
 			GetFontRenderer().SetCoordinateSpace(Rendering::CoordinateSpace::Screen);
 			GetShapeRenderer().SetCoordinateSpace(Rendering::CoordinateSpace::Screen);
-			SetViewProjectionMatrix(Float4x4::kIdentity, GetScreenSpace2DProjectionMatrix());
 		}
 
 		void GraphicsDevice::EndScreenSpaceRendering()
 		{
-			GraphicsResourcePool& resourcePool = GetResourcePool();
-			GraphicsResource& sbTransformBuffer = resourcePool.GetResource(GetCommonSBTransformID());
-			
-			{
-				if (_sbTransformDataForSprite.IsEmpty() == false)
-				{
-					sbTransformBuffer.UpdateBuffer(&_sbTransformDataForSprite[0], _sbTransformDataForSprite.Size());
-				}
+			// This view projection matrix is forced!
+			SetViewProjectionMatrix(Float4x4::kIdentity, GetScreenSpace2DProjectionMatrix());
 
-				GetSpriteRenderer().Render();
-
-				_sbTransformDataForSprite.Clear();
-				_lowLevelRendererForSprite->Flush();
-			}
-			
-			{
-				if (_sbTransformDataForShapeAndFont.IsEmpty() == false)
-				{
-					sbTransformBuffer.UpdateBuffer(&_sbTransformDataForShapeAndFont[0], _sbTransformDataForShapeAndFont.Size());
-				}
-
-				sbTransformBuffer.BindToShader(GraphicsShaderType::VertexShader, sbTransformBuffer.GetRegisterIndex());
-
-				GetFontRenderer().Render();
-				GetShapeRenderer().Render();
-
-				_sbTransformDataForShapeAndFont.Clear();
-				_lowLevelRendererForShapeAndFont->Flush();
-			}
+			Render();
 
 			GetSpriteRenderer().SetCoordinateSpace(Rendering::CoordinateSpace::World);
 			GetFontRenderer().SetCoordinateSpace(Rendering::CoordinateSpace::World);
 			GetShapeRenderer().SetCoordinateSpace(Rendering::CoordinateSpace::World);
+
 			SetViewProjectionMatrix(_viewMatrixCache, _projectionMatrixCache);
 		}
 
@@ -767,6 +752,37 @@ namespace mint
 			_deviceContext->DrawIndexed(indexCount, indexOffset, vertexOffset);
 		}
 
+		void GraphicsDevice::Render() noexcept
+		{
+			GraphicsResourcePool& resourcePool = GetResourcePool();
+			GraphicsResource& sbTransformBuffer = resourcePool.GetResource(GetCommonSBTransformID());
+			sbTransformBuffer.BindToShader(GraphicsShaderType::VertexShader, sbTransformBuffer.GetRegisterIndex());
+
+			if (_lowLevelRendererForSprite->IsRenderable() == true)
+			{
+				if (_sbTransformDataForSprite.IsEmpty() == false)
+				{
+					sbTransformBuffer.UpdateBuffer(&_sbTransformDataForSprite[0], _sbTransformDataForSprite.Size());
+				}
+
+				_lowLevelRendererForSprite->ExecuteRenderCommands(*this);
+				_lowLevelRendererForSprite->Flush();
+				_sbTransformDataForSprite.Clear();
+			}
+
+			if (_lowLevelRendererForShapeAndFont->IsRenderable() == true)
+			{
+				if (_sbTransformDataForShapeAndFont.IsEmpty() == false)
+				{
+					sbTransformBuffer.UpdateBuffer(&_sbTransformDataForShapeAndFont[0], _sbTransformDataForShapeAndFont.Size());
+				}
+
+				_lowLevelRendererForShapeAndFont->ExecuteRenderCommands(*this);
+				_lowLevelRendererForShapeAndFont->Flush();
+				_sbTransformDataForShapeAndFont.Clear();
+			}
+		}
+
 		void GraphicsDevice::EndRendering()
 		{
 			if (_isInRenderingScope == false)
@@ -775,12 +791,9 @@ namespace mint
 				return;
 			}
 
-			if (_shapeRenderer->IsEmpty() == false)
-			{
-				_shapeRenderer->Render();
-			}
-
+			MINT_ASSERT(_fontRenderer->IsEmpty(), "EndRendering() 호출 전에 Flush() 해야 합니다!");
 			MINT_ASSERT(_shapeRenderer->IsEmpty(), "EndRendering() 호출 전에 Flush() 해야 합니다!");
+			MINT_ASSERT(_spriteRenderer->IsEmpty(), "EndRendering() 호출 전에 Flush() 해야 합니다!");
 
 			_swapChain->Present(0, 0);
 

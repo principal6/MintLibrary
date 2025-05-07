@@ -47,16 +47,14 @@ namespace mint
 			virtual ~ShapeRenderer();
 
 		public:
-			virtual void InitializeShaders() noexcept override;
-			void Terminate() noexcept;
-			virtual void Render() noexcept override;
-			virtual void Flush() noexcept override;
+			virtual void Initialize() noexcept;
 
 		public:
 			MINT_INLINE GraphicsObjectID GetDefaultShaderPipelineID() const noexcept { return _shaderPipelineMultipleViewportID; }
 
 		public:
 			void SetMaterial(const GraphicsObjectID& materialID) noexcept;
+			MINT_INLINE GraphicsObjectID GetDefaultMaterialID() const noexcept { return _defaultMaterialID; }
 
 		public:
 			void AddShape(const Shape& shape);
@@ -89,6 +87,10 @@ namespace mint
 			ShapeRenderer(ShapeRenderer&& rhs) = delete;
 
 		protected:
+			void InitializeCommon() noexcept;
+			void Terminate() noexcept;
+
+		protected:
 			const char* GetDefaultVertexShaderString() const;
 			const char* GetDefaultGeometryShaderString() const;
 			const char* GetDefaultPixelShaderString() const;
@@ -107,6 +109,7 @@ namespace mint
 
 		protected:
 			GraphicsObjectID _shaderPipelineMultipleViewportID;
+			GraphicsObjectID _defaultMaterialID;
 			GraphicsObjectID _currentMaterialID;
 			Float2 _uv0 = Float2(0, 0);
 			Float2 _uv1 = Float2(1, 1);

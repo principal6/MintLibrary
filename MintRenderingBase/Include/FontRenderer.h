@@ -54,12 +54,7 @@ namespace mint
 			virtual ~FontRenderer();
 
 		public:
-			virtual void InitializeShaders() noexcept override;
-			void Terminate() noexcept;
-			virtual void Render() noexcept override;
-			virtual void Flush() noexcept override;
-
-		public:
+			void Initialize() noexcept;
 			bool InitializeFontData(const FontData& fontData);
 			void SetTextColor(const Color& textColor) noexcept;
 
@@ -78,6 +73,9 @@ namespace mint
 			FontRenderer(GraphicsDevice& graphicsDevice, LowLevelRenderer<VS_INPUT_SHAPE>& lowLevelRenderer, Vector<SB_Transform>& sbTransformData);
 			FontRenderer(const FontRenderer& rhs) = delete;
 			FontRenderer(FontRenderer&& rhs) = delete;
+
+		private:
+			void Terminate() noexcept;
 
 		private:
 			Float3 ComputePostTranslation(const wchar_t* const wideText, const uint32 textLength, const FontRenderingOption& fontRenderingOption) const;

@@ -72,14 +72,6 @@ void RunGJKTestWindow()
 	FontRenderer& fontRenderer = graphicsDevice.GetFontRenderer();
 	ShapeRenderer& shapeRenderer = graphicsDevice.GetShapeRenderer();
 	MaterialPool& materialPool = graphicsDevice.GetMaterialPool();
-	GraphicsObjectID defaultMaterialID;
-	{
-		MaterialDesc materialDesc;
-		materialDesc._materialName = "Default";
-		materialDesc._shaderPipelineID = shapeRenderer.GetDefaultShaderPipelineID();
-		defaultMaterialID = materialPool.CreateMaterial(materialDesc);
-	}
-
 	const InputContext& inputContext = InputContext::GetInstance();
 	enum class SelectionMode
 	{
@@ -171,10 +163,9 @@ void RunGJKTestWindow()
 		const Float2 windowSize{ app.GetWindow().GetSize() };
 		app.BeginRendering();
 		{
+			app.BeginWorldSpaceRendering();
 			{
 				graphicsDevice.SetViewProjectionMatrix(Float4x4::kIdentity, Float4x4::ProjectionMatrix2DNormal(windowSize._x, windowSize._y));
-
-				shapeRenderer.SetMaterial(defaultMaterialID);
 
 				CircleCollisionShape2D shapeA = CircleCollisionShape2D(64, shapeATransform2D);
 				//EdgeCollisionShape2D shapeB = EdgeCollisionShape2D(Float2(-64, 0), Float2(64, 0), shapeBTransform2D);
@@ -230,9 +221,8 @@ void RunGJKTestWindow()
 					shapeRenderer.SetColor(ByteColor(255, 64, 0));
 					shapeRenderer.DrawCircle(Float3(normal * distance), 4.0f);
 				}
-
-				shapeRenderer.Render();
 			}
+			app.EndWorldSpaceRendering();
 
 			app.BeginScreenSpaceRendering();
 			{
@@ -318,23 +308,19 @@ void RunSplineTestWindow()
 	FontRenderer& fontRenderer = graphicsDevice.GetFontRenderer();
 	ShapeRenderer& shapeRenderer = graphicsDevice.GetShapeRenderer();
 	MaterialPool& materialPool = graphicsDevice.GetMaterialPool();
-	GraphicsObjectID defaultMaterialID;
-	{
-		MaterialDesc materialDesc;
-		materialDesc._materialName = "Default";
-		materialDesc._shaderPipelineID = shapeRenderer.GetDefaultShaderPipelineID();
-		defaultMaterialID = materialPool.CreateMaterial(materialDesc);
-	}
-
 	while (app.IsRunning() == true)
 	{
 		// Rendering
 		app.BeginRendering();
 		{
+			app.BeginWorldSpaceRendering();
+			{
+				__noop;
+			}
+			app.EndWorldSpaceRendering();
+
 			app.BeginScreenSpaceRendering();
 			{
-				shapeRenderer.SetMaterial(defaultMaterialID);
-
 				StackStringW<100> fpsString;
 				FormatString(fpsString, L"FPS: %d", Profiler::FPSCounter::GetFPS());
 				fontRenderer.SetTextColor(Color::kBlack);
@@ -371,14 +357,6 @@ bool Run2DTestWindow()
 	FontRenderer& fontRenderer = graphicsDevice.GetFontRenderer();
 	ShapeRenderer& shapeRenderer = graphicsDevice.GetShapeRenderer();
 	SpriteRenderer& spriteRenderer = graphicsDevice.GetSpriteRenderer();
-	GraphicsObjectID defaultMaterialID;
-	{
-		MaterialDesc materialDesc;
-		materialDesc._materialName = "Default";
-		materialDesc._shaderPipelineID = shapeRenderer.GetDefaultShaderPipelineID();
-		defaultMaterialID = materialPool.CreateMaterial(materialDesc);
-	}
-
 	ByteColorImage corgiSpriteSheet;
 	ImageLoader imageLoader;
 	imageLoader.LoadImage_("Assets/corgi-asset_Miniyeti.png", corgiSpriteSheet);
@@ -462,7 +440,11 @@ bool Run2DTestWindow()
 		// Rendering
 		app.BeginRendering();
 		{
-			shapeRenderer.SetMaterial(defaultMaterialID);
+			app.BeginWorldSpaceRendering();
+			{
+				__noop;
+			}
+			app.EndWorldSpaceRendering();
 
 			app.BeginScreenSpaceRendering();
 			{
@@ -470,7 +452,6 @@ bool Run2DTestWindow()
 				corgiAnimationSet.Update(deltaTime);
 				const SpriteAnimation& corgiCurrentAnimation = corgiAnimationSet.GetCurrentAnimation();
 				spriteRenderer.DrawImage(Float2(64, 64), Float2(128, 128), corgiCurrentAnimation.GetCurrentFrameUV0(), corgiCurrentAnimation.GetCurrentFrameUV1());
-
 
 				StackStringW<100> fpsString;
 				FormatString(fpsString, L"FPS: %d", Profiler::FPSCounter::GetFPS());
@@ -526,14 +507,6 @@ bool Run3DTestWindow()
 	FontRenderer& fontRenderer = graphicsDevice.GetFontRenderer();
 	ShapeRenderer& shapeRenderer = graphicsDevice.GetShapeRenderer();
 	MaterialPool& materialPool = graphicsDevice.GetMaterialPool();
-	GraphicsObjectID defaultMaterialID;
-	{
-		MaterialDesc materialDesc;
-		materialDesc._materialName = "Default";
-		materialDesc._shaderPipelineID = shapeRenderer.GetDefaultShaderPipelineID();
-		defaultMaterialID = materialPool.CreateMaterial(materialDesc);
-	}
-
 	while (app.IsRunning() == true)
 	{
 		const float deltaTime = DeltaTimer::GetInstance().GetDeltaTimeS();
@@ -595,10 +568,15 @@ bool Run3DTestWindow()
 		// Rendering
 		app.BeginRendering();
 		{
+			app.BeginWorldSpaceRendering();
+			{
+				__noop;
+			}
+			app.EndWorldSpaceRendering();
+
 			app.BeginScreenSpaceRendering();
 			{
 				// RenderOverlayUI
-				shapeRenderer.SetMaterial(defaultMaterialID);
 				StackStringW<100> fpsString;
 				FormatString(fpsString, L"FPS: %d", Profiler::FPSCounter::GetFPS());
 				fontRenderer.SetTextColor(Color::kBlack);

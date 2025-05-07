@@ -106,10 +106,20 @@ namespace mint
 			return kShaderString;
 		}
 
-		void ShapeRenderer::InitializeShaders() noexcept
+		void ShapeRenderer::Initialize() noexcept
+		{
+			InitializeCommon();
+
+			MaterialDesc materialDesc;
+			materialDesc._materialName = "DefaultShapeMaterial";
+			materialDesc._shaderPipelineID = GetDefaultShaderPipelineID();
+			MaterialPool& materialPool = _graphicsDevice.GetMaterialPool();
+			_defaultMaterialID = materialPool.CreateMaterial(materialDesc);
+		}
+
+		void ShapeRenderer::InitializeCommon() noexcept
 		{
 			SetClipRect(_graphicsDevice.GetFullScreenClipRect());
-
 
 			ShaderPool& shaderPool = _graphicsDevice.GetShaderPool();
 			GraphicsObjectID vertexShaderID = shaderPool.CreateShaderFromMemory("ShapeRendererVS", GetDefaultVertexShaderString(), "main_shape", GraphicsShaderType::VertexShader);
@@ -142,21 +152,6 @@ namespace mint
 		bool ShapeRenderer::IsEmpty() const noexcept
 		{
 			return _lowLevelRenderer.IsRenderable() == false;
-		}
-
-		void ShapeRenderer::Flush() noexcept
-		{
-			__noop;
-		}
-
-		void ShapeRenderer::Render() noexcept
-		{
-			if (_lowLevelRenderer.IsRenderable() == false)
-			{
-				return;
-			}
-
-			_lowLevelRenderer.ExecuteRenderCommands(_graphicsDevice);
 		}
 
 		void ShapeRenderer::SetMaterial(const GraphicsObjectID& materialID) noexcept

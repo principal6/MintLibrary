@@ -101,6 +101,8 @@ namespace mint
 
 		public:
 			void BeginRendering();
+			void BeginWorldSpaceRendering();
+			void EndWorldSpaceRendering();
 			void BeginScreenSpaceRendering();
 			void EndScreenSpaceRendering();
 			void EndRendering();
@@ -203,6 +205,9 @@ namespace mint
 			const Int2& GetWindowSize() const noexcept;
 			Window& AccessWindow() noexcept;
 			const Window& GetWindow() const noexcept;
+
+		private:
+			void Render() noexcept;
 
 		private:
 			Window& _window;

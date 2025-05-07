@@ -109,8 +109,6 @@ namespace mint
 				}
 			}
 
-			_shapeRenderer->Render();
-
 			Clear();
 		}
 

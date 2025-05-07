@@ -43,11 +43,6 @@ namespace mint
 			virtual ~IRenderer();
 
 		public:
-			virtual void InitializeShaders() noexcept abstract;
-			virtual void Render() noexcept abstract;
-			virtual void Flush() noexcept abstract;
-
-		public:
 			void SetCoordinateSpace(const CoordinateSpace& coordinateSpace) noexcept;
 			void SetColor(const ByteColor& color) noexcept;
 			void SetColor(const Color& color) noexcept;
@@ -72,8 +67,6 @@ namespace mint
 		protected:
 			CoordinateSpace _coordinateSpace;
 			Color _color;
-
-		protected:
 
 		private:
 			Rect _clipRect;
