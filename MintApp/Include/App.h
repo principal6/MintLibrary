@@ -20,6 +20,7 @@ namespace mint
 	namespace Rendering
 	{
 		class GraphicsDevice;
+		class ScopedRenderPhase;
 	}
 
 	namespace GUI
@@ -49,12 +50,7 @@ namespace mint
 
 	public:
 		virtual bool IsRunning();
-		void BeginRendering();
-		void BeginWorldSpaceRendering();
-		void EndWorldSpaceRendering();
-		void BeginScreenSpaceRendering();
-		void EndScreenSpaceRendering();
-		void EndRendering();
+		void ProcessRenderPhase(const Rendering::ScopedRenderPhase& scopedRenderPhase);
 
 	public:
 		Window& GetWindow();
@@ -74,9 +70,6 @@ namespace mint
 
 	protected:
 		bool _is3DMode = true;
-		bool _isInRenderingScope = false;
-		bool _isInScreenSpaceRenderingScope = false;
-		bool _hasScreenSpaceRenderingScopeInRenderingScope = false;
 		SceneObject _defaultCameraObject;
 	};
 }

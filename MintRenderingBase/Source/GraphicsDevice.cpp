@@ -27,6 +27,7 @@ namespace mint
 #define MINT_CHECK_TWO_STATES(a, aa, b, bb) if ((a == aa) && (b == bb)) { return; } a = aa; b = bb;
 
 
+#pragma region SafeResourceMapper
 		SafeResourceMapper::SafeResourceMapper(GraphicsDevice& graphicsDevice, ID3D11Resource* const resource, const uint32 subresource)
 			: _graphicsDevice{ graphicsDevice }
 			, _resource{ resource }
@@ -58,8 +59,118 @@ namespace mint
 		{
 			memcpy(_mappedSubresource.pData, data, size);
 		}
+#pragma endregion
 
 
+#pragma region ScopedRenderPhase, RenderPhaseIterator
+		ScopedRenderPhase::ScopedRenderPhase(RenderPhaseIterator& renderPhaseIterator)
+			: _renderPhaseSequence{ renderPhaseIterator }
+			, _renderPhaseLabel{ renderPhaseIterator._renderPhaseLabel }
+		{
+			MINT_ASSERT(_renderPhaseLabel != RenderPhaseLabel::COUNT, "This condition MUST be assured!!!");
+
+			switch (_renderPhaseLabel)
+			{
+			case RenderPhaseLabel::WorldSpace:
+				_renderPhaseSequence._graphicsDevice.BeginWorldSpaceRendering();
+				break;
+			case RenderPhaseLabel::ScreenSpace:
+				_renderPhaseSequence._graphicsDevice.BeginScreenSpaceRendering();
+				break;
+			case RenderPhaseLabel::COUNT:
+				break;
+			default:
+				MINT_NEVER;
+				break;
+			}
+		}
+		
+		ScopedRenderPhase::~ScopedRenderPhase()
+		{
+			switch (_renderPhaseLabel)
+			{
+			case RenderPhaseLabel::WorldSpace:
+				_renderPhaseSequence._graphicsDevice.EndWorldSpaceRendering();
+				break;
+			case RenderPhaseLabel::ScreenSpace:
+				_renderPhaseSequence._graphicsDevice.EndScreenSpaceRendering();
+				break;
+			case RenderPhaseLabel::COUNT:
+				break;
+			default:
+				MINT_NEVER;
+				break;
+			}
+		}
+
+		bool ScopedRenderPhase::Is(const RenderPhaseLabel& renderPhaseLabel) const
+		{
+			return _renderPhaseLabel == renderPhaseLabel;
+		}
+
+		RenderPhaseIterator::RenderPhaseIterator(GraphicsDevice& graphicsDevice, const RenderPhaseLabel& renderPhaseLabel, bool isCreatedByThis)
+			: _graphicsDevice{ graphicsDevice }
+			, _renderPhaseLabel{ renderPhaseLabel }
+			, _isCreatedByThis{ isCreatedByThis }
+		{
+			if (_isCreatedByThis == false)
+			{
+				_graphicsDevice.BeginRendering();
+			}
+		}
+
+		RenderPhaseIterator::~RenderPhaseIterator()
+		{
+			if (_isCreatedByThis == false)
+			{
+				_graphicsDevice.EndRendering();
+			}
+		}
+
+		bool RenderPhaseIterator::operator!=(const RenderPhaseIterator& rhs) const
+		{
+			if (&_graphicsDevice != &rhs._graphicsDevice)
+				return true;
+
+			if (_renderPhaseLabel != rhs._renderPhaseLabel)
+				return true;
+
+			return false;
+		}
+
+		RenderPhaseIterator RenderPhaseIterator::begin()
+		{
+			return RenderPhaseIterator(_graphicsDevice, RenderPhaseLabel::WorldSpace, true);
+		}
+		
+		RenderPhaseIterator RenderPhaseIterator::end()
+		{
+			return RenderPhaseIterator(_graphicsDevice, RenderPhaseLabel::COUNT, true);
+		}
+
+		bool RenderPhaseIterator::IsValidPhase() const
+		{
+			return _renderPhaseLabel < RenderPhaseLabel::COUNT;
+		}
+
+		ScopedRenderPhase RenderPhaseIterator::GetScopedRenderPhase()
+		{
+			return ScopedRenderPhase(*this);
+		}
+
+		void RenderPhaseIterator::ToNextPhase()
+		{
+			_renderPhaseLabel = static_cast<RenderPhaseLabel>(static_cast<uint8>(_renderPhaseLabel) + 1);
+			
+			if (_renderPhaseLabel >= RenderPhaseLabel::COUNT)
+			{
+				_renderPhaseLabel = RenderPhaseLabel::COUNT;
+			}
+		}
+#pragma endregion
+
+
+#pragma region GraphicsDevice::StateManager
 		GraphicsDevice::StateManager::StateManager(GraphicsDevice& graphicsDevice)
 			: _graphicsDevice{ graphicsDevice }
 			, _iaRenderingPrimitive{ RenderingPrimitive::INVALID }
@@ -288,8 +399,10 @@ namespace mint
 				_graphicsDevice._deviceContext->PSSetConstantBuffers(bindingSlot, 1, constantBuffer->GetBuffer());
 			}
 		}
+#pragma endregion
 
 
+#pragma region GraphicsDevice
 		GraphicsDevice& GraphicsDevice::GetInvalidInstance()
 		{
 			static Window invalidWindow;
@@ -683,6 +796,11 @@ namespace mint
 			_deviceContext->OMSetDepthStencilState(_depthStencilStateLessEqual.Get(), 0);
 		}
 
+		RenderPhaseIterator GraphicsDevice::IterateRenderPhases() noexcept
+		{
+			return RenderPhaseIterator(*this, RenderPhaseLabel::WorldSpace, false);
+		}
+
 		void GraphicsDevice::BeginRendering()
 		{
 			if (_isInRenderingScope)
@@ -917,5 +1035,6 @@ namespace mint
 		{
 			return _window;
 		}
+#pragma endregion
 	}
 }

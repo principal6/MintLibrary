@@ -34,6 +34,7 @@ namespace mint
 	namespace Rendering
 	{
 		class FontRenderer;
+		class RenderPhaseIterator;
 		class ShapeRenderer;
 		class SpriteRenderer;
 		using Microsoft::WRL::ComPtr;
@@ -65,10 +66,67 @@ namespace mint
 			D3D11_MAPPED_SUBRESOURCE _mappedSubresource;
 		};
 
+		enum class RenderPhaseLabel : uint8
+		{
+			WorldSpace,
+			ScreenSpace,
+			COUNT
+		};
+
+		class ScopedRenderPhase
+		{
+			friend RenderPhaseIterator;
+
+		public:
+			~ScopedRenderPhase();
+
+		public:
+			bool Is(const RenderPhaseLabel& renderPhaseLabel) const;
+
+		private:
+			ScopedRenderPhase(RenderPhaseIterator& renderPhaseIterator);
+
+		private:
+			RenderPhaseIterator& _renderPhaseSequence;
+			const RenderPhaseLabel _renderPhaseLabel;
+		};
+
+		class RenderPhaseIterator
+		{
+			friend GraphicsDevice;
+			friend ScopedRenderPhase;
+
+		public:
+			~RenderPhaseIterator();
+
+		public:
+			bool operator!=(const RenderPhaseIterator& rhs) const;
+			RenderPhaseIterator& operator++() { ToNextPhase(); return *this; }
+			ScopedRenderPhase operator*() { return GetScopedRenderPhase(); }
+			RenderPhaseIterator begin();
+			RenderPhaseIterator end();
+
+		private:
+			RenderPhaseIterator(GraphicsDevice& graphicsDevice, const RenderPhaseLabel& renderPhaseLabel, bool isCreatedByThis);
+			RenderPhaseIterator(const RenderPhaseIterator& rhs) = delete;
+			RenderPhaseIterator(RenderPhaseIterator&& rhs) noexcept = delete;
+
+		private:
+			bool IsValidPhase() const;
+			void ToNextPhase();
+			ScopedRenderPhase GetScopedRenderPhase();
+
+		private:
+			GraphicsDevice& _graphicsDevice;
+			RenderPhaseLabel _renderPhaseLabel;
+			bool _isCreatedByThis;
+		};
 
 		class GraphicsDevice final
 		{
 			friend SafeResourceMapper;
+			friend ScopedRenderPhase;
+			friend RenderPhaseIterator;
 
 		public:
 			class StateManager;
@@ -100,13 +158,7 @@ namespace mint
 			void SetDefaultRenderTargetsAndDepthStencil();
 
 		public:
-			void BeginRendering();
-			void BeginWorldSpaceRendering();
-			void EndWorldSpaceRendering();
-			void BeginScreenSpaceRendering();
-			void EndScreenSpaceRendering();
-			void EndRendering();
-
+			[[nodiscard]] RenderPhaseIterator IterateRenderPhases() noexcept;
 			void Draw(const uint32 vertexCount, const uint32 vertexOffset) noexcept;
 			void DrawIndexed(const uint32 indexCount, const uint32 indexOffset, const uint32 vertexOffset) noexcept;
 
@@ -207,6 +259,12 @@ namespace mint
 			const Window& GetWindow() const noexcept;
 
 		private:
+			void BeginRendering();
+			void EndRendering();
+			void BeginWorldSpaceRendering();
+			void EndWorldSpaceRendering();
+			void BeginScreenSpaceRendering();
+			void EndScreenSpaceRendering();
 			void Render() noexcept;
 
 		private:

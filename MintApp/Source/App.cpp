@@ -100,74 +100,21 @@ namespace mint
 		return false;
 	}
 
-	void App::BeginRendering()
+	void App::ProcessRenderPhase(const Rendering::ScopedRenderPhase& scopedRenderPhase)
 	{
-		_graphicsDevice->BeginRendering();
-
-		const SceneObject currentCameraObject = _sceneObjectSystems->GetCameraSystem().GetCurrentCameraObject();
-		const Float4x4& viewMatrix = _sceneObjectSystems->GetCameraSystem().MakeViewMatrix(currentCameraObject);
-		CameraComponent* const cameraComponent = _sceneObjectPool->GetComponent<CameraComponent>(currentCameraObject);
-		_graphicsDevice->SetViewProjectionMatrix(viewMatrix, cameraComponent->_projectionMatrix);
-
-		_isInRenderingScope = true;
-		_hasScreenSpaceRenderingScopeInRenderingScope = false;
-	}
-
-	void App::BeginWorldSpaceRendering()
-	{
-		MINT_ASSERT(_isInRenderingScope == true, "반드시 BeginRendering() 과 EndRendering() 사이에 호출되어야 합니다.");
-
-		_graphicsDevice->BeginWorldSpaceRendering();
-	}
-
-	void App::EndWorldSpaceRendering()
-	{
-		MINT_ASSERT(_isInRenderingScope == true, "반드시 BeginRendering() 과 EndRendering() 사이에 호출되어야 합니다.");
-
-		_sceneObjectRenderer->Render(*_sceneObjectPool);
-
-		_graphicsDevice->EndWorldSpaceRendering();
-	}
-
-	void App::BeginScreenSpaceRendering()
-	{
-		MINT_ASSERT(_isInRenderingScope == true, "반드시 BeginRendering() 과 EndRendering() 사이에 호출되어야 합니다.");
-		MINT_ASSERT(_isInScreenSpaceRenderingScope == false, "BeginScreenSpaceRendering() 을 두 번 연달아 호출할 수 없습니다. 먼저 EndScreenSpaceRendering() 을 호출해 주세요!");
-
-		_hasScreenSpaceRenderingScopeInRenderingScope = true;
-
-		_graphicsDevice->BeginScreenSpaceRendering();
-
-		_isInScreenSpaceRenderingScope = true;
-	}
-
-	void App::EndScreenSpaceRendering()
-	{
-		MINT_ASSERT(_isInRenderingScope == true, "반드시 BeginRendering() 과 EndRendering() 사이에 호출되어야 합니다.");
-		MINT_ASSERT(_isInScreenSpaceRenderingScope == true, "반드시 BeginScreenSpaceRendering() 이후에 호출되어야 합니다.");
-
-		_guiSystem->Render();
-
-		_graphicsDevice->EndScreenSpaceRendering();
-
-		_isInScreenSpaceRenderingScope = false;
-	}
-
-	void App::EndRendering()
-	{
-		if (_hasScreenSpaceRenderingScopeInRenderingScope == false)
+		if (scopedRenderPhase.Is(Rendering::RenderPhaseLabel::WorldSpace))
 		{
-			BeginScreenSpaceRendering();
+			const SceneObject currentCameraObject = _sceneObjectSystems->GetCameraSystem().GetCurrentCameraObject();
+			const Float4x4& viewMatrix = _sceneObjectSystems->GetCameraSystem().MakeViewMatrix(currentCameraObject);
+			CameraComponent* const cameraComponent = _sceneObjectPool->GetComponent<CameraComponent>(currentCameraObject);
+			_graphicsDevice->SetViewProjectionMatrix(viewMatrix, cameraComponent->_projectionMatrix);
 
-			_guiSystem->Render();
-			
-			EndScreenSpaceRendering();
+			_sceneObjectRenderer->Render(*_sceneObjectPool);
 		}
-
-		_graphicsDevice->EndRendering();
-
-		_isInRenderingScope = false;
-		_hasScreenSpaceRenderingScopeInRenderingScope = false;
+		else if (scopedRenderPhase.Is(Rendering::RenderPhaseLabel::ScreenSpace))
+		{
+			_guiSystem->Render();
+		}
 	}
 
 	Window& App::GetWindow()

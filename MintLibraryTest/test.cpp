@@ -161,9 +161,12 @@ void RunGJKTestWindow()
 		}
 
 		const Float2 windowSize{ app.GetWindow().GetSize() };
-		app.BeginRendering();
+		// Rendering
+		for (ScopedRenderPhase renderPhase : graphicsDevice.IterateRenderPhases())
 		{
-			app.BeginWorldSpaceRendering();
+			app.ProcessRenderPhase(renderPhase);
+
+			if (renderPhase.Is(RenderPhaseLabel::WorldSpace))
 			{
 				graphicsDevice.SetViewProjectionMatrix(Float4x4::kIdentity, Float4x4::ProjectionMatrix2DNormal(windowSize._x, windowSize._y));
 
@@ -222,9 +225,7 @@ void RunGJKTestWindow()
 					shapeRenderer.DrawCircle(Float3(normal * distance), 4.0f);
 				}
 			}
-			app.EndWorldSpaceRendering();
-
-			app.BeginScreenSpaceRendering();
+			else if (renderPhase.Is(RenderPhaseLabel::ScreenSpace))
 			{
 				fontRenderer.SetTextColor(Color::kBlack);
 				StackStringW<100> buffer;
@@ -235,9 +236,7 @@ void RunGJKTestWindow()
 				FormatString(buffer, L"Selected: %s (1: None / 2: A / 3: B)", (selectionMode == SelectionMode::None ? L"None" : (selectionMode == SelectionMode::ShapeA ? L"ShapeA" : L"ShapeB")));
 				fontRenderer.DrawDynamicText(buffer.CString(), Float2(10, 50), FontRenderingOption());
 			}
-			app.EndScreenSpaceRendering();
 		}
-		app.EndRendering();
 	}
 }
 
@@ -311,24 +310,18 @@ void RunSplineTestWindow()
 	while (app.IsRunning() == true)
 	{
 		// Rendering
-		app.BeginRendering();
+		for (ScopedRenderPhase renderPhase : graphicsDevice.IterateRenderPhases())
 		{
-			app.BeginWorldSpaceRendering();
-			{
-				__noop;
-			}
-			app.EndWorldSpaceRendering();
+			app.ProcessRenderPhase(renderPhase);
 
-			app.BeginScreenSpaceRendering();
+			if (renderPhase.Is(RenderPhaseLabel::ScreenSpace))
 			{
 				StackStringW<100> fpsString;
 				FormatString(fpsString, L"FPS: %d", Profiler::FPSCounter::GetFPS());
 				fontRenderer.SetTextColor(Color::kBlack);
 				fontRenderer.DrawDynamicText(fpsString.CString(), Float2(10, 10), FontRenderingOption());
 			}
-			app.EndScreenSpaceRendering();
 		}
-		app.EndRendering();
 
 		Profiler::FPSCounter::Count();
 	}
@@ -438,15 +431,11 @@ bool Run2DTestWindow()
 		}
 
 		// Rendering
-		app.BeginRendering();
+		for (ScopedRenderPhase renderPhase : graphicsDevice.IterateRenderPhases())
 		{
-			app.BeginWorldSpaceRendering();
-			{
-				__noop;
-			}
-			app.EndWorldSpaceRendering();
+			app.ProcessRenderPhase(renderPhase);
 
-			app.BeginScreenSpaceRendering();
+			if (renderPhase.Is(RenderPhaseLabel::ScreenSpace))
 			{
 				spriteRenderer.SetMaterial(corgiMaterialID);
 				corgiAnimationSet.Update(deltaTime);
@@ -458,9 +447,7 @@ bool Run2DTestWindow()
 				fontRenderer.SetTextColor(Color::kBlack);
 				fontRenderer.DrawDynamicText(fpsString.CString(), Float2(10, 10), FontRenderingOption());
 			}
-			app.EndScreenSpaceRendering();
 		}
-		app.EndRendering();
 
 		Profiler::FPSCounter::Count();
 	}
@@ -566,25 +553,18 @@ bool Run3DTestWindow()
 		}
 
 		// Rendering
-		app.BeginRendering();
+		for (ScopedRenderPhase renderPhase : graphicsDevice.IterateRenderPhases())
 		{
-			app.BeginWorldSpaceRendering();
-			{
-				__noop;
-			}
-			app.EndWorldSpaceRendering();
+			app.ProcessRenderPhase(renderPhase);
 
-			app.BeginScreenSpaceRendering();
+			if (renderPhase.Is(RenderPhaseLabel::ScreenSpace))
 			{
-				// RenderOverlayUI
 				StackStringW<100> fpsString;
 				FormatString(fpsString, L"FPS: %d", Profiler::FPSCounter::GetFPS());
 				fontRenderer.SetTextColor(Color::kBlack);
 				fontRenderer.DrawDynamicText(fpsString.CString(), Float2(10, 10), FontRenderingOption());
 			}
-			app.EndScreenSpaceRendering();
 		}
-		app.EndRendering();
 
 		Profiler::FPSCounter::Count();
 	}
