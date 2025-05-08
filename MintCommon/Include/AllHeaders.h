@@ -6,6 +6,7 @@
 
 
 #include <MintCommon/Include/CommonDefinitions.h>
+#include <MintCommon/Include/Delegate.h>
 #include <MintCommon/Include/ScopedCPUProfiler.h>
 
 

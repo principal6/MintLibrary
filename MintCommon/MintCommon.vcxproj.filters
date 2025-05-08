@@ -20,6 +20,9 @@
     <ClInclude Include="Include\AllHeaders.h">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Delegate.h">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\CommonDefinitions.cpp">
