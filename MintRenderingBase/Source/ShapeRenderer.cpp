@@ -115,6 +115,8 @@ namespace mint
 			materialDesc._shaderPipelineID = GetDefaultShaderPipelineID();
 			MaterialPool& materialPool = _graphicsDevice.GetMaterialPool();
 			_defaultMaterialID = materialPool.CreateMaterial(materialDesc);
+
+			SetMaterial(_defaultMaterialID);
 		}
 
 		void ShapeRenderer::InitializeCommon() noexcept

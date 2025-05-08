@@ -69,14 +69,23 @@ namespace mint
 		{
 			MINT_ASSERT(_renderPhaseLabel != RenderPhaseLabel::COUNT, "This condition MUST be assured!!!");
 
+			GraphicsDevice& graphicsDevice = _renderPhaseSequence._graphicsDevice;
 			switch (_renderPhaseLabel)
 			{
 			case RenderPhaseLabel::WorldSpace:
-				_renderPhaseSequence._graphicsDevice.BeginWorldSpaceRendering();
+			{
+				graphicsDevice.GetFontRenderer().SetCoordinateSpace(Rendering::CoordinateSpace::World);
+				graphicsDevice.GetShapeRenderer().SetCoordinateSpace(Rendering::CoordinateSpace::World);
+				graphicsDevice.GetSpriteRenderer().SetCoordinateSpace(Rendering::CoordinateSpace::World);
 				break;
+			}
 			case RenderPhaseLabel::ScreenSpace:
-				_renderPhaseSequence._graphicsDevice.BeginScreenSpaceRendering();
+			{
+				graphicsDevice.GetFontRenderer().SetCoordinateSpace(Rendering::CoordinateSpace::Screen);
+				graphicsDevice.GetShapeRenderer().SetCoordinateSpace(Rendering::CoordinateSpace::Screen);
+				graphicsDevice.GetSpriteRenderer().SetCoordinateSpace(Rendering::CoordinateSpace::Screen);
 				break;
+			}
 			case RenderPhaseLabel::COUNT:
 				break;
 			default:
@@ -87,14 +96,26 @@ namespace mint
 		
 		ScopedRenderPhase::~ScopedRenderPhase()
 		{
+			GraphicsDevice& graphicsDevice = _renderPhaseSequence._graphicsDevice;
 			switch (_renderPhaseLabel)
 			{
 			case RenderPhaseLabel::WorldSpace:
-				_renderPhaseSequence._graphicsDevice.EndWorldSpaceRendering();
+			{
+				graphicsDevice.Render();
 				break;
+			}
 			case RenderPhaseLabel::ScreenSpace:
-				_renderPhaseSequence._graphicsDevice.EndScreenSpaceRendering();
+			{
+				const float4x4 cachedViewMatrix = graphicsDevice.GetViewMatrix();
+				const float4x4 cachedProjectionMatrix = graphicsDevice.GetProjectionMatrix();
+				// This view projection matrix is forced!
+				graphicsDevice.SetViewProjectionMatrix(Float4x4::kIdentity, graphicsDevice.GetScreenSpace2DProjectionMatrix());
+
+				graphicsDevice.Render();
+
+				graphicsDevice.SetViewProjectionMatrix(cachedViewMatrix, cachedProjectionMatrix);
 				break;
+			}
 			case RenderPhaseLabel::COUNT:
 				break;
 			default:
@@ -801,65 +822,6 @@ namespace mint
 			return RenderPhaseIterator(*this, RenderPhaseLabel::WorldSpace, false);
 		}
 
-		void GraphicsDevice::BeginRendering()
-		{
-			if (_isInRenderingScope)
-			{
-				MINT_LOG_ERROR("BeginRendering() 을 두 번 연달아 호출할 수 없습니다. 먼저 EndRendering() 을 호출해 주세요!");
-				return;
-			}
-
-			if (_window.IsResized())
-			{
-				UpdateScreenSize();
-			}
-
-			_isInRenderingScope = true;
-
-			_deviceContext->ClearRenderTargetView(_backBufferRtv.Get(), _clearColor);
-			_deviceContext->ClearDepthStencilView(_depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-
-			UseFullScreenViewport();
-
-			MINT_ASSERT(_fontRenderer->IsEmpty(), "BeginRendering() 호출 전에 채우면 안 됩니다!");
-			MINT_ASSERT(_shapeRenderer->IsEmpty(), "BeginRendering() 호출 전에 채우면 안 됩니다!");
-			MINT_ASSERT(_spriteRenderer->IsEmpty(), "BeginRendering() 호출 전에 채우면 안 됩니다!");
-		}
-
-		void GraphicsDevice::BeginWorldSpaceRendering()
-		{
-			_shapeRenderer->SetMaterial(_shapeRenderer->GetDefaultMaterialID());
-		}
-
-		void GraphicsDevice::EndWorldSpaceRendering()
-		{
-			Render();
-		}
-
-		void GraphicsDevice::BeginScreenSpaceRendering()
-		{
-			_viewMatrixCache = _cbViewData._cbViewMatrix;
-			_projectionMatrixCache = _cbViewData._cbProjectionMatrix;
-
-			GetSpriteRenderer().SetCoordinateSpace(Rendering::CoordinateSpace::Screen);
-			GetFontRenderer().SetCoordinateSpace(Rendering::CoordinateSpace::Screen);
-			GetShapeRenderer().SetCoordinateSpace(Rendering::CoordinateSpace::Screen);
-		}
-
-		void GraphicsDevice::EndScreenSpaceRendering()
-		{
-			// This view projection matrix is forced!
-			SetViewProjectionMatrix(Float4x4::kIdentity, GetScreenSpace2DProjectionMatrix());
-
-			Render();
-
-			GetSpriteRenderer().SetCoordinateSpace(Rendering::CoordinateSpace::World);
-			GetFontRenderer().SetCoordinateSpace(Rendering::CoordinateSpace::World);
-			GetShapeRenderer().SetCoordinateSpace(Rendering::CoordinateSpace::World);
-
-			SetViewProjectionMatrix(_viewMatrixCache, _projectionMatrixCache);
-		}
-
 		void GraphicsDevice::Draw(const uint32 vertexCount, const uint32 vertexOffset) noexcept
 		{
 			_deviceContext->Draw(vertexCount, vertexOffset);
@@ -899,6 +861,31 @@ namespace mint
 				_lowLevelRendererForShapeAndFont->Flush();
 				_sbTransformDataForShapeAndFont.Clear();
 			}
+		}
+
+		void GraphicsDevice::BeginRendering()
+		{
+			if (_isInRenderingScope)
+			{
+				MINT_LOG_ERROR("BeginRendering() 을 두 번 연달아 호출할 수 없습니다. 먼저 EndRendering() 을 호출해 주세요!");
+				return;
+			}
+
+			if (_window.IsResized())
+			{
+				UpdateScreenSize();
+			}
+
+			_isInRenderingScope = true;
+
+			_deviceContext->ClearRenderTargetView(_backBufferRtv.Get(), _clearColor);
+			_deviceContext->ClearDepthStencilView(_depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+
+			UseFullScreenViewport();
+
+			MINT_ASSERT(_fontRenderer->IsEmpty(), "BeginRendering() 호출 전에 채우면 안 됩니다!");
+			MINT_ASSERT(_shapeRenderer->IsEmpty(), "BeginRendering() 호출 전에 채우면 안 됩니다!");
+			MINT_ASSERT(_spriteRenderer->IsEmpty(), "BeginRendering() 호출 전에 채우면 안 됩니다!");
 		}
 
 		void GraphicsDevice::EndRendering()
@@ -1014,6 +1001,11 @@ namespace mint
 
 			GraphicsResource& cbView = _resourcePool.GetResource(_cbViewID);
 			cbView.UpdateBuffer(&_cbViewData, 1);
+		}
+
+		const Float4x4& GraphicsDevice::GetViewMatrix() const noexcept
+		{
+			return _cbViewData._cbViewMatrix;
 		}
 
 		const Float4x4& GraphicsDevice::GetProjectionMatrix() const noexcept

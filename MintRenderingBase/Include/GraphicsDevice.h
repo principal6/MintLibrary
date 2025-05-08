@@ -125,7 +125,6 @@ namespace mint
 		class GraphicsDevice final
 		{
 			friend SafeResourceMapper;
-			friend ScopedRenderPhase;
 			friend RenderPhaseIterator;
 
 		public:
@@ -161,6 +160,7 @@ namespace mint
 			[[nodiscard]] RenderPhaseIterator IterateRenderPhases() noexcept;
 			void Draw(const uint32 vertexCount, const uint32 vertexOffset) noexcept;
 			void DrawIndexed(const uint32 indexCount, const uint32 indexOffset, const uint32 vertexOffset) noexcept;
+			void Render() noexcept;
 
 		public:
 			void UseScissorRectangles() noexcept;
@@ -247,6 +247,7 @@ namespace mint
 
 		public:
 			void SetViewProjectionMatrix(const Float4x4& viewMatrix, const Float4x4& projectionMatrix) noexcept;
+			const Float4x4& GetViewMatrix() const noexcept;
 			const Float4x4& GetProjectionMatrix() const noexcept;
 			const Float4x4& GetViewProjectionMatrix() const noexcept;
 			Float4x4 GetScreenSpace2DProjectionMatrix() const noexcept;
@@ -261,12 +262,7 @@ namespace mint
 		private:
 			void BeginRendering();
 			void EndRendering();
-			void BeginWorldSpaceRendering();
-			void EndWorldSpaceRendering();
-			void BeginScreenSpaceRendering();
-			void EndScreenSpaceRendering();
-			void Render() noexcept;
-
+			
 		private:
 			Window& _window;
 			bool _usesMSAA;
@@ -307,8 +303,6 @@ namespace mint
 
 		private:
 			CB_View _cbViewData;
-			float4x4 _viewMatrixCache;
-			float4x4 _projectionMatrixCache;
 			GraphicsObjectID _cbViewID;
 
 		private: // Common buffers
