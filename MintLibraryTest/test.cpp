@@ -164,8 +164,6 @@ void RunGJKTestWindow()
 		// Rendering
 		for (ScopedRenderPhase renderPhase : graphicsDevice.IterateRenderPhases())
 		{
-			app.ProcessRenderPhase(renderPhase);
-
 			if (renderPhase.Is(RenderPhaseLabel::WorldSpace))
 			{
 				graphicsDevice.SetViewProjectionMatrix(Float4x4::kIdentity, Float4x4::ProjectionMatrix2DNormal(windowSize._x, windowSize._y));
@@ -312,8 +310,6 @@ void RunSplineTestWindow()
 		// Rendering
 		for (ScopedRenderPhase renderPhase : graphicsDevice.IterateRenderPhases())
 		{
-			app.ProcessRenderPhase(renderPhase);
-
 			if (renderPhase.Is(RenderPhaseLabel::ScreenSpace))
 			{
 				StackStringW<100> fpsString;
@@ -433,8 +429,6 @@ bool Run2DTestWindow()
 		// Rendering
 		for (ScopedRenderPhase renderPhase : graphicsDevice.IterateRenderPhases())
 		{
-			app.ProcessRenderPhase(renderPhase);
-
 			if (renderPhase.Is(RenderPhaseLabel::ScreenSpace))
 			{
 				spriteRenderer.SetMaterial(corgiMaterialID);
@@ -555,8 +549,6 @@ bool Run3DTestWindow()
 		// Rendering
 		for (ScopedRenderPhase renderPhase : graphicsDevice.IterateRenderPhases())
 		{
-			app.ProcessRenderPhase(renderPhase);
-
 			if (renderPhase.Is(RenderPhaseLabel::ScreenSpace))
 			{
 				StackStringW<100> fpsString;

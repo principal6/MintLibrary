@@ -35,6 +35,10 @@ namespace mint
 
 		_sceneObjectRenderer.Assign(MINT_NEW(SceneObjectRenderer, *_graphicsDevice));
 
+		Rendering::GraphicsDevice::DelegateExecuteRenderPhase delegateExecuteRenderPhase;
+		delegateExecuteRenderPhase.Bind<App, &App::ExecuteRenderPhase>(this);
+		_graphicsDevice->SetDelegateExecuteRenderPhase(delegateExecuteRenderPhase);
+
 		const Float2 windowSize{ GetWindow().GetSize() };
 		_defaultCameraObject = _sceneObjectPool->CreateSceneObject();
 		switch (appCreationDesc._appType)
@@ -100,7 +104,7 @@ namespace mint
 		return false;
 	}
 
-	void App::ProcessRenderPhase(const Rendering::ScopedRenderPhase& scopedRenderPhase)
+	void App::ExecuteRenderPhase(const Rendering::ScopedRenderPhase& scopedRenderPhase)
 	{
 		if (scopedRenderPhase.Is(Rendering::RenderPhaseLabel::WorldSpace))
 		{

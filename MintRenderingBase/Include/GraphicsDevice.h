@@ -6,6 +6,7 @@
 
 
 #include <MintCommon/Include/CommonDefinitions.h>
+#include <MintCommon/Include/Delegate.h>
 
 #include <MintContainer/Include/OwnPtr.h>
 #include <MintContainer/Include/Array.h>
@@ -161,6 +162,9 @@ namespace mint
 			void Draw(const uint32 vertexCount, const uint32 vertexOffset) noexcept;
 			void DrawIndexed(const uint32 indexCount, const uint32 indexOffset, const uint32 vertexOffset) noexcept;
 			void Render() noexcept;
+			using DelegateExecuteRenderPhase = Delegate<const ScopedRenderPhase&>;
+			void SetDelegateExecuteRenderPhase(const DelegateExecuteRenderPhase& delegate) noexcept;
+			const DelegateExecuteRenderPhase& GetDelegateExecuteRenderPhase() const noexcept;
 
 		public:
 			void UseScissorRectangles() noexcept;
@@ -333,6 +337,7 @@ namespace mint
 			OwnPtr<ShapeRenderer> _shapeRenderer;
 			OwnPtr<SpriteRenderer> _spriteRenderer;
 			bool _isInRenderingScope;
+			DelegateExecuteRenderPhase _renderPhaseDelegate;
 		};
 	}
 }

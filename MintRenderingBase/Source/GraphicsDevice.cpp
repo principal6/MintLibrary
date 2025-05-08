@@ -92,11 +92,15 @@ namespace mint
 				MINT_NEVER;
 				break;
 			}
+
+			const GraphicsDevice::DelegateExecuteRenderPhase& delegateExecuteRenderPhase = graphicsDevice.GetDelegateExecuteRenderPhase();
+			delegateExecuteRenderPhase.Invoke(*this);
 		}
 		
 		ScopedRenderPhase::~ScopedRenderPhase()
 		{
 			GraphicsDevice& graphicsDevice = _renderPhaseSequence._graphicsDevice;
+
 			switch (_renderPhaseLabel)
 			{
 			case RenderPhaseLabel::WorldSpace:
@@ -861,6 +865,16 @@ namespace mint
 				_lowLevelRendererForShapeAndFont->Flush();
 				_sbTransformDataForShapeAndFont.Clear();
 			}
+		}
+		
+		void GraphicsDevice::SetDelegateExecuteRenderPhase(const DelegateExecuteRenderPhase& delegate) noexcept
+		{
+			_renderPhaseDelegate = delegate;
+		}
+
+		const GraphicsDevice::DelegateExecuteRenderPhase& GraphicsDevice::GetDelegateExecuteRenderPhase() const noexcept
+		{
+			return _renderPhaseDelegate;
 		}
 
 		void GraphicsDevice::BeginRendering()

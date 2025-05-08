@@ -50,7 +50,6 @@ namespace mint
 
 	public:
 		virtual bool IsRunning();
-		void ProcessRenderPhase(const Rendering::ScopedRenderPhase& scopedRenderPhase);
 
 	public:
 		Window& GetWindow();
@@ -58,6 +57,9 @@ namespace mint
 		SceneObjectPool& GetObjectPool();
 		SceneObjectSystems& GetSceneObjectSystems();
 		GUI::GUISystem& GetGUISystem();
+
+	protected:
+		void ExecuteRenderPhase(const Rendering::ScopedRenderPhase& scopedRenderPhase);
 
 	protected:
 		OwnPtr<Window> _window;
