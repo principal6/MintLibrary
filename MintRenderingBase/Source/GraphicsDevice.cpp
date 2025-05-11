@@ -828,16 +828,19 @@ namespace mint
 
 		void GraphicsDevice::Draw(const uint32 vertexCount, const uint32 vertexOffset) noexcept
 		{
+			MINT_ASSERT(_isInRenderingScope == true, "This function must be called in ScopedRenderPhase!");
 			_deviceContext->Draw(vertexCount, vertexOffset);
 		}
 
 		void GraphicsDevice::DrawIndexed(const uint32 indexCount, const uint32 indexOffset, const uint32 vertexOffset) noexcept
 		{
+			MINT_ASSERT(_isInRenderingScope == true, "This function must be called in ScopedRenderPhase!");
 			_deviceContext->DrawIndexed(indexCount, indexOffset, vertexOffset);
 		}
 
 		void GraphicsDevice::Render() noexcept
 		{
+			MINT_ASSERT(_isInRenderingScope == true, "This function must be called in ScopedRenderPhase!");
 			GraphicsResourcePool& resourcePool = GetResourcePool();
 			GraphicsResource& sbTransformBuffer = resourcePool.GetResource(GetCommonSBTransformID());
 			sbTransformBuffer.BindToShader(GraphicsShaderType::VertexShader, sbTransformBuffer.GetRegisterIndex());
@@ -879,37 +882,27 @@ namespace mint
 
 		void GraphicsDevice::BeginRendering()
 		{
-			if (_isInRenderingScope)
-			{
-				MINT_LOG_ERROR("BeginRendering() 을 두 번 연달아 호출할 수 없습니다. 먼저 EndRendering() 을 호출해 주세요!");
-				return;
-			}
+			MINT_ASSERT(_isInRenderingScope == false, "BeginRendering() 을 두 번 연달아 호출할 수 없습니다. 먼저 EndRendering() 을 호출해 주세요!");
+			MINT_ASSERT(_fontRenderer->IsEmpty(), "BeginRendering() 호출 전에 채우면 안 됩니다!");
+			MINT_ASSERT(_shapeRenderer->IsEmpty(), "BeginRendering() 호출 전에 채우면 안 됩니다!");
+			MINT_ASSERT(_spriteRenderer->IsEmpty(), "BeginRendering() 호출 전에 채우면 안 됩니다!");
 
 			if (_window.IsResized())
 			{
 				UpdateScreenSize();
 			}
 
-			_isInRenderingScope = true;
-
 			_deviceContext->ClearRenderTargetView(_backBufferRtv.Get(), _clearColor);
 			_deviceContext->ClearDepthStencilView(_depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
 			UseFullScreenViewport();
 
-			MINT_ASSERT(_fontRenderer->IsEmpty(), "BeginRendering() 호출 전에 채우면 안 됩니다!");
-			MINT_ASSERT(_shapeRenderer->IsEmpty(), "BeginRendering() 호출 전에 채우면 안 됩니다!");
-			MINT_ASSERT(_spriteRenderer->IsEmpty(), "BeginRendering() 호출 전에 채우면 안 됩니다!");
+			_isInRenderingScope = true;
 		}
 
 		void GraphicsDevice::EndRendering()
 		{
-			if (_isInRenderingScope == false)
-			{
-				MINT_LOG_ERROR("EndRendering() 을 두 번 연달아 호출할 수 없습니다. 먼저 BeginRendering() 을 호출해 주세요!");
-				return;
-			}
-
+			MINT_ASSERT(_isInRenderingScope == true, "BeginRendering() 을 두 번 연달아 호출할 수 없습니다. 먼저 EndRendering() 을 호출해 주세요!");
 			MINT_ASSERT(_fontRenderer->IsEmpty(), "EndRendering() 호출 전에 Flush() 해야 합니다!");
 			MINT_ASSERT(_shapeRenderer->IsEmpty(), "EndRendering() 호출 전에 Flush() 해야 합니다!");
 			MINT_ASSERT(_spriteRenderer->IsEmpty(), "EndRendering() 호출 전에 Flush() 해야 합니다!");
