@@ -22,7 +22,7 @@ namespace mint
 
 namespace mint
 {
-	class SceneObject : public SerialAndIndex<uint64, kInvalidIndexUint64, 40>
+	class SceneObject : public SerialAndIndex<uint64, 40>
 	{
 	};
 

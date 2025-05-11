@@ -33,13 +33,10 @@ namespace mint
 		ComponentType& GetComponentMust(const SceneObject& sceneObject);
 		Transform& GetTransform(const SceneObject& sceneObject);
 
-	public:
-		const Vector<SceneObject>& GetSceneObjects() const noexcept;
-		uint32 GetSceneObjectCount() const noexcept;
-
 	private:
 		Vector<SceneObject> _sceneObjects;
 		uint32 _nextEmptySceneObjectIndex{ 0 };
+		uint32 _aliveSceneObjectCount{ 0 };
 	};
 }
 

@@ -52,7 +52,8 @@ namespace mint
 
 		SceneObject& sceneObject = _sceneObjects[_nextEmptySceneObjectIndex];
 		sceneObject.SetSerialAndIndex(sceneObject.GetSerial() + 1, _nextEmptySceneObjectIndex);
-		
+		++_aliveSceneObjectCount;
+
 		const uint32 nextEmptySceneObjectIndexCache = _nextEmptySceneObjectIndex;
 		const uint32 poolSize = _sceneObjects.Size();
 		for (uint32 i = _nextEmptySceneObjectIndex + 1; i < poolSize; ++i)
@@ -76,9 +77,13 @@ namespace mint
 
 	inline void SceneObjectPool::DestroySceneObject(SceneObject sceneObject)
 	{
+		MINT_ASSERT(_aliveSceneObjectCount > 0, "로직 상 반드시 보장되어야 합니다!");
+		--_aliveSceneObjectCount;
+		
 		const uint32 index = static_cast<uint32>(sceneObject.GetIndex());
 		MINT_ASSERT(index < _sceneObjects.Size(), "로직 상 반드시 보장되어야 합니다!");
-		_sceneObjects[index].SetInvalid();
+		_sceneObjects[index].SetInvalidIndex();
+
 		_nextEmptySceneObjectIndex = Min(index, _nextEmptySceneObjectIndex);
 
 		const Vector<ISceneObjectComponentPool*>& componentPools = SceneObjectComponentPoolRegistry::GetInstance().GetComponentPools();
@@ -86,16 +91,6 @@ namespace mint
 		{
 			componentPool->RemoveComponentFrom(sceneObject);
 		}
-	}
-
-	inline const Vector<SceneObject>& SceneObjectPool::GetSceneObjects() const noexcept
-	{
-		return _sceneObjects;
-	}
-
-	MINT_INLINE uint32 SceneObjectPool::GetSceneObjectCount() const noexcept
-	{
-		return _sceneObjects.Size();
 	}
 
 	template<typename ComponentType>
