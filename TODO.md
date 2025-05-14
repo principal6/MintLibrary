@@ -1,7 +1,4 @@
 ﻿# TODO
-## Renderer - ShapeRenderer 에 DefaultMaterial 추가??
-## Renderer - Rendering Phase/Order 관리!!! World => Screen 순서가 보장되도록!!!
-## Renderer - MeshRenderer 추가
 ## GUI 개편
 ### Manager classes for GUI system
 ControlRegistry
@@ -60,6 +57,7 @@ TooltipManager
 [ProgressBar]
 [Image]
 
+## Renderer - MeshRenderer 추가
 ## Tree Print 기능 추가, Tree 를 가변트리/고정트리로 나눠서 Cache Miss 개선( Vector/StackVector 이용 )
 ## ShapeRenderer 에 Scale 기능 넣기!
 
