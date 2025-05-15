@@ -1,8 +1,8 @@
 ﻿#include <MintPhysics/Include/Intersection.h>
 #include <MintPhysics/Include/Intersection.hpp>
 #include <MintMath/Include/Geometry.h>
-#include <MintRenderingBase/Include/ShapeRenderer.h>
-#include <MintRenderingBase/Include/ShapeGenerator.h>
+#include <MintRendering/Include/ShapeRenderer.h>
+#include <MintRendering/Include/ShapeGenerator.h>
 #include <MintPhysics/Include/CollisionShape.h>
 
 

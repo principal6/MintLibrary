@@ -163,6 +163,9 @@
     <ProjectReference Include="..\MintReflection\MintReflection.vcxproj">
       <Project>{837c9d1f-d52b-43b8-aa39-6900b21bebcf}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\MintRendering\MintRendering.vcxproj">
+      <Project>{aec380b7-4d57-424b-a65d-2f0f02b95d50}</Project>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\AllHeaders.h" />

@@ -5,7 +5,7 @@
 #define _MINT_RENDERING_BASE_CPP_HLSL_STRUCTURED_BUFFER_H_
 
 
-#include <MintRenderingBase/Include/CppHlsl/CppHlslTypes.h>
+#include <MintRendering/Include/CppHlsl/CppHlslTypes.h>
 
 
 namespace mint

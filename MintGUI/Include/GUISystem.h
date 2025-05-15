@@ -9,8 +9,8 @@
 #include <MintContainer/Include/StringReference.h>
 #include <MintContainer/Include/OwnPtr.h>
 #include <MintContainer/Include/SharedPtr.h>
-#include <MintRenderingBase/Include/RenderingBaseCommon.h>
-#include <MintRenderingBase/Include/GraphicsObject.h>
+#include <MintRendering/Include/RenderingBaseCommon.h>
+#include <MintRendering/Include/GraphicsObject.h>
 #include <MintGUI/Include/GUIComponents.h>
 
 

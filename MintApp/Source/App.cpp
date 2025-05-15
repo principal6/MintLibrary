@@ -1,10 +1,10 @@
 #include <MintApp/Include/App.h>
 
 #include <MintPlatform/Include/Window.h>
-#include <MintRenderingBase/Include/GraphicsDevice.h>
-#include <MintRenderingBase/Include/ShapeRenderer.h>
-#include <MintRenderingBase/Include/FontRenderer.h>
-#include <MintRenderingBase/Include/SpriteRenderer.h>
+#include <MintRendering/Include/GraphicsDevice.h>
+#include <MintRendering/Include/ShapeRenderer.h>
+#include <MintRendering/Include/FontRenderer.h>
+#include <MintRendering/Include/SpriteRenderer.h>
 #include <MintGUI/Include/GUISystem.h>
 #include <MintApp/Include/SceneObjectPool.hpp>
 #include <MintApp/Include/SceneObjectRenderer.h>

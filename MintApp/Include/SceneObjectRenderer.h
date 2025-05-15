@@ -7,7 +7,7 @@
 
 #include <MintCommon/Include/CommonDefinitions.h>
 
-#include <MintRenderingBase/Include/LowLevelRenderer.h>
+#include <MintRendering/Include/LowLevelRenderer.h>
 
 #include <Assets/Include/CppHlsl/CppHlslConstantBuffers.h>
 

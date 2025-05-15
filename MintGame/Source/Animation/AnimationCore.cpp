@@ -3,7 +3,7 @@
 #include <MintContainer/Include/Vector.hpp>
 #include <MintContainer/Include/StringUtil.hpp>
 
-#include <MintRendering/Include/InstantRenderer.h>
+#include <MintRendering/Include/Utilities/InstantRenderer.h>
 
 
 namespace mint

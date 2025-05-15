@@ -3,9 +3,9 @@
 #include <MintContainer/Include/HashMap.hpp>
 #include <MintContainer/Include/StringReference.hpp>
 #include <MintContainer/Include/Algorithm.hpp>
-#include <MintRenderingBase/Include/GraphicsDevice.h>
-#include <MintRenderingBase/Include/FontRenderer.h>
-#include <MintRenderingBase/Include/ShapeRenderer.h>
+#include <MintRendering/Include/GraphicsDevice.h>
+#include <MintRendering/Include/FontRenderer.h>
+#include <MintRendering/Include/ShapeRenderer.h>
 #include <MintPlatform/Include/InputContext.h>
 #include <MintPhysics/Include/CollisionShape.h>
 #include <MintPhysics/Include/Intersection.hpp>

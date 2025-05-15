@@ -307,7 +307,7 @@ void RunSplineTestWindow()
 	MaterialPool& materialPool = graphicsDevice.GetMaterialPool();
 	while (app.IsRunning() == true)
 	{
-		// Rendering
+		// RenderingSS
 		for (ScopedRenderPhase renderPhase : graphicsDevice.IterateRenderPhases())
 		{
 			if (renderPhase.Is(RenderPhaseLabel::ScreenSpace))

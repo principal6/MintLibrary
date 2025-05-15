@@ -2,50 +2,217 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Include">
-      <UniqueIdentifier>{705e0b35-ab58-41f7-9d06-e24649a7e886}</UniqueIdentifier>
+      <UniqueIdentifier>{23a36b27-ab46-41ae-b21c-eade8cf66731}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source">
-      <UniqueIdentifier>{299a32cb-a780-4df6-a2e4-d30086cbe0c7}</UniqueIdentifier>
+      <UniqueIdentifier>{3d5693c6-ad40-43e0-82d9-15bc53da638f}</UniqueIdentifier>
     </Filter>
     <Filter Include="Assets">
-      <UniqueIdentifier>{304c60ee-9cb6-4c25-aa0b-6dd5b0279b54}</UniqueIdentifier>
+      <UniqueIdentifier>{8569bdf1-fd70-4ad8-8105-57184550e826}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\CppHlsl">
+      <UniqueIdentifier>{ba152108-72e8-49ec-879a-8e468507b31f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include\CppHlsl">
+      <UniqueIdentifier>{80dbbf42-4860-4cfb-b2d6-0d7e24ce5a7a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\CppHlsl">
+      <UniqueIdentifier>{defe00fb-a822-402c-9509-712cdebd06c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include\Utilities">
+      <UniqueIdentifier>{6f9388d4-416d-4a39-9d83-ec57289ed753}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Utilities">
+      <UniqueIdentifier>{22c7f0b8-ec68-4128-90de-62aca9ef2bb2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Include\GraphicsResource.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Shader.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DxShaderHeaderMemory.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\GraphicsDevice.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\GraphicsObject.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\ShapeRenderer.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\RenderingBaseCommon.h">
+      <Filter>Include</Filter>
+    </ClInclude>
     <ClInclude Include="Include\AllHeaders.h">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="Include\MeshGenerator.h">
+    <ClInclude Include="Include\AllHpps.h">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Plotter.h">
+    <ClInclude Include="Include\LowLevelRenderer.h">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="Include\InstantRenderer.h">
+    <ClInclude Include="Include\LowLevelRenderer.hpp">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="Include\SplineGenerator.h">
+    <ClInclude Include="Include\MeshData.h">
       <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\CppHlsl\Interpreter.h">
+      <Filter>Include\CppHlsl</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\CppHlsl\Lexer.h">
+      <Filter>Include\CppHlsl</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\CppHlsl\Parser.h">
+      <Filter>Include\CppHlsl</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\CppHlsl\CppHlslTypes.h">
+      <Filter>Include\CppHlsl</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\FontLoader.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Assets\Include\CppHlsl\CppHlslConstantBuffers.h">
+      <Filter>Assets\CppHlsl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Assets\Include\CppHlsl\CppHlslStreamData.h">
+      <Filter>Assets\CppHlsl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Assets\Include\CppHlsl\CppHlslStructuredBuffers.h">
+      <Filter>Assets\CppHlsl</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\ImageLoader.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\ShapeGenerator.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\SpriteAnimation.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\IRenderer.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\ShaderPipeline.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\SpriteRenderer.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Material.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\FontRenderer.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Utilities\InstantRenderer.h">
+      <Filter>Include\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Utilities\MeshGenerator.h">
+      <Filter>Include\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Utilities\Plotter.h">
+      <Filter>Include\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Utilities\SplineGenerator.h">
+      <Filter>Include\Utilities</Filter>
     </ClInclude>
     <ClInclude Include="Include\TestRendering.h">
       <Filter>Include</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\MeshGenerator.cpp">
+    <None Include="Include\GraphicsDevice.inl">
+      <Filter>Include</Filter>
+    </None>
+    <None Include="Include\CppHlsl\Parser.inl">
+      <Filter>Include\CppHlsl</Filter>
+    </None>
+    <None Include="Include\IRenderer.inl">
+      <Filter>Include</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\GraphicsResource.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Plotter.cpp">
+    <ClCompile Include="Source\Shader.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Source\InstantRenderer.cpp">
+    <ClCompile Include="Source\DxShaderHeaderMemory.cpp">
       <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\GraphicsDevice.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\GraphicsObject.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ShapeRenderer.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MeshData.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\RenderingBaseCommon.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\CppHlsl\Interpreter.cpp">
+      <Filter>Source\CppHlsl</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\CppHlsl\Lexer.cpp">
+      <Filter>Source\CppHlsl</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\CppHlsl\Parser.cpp">
+      <Filter>Source\CppHlsl</Filter>
     </ClCompile>
     <ClCompile Include="Source\_UnityBuild.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Source\SplineGenerator.cpp">
+    <ClCompile Include="Source\FontLoader.cpp">
       <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ImageLoader.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ShapeGenerator.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\SpriteAnimation.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\IRenderer.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ShaderPipeline.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\SpriteRenderer.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Material.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\FontRenderer.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Utilities\InstantRenderer.cpp">
+      <Filter>Source\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Utilities\MeshGenerator.cpp">
+      <Filter>Source\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Utilities\Plotter.cpp">
+      <Filter>Source\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Utilities\SplineGenerator.cpp">
+      <Filter>Source\Utilities</Filter>
     </ClCompile>
     <ClCompile Include="Source\TestRendering.cpp">
       <Filter>Source</Filter>

@@ -7,10 +7,10 @@
 
 #include <MintCommon/Include/CommonDefinitions.h>
 
-#include <MintRenderingBase/Include/RenderingBaseCommon.h>
-#include <MintRenderingBase/Include/MeshData.h>
+#include <MintRendering/Include/RenderingBaseCommon.h>
+#include <MintRendering/Include/MeshData.h>
 
-#include <MintRendering/Include/MeshGenerator.h>
+#include <MintRendering/Include/Utilities/MeshGenerator.h>
 
 #include <MintApp/Include/SceneObject.h>
 

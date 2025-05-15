@@ -1,6 +1,6 @@
 ﻿#include <MintRendering/Include/TestRendering.h>
-#include <MintRenderingBase/Include/AllHeaders.h>
-#include <MintRenderingBase/Include/AllHpps.h>
+#include <MintRendering/Include/AllHeaders.h>
+#include <MintRendering/Include/AllHpps.h>
 #include <MintRendering/Include/AllHeaders.h>
 
 

@@ -6,15 +6,15 @@ classDiagram
 
     MintContainer <|-- MintAudio
     MintContainer <|-- MintPlatform
-    MintContainer <|-- MintRenderingBase
+    MintContainer <|-- MintRendering
     MintContainer <|-- MintReflection
     MintContainer <|-- MintLanguage
 
-    MintLanguage <|-- MintRenderingBase
+    MintLanguage <|-- MintRendering
 
-    MintRenderingBase <|-- MintRendering
+    MintRendering <|-- MintRendering
 
-    MintRenderingBase <|-- MintPhysics
+    MintRendering <|-- MintPhysics
     MintMath <|-- MintPhysics
 
     MintRendering <|-- MintGUI
@@ -54,7 +54,7 @@ classDiagram
         Easing
         ...
     }
-    class MintRenderingBase{
+    class MintRendering{
         GraphicsDevice
         Renderer
         ShapeGenerator

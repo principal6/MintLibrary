@@ -13,7 +13,7 @@
 
 #include <MintReflection/Include/AllHpps.h>
 
-#include <MintRenderingBase/Include/AllHpps.h>
+#include <MintRendering/Include/AllHpps.h>
 
 #include <MintPhysics/Include/AllHpps.h>
 

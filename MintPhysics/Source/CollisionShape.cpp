@@ -4,7 +4,7 @@
 #include <MintMath/Include/Float2x2.h>
 #include <MintMath/Include/Geometry.h>
 #include <MintMath/Include/Transform.h>
-#include <MintRenderingBase/Include/ShapeRenderer.h>
+#include <MintRendering/Include/ShapeRenderer.h>
 
 
 namespace mint

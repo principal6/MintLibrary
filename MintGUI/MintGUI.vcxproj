@@ -178,7 +178,7 @@
       <Project>{b4c9e234-d622-434d-a085-acf5b2262e68}</Project>
     </ProjectReference>
     <ProjectReference Include="..\MintRendering\MintRendering.vcxproj">
-      <Project>{14d785c7-0bd3-4fb4-b5f2-f6899ad37f8a}</Project>
+      <Project>{aec380b7-4d57-424b-a65d-2f0f02b95d50}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

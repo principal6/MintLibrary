@@ -32,7 +32,7 @@ namespace mint
 
 #include <MintReflection/Include/AllHeaders.h>
 
-#include <MintRenderingBase/Include/AllHeaders.h>
+#include <MintRendering/Include/AllHeaders.h>
 
 #include <MintLanguage/Include/AllHeaders.h>
 

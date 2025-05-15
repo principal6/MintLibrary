@@ -24,7 +24,6 @@ robocopy MintPhysics/Include Out/Include/MintPhysics/Include /S
 robocopy MintPlatform/Include Out/Include/MintPlatform/Include /S
 robocopy MintReflection/Include Out/Include/MintReflection/Include /S
 robocopy MintRendering/Include Out/Include/MintRendering/Include /S
-robocopy MintRenderingBase/Include Out/Include/MintRenderingBase/Include /S
 
 : Lib Directory (DEBUG)
 robocopy _output/Debug Out/Lib/Debug MintApp.lib
@@ -40,7 +39,6 @@ robocopy _output/Debug Out/Lib/Debug MintPhysics.lib
 robocopy _output/Debug Out/Lib/Debug MintPlatform.lib
 robocopy _output/Debug Out/Lib/Debug MintReflection.lib
 robocopy _output/Debug Out/Lib/Debug MintRendering.lib
-robocopy _output/Debug Out/Lib/Debug MintRenderingBase.lib
 
 : Lib Directory (RELEASE)
 robocopy _output/Release Out/Lib/Release MintApp.lib
@@ -56,6 +54,5 @@ robocopy _output/Release Out/Lib/Release MintPhysics.lib
 robocopy _output/Release Out/Lib/Release MintPlatform.lib
 robocopy _output/Release Out/Lib/Release MintReflection.lib
 robocopy _output/Release Out/Lib/Release MintRendering.lib
-robocopy _output/Release Out/Lib/Release MintRenderingBase.lib
 
 pause

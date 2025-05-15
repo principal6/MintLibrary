@@ -16,6 +16,5 @@ robocopy MintPhysics Upstream/MintLibrary/MintPhysics /S
 robocopy MintPlatform Upstream/MintLibrary/MintPlatform /S
 robocopy MintReflection Upstream/MintLibrary/MintReflection /S
 robocopy MintRendering Upstream/MintLibrary/MintRendering /S
-robocopy MintRenderingBase Upstream/MintLibrary/MintRenderingBase /S
 
 pause

@@ -5,7 +5,7 @@
 #include <MintContainer/Include/Color.h>
 #include <MintContainer/Include/Algorithm.hpp>
 #include <MintContainer/Include/StringUtil.hpp>
-#include <MintRenderingBase/Include/ShapeRenderer.h>
+#include <MintRendering/Include/ShapeRenderer.h>
 #include <MintPhysics/Include/Intersection.hpp>
 
 

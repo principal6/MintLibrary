@@ -2,9 +2,9 @@
 
 #include <MintContainer/Include/Vector.hpp>
 
-#include <MintRenderingBase/Include/GraphicsDevice.h>
-#include <MintRenderingBase/Include/LowLevelRenderer.hpp>
-#include <MintRenderingBase/Include/ShapeRenderer.h>
+#include <MintRendering/Include/GraphicsDevice.h>
+#include <MintRendering/Include/LowLevelRenderer.hpp>
+#include <MintRendering/Include/ShapeRenderer.h>
 
 #include <MintApp/Include/SceneObject.h>
 #include <MintApp/Include/SceneObjectPool.hpp>

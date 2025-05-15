@@ -9,8 +9,8 @@
 
 //#include <MintContainer/Include/Vector.hpp>
 
-#include <MintRenderingBase/Include/GraphicsDevice.h>
-#include <MintRenderingBase/Include/LowLevelRenderer.hpp>
+#include <MintRendering/Include/GraphicsDevice.h>
+#include <MintRendering/Include/LowLevelRenderer.hpp>
 
 #include <MintApp/Include/DeltaTimer.h>
 #include <MintApp/Include/SceneObject.hpp>

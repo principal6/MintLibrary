@@ -5,7 +5,7 @@
 #define _MINT_GUI_GUI_COMPONENTS_H_
 
 
-#include <MintRenderingBase/Include/RenderingBaseCommon.h>
+#include <MintRendering/Include/RenderingBaseCommon.h>
 #include <MintContainer/Include/ID.h>
 #include <MintContainer/Include/String.h>
 #include <MintContainer/Include/OwnPtr.h>
