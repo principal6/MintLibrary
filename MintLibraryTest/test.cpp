@@ -256,14 +256,14 @@ void RunSplineTestWindow()
 	mint::App app{ windowCreationDesc, appCreationDesc };
 
 	GUISystem& guiSystem = app.GetGUISystem();
-	GUIEntityTemplate guiControlPointEntityTemplateID = guiSystem.CreateTemplate();
+	GUIControlTemplate guiControlPointControlTemplate = guiSystem.CreateTemplate();
 	{
 		GUITransform2DComponent transform2DComponent;
 		transform2DComponent._transform2D._translation = Float2(60, 40);
-		guiSystem.AttachComponent(guiControlPointEntityTemplateID, std::move(transform2DComponent));
+		guiSystem.AttachComponent(guiControlPointControlTemplate, std::move(transform2DComponent));
 
-		guiSystem.AttachComponent(guiControlPointEntityTemplateID, GUIInteractionStateComponent());
-		guiSystem.AttachComponent(guiControlPointEntityTemplateID, GUIDraggableComponent());
+		guiSystem.AttachComponent(guiControlPointControlTemplate, GUIInteractionStateComponent());
+		guiSystem.AttachComponent(guiControlPointControlTemplate, GUIDraggableComponent());
 
 		GUIShapeComponent shapeComponent;
 		Shape defaultShape;
@@ -275,30 +275,30 @@ void RunSplineTestWindow()
 		shapeComponent._shapes[static_cast<uint32>(GUIInteractionState::None)] = defaultShape;
 		shapeComponent._shapes[static_cast<uint32>(GUIInteractionState::Hovered)] = hoveredShape;
 		shapeComponent._shapes[static_cast<uint32>(GUIInteractionState::Pressed)] = pressedShape;
-		guiSystem.AttachComponent(guiControlPointEntityTemplateID, std::move(shapeComponent));
+		guiSystem.AttachComponent(guiControlPointControlTemplate, std::move(shapeComponent));
 
 		GUICollisionShape2DComponent collisionShape2DComponent;
 		collisionShape2DComponent._collisionShape2D = MakeShared<Physics::CollisionShape2D>(Physics::ConvexCollisionShape2D::MakeFromRenderingShape(Float2::kZero, defaultShape));
-		guiSystem.AttachComponent(guiControlPointEntityTemplateID, std::move(collisionShape2DComponent));
+		guiSystem.AttachComponent(guiControlPointControlTemplate, std::move(collisionShape2DComponent));
 
 		GUITextComponent textComponent;
 		textComponent._offset = Float2(0, 16);
 		textComponent._text = L"CP";
-		guiSystem.AttachComponent(guiControlPointEntityTemplateID, std::move(textComponent));
+		guiSystem.AttachComponent(guiControlPointControlTemplate, std::move(textComponent));
 	}
 
-	const GUIEntity guiControlPointEntity0 = guiSystem.CreateEntity(guiControlPointEntityTemplateID);
-	guiSystem.GetComponent<GUITransform2DComponent>(guiControlPointEntity0)->_transform2D._translation = Float2(80, 160);
-	guiSystem.GetComponent<GUITextComponent>(guiControlPointEntity0)->_text = L"CP0";
-	const GUIEntity guiControlPointEntity1 = guiSystem.CreateEntity(guiControlPointEntityTemplateID);
-	guiSystem.GetComponent<GUITransform2DComponent>(guiControlPointEntity1)->_transform2D._translation = Float2(160, 80);
-	guiSystem.GetComponent<GUITextComponent>(guiControlPointEntity1)->_text = L"CP1";
-	const GUIEntity guiControlPointEntity2 = guiSystem.CreateEntity(guiControlPointEntityTemplateID);
-	guiSystem.GetComponent<GUITransform2DComponent>(guiControlPointEntity2)->_transform2D._translation = Float2(240, 80);
-	guiSystem.GetComponent<GUITextComponent>(guiControlPointEntity2)->_text = L"CP2";
-	const GUIEntity guiControlPointEntity3 = guiSystem.CreateEntity(guiControlPointEntityTemplateID);
-	guiSystem.GetComponent<GUITransform2DComponent>(guiControlPointEntity3)->_transform2D._translation = Float2(320, 160);
-	guiSystem.GetComponent<GUITextComponent>(guiControlPointEntity3)->_text = L"CP3";
+	const GUIControl guiControlPointControl0 = guiSystem.CreateControl(guiControlPointControlTemplate);
+	guiSystem.GetComponent<GUITransform2DComponent>(guiControlPointControl0)->_transform2D._translation = Float2(80, 160);
+	guiSystem.GetComponent<GUITextComponent>(guiControlPointControl0)->_text = L"CP0";
+	const GUIControl guiControlPointControl1 = guiSystem.CreateControl(guiControlPointControlTemplate);
+	guiSystem.GetComponent<GUITransform2DComponent>(guiControlPointControl1)->_transform2D._translation = Float2(160, 80);
+	guiSystem.GetComponent<GUITextComponent>(guiControlPointControl1)->_text = L"CP1";
+	const GUIControl guiControlPointControl2 = guiSystem.CreateControl(guiControlPointControlTemplate);
+	guiSystem.GetComponent<GUITransform2DComponent>(guiControlPointControl2)->_transform2D._translation = Float2(240, 80);
+	guiSystem.GetComponent<GUITextComponent>(guiControlPointControl2)->_text = L"CP2";
+	const GUIControl guiControlPointControl3 = guiSystem.CreateControl(guiControlPointControlTemplate);
+	guiSystem.GetComponent<GUITransform2DComponent>(guiControlPointControl3)->_transform2D._translation = Float2(320, 160);
+	guiSystem.GetComponent<GUITextComponent>(guiControlPointControl3)->_text = L"CP3";
 
 	GraphicsDevice& graphicsDevice = app.GetGraphicsDevice();
 	const InputContext& inputContext = InputContext::GetInstance();

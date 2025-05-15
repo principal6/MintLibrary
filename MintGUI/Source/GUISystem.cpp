@@ -19,8 +19,8 @@ namespace mint
 #pragma region GUISystem
 		GUISystem::GUISystem(Rendering::GraphicsDevice& graphicsDevice)
 			: _graphicsDevice{ graphicsDevice }
-			, _nextEntityID{ 0 }
-			, _nextEntityTemplateID{ 0 }
+			, _nextControlID{ 0 }
+			, _nextControlTemplateID{ 0 }
 		{
 			Initialize();
 		}
@@ -30,65 +30,65 @@ namespace mint
 			Terminate();
 		}
 
-		GUIEntity GUISystem::CreateEntity()
+		GUIControl GUISystem::CreateControl()
 		{
-			GUIEntity entity;
-			entity.Assign(_nextEntityID);
-			++_nextEntityID;
-			_entities.PushBack(entity);
-			return entity;
+			GUIControl control;
+			control.Assign(_nextControlID);
+			++_nextControlID;
+			_controls.PushBack(control);
+			return control;
 		}
 		
-		GUIEntity GUISystem::CreateEntity(const GUIEntityTemplate& entityTemplate)
+		GUIControl GUISystem::CreateControl(const GUIControlTemplate& controlTemplate)
 		{
-			const GUIEntity entity = CreateEntity();
+			const GUIControl control = CreateControl();
 			const Vector<IGUIComponentPool*>& componentPools = GUIComponentPoolRegistry::GetInstance().GetComponentPools();
 			for (IGUIComponentPool* const componentPool : componentPools)
 			{
-				componentPool->CopyComponentFromTemplate(entityTemplate, entity);
+				componentPool->CopyComponentFromTemplate(controlTemplate, control);
 			}
-			return entity;
+			return control;
 		}
 
-		GUIEntity GUISystem::CloneEntity(const GUIEntity& sourceEntity)
+		GUIControl GUISystem::CloneControl(const GUIControl& sourceControl)
 		{
-			const GUIEntity targetEntity = CreateEntity();
+			const GUIControl targetControl = CreateControl();
 			const Vector<IGUIComponentPool*>& componentPools = GUIComponentPoolRegistry::GetInstance().GetComponentPools();
 			for (IGUIComponentPool* const componentPool : componentPools)
 			{
-				componentPool->CopyComponent(sourceEntity, targetEntity);
+				componentPool->CopyComponent(sourceControl, targetControl);
 			}
-			return targetEntity;
+			return targetControl;
 		}
 
-		GUIEntityTemplate GUISystem::CreateTemplate()
+		GUIControlTemplate GUISystem::CreateTemplate()
 		{
-			GUIEntityTemplate entityTemplate;
-			entityTemplate.Assign(_nextEntityTemplateID);
-			++_nextEntityTemplateID;
-			_entityTemplates.PushBack(entityTemplate);
-			return entityTemplate;
+			GUIControlTemplate controlTemplate;
+			controlTemplate.Assign(_nextControlTemplateID);
+			++_nextControlTemplateID;
+			_controlTemplates.PushBack(controlTemplate);
+			return controlTemplate;
 		}
 
-		GUIEntityTemplate GUISystem::CreateTemplate(const GUIEntity& sourceEntity)
+		GUIControlTemplate GUISystem::CreateTemplate(const GUIControl& sourceControl)
 		{
-			const GUIEntityTemplate entityTemplate = CreateTemplate();
+			const GUIControlTemplate controlTemplate = CreateTemplate();
 			const Vector<IGUIComponentPool*>& componentPools = GUIComponentPoolRegistry::GetInstance().GetComponentPools();
 			for (IGUIComponentPool* const componentPool : componentPools)
 			{
-				componentPool->CopyComponentToTemplate(sourceEntity, entityTemplate);
+				componentPool->CopyComponentToTemplate(sourceControl, controlTemplate);
 			}
-			return entityTemplate;
+			return controlTemplate;
 		}
 
 		void GUISystem::Update()
 		{
-			InputSystem(_entities);
+			InputSystem(_controls);
 		}
 
 		void GUISystem::Render()
 		{
-			RenderSystem(_entities, _graphicsDevice);
+			RenderSystem(_controls, _graphicsDevice);
 		}
 
 		void GUISystem::Initialize()
@@ -110,7 +110,7 @@ namespace mint
 			materialPool.DestroyMaterial(_defaultMaterialID);
 		}
 
-		void GUISystem::InputSystem(const Vector<GUIEntity>& entities)
+		void GUISystem::InputSystem(const Vector<GUIControl>& controls)
 		{
 			static Float2 sMouseLeftButtonPressedPosition;
 
@@ -124,11 +124,11 @@ namespace mint
 			}
 
 			const bool isLeftMouseButtonReleasedOrUp = leftMouseButtonState == MouseButtonState::Released || leftMouseButtonState == MouseButtonState::Up;
-			for (const GUIEntity& entity : entities)
+			for (const GUIControl& control : controls)
 			{
-				GUITransform2DComponent* const transform2DComponent = GetComponent<GUITransform2DComponent>(entity);
-				GUICollisionShape2DComponent* const collisionShape2DComponent = GetComponent<GUICollisionShape2DComponent>(entity);
-				GUIInteractionStateComponent* const interactionStateComponent = GetComponent<GUIInteractionStateComponent>(entity);
+				GUITransform2DComponent* const transform2DComponent = GetComponent<GUITransform2DComponent>(control);
+				GUICollisionShape2DComponent* const collisionShape2DComponent = GetComponent<GUICollisionShape2DComponent>(control);
+				GUIInteractionStateComponent* const interactionStateComponent = GetComponent<GUIInteractionStateComponent>(control);
 
 				if (isLeftMouseButtonReleasedOrUp)
 				{
@@ -156,7 +156,7 @@ namespace mint
 
 				if (interactionStateComponent->_interactionState == GUIInteractionState::Pressed)
 				{
-					GUIDraggableComponent* const draggableComponent = GetComponent<GUIDraggableComponent>(entity);
+					GUIDraggableComponent* const draggableComponent = GetComponent<GUIDraggableComponent>(control);
 					if (draggableComponent != nullptr)
 					{
 						if (leftMouseButtonState == MouseButtonState::Pressed)
@@ -172,7 +172,7 @@ namespace mint
 			}
 		}
 
-		void GUISystem::RenderSystem(const Vector<GUIEntity>& entities, Rendering::GraphicsDevice& graphicsDevice)
+		void GUISystem::RenderSystem(const Vector<GUIControl>& controls, Rendering::GraphicsDevice& graphicsDevice)
 		{
 			using namespace Rendering;
 
@@ -182,12 +182,12 @@ namespace mint
 			Rendering::ShapeRenderer& shapeRenderer = graphicsDevice.GetShapeRenderer();
 			shapeRenderer.SetMaterial(_defaultMaterialID);
 
-			for (const GUIEntity& entity : entities)
+			for (const GUIControl& control : controls)
 			{
-				GUITransform2DComponent* const transform2DComponent = GetComponent<GUITransform2DComponent>(entity);
-				GUIInteractionStateComponent* const interactionStateComponent = GetComponent<GUIInteractionStateComponent>(entity);
+				GUITransform2DComponent* const transform2DComponent = GetComponent<GUITransform2DComponent>(control);
+				GUIInteractionStateComponent* const interactionStateComponent = GetComponent<GUIInteractionStateComponent>(control);
 
-				GUITextComponent* const textComponent = GetComponent<GUITextComponent>(entity);
+				GUITextComponent* const textComponent = GetComponent<GUITextComponent>(control);
 				if (textComponent != nullptr)
 				{
 					FontRenderingOption fontRenderingOption;
@@ -196,7 +196,7 @@ namespace mint
 					fontRenderer.DrawDynamicText(textComponent->_text.CString(), transform2DComponent->_transform2D._translation + textComponent->_offset, fontRenderingOption);
 				}
 
-				GUIShapeComponent* const shapeComponent = GetComponent<GUIShapeComponent>(entity);
+				GUIShapeComponent* const shapeComponent = GetComponent<GUIShapeComponent>(control);
 				if (shapeComponent != nullptr)
 				{
 					uint32 shapeIndex = static_cast<uint32>(interactionStateComponent->_interactionState);

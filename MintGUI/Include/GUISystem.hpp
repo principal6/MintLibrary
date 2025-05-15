@@ -13,21 +13,21 @@ namespace mint
 	namespace GUI
 	{
 		template<typename ComponentType>
-		void GUISystem::AttachComponent(const GUIEntity& entity, ComponentType&& component)
+		void GUISystem::AttachComponent(const GUIControl& control, ComponentType&& component)
 		{
-			return GUIComponentPool<ComponentType>::GetInstance().AddComponentTo(entity, std::move(component));
+			return GUIComponentPool<ComponentType>::GetInstance().AddComponentTo(control, std::move(component));
 		}
 		
 		template<typename ComponentType>
-		void GUISystem::AttachComponent(const GUIEntityTemplate& entityTemplate, ComponentType&& component)
+		void GUISystem::AttachComponent(const GUIControlTemplate& controlTemplate, ComponentType&& component)
 		{
-			return GUIComponentPool<ComponentType>::GetInstance().AddComponentToTemplate(entityTemplate, std::move(component));
+			return GUIComponentPool<ComponentType>::GetInstance().AddComponentToTemplate(controlTemplate, std::move(component));
 		}
 
 		template<typename ComponentType>
-		ComponentType* GUISystem::GetComponent(const GUIEntity& entity)
+		ComponentType* GUISystem::GetComponent(const GUIControl& control)
 		{
-			return GUIComponentPool<ComponentType>::GetInstance().GetComponent(entity);
+			return GUIComponentPool<ComponentType>::GetInstance().GetComponent(control);
 		}
 	}
 }

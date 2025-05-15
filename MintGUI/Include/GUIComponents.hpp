@@ -12,12 +12,12 @@
 
 namespace mint
 {
-	inline uint64 Hasher<GUI::GUIEntity>::operator()(const GUI::GUIEntity& value) const noexcept
+	inline uint64 Hasher<GUI::GUIControl>::operator()(const GUI::GUIControl& value) const noexcept
 	{
 		return ComputeHash(value.Value());
 	}
 
-	inline uint64 Hasher<GUI::GUIEntityTemplate>::operator()(const GUI::GUIEntityTemplate& value) const noexcept
+	inline uint64 Hasher<GUI::GUIControlTemplate>::operator()(const GUI::GUIControlTemplate& value) const noexcept
 	{
 		return ComputeHash(value.Value());
 	}
@@ -50,54 +50,54 @@ namespace mint
 		}
 
 		template<typename ComponentType>
-		void GUIComponentPool<ComponentType>::AddComponentTo(const GUIEntity& entity, ComponentType&& component)
+		void GUIComponentPool<ComponentType>::AddComponentTo(const GUIControl& control, ComponentType&& component)
 		{
-			_entityComponents.Insert(entity, std::move(component));
+			_controlComponents.Insert(control, std::move(component));
 		}
 
 		template<typename ComponentType>
-		void GUIComponentPool<ComponentType>::AddComponentToTemplate(const GUIEntityTemplate& entityTemplate, ComponentType&& component)
+		void GUIComponentPool<ComponentType>::AddComponentToTemplate(const GUIControlTemplate& controlTemplate, ComponentType&& component)
 		{
-			_entityTemplateComponents.Insert(entityTemplate, std::move(component));
+			_controlTemplateComponents.Insert(controlTemplate, std::move(component));
 		}
 
 		template<typename ComponentType>
-		bool GUIComponentPool<ComponentType>::HasComponent(const GUIEntity& entity) const
+		bool GUIComponentPool<ComponentType>::HasComponent(const GUIControl& control) const
 		{
-			return _entityComponents.Contains(entity);
+			return _controlComponents.Contains(control);
 		}
 
 		template<typename ComponentType>
-		void GUIComponentPool<ComponentType>::CopyComponent(const GUIEntity& sourceEntity, const GUIEntity& targetEntity)
+		void GUIComponentPool<ComponentType>::CopyComponent(const GUIControl& sourceControl, const GUIControl& targetControl)
 		{
-			const ComponentType* const sourceComponent = GetComponent(sourceEntity);
-			AddComponentTo(targetEntity, ComponentType(*sourceComponent));
+			const ComponentType* const sourceComponent = GetComponent(sourceControl);
+			AddComponentTo(targetControl, ComponentType(*sourceComponent));
 		}
 
 		template<typename ComponentType>
-		void GUIComponentPool<ComponentType>::CopyComponentToTemplate(const GUIEntity& sourceEntity, const GUIEntityTemplate& targetEntityTemplate)
+		void GUIComponentPool<ComponentType>::CopyComponentToTemplate(const GUIControl& sourceControl, const GUIControlTemplate& targetControlTemplate)
 		{
-			const ComponentType* const sourceComponent = GetComponent(sourceEntity);
-			AddComponentToTemplate(targetEntityTemplate, ComponentType(*sourceComponent));
+			const ComponentType* const sourceComponent = GetComponent(sourceControl);
+			AddComponentToTemplate(targetControlTemplate, ComponentType(*sourceComponent));
 		}
 
 		template<typename ComponentType>
-		void GUIComponentPool<ComponentType>::CopyComponentFromTemplate(const GUIEntityTemplate& sourceEntityTemplate, const GUIEntity& targetEntity)
+		void GUIComponentPool<ComponentType>::CopyComponentFromTemplate(const GUIControlTemplate& sourceControlTemplate, const GUIControl& targetControl)
 		{
-			const ComponentType* const sourceComponent = GetTemplateComponent(sourceEntityTemplate);
-			AddComponentTo(targetEntity, ComponentType(*sourceComponent));
+			const ComponentType* const sourceComponent = GetTemplateComponent(sourceControlTemplate);
+			AddComponentTo(targetControl, ComponentType(*sourceComponent));
 		}
 
 		template<typename ComponentType>
-		ComponentType* GUIComponentPool<ComponentType>::GetComponent(const GUIEntity& entity)
+		ComponentType* GUIComponentPool<ComponentType>::GetComponent(const GUIControl& control)
 		{
-			return _entityComponents.Find(entity);
+			return _controlComponents.Find(control);
 		}
 
 		template<typename ComponentType>
-		ComponentType* GUIComponentPool<ComponentType>::GetTemplateComponent(const GUIEntityTemplate& entityTemplate)
+		ComponentType* GUIComponentPool<ComponentType>::GetTemplateComponent(const GUIControlTemplate& controlTemplate)
 		{
-			return _entityTemplateComponents.Find(entityTemplate);
+			return _controlTemplateComponents.Find(controlTemplate);
 		}
 #pragma endregion
 	}

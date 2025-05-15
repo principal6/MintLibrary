@@ -33,19 +33,19 @@ namespace mint
 			~GUISystem();
 
 		public:
-			GUIEntity CreateEntity();
-			GUIEntity CreateEntity(const GUIEntityTemplate& entityTemplate);
-			GUIEntity CloneEntity(const GUIEntity& sourceEntity);
+			GUIControl CreateControl();
+			GUIControl CreateControl(const GUIControlTemplate& controlTemplate);
+			GUIControl CloneControl(const GUIControl& sourceControl);
 			
-			GUIEntityTemplate CreateTemplate();
-			GUIEntityTemplate CreateTemplate(const GUIEntity& sourceEntity);
+			GUIControlTemplate CreateTemplate();
+			GUIControlTemplate CreateTemplate(const GUIControl& sourceControl);
 
 			template<typename ComponentType>
-			void AttachComponent(const GUIEntity& entity, ComponentType&& component);
+			void AttachComponent(const GUIControl& control, ComponentType&& component);
 			template<typename ComponentType>
-			void AttachComponent(const GUIEntityTemplate& entityTemplate, ComponentType&& component);
+			void AttachComponent(const GUIControlTemplate& controlTemplate, ComponentType&& component);
 			template<typename ComponentType>
-			ComponentType* GetComponent(const GUIEntity& entity);
+			ComponentType* GetComponent(const GUIControl& control);
 
 			void Update();
 			void Render();
@@ -53,20 +53,20 @@ namespace mint
 		private:
 			void Initialize();
 			void Terminate();
-			void InputSystem(const Vector<GUIEntity>& entities);
-			void RenderSystem(const Vector<GUIEntity>& entities, Rendering::GraphicsDevice& graphicsDevice);
+			void InputSystem(const Vector<GUIControl>& controls);
+			void RenderSystem(const Vector<GUIControl>& controls, Rendering::GraphicsDevice& graphicsDevice);
 
 		private:
 			Rendering::GraphicsDevice& _graphicsDevice;
 			Rendering::GraphicsObjectID _defaultMaterialID;
 
 		private:
-			uint32 _nextEntityID;
-			Vector<GUIEntity> _entities;
+			uint32 _nextControlID;
+			Vector<GUIControl> _controls;
 
 		private:
-			uint16 _nextEntityTemplateID;
-			Vector<GUIEntityTemplate> _entityTemplates;
+			uint16 _nextControlTemplateID;
+			Vector<GUIControlTemplate> _controlTemplates;
 		};
 	}
 }
