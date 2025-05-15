@@ -67,10 +67,10 @@ namespace mint
 	}
 
 	template<typename ComponentType>
-	inline void SceneObjectComponentPool<ComponentType>::CopyComponent(const SceneObject& sourceEntity, const SceneObject& targetEntity)
+	inline void SceneObjectComponentPool<ComponentType>::CopyComponent(const SceneObject& sourceSceneObject, const SceneObject& targetSceneObject)
 	{
-		const ComponentType* const sourceComponent = GetComponent(sourceEntity);
-		AddComponentTo(targetEntity, ComponentType(*sourceComponent));
+		const ComponentType* const sourceComponent = GetComponent(sourceSceneObject);
+		AddComponentTo(targetSceneObject, ComponentType(*sourceComponent));
 	}
 
 	template<typename ComponentType>

@@ -40,9 +40,9 @@ namespace mint
 		virtual ~ISceneObjectComponentPool() { __noop; }
 
 	public:
-		virtual void RemoveComponentFrom(const SceneObject& entity) = 0;
-		virtual bool HasComponent(const SceneObject& entity) const = 0;
-		virtual void CopyComponent(const SceneObject& sourceEntity, const SceneObject& targetEntity) = 0;
+		virtual void RemoveComponentFrom(const SceneObject& sceneObject) = 0;
+		virtual bool HasComponent(const SceneObject& sceneObject) const = 0;
+		virtual void CopyComponent(const SceneObject& sourceSceneObject, const SceneObject& targetSceneObject) = 0;
 	};
 
 	template<typename ComponentType>
@@ -60,7 +60,7 @@ namespace mint
 		void AddComponentTo(const SceneObject& sceneObject, ComponentType&& component);
 		virtual void RemoveComponentFrom(const SceneObject& sceneObject) override final;
 		virtual bool HasComponent(const SceneObject& sceneObject) const override final;
-		virtual void CopyComponent(const SceneObject& sourceEntity, const SceneObject& targetEntity) override final;
+		virtual void CopyComponent(const SceneObject& sourceSceneObject, const SceneObject& targetSceneObject) override final;
 		ComponentType* GetComponent(const SceneObject& sceneObject);
 		ContiguousHashMap<SceneObject, ComponentType>& GetComponentMap();
 
