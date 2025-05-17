@@ -19,6 +19,8 @@
 
 #include <MintGUI/Include/AllHpps.h>
 
+#include <MintECS/Include/AllHpps.h>
+
 #include <MintApp/Include/AllHpps.h>
 
 

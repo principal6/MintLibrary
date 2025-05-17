@@ -38,9 +38,6 @@
     <ClInclude Include="Include\App.h">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="Include\SceneObject.hpp">
-      <Filter>Include</Filter>
-    </ClInclude>
     <ClInclude Include="Include\SceneObjectSystems.h">
       <Filter>Include</Filter>
     </ClInclude>

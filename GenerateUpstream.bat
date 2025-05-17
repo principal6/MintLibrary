@@ -7,6 +7,7 @@ robocopy MintApp Upstream/MintLibrary/MintApp /S
 robocopy MintAudio Upstream/MintLibrary/MintAudio /S
 robocopy MintCommon Upstream/MintLibrary/MintCommon /S
 robocopy MintContainer Upstream/MintLibrary/MintContainer /S
+robocopy MintECS Upstream/MintLibrary/MintECS /S
 robocopy MintGame Upstream/MintLibrary/MintGame /S
 robocopy MintGUI Upstream/MintLibrary/MintGUI /S
 robocopy MintLanguage Upstream/MintLibrary/MintLanguage /S

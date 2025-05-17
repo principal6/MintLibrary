@@ -5,38 +5,25 @@
 #define _MINT_APP_SCENE_OBJECT_POOL_H_
 
 
-#include <MintContainer/Include/Vector.h>
-#include <MintContainer/Include/SharedPtr.h>
-#include <MintContainer/Include/SerialAndIndex.h>
-
+#include <MintECS/Include/EntityPool.h>
 #include <MintApp/Include/SceneObject.h>
 
 
 namespace mint
 {
-	class SceneObjectPool final
+	class SceneObjectPool final : public ECS::EntityPool<SceneObject>
 	{
 	public:
 		SceneObjectPool();
-		~SceneObjectPool();
+		virtual ~SceneObjectPool();
 
 	public:
-		SceneObject CreateSceneObject();
-		void DestroySceneObject(SceneObject sceneObject);
-		template<typename ComponentType>
-		void AttachComponent(const SceneObject& sceneObject, const ComponentType& component);
-		template<typename ComponentType>
-		void AttachComponent(const SceneObject& sceneObject, ComponentType&& component);
-		template<typename ComponentType>
-		ComponentType* GetComponent(const SceneObject& sceneObject);
-		template<typename ComponentType>
-		ComponentType& GetComponentMust(const SceneObject& sceneObject);
+		SceneObject CreateSceneObject() { return CreateEntity(); }
+		void DestroySceneObject(SceneObject sceneObject) { DestroyEntity(sceneObject); }
 		Transform& GetTransform(const SceneObject& sceneObject);
 
-	private:
-		Vector<SceneObject> _sceneObjects;
-		uint32 _nextEmptySceneObjectIndex{ 0 };
-		uint32 _aliveSceneObjectCount{ 0 };
+	protected:
+		virtual void OnEntityCreated(SceneObject entity) override final;
 	};
 }
 

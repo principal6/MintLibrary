@@ -29,6 +29,7 @@ IF NOT EXIST _intermediate\MintApp mkdir _intermediate\MintApp
 IF NOT EXIST _intermediate\MintAudio mkdir _intermediate\MintAudio
 IF NOT EXIST _intermediate\MintCommon mkdir _intermediate\MintCommon
 IF NOT EXIST _intermediate\MintContainer mkdir _intermediate\MintContainer
+IF NOT EXIST _intermediate\MintECS mkdir _intermediate\MintECS
 IF NOT EXIST _intermediate\MintGame mkdir _intermediate\MintGame
 IF NOT EXIST _intermediate\MintGUI mkdir _intermediate\MintGUI
 IF NOT EXIST _intermediate\MintLanguage mkdir _intermediate\MintLanguage
@@ -49,6 +50,7 @@ cl MintPlatform\Source\_UnityBuild.cpp /c /Fo_intermediate\MintPlatform\ /Fd_out
 cl MintReflection\Source\_UnityBuild.cpp /c /Fo_intermediate\MintReflection\ /Fd_output\MintReflection.pdb
 cl MintLanguage\Source\_UnityBuild.cpp /c /Fo_intermediate\MintLanguage\ /Fd_output\MintLanguage.pdb
 cl MintRendering\Source\_UnityBuild.cpp /c /Fo_intermediate\MintRendering\ /Fd_output\MintRendering.pdb
+cl MintECS\Source\_UnityBuild.cpp /c /Fo_intermediate\MintECS\ /Fd_output\MintECS.pdb
 cl MintAudio\Source\_UnityBuild.cpp /c /Fo_intermediate\MintAudio\ /Fd_output\MintAudio.pdb
 cl MintPhysics\Source\_UnityBuild.cpp /c /Fo_intermediate\MintPhysics\ /Fd_output\MintPhysics.pdb
 cl MintGUI\Source\_UnityBuild.cpp /c /Fo_intermediate\MintGUI\ /Fd_output\MintGUI.pdb
@@ -64,6 +66,7 @@ lib _intermediate\MintPlatform\_UnityBuild.obj /OUT:_output\MintPlatform.lib
 lib _intermediate\MintReflection\_UnityBuild.obj /OUT:_output\MintReflection.lib
 lib _intermediate\MintLanguage\_UnityBuild.obj /OUT:_output\MintLanguage.lib
 lib _intermediate\MintRendering\_UnityBuild.obj /OUT:_output\MintRendering.lib /LIBPATH:Externals\freetype_2_10_4\lib\ %MODED_LIBS%
+lib _intermediate\MintECS\_UnityBuild.obj /OUT:_output\MintECS.lib
 lib _intermediate\MintAudio\_UnityBuild.obj /OUT:_output\MintAudio.lib
 lib _intermediate\MintPhysics\_UnityBuild.obj /OUT:_output\MintPhysics.lib
 lib _intermediate\MintGUI\_UnityBuild.obj /OUT:_output\MintGUI.lib
@@ -73,7 +76,7 @@ lib _intermediate\MintGame\_UnityBuild.obj /OUT:_output\MintGame.lib
 
 :### COMPILE AND LINK <MintLibrary>
 cl MintLibrary\Source\_UnityBuild.cpp -c /Fo_intermediate\MintLibrary\ /Fd_output
-lib _intermediate\MintLibrary\_UnityBuild.obj /OUT:_output\MintLibrary.lib _output\MintCommon.lib _output\MintContainer.lib _output\MintMath.lib _output\MintPlatform.lib _output\MintReflection.lib _output\MintLanguage.lib _output\MintRendering.lib _output\MintAudio.lib _output\MintPhysics.lib _output\MintGUI.lib _output\MintApp.lib _output\MintGame.lib
+lib _intermediate\MintLibrary\_UnityBuild.obj /OUT:_output\MintLibrary.lib _output\MintCommon.lib _output\MintContainer.lib _output\MintMath.lib _output\MintPlatform.lib _output\MintReflection.lib _output\MintLanguage.lib _output\MintRendering.lib _output\MintECS.lib _output\MintAudio.lib _output\MintPhysics.lib _output\MintGUI.lib _output\MintApp.lib _output\MintGame.lib
 
 
 :### COMPILE THE FINAL EXECUTABLE!

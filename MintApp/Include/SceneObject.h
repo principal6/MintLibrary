@@ -6,13 +6,9 @@
 
 
 #include <MintCommon/Include/CommonDefinitions.h>
-
-#include <MintContainer/Include/ID.h>
-#include <MintContainer/Include/Hash.h>
-#include <MintContainer/Include/ContiguousHashMap.h>
-#include <MintContainer/Include/SerialAndIndex.h>
-
 #include <MintMath/Include/Transform.h>
+#include <MintECS/Include/Entity.h>
+#include <MintECS/Include/EntityComponentPool.h>
 
 
 namespace mint
@@ -22,73 +18,12 @@ namespace mint
 
 namespace mint
 {
-	class SceneObject : public SerialAndIndex<uint64, 40>
-	{
-	};
-
-	template <>
-	struct Hasher<SceneObject> final
-	{
-		uint64 operator()(const SceneObject& value) const noexcept;
-	};
-
-	// type-erasure for SceneObjectComponentPool
-	class ISceneObjectComponentPool abstract
-	{
-	public:
-		ISceneObjectComponentPool() { __noop; }
-		virtual ~ISceneObjectComponentPool() { __noop; }
-
-	public:
-		virtual void RemoveComponentFrom(const SceneObject& sceneObject) = 0;
-		virtual bool HasComponent(const SceneObject& sceneObject) const = 0;
-		virtual void CopyComponent(const SceneObject& sourceSceneObject, const SceneObject& targetSceneObject) = 0;
-	};
+	using SceneObject = ECS::EntityBase<uint64, 40>;
 
 	template<typename ComponentType>
-	class SceneObjectComponentPool final : public ISceneObjectComponentPool
-	{
-	public:
-		SceneObjectComponentPool();
-		virtual ~SceneObjectComponentPool();
+	using SceneObjectComponentPool = ECS::EntityComponentPool<SceneObject, ComponentType>;
 
-	public:
-		static SceneObjectComponentPool& GetInstance();
-
-	public:
-		void AddComponentTo(const SceneObject& sceneObject, const ComponentType& component);
-		void AddComponentTo(const SceneObject& sceneObject, ComponentType&& component);
-		virtual void RemoveComponentFrom(const SceneObject& sceneObject) override final;
-		virtual bool HasComponent(const SceneObject& sceneObject) const override final;
-		virtual void CopyComponent(const SceneObject& sourceSceneObject, const SceneObject& targetSceneObject) override final;
-		ComponentType* GetComponent(const SceneObject& sceneObject);
-		ContiguousHashMap<SceneObject, ComponentType>& GetComponentMap();
-
-	private:
-		ContiguousHashMap<SceneObject, ComponentType> _componentMap;
-	};
-
-	class SceneObjectComponentPoolRegistry
-	{
-		SceneObjectComponentPoolRegistry();
-		SceneObjectComponentPoolRegistry(const SceneObjectComponentPoolRegistry& rhs) = delete;
-		SceneObjectComponentPoolRegistry(SceneObjectComponentPoolRegistry&& rhs) noexcept = delete;
-
-	public:
-		~SceneObjectComponentPoolRegistry();
-		static SceneObjectComponentPoolRegistry& GetInstance();
-
-	public:
-		void RegisterComponentPool(ISceneObjectComponentPool& componentPool);
-		const Vector<ISceneObjectComponentPool*>& GetComponentPools() const;
-
-	private:
-		Vector<ISceneObjectComponentPool*> _componentPools;
-#if defined(MINT_DEBUG)
-	private:
-		static SceneObjectComponentPoolRegistry* _sInstance;
-#endif // defined(MINT_DEBUG)
-	};
+	using SceneObjectComponentPoolRegistry = ECS::EntityComponentPoolRegistry<SceneObject>;
 
 	struct TransformComponent
 	{

@@ -44,6 +44,8 @@ namespace mint
 
 #include <MintAudio/Include/AllHeaders.h>
 
+#include <MintECS/Include/AllHeaders.h>
+
 #include <MintApp/Include/AllHeaders.h>
 
 #include <MintGame/Include/AllHeaders.h>

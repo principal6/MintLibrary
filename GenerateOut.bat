@@ -15,6 +15,7 @@ robocopy MintApp/Include Out/Include/MintApp/Include /S
 robocopy MintAudio/Include Out/Include/MintAudio/Include /S
 robocopy MintCommon/Include Out/Include/MintCommon/Include /S
 robocopy MintContainer/Include Out/Include/MintContainer/Include /S
+robocopy MintECS/Include Out/Include/MintECS/Include /S
 robocopy MintGame/Include Out/Include/MintGame/Include /S
 robocopy MintGUI/Include Out/Include/MintGUI/Include /S
 robocopy MintLanguage/Include Out/Include/MintLanguage/Include /S
@@ -30,6 +31,7 @@ robocopy _output/Debug Out/Lib/Debug MintApp.lib
 robocopy _output/Debug Out/Lib/Debug MintAudio.lib
 robocopy _output/Debug Out/Lib/Debug MintCommon.lib
 robocopy _output/Debug Out/Lib/Debug MintContainer.lib
+robocopy _output/Debug Out/Lib/Debug MintECS.lib
 robocopy _output/Debug Out/Lib/Debug MintGame.lib
 robocopy _output/Debug Out/Lib/Debug MintGUI.lib
 robocopy _output/Debug Out/Lib/Debug MintLanguage.lib
@@ -45,6 +47,7 @@ robocopy _output/Release Out/Lib/Release MintApp.lib
 robocopy _output/Release Out/Lib/Release MintAudio.lib
 robocopy _output/Release Out/Lib/Release MintCommon.lib
 robocopy _output/Release Out/Lib/Release MintContainer.lib
+robocopy _output/Release Out/Lib/Release MintECS.lib
 robocopy _output/Release Out/Lib/Release MintGame.lib
 robocopy _output/Release Out/Lib/Release MintGUI.lib
 robocopy _output/Release Out/Lib/Release MintLanguage.lib

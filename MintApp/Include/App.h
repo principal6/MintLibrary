@@ -10,7 +10,7 @@
 
 namespace mint
 {
-	class SceneObject;
+	using SceneObject = ECS::EntityBase<uint64, 40>;
 	class SceneObjectPool;
 	class SceneObjectRenderer;
 	class SceneObjectSystems;

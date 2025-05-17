@@ -1,5 +1,5 @@
 #include <MintApp/Include/SceneObjectSystems.h>
-#include <MintApp/Include/SceneObject.hpp>
+#include <MintApp/Include/SceneObject.h>
 #include <MintApp/Include/SceneObjectPool.hpp>
 
 #include <MintContainer/Include/Vector.hpp>

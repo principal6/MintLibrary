@@ -6,6 +6,7 @@
 #include <MintRendering/Include/FontRenderer.h>
 #include <MintRendering/Include/SpriteRenderer.h>
 #include <MintGUI/Include/GUISystem.h>
+#include <MintECS/Include/Entity.hpp>
 #include <MintApp/Include/SceneObjectPool.hpp>
 #include <MintApp/Include/SceneObjectRenderer.h>
 #include <MintApp/Include/SceneObjectSystems.h>
