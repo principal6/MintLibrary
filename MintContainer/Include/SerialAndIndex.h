@@ -6,18 +6,19 @@
 
 
 #include <MintCommon/Include/CommonDefinitions.h>
+#include <type_traits>
 
 
 namespace mint
 {
 	template<typename T, uint8 IndexBits>
-	class SerialAndIndex
+	class SerialAndIndex final
 	{
 	public:
 		SerialAndIndex() : _raw{ 0 } { SetInvalidIndex(); }
 		SerialAndIndex(const SerialAndIndex& rhs) = default;
 		SerialAndIndex(SerialAndIndex&& rhs) noexcept = default;
-		virtual ~SerialAndIndex() = default;
+		~SerialAndIndex() = default;
 
 	public:
 		SerialAndIndex& operator=(const SerialAndIndex& rhs) = default;
@@ -42,7 +43,7 @@ namespace mint
 
 	protected:
 		static_assert(IndexBits < sizeof(T) * 8, "SerialAndIndex: No room for serial bits!");
-		T _raw;
+		std::enable_if_t<std::is_unsigned_v<T>, T> _raw;
 	};
 }
 
