@@ -6,6 +6,8 @@
 
 
 #include <MintECS/Include/EntityComponentPool.h>
+#include <MintContainer/Include/Vector.hpp>
+#include <mintContainer/Include/ContiguousHashMap.hpp>
 
 
 namespace mint
