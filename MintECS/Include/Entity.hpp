@@ -15,6 +15,12 @@ namespace mint
 	{
 		return ComputeHash(value.GetRawValue());
 	}
+
+	template<typename T> requires std::derived_from<T, ECS::EntityBase<typename T::UintType, T::kIndexBits>>
+	inline uint64 Hasher<T>::operator()(const T& value) const noexcept
+	{
+		return ComputeHash(value.GetRawValue());
+	}
 }
 
 

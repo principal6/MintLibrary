@@ -29,7 +29,7 @@ namespace mint
 
 
 		template<typename EntityType, typename ComponentType>
-		class EntityComponentPool : public IEntityComponentPool<EntityType>
+		class EntityComponentPool final : public IEntityComponentPool<EntityType>
 		{
 		public:
 			virtual ~EntityComponentPool();
@@ -55,7 +55,7 @@ namespace mint
 
 
 		template<typename EntityType>
-		class EntityComponentPoolRegistry
+		class EntityComponentPoolRegistry final
 		{
 		public:
 			virtual ~EntityComponentPoolRegistry();

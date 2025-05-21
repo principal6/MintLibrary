@@ -29,7 +29,7 @@ namespace mint
 	uint64 ComputeHash(const T& value) noexcept;
 
 
-	template <typename T>
+	template <typename T, typename Enable = void>
 	struct Hasher final
 	{
 		uint64 operator()(const T& value) const noexcept;

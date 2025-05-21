@@ -12,10 +12,10 @@
 namespace mint
 {
 	class Float2;
+	class SceneObject;
 	enum class CameraMoveDirection : uint8;
 	struct CameraComponent;
 	struct TransformComponent;
-	using SceneObject = ECS::EntityBase<uint64, 40>;
 }
 
 namespace mint

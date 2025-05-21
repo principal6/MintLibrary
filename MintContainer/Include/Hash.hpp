@@ -71,8 +71,8 @@ namespace mint
 	}
 
 
-	template<typename T>
-	inline uint64 Hasher<T>::operator()(const T& value) const noexcept
+	template<typename T, typename Enable>
+	inline uint64 Hasher<T, Enable>::operator()(const T& value) const noexcept
 	{
 		if constexpr (HasMethodComputeHash<T>::value == true)
 		{
