@@ -33,12 +33,18 @@
     <ClInclude Include="Include\AllHpps.h">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="Include\TestECS.h">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\_UnityBuild.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\TestECS.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\TestStaticInstanece.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>

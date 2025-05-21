@@ -8,6 +8,7 @@
 #include <MintLanguage/Include/Test.h>
 #include <MintReflection/Include/TestReflection.h>
 #include <MintRendering/Include/TestRendering.h>
+#include <MintECS/Include/TestECS.h>
 #include <MintLibrary/Include/Test.h>
 
 
@@ -34,6 +35,7 @@ int main()
 	mint::TestPlatform::Test();
 	mint::TestLanguage::Test();
 	mint::TestReflection::Test();
+	mint::TestECS::Test();
 	mint::TestLibrary::Test();
 
 	//mint::AudioSystem audioSystem;
