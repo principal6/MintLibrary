@@ -7,7 +7,7 @@
 
 #include <MintECS/Include/Entity.h>
 #include <MintECS/Include/EntityComponentPool.h>
-#include <MintECS/Include/EntityPool.h>
+#include <MintECS/Include/EntityRegistry.h>
 
 
 #endif // !_MINT_ECS_ALL_HEADERS_H_

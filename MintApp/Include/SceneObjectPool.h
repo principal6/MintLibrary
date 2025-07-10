@@ -5,13 +5,13 @@
 #define _MINT_APP_SCENE_OBJECT_POOL_H_
 
 
-#include <MintECS/Include/EntityPool.h>
+#include <MintECS/Include/EntityRegistry.h>
 #include <MintApp/Include/SceneObject.h>
 
 
 namespace mint
 {
-	class SceneObjectPool final : public ECS::EntityPool<SceneObject>
+	class SceneObjectPool final : public ECS::EntityRegistry<SceneObject>
 	{
 	public:
 		SceneObjectPool();

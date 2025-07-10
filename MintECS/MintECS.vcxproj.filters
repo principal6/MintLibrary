@@ -12,12 +12,6 @@
     <ClInclude Include="Include\Entity.h">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="Include\EntityPool.h">
-      <Filter>Include</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\EntityPool.hpp">
-      <Filter>Include</Filter>
-    </ClInclude>
     <ClInclude Include="Include\EntityComponentPool.h">
       <Filter>Include</Filter>
     </ClInclude>
@@ -36,6 +30,8 @@
     <ClInclude Include="Include\TestECS.h">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="Include\EntityRegistry.h" />
+    <ClInclude Include="Include\EntityRegistry.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\_UnityBuild.cpp">

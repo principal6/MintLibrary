@@ -5,7 +5,7 @@
 #define _MINT_ECS_ENTITY_POOL_HPP_
 
 
-#include <MintECS/Include/EntityPool.h>
+#include <MintECS/Include/EntityRegistry.h>
 #include <MintContainer/Include/Vector.hpp>
 #include <MintECS/Include/EntityComponentPool.hpp>
 
@@ -15,13 +15,13 @@ namespace mint
 	namespace ECS
 	{
 		template<typename EntityType>
-		inline EntityPool<EntityType>::EntityPool()
+		inline EntityRegistry<EntityType>::EntityRegistry()
 		{
 			_nextEmptyEntityIndex = 0;
 		}
 
 		template<typename EntityType>
-		inline EntityPool<EntityType>::~EntityPool()
+		inline EntityRegistry<EntityType>::~EntityRegistry()
 		{
 			for (const EntityType& s : _entities)
 			{
@@ -35,7 +35,7 @@ namespace mint
 		}
 
 		template<typename EntityType>
-		MINT_INLINE EntityType EntityPool<EntityType>::CreateEntity()
+		MINT_INLINE EntityType EntityRegistry<EntityType>::CreateEntity()
 		{
 			if (_nextEmptyEntityIndex >= _entities.Size())
 			{
@@ -72,7 +72,7 @@ namespace mint
 		}
 
 		template<typename EntityType>
-		inline void EntityPool<EntityType>::DestroyEntity(EntityType entity)
+		inline void EntityRegistry<EntityType>::DestroyEntity(EntityType entity)
 		{
 			MINT_ASSERT(_aliveEntityCount > 0, "로직 상 반드시 보장되어야 합니다!");
 			--_aliveEntityCount;
@@ -92,28 +92,28 @@ namespace mint
 
 		template<typename EntityType>
 		template<typename ComponentType>
-		inline void EntityPool<EntityType>::AttachComponent(const EntityType& entity, const ComponentType& component)
+		inline void EntityRegistry<EntityType>::AttachComponent(const EntityType& entity, const ComponentType& component)
 		{
 			return EntityComponentPool<EntityType, ComponentType>::GetInstance().AddComponentTo(entity, component);
 		}
 
 		template<typename EntityType>
 		template<typename ComponentType>
-		inline void EntityPool<EntityType>::AttachComponent(const EntityType& entity, ComponentType&& component)
+		inline void EntityRegistry<EntityType>::AttachComponent(const EntityType& entity, ComponentType&& component)
 		{
 			return EntityComponentPool<EntityType, ComponentType>::GetInstance().AddComponentTo(entity, std::move(component));
 		}
 
 		template<typename EntityType>
 		template<typename ComponentType>
-		inline ComponentType* EntityPool<EntityType>::GetComponent(const EntityType& entity)
+		inline ComponentType* EntityRegistry<EntityType>::GetComponent(const EntityType& entity)
 		{
 			return EntityComponentPool<EntityType, ComponentType>::GetInstance().GetComponent(entity);
 		}
 
 		template<typename EntityType>
 		template<typename ComponentType>
-		inline ComponentType& EntityPool<EntityType>::GetComponentMust(const EntityType& entity)
+		inline ComponentType& EntityRegistry<EntityType>::GetComponentMust(const EntityType& entity)
 		{
 			ComponentType* const component = GetComponent<ComponentType>(entity);
 			MINT_ASSERT(component != nullptr, "해당 Component 가 Entity 에 존재하지 않습니다!");

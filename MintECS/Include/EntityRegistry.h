@@ -14,11 +14,11 @@ namespace mint
 	namespace ECS
 	{
 		template<typename EntityType>
-		class EntityPool
+		class EntityRegistry
 		{
 		public:
-			EntityPool();
-			virtual ~EntityPool();
+			EntityRegistry();
+			virtual ~EntityRegistry();
 
 		public:
 			EntityType CreateEntity();

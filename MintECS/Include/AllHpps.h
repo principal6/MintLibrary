@@ -7,7 +7,7 @@
 
 #include <MintECS/Include/Entity.hpp>
 #include <MintECS/Include/EntityComponentPool.hpp>
-#include <MintECS/Include/EntityPool.hpp>
+#include <MintECS/Include/EntityRegistry.hpp>
 
 
 #endif // !_MINT_ECS_ALL_HPPS_H_

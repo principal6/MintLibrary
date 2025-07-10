@@ -7,7 +7,7 @@
 
 #include <MintApp/Include/SceneObjectPool.h>
 
-#include <MintECS/Include/EntityPool.hpp>
+#include <MintECS/Include/EntityRegistry.hpp>
 
 
 namespace mint

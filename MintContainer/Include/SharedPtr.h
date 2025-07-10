@@ -77,16 +77,16 @@ namespace mint
 		friend class SharedPtrViewer;
 
 		template<typename T>
-		friend static SharedPtr<T> MakeShared();
+		friend SharedPtr<T> MakeShared();
 
 		template<typename T>
-		friend static SharedPtr<T> MakeShared(const T& rhs);
+		friend SharedPtr<T> MakeShared(const T& rhs);
 
 		template<typename T, typename U>
-		friend static SharedPtr<T> MakeShared(const U& rhs);
+		friend SharedPtr<T> MakeShared(const U& rhs);
 
 		template<typename T>
-		friend static SharedPtr<T> MakeShared(T&& rhs);
+		friend SharedPtr<T> MakeShared(T&& rhs);
 
 	public:
 		SharedPtr() = default;
