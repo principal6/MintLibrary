@@ -200,23 +200,22 @@ namespace mint
 		template<typename ComponentType>
 		inline const EntityComponentPool<EntityType, ComponentType>& EntityRegistry<EntityType>::GetComponentPool() const
 		{
-			for (const OwnPtr<IEntityComponentPool<EntityType>>& iter : _componentPools)
+			OwnPtr<IEntityComponentPool<EntityType>>* const found = _componentPools.Find(typeid(ComponentType).hash_code());
+			if (found != nullptr)
 			{
-				if (iter->GetTypeIndex() == typeid(ComponentType))
-				{
-					return static_cast<const EntityComponentPool<EntityType, ComponentType>&>(*iter);
-				}
+				return static_cast<const EntityComponentPool<EntityType, ComponentType>&>(**found);
 			}
 
 			OwnPtr<IEntityComponentPool<EntityType>> newComponentPool = MINT_NEW((EntityComponentPool<EntityType, ComponentType>));
-			_componentPools.PushBack(std::move(newComponentPool));
-			return static_cast<const EntityComponentPool<EntityType, ComponentType>&>(*_componentPools.Back());
+			const EntityComponentPool<EntityType, ComponentType>& result = static_cast<const EntityComponentPool<EntityType, ComponentType>&>(*newComponentPool);
+			_componentPools.Insert(typeid(ComponentType).hash_code(), std::move(newComponentPool));
+			return result;
 		}
 
 		template<typename EntityType>
 		inline const Vector<OwnPtr<IEntityComponentPool<EntityType>>>& EntityRegistry<EntityType>::GetComponentPools() const
 		{
-			return _componentPools;
+			return _componentPools.GetValues();
 		}
 #pragma endregion
 	}

@@ -97,7 +97,7 @@ namespace mint
 			uint32 _aliveEntityCount{ 0 };
 		
 		protected:
-			mutable Vector<OwnPtr<IEntityComponentPool<EntityType>>> _componentPools;
+			mutable ContiguousHashMap<size_t, OwnPtr<IEntityComponentPool<EntityType>>> _componentPools;
 		};
 	}
 }
