@@ -74,7 +74,6 @@ namespace mint
 			{
 				return _values[_keyMapIterator.GetValue()];
 			}
-		
 		private:
 			HashMap<Key, IndexType>::Iterator _keyMapIterator;
 			Vector<Value>& _values;
@@ -87,6 +86,51 @@ namespace mint
 		Iterator end() noexcept
 		{
 			return Iterator(_keyMap.end(), _values);
+		}
+
+		class ConstIterator
+		{
+		public:
+			ConstIterator(HashMap<Key, IndexType>::ConstIterator&& keyMapIterator, const Vector<Value>& values) : _keyMapIterator{ std::move(keyMapIterator) }, _values{ values } { __noop; }
+			~ConstIterator() = default;
+			bool operator==(const ConstIterator& rhs) const noexcept
+			{
+				return _keyMapIterator == rhs._keyMapIterator;
+			}
+			bool operator!=(const ConstIterator& rhs) const noexcept
+			{
+				return !(*this == rhs);
+			}
+			ConstIterator& operator++() noexcept
+			{
+				++_keyMapIterator;
+				return *this;
+			}
+			const Value& operator*() const noexcept
+			{
+				return GetValue();
+			}
+			const Key& GetKey() const noexcept
+			{
+				return _keyMapIterator.GetKey();
+			}
+			const Value& GetValue() const noexcept
+			{
+				return _values[_keyMapIterator.GetValue()];
+			}
+		private:
+			HashMap<Key, IndexType>::ConstIterator _keyMapIterator;
+			const Vector<Value>& _values;
+		};
+
+		ConstIterator begin() const noexcept
+		{
+			return ConstIterator(_keyMap.begin(), _values);
+		}
+
+		ConstIterator end() const noexcept
+		{
+			return ConstIterator(_keyMap.end(), _values);
 		}
 
 	private:

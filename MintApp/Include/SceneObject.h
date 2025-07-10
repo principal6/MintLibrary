@@ -9,6 +9,7 @@
 #include <MintMath/Include/Transform.h>
 #include <MintECS/Include/Entity.h>
 #include <MintECS/Include/EntityComponentPool.h>
+#include <MintECS/Include/EntityRegistry.h>
 
 
 namespace mint
@@ -22,8 +23,6 @@ namespace mint
 
 	template<typename ComponentType>
 	using SceneObjectComponentPool = ECS::EntityComponentPool<SceneObject, ComponentType>;
-
-	using SceneObjectComponentPoolRegistry = ECS::EntityComponentPoolRegistry<SceneObject>;
 
 	struct TransformComponent
 	{

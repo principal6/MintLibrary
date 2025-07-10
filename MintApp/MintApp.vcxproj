@@ -178,8 +178,8 @@
     <ClInclude Include="Include\MeshComponent.h" />
     <ClInclude Include="Include\SceneObject.h" />
     <ClInclude Include="Include\SceneObjectSystems.h" />
-    <ClInclude Include="Include\SceneObjectPool.h" />
-    <ClInclude Include="Include\SceneObjectPool.hpp" />
+    <ClInclude Include="Include\SceneObjectRegistry.h" />
+    <ClInclude Include="Include\SceneObjectRegistry.hpp" />
     <ClInclude Include="Include\SceneObjectRenderer.h" />
   </ItemGroup>
   <ItemGroup>

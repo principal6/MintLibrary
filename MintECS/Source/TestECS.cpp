@@ -7,9 +7,6 @@ namespace mint
 
 	namespace TestECS
 	{
-		ECS::EntityComponentPool<EntityType0, TestComponent>* gInstance0 = nullptr;
-		ECS::EntityComponentPool<EntityType0, TestComponent>* gInstance1 = nullptr;
-
 		class TestBase {};
 		class TestDerived : public TestBase {};
 
@@ -34,15 +31,6 @@ namespace mint
 		void Test()
 		{
 			using namespace ECS;
-
-			TestStaticInstance();
-
-			gInstance0 = &EntityComponentPool<EntityType0, TestComponent>::GetInstance();
-			MINT_ASSERT(gInstance0 == gInstance1, "!!!");
-
-			EntityComponentPool<EntityType0, TestComponent>& instance0 = EntityComponentPool<EntityType0, TestComponent>::GetInstance();
-			EntityComponentPool<EntityType1, TestComponent>& instance1 = EntityComponentPool<EntityType1, TestComponent>::GetInstance();
-			MINT_ASSERT(reinterpret_cast<void*>(&instance0) != reinterpret_cast<void*>(&instance1), "!!!");
 
 			TestDerived testDerived;
 			MINT_ASSERT(TestEnable<TestDerived>()(testDerived) == 1llu, "!!!");

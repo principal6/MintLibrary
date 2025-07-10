@@ -14,7 +14,7 @@
 
 namespace mint
 {
-	class SceneObjectPool;
+	class SceneObjectRegistry;
 
 	namespace Rendering
 	{
@@ -32,7 +32,7 @@ namespace mint
 		~SceneObjectRenderer();
 
 	public:
-		void Render(const SceneObjectPool& sceneObjectPool) noexcept;
+		void Render(const SceneObjectRegistry& sceneObjectRegistry) noexcept;
 
 	private:
 		void Initialize() noexcept;

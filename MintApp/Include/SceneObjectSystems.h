@@ -32,7 +32,11 @@ namespace mint
 	class SceneObjectCameraSystem
 	{
 	public:
-		SceneObjectCameraSystem() = default;
+		SceneObjectCameraSystem(SceneObjectRegistry& sceneObjectRegistry)
+			: _sceneObjectRegistry(sceneObjectRegistry)
+		{
+			__noop;
+		}
 		~SceneObjectCameraSystem() = default;
 
 	public:
@@ -61,19 +65,26 @@ namespace mint
 		CameraMoveSpeed GetSlowerMoveSpeed(const CameraMoveSpeed moveSpeed) const;
 
 	private:
+		SceneObjectRegistry& _sceneObjectRegistry;
 		SceneObject _currentCameraObject;
 	};
 
 	class SceneObjectSystems
 	{
 	public:
-		SceneObjectSystems() = default;
+		SceneObjectSystems(SceneObjectRegistry& sceneObjectRegistry)
+			: _sceneObjectRegistry(sceneObjectRegistry)
+			, _cameraSystem(_sceneObjectRegistry)
+		{
+			__noop;
+		}
 		~SceneObjectSystems() = default;
 
 	public:
 		SceneObjectCameraSystem& GetCameraSystem() { return _cameraSystem; }
 
 	private:
+		SceneObjectRegistry& _sceneObjectRegistry;
 		SceneObjectCameraSystem _cameraSystem;
 	};
 }

@@ -7,7 +7,7 @@
 #include <MintRendering/Include/ShapeRenderer.h>
 
 #include <MintApp/Include/SceneObject.h>
-#include <MintApp/Include/SceneObjectPool.hpp>
+#include <MintApp/Include/SceneObjectRegistry.hpp>
 #include <MintApp/Include/MeshComponent.h>
 
 
@@ -24,7 +24,7 @@ namespace mint
 		Terminate();
 	}
 
-	void SceneObjectRenderer::Render(const SceneObjectPool& sceneObjectPool) noexcept
+	void SceneObjectRenderer::Render(const SceneObjectRegistry& sceneObjectRegistry) noexcept
 	{
 		using namespace Rendering;
 
@@ -32,9 +32,9 @@ namespace mint
 		ShaderPipelinePool& shaderPipelinePool = _graphicsDevice.GetShaderPipelinePool();
 		GraphicsResourcePool& resourcePool = _graphicsDevice.GetResourcePool();
 
-		SceneObjectComponentPool<TransformComponent>& transformComponentPool = SceneObjectComponentPool<TransformComponent>::GetInstance();
-		SceneObjectComponentPool<MeshComponent>& meshComponentPool = SceneObjectComponentPool<MeshComponent>::GetInstance();
-		ContiguousHashMap<SceneObject, MeshComponent>& meshComponentMap = meshComponentPool.GetComponentMap();
+		const SceneObjectComponentPool<TransformComponent>& transformComponentPool = sceneObjectRegistry.GetComponentPool<TransformComponent>();
+		const SceneObjectComponentPool<MeshComponent>& meshComponentPool = sceneObjectRegistry.GetComponentPool<MeshComponent>();
+		const ContiguousHashMap<SceneObject, MeshComponent>& meshComponentMap = meshComponentPool.GetComponentMap();
 		if (meshComponentMap.IsEmpty() == false)
 		{
 			const ShaderPipeline& shaderPipelineDefault = shaderPipelinePool.GetShaderPipeline(_shaderPipelineDefaultID);
@@ -52,8 +52,8 @@ namespace mint
 			for (auto iter = meshComponentMap.begin(); iter != meshComponentMap.end(); ++iter)
 			{
 				const SceneObject& sceneObject = iter.GetKey();
-				MeshComponent& meshComponent = iter.GetValue();
-				TransformComponent* transformComponent = transformComponentPool.GetComponent(sceneObject);
+				const MeshComponent& meshComponent = iter.GetValue();
+				const TransformComponent* transformComponent = transformComponentPool.GetComponent(sceneObject);
 				_cbTransformData._cbWorldMatrix = transformComponent->_transform.ToMatrix();
 				cbTransform.UpdateBuffer(&_cbTransformData, 1);
 
@@ -84,16 +84,16 @@ namespace mint
 			sbMaterial.UnbindFromShader();
 		}
 
-		SceneObjectComponentPool<Mesh2DComponent>& mesh2DComponentPool = SceneObjectComponentPool<Mesh2DComponent>::GetInstance();
-		ContiguousHashMap<SceneObject, Mesh2DComponent>& mesh2DComponentMap = mesh2DComponentPool.GetComponentMap();
+		const SceneObjectComponentPool<Mesh2DComponent>& mesh2DComponentPool = sceneObjectRegistry.GetComponentPool<Mesh2DComponent>();
+		const ContiguousHashMap<SceneObject, Mesh2DComponent>& mesh2DComponentMap = mesh2DComponentPool.GetComponentMap();
 		if (mesh2DComponentMap.IsEmpty() == false)
 		{
 			ShapeRenderer& shapeRenderer = _graphicsDevice.GetShapeRenderer();
 			for (auto iter = mesh2DComponentMap.begin(); iter != mesh2DComponentMap.end(); ++iter)
 			{
 				const SceneObject& sceneObject = iter.GetKey();
-				Mesh2DComponent& mesh2DComponent = iter.GetValue();
-				TransformComponent* transformComponent = transformComponentPool.GetComponent(sceneObject);
+				const Mesh2DComponent& mesh2DComponent = iter.GetValue();
+				const TransformComponent* transformComponent = transformComponentPool.GetComponent(sceneObject);
 				shapeRenderer.AddShape(mesh2DComponent._shape, transformComponent->_transform);
 			}
 		}

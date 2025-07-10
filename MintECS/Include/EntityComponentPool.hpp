@@ -27,19 +27,6 @@ namespace mint
 		}
 
 		template<typename EntityType, typename ComponentType>
-		inline EntityComponentPool<EntityType, ComponentType>& EntityComponentPool<EntityType, ComponentType>::GetInstance()
-		{
-			static EntityComponentPool<EntityType, ComponentType> sInstance;
-			static bool isRegistered = false;
-			if (isRegistered == false)
-			{
-				EntityComponentPoolRegistry<EntityType>::GetInstance().RegisterComponentPool(sInstance);
-				isRegistered = true;
-			}
-			return sInstance;
-		}
-
-		template<typename EntityType, typename ComponentType>
 		inline void EntityComponentPool<EntityType, ComponentType>::AddComponentTo(const EntityType& entity, const ComponentType& component)
 		{
 			_componentMap.Insert(entity, component);
@@ -77,52 +64,21 @@ namespace mint
 		}
 
 		template<typename EntityType, typename ComponentType>
+		inline const ComponentType* EntityComponentPool<EntityType, ComponentType>::GetComponent(const EntityType& entity) const
+		{
+			return _componentMap.Find(entity);
+		}
+
+		template<typename EntityType, typename ComponentType>
 		inline ContiguousHashMap<EntityType, ComponentType>& EntityComponentPool<EntityType, ComponentType>::GetComponentMap()
 		{
 			return _componentMap;
 		}
-#pragma endregion
 
-
-#pragma region EntityComponentPoolRegistry
-		template<typename EntityType>
-		inline EntityComponentPoolRegistry<EntityType>::EntityComponentPoolRegistry()
+		template<typename EntityType, typename ComponentType>
+		inline const ContiguousHashMap<EntityType, ComponentType>& EntityComponentPool<EntityType, ComponentType>::GetComponentMap() const
 		{
-			__noop;
-		}
-
-		template<typename EntityType>
-		inline EntityComponentPoolRegistry<EntityType>::~EntityComponentPoolRegistry()
-		{
-			__noop;
-		}
-
-		template<typename EntityType>
-		inline EntityComponentPoolRegistry<EntityType>& EntityComponentPoolRegistry<EntityType>::GetInstance()
-		{
-			static EntityComponentPoolRegistry<EntityType> sInstance;
-			return sInstance;
-		}
-
-		template<typename EntityType>
-		inline void EntityComponentPoolRegistry<EntityType>::RegisterComponentPool(IEntityComponentPool<EntityType>& componentPool)
-		{
-			for (const auto& iter : _componentPools)
-			{
-				if (iter == &componentPool)
-				{
-					MINT_ASSERT(false, "This component pool is already registered!!!");
-					return;
-				}
-			}
-
-			_componentPools.PushBack(&componentPool);
-		}
-
-		template<typename EntityType>
-		inline const Vector<IEntityComponentPool<EntityType>*>& EntityComponentPoolRegistry<EntityType>::GetComponentPools() const
-		{
-			return _componentPools;
+			return _componentMap;
 		}
 #pragma endregion
 	}

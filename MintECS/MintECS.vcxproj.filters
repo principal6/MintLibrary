@@ -30,17 +30,18 @@
     <ClInclude Include="Include\TestECS.h">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="Include\EntityRegistry.h" />
-    <ClInclude Include="Include\EntityRegistry.hpp" />
+    <ClInclude Include="Include\EntityRegistry.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\EntityRegistry.hpp">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\_UnityBuild.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\TestECS.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\TestStaticInstanece.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>

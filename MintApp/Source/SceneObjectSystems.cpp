@@ -1,6 +1,6 @@
 #include <MintApp/Include/SceneObjectSystems.h>
 #include <MintApp/Include/SceneObject.h>
-#include <MintApp/Include/SceneObjectPool.hpp>
+#include <MintApp/Include/SceneObjectRegistry.hpp>
 
 #include <MintContainer/Include/Vector.hpp>
 #include <MintContainer/Include/ContiguousHashMap.hpp>
@@ -72,7 +72,7 @@ namespace mint
 
 	void SceneObjectCameraSystem::UpdateSystem(const Vector<SceneObject>& sceneObjects)
 	{
-		SceneObjectComponentPool<CameraComponent>& cameraComponentPool = SceneObjectComponentPool<CameraComponent>::GetInstance();
+		SceneObjectComponentPool<CameraComponent>& cameraComponentPool = _sceneObjectRegistry.GetComponentPool<CameraComponent>();
 		for (const SceneObject& sceneObject : sceneObjects)
 		{
 			CameraComponent* const cameraComponent = cameraComponentPool.GetComponent(sceneObject);
@@ -81,7 +81,7 @@ namespace mint
 
 	void SceneObjectCameraSystem::UpdateScreenSize(const Float2& screenSize)
 	{
-		SceneObjectComponentPool<CameraComponent>& cameraComponentPool = SceneObjectComponentPool<CameraComponent>::GetInstance();
+		SceneObjectComponentPool<CameraComponent>& cameraComponentPool = _sceneObjectRegistry.GetComponentPool<CameraComponent>();
 		ContiguousHashMap<SceneObject, CameraComponent>& cameraComponentMap = cameraComponentPool.GetComponentMap();
 		for (CameraComponent& cameraComponent : cameraComponentMap)
 		{
@@ -91,7 +91,7 @@ namespace mint
 
 	Float4x4 SceneObjectCameraSystem::MakeViewMatrix(const SceneObject& cameraObject) const
 	{
-		SceneObjectComponentPool<CameraComponent>& cameraComponentPool = SceneObjectComponentPool<CameraComponent>::GetInstance();
+		SceneObjectComponentPool<CameraComponent>& cameraComponentPool = _sceneObjectRegistry.GetComponentPool<CameraComponent>();
 		CameraComponent* const cameraComponent = cameraComponentPool.GetComponent(cameraObject);
 		const float handnessSign = GetHandednessSign(*cameraComponent);
 		const Float3 kBaseForward = Float3::kAxisZ * handnessSign;
@@ -100,21 +100,21 @@ namespace mint
 		cameraComponent->_forwardDirection = Float4x4::RotationMatrixAxisAngle(leftDirection * -handnessSign, cameraComponent->_pitch) * forwardDirectionXz;
 		const Float3& upDirection = Float3::CrossAndNormalize(leftDirection, cameraComponent->_forwardDirection) * handnessSign;
 		const Float4x4& rotationMatrix = Float4x4::RotationMatrixFromAxes(-leftDirection, upDirection, cameraComponent->_forwardDirection * handnessSign);
-		SceneObjectComponentPool<TransformComponent>& transformComponentPool = SceneObjectComponentPool<TransformComponent>::GetInstance();
+		SceneObjectComponentPool<TransformComponent>& transformComponentPool = _sceneObjectRegistry.GetComponentPool<TransformComponent>();
 		TransformComponent* const transformComponent = transformComponentPool.GetComponent(cameraObject);
 		return rotationMatrix.Transpose() * Float4x4::TranslationMatrix(-transformComponent->_transform._translation);
 	}
 
 	void SceneObjectCameraSystem::IncreaseCurrentCameraMoveSpeed()
 	{
-		SceneObjectComponentPool<CameraComponent>& cameraComponentPool = SceneObjectComponentPool<CameraComponent>::GetInstance();
+		SceneObjectComponentPool<CameraComponent>& cameraComponentPool = _sceneObjectRegistry.GetComponentPool<CameraComponent>();
 		CameraComponent* const cameraComponent = cameraComponentPool.GetComponent(_currentCameraObject);
 		cameraComponent->_moveSpeed = GetFasterMoveSpeed(cameraComponent->_moveSpeed);
 	}
 
 	void SceneObjectCameraSystem::DecreaseCurrentCameraMoveSpeed()
 	{
-		SceneObjectComponentPool<CameraComponent>& cameraComponentPool = SceneObjectComponentPool<CameraComponent>::GetInstance();
+		SceneObjectComponentPool<CameraComponent>& cameraComponentPool = _sceneObjectRegistry.GetComponentPool<CameraComponent>();
 		CameraComponent* const cameraComponent = cameraComponentPool.GetComponent(_currentCameraObject);
 		cameraComponent->_moveSpeed = GetSlowerMoveSpeed(cameraComponent->_moveSpeed);
 	}
@@ -217,7 +217,7 @@ namespace mint
 	{
 		static float factor = 0.005f;
 
-		SceneObjectComponentPool<CameraComponent>& cameraComponentPool = SceneObjectComponentPool<CameraComponent>::GetInstance();
+		SceneObjectComponentPool<CameraComponent>& cameraComponentPool = _sceneObjectRegistry.GetComponentPool<CameraComponent>();
 		CameraComponent* const cameraComponent = cameraComponentPool.GetComponent(_currentCameraObject);
 		const float handnessSign = GetHandednessSign(*cameraComponent);
 		SceneObjectComponentHelpers::RotateCameraPitch(mouseDelta._y * factor, *cameraComponent);
@@ -226,14 +226,14 @@ namespace mint
 
 	void SceneObjectCameraSystem::MoveCurrentCamera(const CameraMoveDirection& cameraMoveDirection, float deltaTime)
 	{
-		SceneObjectComponentPool<CameraComponent>& cameraComponentPool = SceneObjectComponentPool<CameraComponent>::GetInstance();
+		SceneObjectComponentPool<CameraComponent>& cameraComponentPool = _sceneObjectRegistry.GetComponentPool<CameraComponent>();
 		CameraComponent* const cameraComponent = cameraComponentPool.GetComponent(_currentCameraObject);
 		const float handnessSign = GetHandednessSign(*cameraComponent);
 		const Float3& leftDirection = Float3::Cross(cameraComponent->_forwardDirection, Float3::kAxisY) * handnessSign;
 		const Float3& upDirection = Float3::Cross(leftDirection, cameraComponent->_forwardDirection) * handnessSign;
 
 		const float moveSpeedFloat = GetMoveSpeedAsFloat((cameraComponent->_isBoostMode) ? GetFasterMoveSpeed(GetFasterMoveSpeed(cameraComponent->_moveSpeed)) : cameraComponent->_moveSpeed);
-		SceneObjectComponentPool<TransformComponent>& transformComponentPool = SceneObjectComponentPool<TransformComponent>::GetInstance();
+		SceneObjectComponentPool<TransformComponent>& transformComponentPool = _sceneObjectRegistry.GetComponentPool<TransformComponent>();
 		TransformComponent* const transformComponent = transformComponentPool.GetComponent(_currentCameraObject);
 		Transform& transform = transformComponent->_transform;
 		switch (cameraMoveDirection)

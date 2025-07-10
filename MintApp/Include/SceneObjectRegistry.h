@@ -11,11 +11,11 @@
 
 namespace mint
 {
-	class SceneObjectPool final : public ECS::EntityRegistry<SceneObject>
+	class SceneObjectRegistry final : public ECS::EntityRegistry<SceneObject>
 	{
 	public:
-		SceneObjectPool();
-		virtual ~SceneObjectPool();
+		SceneObjectRegistry();
+		virtual ~SceneObjectRegistry();
 
 	public:
 		SceneObject CreateSceneObject() { return CreateEntity(); }

@@ -5,29 +5,29 @@
 #define _MINT_APP_SCENE_OBJECT_POOL_HPP_
 
 
-#include <MintApp/Include/SceneObjectPool.h>
+#include <MintApp/Include/SceneObjectRegistry.h>
 
 #include <MintECS/Include/EntityRegistry.hpp>
 
 
 namespace mint
 {
-	inline SceneObjectPool::SceneObjectPool()
+	inline SceneObjectRegistry::SceneObjectRegistry()
 	{
 		__noop;
 	}
 
-	inline SceneObjectPool::~SceneObjectPool()
+	inline SceneObjectRegistry::~SceneObjectRegistry()
 	{
 		__noop;
 	}
 
-	inline Transform& SceneObjectPool::GetTransform(const SceneObject& sceneObject)
+	inline Transform& SceneObjectRegistry::GetTransform(const SceneObject& sceneObject)
 	{
 		return GetComponent<TransformComponent>(sceneObject)->_transform;
 	}
 
-	inline void SceneObjectPool::OnEntityCreated(SceneObject entity)
+	inline void SceneObjectRegistry::OnEntityCreated(SceneObject entity)
 	{
 		// 모든 SceneObject 는 TransformComponent 를 가진다!
 		AttachComponent(entity, TransformComponent());

@@ -7,7 +7,7 @@
 #include <MintRendering/Include/SpriteRenderer.h>
 #include <MintGUI/Include/GUISystem.h>
 #include <MintECS/Include/Entity.hpp>
-#include <MintApp/Include/SceneObjectPool.hpp>
+#include <MintApp/Include/SceneObjectRegistry.hpp>
 #include <MintApp/Include/SceneObjectRenderer.h>
 #include <MintApp/Include/SceneObjectSystems.h>
 
@@ -16,8 +16,8 @@ namespace mint
 {
 	App::App(const WindowCreationDesc& windowCreationDesc, const AppCreationDesc& appCreationDesc)
 		: _window{ MINT_NEW(Window) }
-		, _sceneObjectPool{ MINT_NEW(SceneObjectPool) }
-		, _sceneObjectSystems{ MINT_NEW(SceneObjectSystems) }
+		, _sceneObjectRegistry{ MINT_NEW(SceneObjectRegistry) }
+		, _sceneObjectSystems{ MINT_NEW(SceneObjectSystems, *_sceneObjectRegistry) }
 		, _frameNumber{ 0 }
 	{
 		if (_window->Create(windowCreationDesc) == false)
@@ -41,7 +41,7 @@ namespace mint
 		_graphicsDevice->SetDelegateExecuteRenderPhase(delegateExecuteRenderPhase);
 
 		const Float2 windowSize{ GetWindow().GetSize() };
-		_defaultCameraObject = _sceneObjectPool->CreateSceneObject();
+		_defaultCameraObject = _sceneObjectRegistry->CreateSceneObject();
 		switch (appCreationDesc._appType)
 		{
 		case AppType::Default3D:
@@ -49,9 +49,9 @@ namespace mint
 			CameraComponent cameraComponent;
 			SceneObjectComponentHelpers::MakePerspectiveCamera(Math::ToRadian(60.0f), 0.01f, 100.0f, windowSize._x / windowSize._y, cameraComponent);
 			SceneObjectComponentHelpers::RotateCameraPitch(0.125f, cameraComponent);
-			_sceneObjectPool->AttachComponent(_defaultCameraObject, std::move(cameraComponent));
+			_sceneObjectRegistry->AttachComponent(_defaultCameraObject, std::move(cameraComponent));
 
-			TransformComponent* const transformComponent = _sceneObjectPool->GetComponent<TransformComponent>(_defaultCameraObject);
+			TransformComponent* const transformComponent = _sceneObjectRegistry->GetComponent<TransformComponent>(_defaultCameraObject);
 			transformComponent->_transform._translation._z = 5.0f;
 
 			_is3DMode = true;
@@ -62,9 +62,9 @@ namespace mint
 			CameraComponent cameraComponent;
 			SceneObjectComponentHelpers::MakePerspectiveCamera(Math::ToRadian(60.0f), 1.0f, 100.0f, windowSize._x / windowSize._y, cameraComponent);
 			SceneObjectComponentHelpers::RotateCameraPitch(0.125f, cameraComponent);
-			_sceneObjectPool->AttachComponent(_defaultCameraObject, std::move(cameraComponent));
+			_sceneObjectRegistry->AttachComponent(_defaultCameraObject, std::move(cameraComponent));
 
-			TransformComponent* const transformComponent = _sceneObjectPool->GetComponent<TransformComponent>(_defaultCameraObject);
+			TransformComponent* const transformComponent = _sceneObjectRegistry->GetComponent<TransformComponent>(_defaultCameraObject);
 			transformComponent->_transform._translation._z = 5.0f;
 
 			_is3DMode = false;
@@ -111,10 +111,10 @@ namespace mint
 		{
 			const SceneObject currentCameraObject = _sceneObjectSystems->GetCameraSystem().GetCurrentCameraObject();
 			const Float4x4& viewMatrix = _sceneObjectSystems->GetCameraSystem().MakeViewMatrix(currentCameraObject);
-			CameraComponent* const cameraComponent = _sceneObjectPool->GetComponent<CameraComponent>(currentCameraObject);
+			CameraComponent* const cameraComponent = _sceneObjectRegistry->GetComponent<CameraComponent>(currentCameraObject);
 			_graphicsDevice->SetViewProjectionMatrix(viewMatrix, cameraComponent->_projectionMatrix);
 
-			_sceneObjectRenderer->Render(*_sceneObjectPool);
+			_sceneObjectRenderer->Render(*_sceneObjectRegistry);
 		}
 		else if (scopedRenderPhase.Is(Rendering::RenderPhaseLabel::ScreenSpace))
 		{
@@ -132,9 +132,9 @@ namespace mint
 		return *_graphicsDevice;
 	}
 
-	SceneObjectPool& App::GetObjectPool()
+	SceneObjectRegistry& App::GetObjectPool()
 	{
-		return *_sceneObjectPool;
+		return *_sceneObjectRegistry;
 	}
 
 	SceneObjectSystems& App::GetSceneObjectSystems()

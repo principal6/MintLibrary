@@ -8,11 +8,15 @@
 #include <MintContainer/Include/Vector.h>
 #include <MintContainer/Include/ContiguousHashMap.h>
 
+#include <typeindex>
 
 namespace mint
 {
 	namespace ECS
 	{
+		template<typename EntityType>
+		class EntityRegistry;
+
 		// type-erasure for EntityComponentPool
 		template<typename EntityType>
 		class IEntityComponentPool abstract
@@ -25,17 +29,17 @@ namespace mint
 			virtual void RemoveComponentFrom(const EntityType& entity) = 0;
 			virtual bool HasComponent(const EntityType& entity) const = 0;
 			virtual void CopyComponent(const EntityType& sourceEntity, const EntityType& targetEntity) = 0;
+			virtual std::type_index GetTypeIndex() const = 0;
 		};
 
 
 		template<typename EntityType, typename ComponentType>
 		class EntityComponentPool final : public IEntityComponentPool<EntityType>
 		{
-		public:
-			virtual ~EntityComponentPool();
+			friend EntityRegistry;
 
 		public:
-			static EntityComponentPool& GetInstance();
+			virtual ~EntityComponentPool();
 
 		public:
 			void AddComponentTo(const EntityType& entity, const ComponentType& component);
@@ -44,36 +48,16 @@ namespace mint
 			virtual bool HasComponent(const EntityType& entity) const override final;
 			virtual void CopyComponent(const EntityType& sourceEntity, const EntityType& targetEntity) override final;
 			ComponentType* GetComponent(const EntityType& entity);
+			const ComponentType* GetComponent(const EntityType& entity) const;
 			ContiguousHashMap<EntityType, ComponentType>& GetComponentMap();
+			const ContiguousHashMap<EntityType, ComponentType>& GetComponentMap() const;
+			std::type_index GetTypeIndex() const override { return typeid(ComponentType); }
 
 		protected:
 			EntityComponentPool();
 
 		protected:
 			ContiguousHashMap<EntityType, ComponentType> _componentMap;
-		};
-
-
-		template<typename EntityType>
-		class EntityComponentPoolRegistry final
-		{
-		public:
-			virtual ~EntityComponentPoolRegistry();
-
-		public:
-			static EntityComponentPoolRegistry& GetInstance();
-
-		public:
-			void RegisterComponentPool(IEntityComponentPool<EntityType>& componentPool);
-			const Vector<IEntityComponentPool<EntityType>*>& GetComponentPools() const;
-
-		protected:
-			EntityComponentPoolRegistry();
-			EntityComponentPoolRegistry(const EntityComponentPoolRegistry& rhs) = delete;
-			EntityComponentPoolRegistry(EntityComponentPoolRegistry&& rhs) noexcept = delete;
-
-		protected:
-			Vector<IEntityComponentPool<EntityType>*> _componentPools;
 		};
 	}
 }

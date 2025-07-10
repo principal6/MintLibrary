@@ -76,7 +76,7 @@ classDiagram
         ...
     }
     class MintApp{
-        SceneObjectPool
+        SceneObjectRegistry
         SceneObject
         App
         ...

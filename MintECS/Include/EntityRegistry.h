@@ -6,6 +6,7 @@
 
 
 #include <MintContainer/Include/Vector.h>
+#include <MintContainer/Include/OwnPtr.h>
 #include <MintECS/Include/Entity.h>
 
 
@@ -13,6 +14,9 @@ namespace mint
 {
 	namespace ECS
 	{
+		template<typename EntityType, typename ComponentType>
+		class EntityComponentPool;
+
 		template<typename EntityType>
 		class EntityRegistry
 		{
@@ -32,6 +36,13 @@ namespace mint
 			template<typename ComponentType>
 			ComponentType& GetComponentMust(const EntityType& entity);
 
+		public:
+			template<typename ComponentType>
+			EntityComponentPool<EntityType, ComponentType>& GetComponentPool();
+			template<typename ComponentType>
+			const EntityComponentPool<EntityType, ComponentType>& GetComponentPool() const;
+			const Vector<OwnPtr<IEntityComponentPool<EntityType>>>& GetComponentPools() const;
+
 		protected:
 			virtual void OnEntityCreated(EntityType entity) = 0;
 
@@ -39,6 +50,9 @@ namespace mint
 			Vector<EntityType> _entities;
 			uint32 _nextEmptyEntityIndex{ 0 };
 			uint32 _aliveEntityCount{ 0 };
+		
+		protected:
+			mutable Vector<OwnPtr<IEntityComponentPool<EntityType>>> _componentPools;
 		};
 	}
 }

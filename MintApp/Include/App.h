@@ -11,7 +11,7 @@
 namespace mint
 {
 	class SceneObject;
-	class SceneObjectPool;
+	class SceneObjectRegistry;
 	class SceneObjectRenderer;
 	class SceneObjectSystems;
 	class Window;
@@ -54,7 +54,7 @@ namespace mint
 	public:
 		Window& GetWindow();
 		Rendering::GraphicsDevice& GetGraphicsDevice();
-		SceneObjectPool& GetObjectPool();
+		SceneObjectRegistry& GetObjectPool();
 		SceneObjectSystems& GetSceneObjectSystems();
 		GUI::GUISystem& GetGUISystem();
 
@@ -64,7 +64,7 @@ namespace mint
 	protected:
 		OwnPtr<Window> _window;
 		OwnPtr<Rendering::GraphicsDevice> _graphicsDevice;
-		OwnPtr<SceneObjectPool> _sceneObjectPool;
+		OwnPtr<SceneObjectRegistry> _sceneObjectRegistry;
 		OwnPtr<SceneObjectRenderer> _sceneObjectRenderer;
 		OwnPtr<SceneObjectSystems> _sceneObjectSystems;
 		OwnPtr<GUI::GUISystem> _guiSystem;

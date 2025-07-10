@@ -16,6 +16,5 @@ namespace mint
 		};
 
 		void Test();
-		void TestStaticInstance();
 	}
 }

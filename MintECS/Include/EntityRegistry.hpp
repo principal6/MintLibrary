@@ -83,8 +83,7 @@ namespace mint
 
 			_nextEmptyEntityIndex = Min(index, _nextEmptyEntityIndex);
 
-			const Vector<IEntityComponentPool<EntityType>*>& componentPools = EntityComponentPoolRegistry<EntityType>::GetInstance().GetComponentPools();
-			for (IEntityComponentPool<EntityType>* const componentPool : componentPools)
+			for (OwnPtr<IEntityComponentPool<EntityType>>& componentPool : _componentPools)
 			{
 				componentPool->RemoveComponentFrom(entity);
 			}
@@ -94,21 +93,21 @@ namespace mint
 		template<typename ComponentType>
 		inline void EntityRegistry<EntityType>::AttachComponent(const EntityType& entity, const ComponentType& component)
 		{
-			return EntityComponentPool<EntityType, ComponentType>::GetInstance().AddComponentTo(entity, component);
+			return GetComponentPool<ComponentType>().AddComponentTo(entity, component);
 		}
 
 		template<typename EntityType>
 		template<typename ComponentType>
 		inline void EntityRegistry<EntityType>::AttachComponent(const EntityType& entity, ComponentType&& component)
 		{
-			return EntityComponentPool<EntityType, ComponentType>::GetInstance().AddComponentTo(entity, std::move(component));
+			return GetComponentPool<ComponentType>().AddComponentTo(entity, std::move(component));
 		}
 
 		template<typename EntityType>
 		template<typename ComponentType>
 		inline ComponentType* EntityRegistry<EntityType>::GetComponent(const EntityType& entity)
 		{
-			return EntityComponentPool<EntityType, ComponentType>::GetInstance().GetComponent(entity);
+			return GetComponentPool<ComponentType>().GetComponent(entity);
 		}
 
 		template<typename EntityType>
@@ -118,6 +117,37 @@ namespace mint
 			ComponentType* const component = GetComponent<ComponentType>(entity);
 			MINT_ASSERT(component != nullptr, "해당 Component 가 Entity 에 존재하지 않습니다!");
 			return *component;
+		}
+
+		template<typename EntityType>
+		template<typename ComponentType>
+		inline EntityComponentPool<EntityType, ComponentType>& EntityRegistry<EntityType>::GetComponentPool()
+		{
+			const EntityRegistry& constEntityRegistry = static_cast<const EntityRegistry&>(*this);
+			return const_cast<EntityComponentPool<EntityType, ComponentType>&>(constEntityRegistry.GetComponentPool<ComponentType>());
+		}
+
+		template<typename EntityType>
+		template<typename ComponentType>
+		inline const EntityComponentPool<EntityType, ComponentType>& EntityRegistry<EntityType>::GetComponentPool() const
+		{
+			for (const OwnPtr<IEntityComponentPool<EntityType>>& iter : _componentPools)
+			{
+				if (iter->GetTypeIndex() == typeid(ComponentType))
+				{
+					return static_cast<const EntityComponentPool<EntityType, ComponentType>&>(*iter);
+				}
+			}
+
+			OwnPtr<IEntityComponentPool<EntityType>> newComponentPool = MINT_NEW((EntityComponentPool<EntityType, ComponentType>));
+			_componentPools.PushBack(std::move(newComponentPool));
+			return static_cast<const EntityComponentPool<EntityType, ComponentType>&>(*_componentPools.Back());
+		}
+
+		template<typename EntityType>
+		inline const Vector<OwnPtr<IEntityComponentPool<EntityType>>>& EntityRegistry<EntityType>::GetComponentPools() const
+		{
+			return _componentPools;
 		}
 	}
 }

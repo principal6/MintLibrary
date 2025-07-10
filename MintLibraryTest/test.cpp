@@ -362,21 +362,21 @@ bool Run2DTestWindow()
 		corgiMaterialID = materialPool.CreateMaterial(materialDesc);
 	}
 
-	SceneObjectPool& sceneObjectPool = app.GetObjectPool();
-	SceneObject sceneObject0 = sceneObjectPool.CreateSceneObject();
+	SceneObjectRegistry& sceneObjectRegistry = app.GetObjectPool();
+	SceneObject sceneObject0 = sceneObjectRegistry.CreateSceneObject();
 	{
 		Mesh2DComponent mesh2DComponent;
 		ShapeGenerator::GenerateCircle(1.0f, 16, ByteColor(0, 0, 255), mesh2DComponent._shape);
-		sceneObjectPool.AttachComponent(sceneObject0, std::move(mesh2DComponent));
+		sceneObjectRegistry.AttachComponent(sceneObject0, std::move(mesh2DComponent));
 	}
 	{
-		const Shape& shape = sceneObjectPool.GetComponentMust<Mesh2DComponent>(sceneObject0)._shape;
+		const Shape& shape = sceneObjectRegistry.GetComponentMust<Mesh2DComponent>(sceneObject0)._shape;
 		Collision2DComponent collision2DComponent;
 		collision2DComponent._collisionShape2D = MakeShared<CollisionShape2D>(ConvexCollisionShape2D::MakeFromRenderingShape(Float2::kZero, shape));
-		sceneObjectPool.AttachComponent(sceneObject0, std::move(collision2DComponent));
+		sceneObjectRegistry.AttachComponent(sceneObject0, std::move(collision2DComponent));
 	}
 
-	SceneObject sceneObject1 = sceneObjectPool.CreateSceneObject();
+	SceneObject sceneObject1 = sceneObjectRegistry.CreateSceneObject();
 	{
 		Mesh2DComponent mesh2DComponent;
 		Vector<Float2> points;
@@ -384,13 +384,13 @@ bool Run2DTestWindow()
 		points.PushBack(Float2(1, 0));
 		points.PushBack(Float2(2, 0));
 		ShapeGenerator::GenerateConvexShape(points, ByteColor(0, 128, 255), mesh2DComponent._shape);
-		sceneObjectPool.AttachComponent(sceneObject1, std::move(mesh2DComponent));
+		sceneObjectRegistry.AttachComponent(sceneObject1, std::move(mesh2DComponent));
 	}
 	{
-		const Shape& shape = sceneObjectPool.GetComponentMust<Mesh2DComponent>(sceneObject1)._shape;
+		const Shape& shape = sceneObjectRegistry.GetComponentMust<Mesh2DComponent>(sceneObject1)._shape;
 		Collision2DComponent collision2DComponent;
 		collision2DComponent._collisionShape2D = MakeShared<CollisionShape2D>(ConvexCollisionShape2D::MakeFromRenderingShape(Float2::kZero, shape));
-		sceneObjectPool.AttachComponent(sceneObject1, std::move(collision2DComponent));
+		sceneObjectRegistry.AttachComponent(sceneObject1, std::move(collision2DComponent));
 	}
 
 	SpriteAnimationSet corgiAnimationSet;
@@ -468,8 +468,8 @@ bool Run3DTestWindow()
 	mint::App app{ windowCreationDesc, appCreationDesc };
 
 
-	SceneObjectPool& sceneObjectPool = app.GetObjectPool();
-	SceneObject testObject = sceneObjectPool.CreateSceneObject();
+	SceneObjectRegistry& sceneObjectRegistry = app.GetObjectPool();
+	SceneObject testObject = sceneObjectRegistry.CreateSceneObject();
 	{
 		MeshComponent meshComponent;
 		Rendering::MeshGenerator::GeoSphereParam geosphereParam;
@@ -477,9 +477,9 @@ bool Run3DTestWindow()
 		geosphereParam._subdivisionIteration = 3;
 		geosphereParam._smooth = true;
 		Rendering::MeshGenerator::GenerateGeoSphere(geosphereParam, meshComponent._meshData);
-		sceneObjectPool.AttachComponent(testObject, std::move(meshComponent));
+		sceneObjectRegistry.AttachComponent(testObject, std::move(meshComponent));
 
-		Transform& transform = sceneObjectPool.GetTransform(testObject);
+		Transform& transform = sceneObjectRegistry.GetTransform(testObject);
 		transform._translation._z = -1.0f;
 	}
 
@@ -494,7 +494,7 @@ bool Run3DTestWindow()
 	{
 		const float deltaTime = DeltaTimer::GetInstance().GetDeltaTimeS();
 		const SceneObject& currentCameraObject = sceneObjectSystems.GetCameraSystem().GetCurrentCameraObject();
-		CameraComponent& cameraComponent = sceneObjectPool.GetComponentMust<CameraComponent>(currentCameraObject);
+		CameraComponent& cameraComponent = sceneObjectRegistry.GetComponentMust<CameraComponent>(currentCameraObject);
 		if (inputContext.IsKeyPressed())
 		{
 			if (inputContext.IsKeyDown(KeyCode::Enter) == true)
@@ -515,12 +515,12 @@ bool Run3DTestWindow()
 			}
 			else if (inputContext.IsKeyDown(KeyCode::Num4) == true)
 			{
-				MeshComponent* const meshComponent = sceneObjectPool.GetComponent<MeshComponent>(testObject);
+				MeshComponent* const meshComponent = sceneObjectRegistry.GetComponent<MeshComponent>(testObject);
 				meshComponent->_shouldDrawNormals = !meshComponent->_shouldDrawNormals;
 			}
 			else if (inputContext.IsKeyDown(KeyCode::Num5) == true)
 			{
-				MeshComponent* const meshComponent = sceneObjectPool.GetComponent<MeshComponent>(testObject);
+				MeshComponent* const meshComponent = sceneObjectRegistry.GetComponent<MeshComponent>(testObject);
 				meshComponent->_shouldDrawEdges = !meshComponent->_shouldDrawEdges;
 			}
 			else if (inputContext.IsKeyDown(KeyCode::Shift) == true)
