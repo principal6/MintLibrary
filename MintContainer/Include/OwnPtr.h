@@ -17,7 +17,7 @@ namespace mint
 		OwnPtr() : _rawPointer{ nullptr } { __noop; }
 		OwnPtr(T* const rawPointer) : _rawPointer{ rawPointer } { __noop; }
 		OwnPtr(const OwnPtr& rhs) = delete;
-		OwnPtr(OwnPtr&& rhs) : _rawPointer{ rhs._rawPointer } { rhs._rawPointer = nullptr; }
+		OwnPtr(OwnPtr&& rhs) noexcept : _rawPointer{ rhs._rawPointer } { rhs._rawPointer = nullptr; }
 		~OwnPtr() { Release(); }
 
 	public:
