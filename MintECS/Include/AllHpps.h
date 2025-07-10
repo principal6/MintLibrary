@@ -6,7 +6,6 @@
 
 
 #include <MintECS/Include/Entity.hpp>
-#include <MintECS/Include/EntityComponentPool.hpp>
 #include <MintECS/Include/EntityRegistry.hpp>
 
 

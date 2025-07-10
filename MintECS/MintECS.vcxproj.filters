@@ -12,12 +12,6 @@
     <ClInclude Include="Include\Entity.h">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="Include\EntityComponentPool.h">
-      <Filter>Include</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\EntityComponentPool.hpp">
-      <Filter>Include</Filter>
-    </ClInclude>
     <ClInclude Include="Include\Entity.hpp">
       <Filter>Include</Filter>
     </ClInclude>

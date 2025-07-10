@@ -6,7 +6,6 @@
 
 
 #include <MintECS/Include/Entity.h>
-#include <MintECS/Include/EntityComponentPool.h>
 #include <MintECS/Include/EntityRegistry.h>
 
 

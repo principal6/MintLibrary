@@ -163,8 +163,6 @@
     <ClInclude Include="Include\AllHpps.h" />
     <ClInclude Include="Include\Entity.h" />
     <ClInclude Include="Include\Entity.hpp" />
-    <ClInclude Include="Include\EntityComponentPool.h" />
-    <ClInclude Include="Include\EntityComponentPool.hpp" />
     <ClInclude Include="Include\EntityRegistry.h" />
     <ClInclude Include="Include\EntityRegistry.hpp" />
     <ClInclude Include="Include\TestECS.h" />

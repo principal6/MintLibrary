@@ -8,7 +8,6 @@
 #include <MintCommon/Include/CommonDefinitions.h>
 #include <MintMath/Include/Transform.h>
 #include <MintECS/Include/Entity.h>
-#include <MintECS/Include/EntityComponentPool.h>
 #include <MintECS/Include/EntityRegistry.h>
 
 
