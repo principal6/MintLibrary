@@ -89,6 +89,18 @@ namespace mint
 		}
 
 		template<int32 M, int32 N, typename T>
+		void SetNeg(T(&mat)[M][N]) noexcept
+		{
+			for (int32 row = 0; row < M; ++row)
+			{
+				for (int32 col = 0; col < N; ++col)
+				{
+					mat[row][col] = -mat[row][col];
+				}
+			}
+		}
+
+		template<int32 M, int32 N, typename T>
 		void SetRow(const T(&src)[N], T(&dest)[M][N], const int32 destRow) noexcept
 		{
 			for (int32 col = 0; col < N; ++col)
@@ -107,7 +119,7 @@ namespace mint
 		}
 
 		template<int32 M, int32 N, typename T>
-		void setCol(const T(&src)[M], T(&dest)[M][N], const int32 destCol) noexcept
+		void SetCol(const T(&src)[M], T(&dest)[M][N], const int32 destCol) noexcept
 		{
 			for (int32 row = 0; row < M; ++row)
 			{
@@ -396,6 +408,12 @@ namespace mint
 	}
 
 	template<int32 M, int32 N, typename T>
+	Matrix<M, N, T>::operator float() const requires (M == 1 && N == 1)
+	{
+		return _m[0][0];
+	}
+
+	template<int32 M, int32 N, typename T>
 	inline bool Matrix<M, N, T>::operator==(const Matrix& rhs) const noexcept
 	{
 		return Math::Equals(_m, rhs._m);
@@ -444,7 +462,7 @@ namespace mint
 	}
 
 	template<int32 M, int32 N, typename T>
-	MINT_INLINE Matrix<M, N, T> Matrix<M, N, T>::operator*(const T scalar) noexcept
+	MINT_INLINE Matrix<M, N, T> Matrix<M, N, T>::operator*(const T scalar) const noexcept
 	{
 		Matrix result = *this;
 		result *= scalar;
@@ -452,7 +470,7 @@ namespace mint
 	}
 
 	template<int32 M, int32 N, typename T>
-	MINT_INLINE Matrix<M, N, T> Matrix<M, N, T>::operator/(const T scalar) noexcept
+	MINT_INLINE Matrix<M, N, T> Matrix<M, N, T>::operator/(const T scalar) const noexcept
 	{
 		Matrix result = *this;
 		result /= scalar;
@@ -460,7 +478,7 @@ namespace mint
 	}
 
 	template<int32 M, int32 N, typename T>
-	MINT_INLINE Matrix<M, N, T> Matrix<M, N, T>::operator+(const Matrix& rhs) noexcept
+	MINT_INLINE Matrix<M, N, T> Matrix<M, N, T>::operator+(const Matrix& rhs) const noexcept
 	{
 		Matrix result = *this;
 		result += rhs;
@@ -468,10 +486,18 @@ namespace mint
 	}
 
 	template<int32 M, int32 N, typename T>
-	MINT_INLINE Matrix<M, N, T> Matrix<M, N, T>::operator-(const Matrix& rhs) noexcept
+	MINT_INLINE Matrix<M, N, T> Matrix<M, N, T>::operator-(const Matrix& rhs) const noexcept
 	{
 		Matrix result = *this;
 		result -= rhs;
+		return result;
+	}
+
+	template<int32 M, int32 N, typename T>
+	MINT_INLINE Matrix<M, N, T> Matrix<M, N, T>::operator-() const noexcept
+	{
+		Matrix result = *this;
+		Math::SetNeg(result._m);
 		return result;
 	}
 
@@ -536,7 +562,7 @@ namespace mint
 	{
 		if (columnIndex < static_cast<uint32>(N))
 		{
-			Math::setCol(column._c, _m, static_cast<int32>(columnIndex));
+			Math::SetCol(column._c, _m, static_cast<int32>(columnIndex));
 		}
 	}
 

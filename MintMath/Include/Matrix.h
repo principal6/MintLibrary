@@ -40,6 +40,9 @@ namespace mint
 		void SetDivMat(T(&mat)[M][N], const T scalar) noexcept;
 
 		template <int32 M, int32 N, typename T>
+		void SetNeg(T(&mat)[M][N]) noexcept;
+
+		template <int32 M, int32 N, typename T>
 		void SetRow(const T(&src)[N], T(&dest)[M][N], const int32 destRow) noexcept;
 
 		template <int32 M, int32 N, typename T>
@@ -134,6 +137,9 @@ namespace mint
 		~Matrix();
 
 	public:
+		operator float() const requires (M == 1 && N == 1);
+
+	public:
 		Matrix& operator=(const Matrix& rhs) = default;
 		Matrix& operator=(Matrix&& rhs) noexcept = default;
 
@@ -149,10 +155,11 @@ namespace mint
 		Matrix& operator*=(const Matrix<N, N, T>& rhs) noexcept;
 
 	public:
-		Matrix operator*(const T scalar) noexcept;
-		Matrix operator/(const T scalar) noexcept;
-		Matrix operator+(const Matrix& rhs) noexcept;
-		Matrix operator-(const Matrix& rhs) noexcept;
+		Matrix operator*(const T scalar) const noexcept;
+		Matrix operator/(const T scalar) const noexcept;
+		Matrix operator+(const Matrix& rhs) const noexcept;
+		Matrix operator-(const Matrix& rhs) const noexcept;
+		Matrix operator-() const noexcept;
 
 	public:
 		template <int32 P>
