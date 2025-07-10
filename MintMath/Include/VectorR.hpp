@@ -237,6 +237,12 @@ namespace mint
 	}
 
 	template<int32 N, typename T>
+	VectorR<N, T>::operator float() const requires (N == 1)
+	{
+		return _c[0];
+	}
+
+	template<int32 N, typename T>
 	MINT_INLINE VectorR<N, T>& VectorR<N, T>::operator*=(const T scalar) noexcept
 	{
 		for (int32 index = 0; index < N; ++index)

@@ -95,6 +95,9 @@ namespace mint
 		~VectorR() = default;
 
 	public:
+		operator float() const requires (N == 1);
+		
+	public:
 		VectorR& operator=(const VectorR& rhs) = default;
 		VectorR& operator=(VectorR&& rhs) noexcept = default;
 
