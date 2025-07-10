@@ -21,6 +21,7 @@ void RunGJKTestWindow();
 void RunSplineTestWindow();
 bool Run2DTestWindow();
 bool Run3DTestWindow();
+bool RunPhysics2DTestWindow();
 
 
 int main()
@@ -47,7 +48,8 @@ int main()
 	//RunGJKTestWindow();
 	//RunSplineTestWindow();
 	//Run2DTestWindow();
-	Run3DTestWindow();
+	//Run3DTestWindow();
+	RunPhysics2DTestWindow();
 	return 0;
 }
 
@@ -546,6 +548,216 @@ bool Run3DTestWindow()
 			{
 				sceneObjectSystems.GetCameraSystem().DecreaseCurrentCameraMoveSpeed();
 			}
+		}
+
+		// Rendering
+		for (ScopedRenderPhase renderPhase : graphicsDevice.IterateRenderPhases())
+		{
+			if (renderPhase.Is(RenderPhaseLabel::ScreenSpace))
+			{
+				StackStringW<100> fpsString;
+				FormatString(fpsString, L"FPS: %d", Profiler::FPSCounter::GetFPS());
+				fontRenderer.SetTextColor(Color::kBlack);
+				fontRenderer.DrawDynamicText(fpsString.CString(), Float2(10, 10), FontRenderingOption());
+			}
+		}
+
+		Profiler::FPSCounter::Count();
+	}
+	return true;
+}
+
+bool RunPhysics2DTestWindow()
+{
+	using namespace mint;
+	using namespace Rendering;
+	using namespace Physics;
+	using namespace Game;
+
+	WindowCreationDesc windowCreationDesc;
+	windowCreationDesc._position.Set(200, 100);
+	windowCreationDesc._size.Set(1024, 768);
+	windowCreationDesc._title = L"Physics2D Test";
+	windowCreationDesc._backgroundColor = ByteColor(224, 224, 224);
+	AppCreationDesc appCreationDesc;
+	appCreationDesc._useMSAA = true;
+	appCreationDesc._appType = AppType::Default2D;
+	mint::App app{ windowCreationDesc, appCreationDesc };
+
+	GraphicsDevice& graphicsDevice = app.GetGraphicsDevice();
+	GraphicsResourcePool& resourcePool = graphicsDevice.GetResourcePool();
+	MaterialPool& materialPool = graphicsDevice.GetMaterialPool();
+	FontRenderer& fontRenderer = graphicsDevice.GetFontRenderer();
+	ShapeRenderer& shapeRenderer = graphicsDevice.GetShapeRenderer();
+
+	SceneObjectRegistry& sceneObjectRegistry = app.GetObjectPool();
+
+
+	struct RigidBody2DComponent
+	{
+		Float2 _velocity{ 0.0f, 0.0f };
+		float _angularVelocity{ 0.0f };
+		float _inverseMass{ 1.0f };
+	};
+
+	SceneObject sceneObject0 = sceneObjectRegistry.CreateSceneObject();
+	{
+		Mesh2DComponent mesh2DComponent;
+		ShapeGenerator::GenerateCircle(0.125f, 16, ByteColor(0, 0, 255), mesh2DComponent._shape);
+		sceneObjectRegistry.AttachComponent(sceneObject0, std::move(mesh2DComponent));
+	}
+	{
+		const Shape& shape = sceneObjectRegistry.GetComponentMust<Mesh2DComponent>(sceneObject0)._shape;
+		Collision2DComponent collision2DComponent;
+		collision2DComponent._collisionShape2D = MakeShared<CollisionShape2D>(ConvexCollisionShape2D::MakeFromRenderingShape(Float2::kZero, shape));
+		sceneObjectRegistry.AttachComponent(sceneObject0, std::move(collision2DComponent));
+	}
+	{
+		RigidBody2DComponent rigidBody2DComponent;
+		rigidBody2DComponent._inverseMass = 0.0f; // Static body
+		sceneObjectRegistry.AttachComponent(sceneObject0, std::move(rigidBody2DComponent));
+	}
+
+	SceneObject sceneObject1 = sceneObjectRegistry.CreateSceneObject();
+	{
+		Mesh2DComponent mesh2DComponent;
+		ShapeGenerator::GenerateCircle(0.125f, 16, ByteColor(0, 128, 64), mesh2DComponent._shape);
+		sceneObjectRegistry.AttachComponent(sceneObject1, std::move(mesh2DComponent));
+	}
+	{
+		const Shape& shape = sceneObjectRegistry.GetComponentMust<Mesh2DComponent>(sceneObject1)._shape;
+		Collision2DComponent collision2DComponent;
+		collision2DComponent._collisionShape2D = MakeShared<CollisionShape2D>(ConvexCollisionShape2D::MakeFromRenderingShape(Float2::kZero, shape));
+		sceneObjectRegistry.AttachComponent(sceneObject1, std::move(collision2DComponent));
+	}
+	sceneObjectRegistry.GetComponentMust<TransformComponent>(sceneObject1)._transform._translation = Float3(0.5f, 0.0f, 0.0f);
+	{
+		RigidBody2DComponent rigidBody2DComponent;
+		sceneObjectRegistry.AttachComponent(sceneObject1, std::move(rigidBody2DComponent));
+	}
+
+	SceneObject sceneObjectFloor = sceneObjectRegistry.CreateSceneObject();
+	{
+		Mesh2DComponent mesh2DComponent;
+		ShapeGenerator::GenerateRectangle(Float2(4.0f, 0.25f), ByteColor(64, 64, 64), mesh2DComponent._shape);
+		sceneObjectRegistry.AttachComponent(sceneObjectFloor, std::move(mesh2DComponent));
+	}
+	{
+		const Shape& shape = sceneObjectRegistry.GetComponentMust<Mesh2DComponent>(sceneObjectFloor)._shape;
+		Collision2DComponent collision2DComponent;
+		collision2DComponent._collisionShape2D = MakeShared<CollisionShape2D>(ConvexCollisionShape2D::MakeFromRenderingShape(Float2::kZero, shape));
+		sceneObjectRegistry.AttachComponent(sceneObjectFloor, std::move(collision2DComponent));
+	}
+	sceneObjectRegistry.GetComponentMust<TransformComponent>(sceneObjectFloor)._transform._translation = Float3(0.0f, -3.0f, 0.0f);
+	{
+		RigidBody2DComponent rigidBody2DComponent;
+		rigidBody2DComponent._inverseMass = 0.0f; // Static body
+		sceneObjectRegistry.AttachComponent(sceneObjectFloor, std::move(rigidBody2DComponent));
+	}
+
+	const InputContext& inputContext = InputContext::GetInstance();
+	float accumulatedTimeForPhysics = 0.0f;
+	while (app.IsRunning() == true)
+	{
+		const float deltaTime = DeltaTimer::GetInstance().GetDeltaTimeS();
+		accumulatedTimeForPhysics += deltaTime;
+
+		if (inputContext.IsKeyPressed())
+		{
+			if (inputContext.IsKeyDown(KeyCode::Enter) == true)
+			{
+				graphicsDevice.GetShaderPool().RecompileAllShaders();
+			}
+		}
+
+		// Physics Update
+		if (accumulatedTimeForPhysics >= (1.0f / 60.0f))
+		{
+			accumulatedTimeForPhysics -= (1.0f / 60.0f);
+
+			const float kGravityAcceleration = -9.81f;
+			const float kTimeStep = 1.0f / 60.0f;
+
+			Transform& transform0 = sceneObjectRegistry.GetComponentMust<TransformComponent>(sceneObject0)._transform;
+			Transform& transform1 = sceneObjectRegistry.GetComponentMust<TransformComponent>(sceneObject1)._transform;
+			RigidBody2DComponent& rigidBody2DComponent0 = sceneObjectRegistry.GetComponentMust<RigidBody2DComponent>(sceneObject0);
+			RigidBody2DComponent& rigidBody2DComponent1 = sceneObjectRegistry.GetComponentMust<RigidBody2DComponent>(sceneObject1);
+
+			// Constraint
+			{
+				const float kBeta = 0.2f; // or 0.1 ~ 0.4, tuning parameter
+				const float kDistance = 0.5f;
+
+				VectorF<2> xA{ transform0._translation._x, transform0._translation._y };
+				VectorF<2> xB{ transform1._translation._x, transform1._translation._y };
+				VectorF<2> r = xB - xA;
+				const float C = r.Dot(r) - kDistance * kDistance;
+				const float kPositionalCorrection = kBeta * C / kTimeStep;
+
+				VectorF<2> gradC_xA = -2.0f * r;
+				VectorF<2> gradC_xB = 2.0f * r;
+				MatrixF<4, 1> gradC;
+				gradC.SetElement(0, 0, gradC_xA.X());
+				gradC.SetElement(1, 0, gradC_xA.Y());
+				gradC.SetElement(2, 0, gradC_xB.X());
+				gradC.SetElement(3, 0, gradC_xB.Y());
+
+				MatrixF<1, 4> J = gradC.Transpose();
+				VectorF<2> vA{ rigidBody2DComponent0._velocity._x, rigidBody2DComponent0._velocity._y };
+				VectorF<2> vB{ rigidBody2DComponent1._velocity._x, rigidBody2DComponent1._velocity._y };
+				VectorF<4> v;
+				v.SetComponent(0, vA.X());
+				v.SetComponent(1, vA.Y());
+				v.SetComponent(2, vB.X());
+				v.SetComponent(3, vB.Y());
+
+				const float dCdt = J * v;
+
+				const float inverseMassA = rigidBody2DComponent0._inverseMass;
+				const float inverseMassB = rigidBody2DComponent1._inverseMass;
+				MatrixF<4, 4> inverseM;
+				inverseM.SetElement(0, 0, inverseMassA);
+				inverseM.SetElement(1, 1, inverseMassA);
+				inverseM.SetElement(2, 2, inverseMassB);
+				inverseM.SetElement(3, 3, inverseMassB);
+
+				// P = M * delta_v 이므로
+				// => delta_v = inverseM * P
+				// 
+				// 또한 P = J^T * lambda 이므로
+				// delta_v = inverseM * J^T * lambda
+
+				// impulse 를 가한 뒤에도 Constraint 가 유지되어야 하므로
+				// J(v + delta_v) = 0 이어야 한다.
+				// => J * v + J * delta_v = 0
+				// => J * delta_v = -J * v
+				// => J * inverseM * J^T * lambda = -J * v
+				// lambda = (-J * v) / (J * inverseM * J^T)
+
+				float numerator = -J * v;
+				// Baumgarte Stabilization
+				numerator -= kPositionalCorrection;
+				
+				const float denominator = (J * inverseM * J.Transpose());
+				const float lambda = numerator / denominator;
+
+				const auto delta_v = inverseM * J.Transpose() * lambda;
+				VectorF<2> delta_vA;
+				VectorF<2> delta_vB;
+				delta_vA.SetComponent(0, delta_v.GetElement(0, 0));
+				delta_vA.SetComponent(1, delta_v.GetElement(1, 0));
+				delta_vB.SetComponent(0, delta_v.GetElement(2, 0));
+				delta_vB.SetComponent(1, delta_v.GetElement(3, 0));
+
+				rigidBody2DComponent0._velocity += Float2(delta_vA.X(), delta_vA.Y());
+				rigidBody2DComponent1._velocity += Float2(delta_vB.X(), delta_vB.Y());
+			}
+
+			//rigidBody2DComponent0._velocity += Float2(0.0f, kGravityAcceleration) * kTimeStep;
+			rigidBody2DComponent1._velocity += Float2(0.0f, kGravityAcceleration) * kTimeStep;
+
+			transform0._translation += Float3(rigidBody2DComponent0._velocity * kTimeStep, 0.0f);
+			transform1._translation += Float3(rigidBody2DComponent1._velocity * kTimeStep, 0.0f);
 		}
 
 		// Rendering
