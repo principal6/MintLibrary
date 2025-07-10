@@ -675,6 +675,7 @@ bool RunPhysics2DTestWindow()
 		{
 			accumulatedTimeForPhysics -= (1.0f / 60.0f);
 
+			const uint32 kConstraintSubStepCount = 4;
 			const float kGravityAcceleration = -9.81f;
 			const float kTimeStep = 1.0f / 60.0f;
 
@@ -684,15 +685,19 @@ bool RunPhysics2DTestWindow()
 			RigidBody2DComponent& rigidBody2DComponent1 = sceneObjectRegistry.GetComponentMust<RigidBody2DComponent>(sceneObject1);
 
 			// Constraint
+			const float kBeta = 0.2f; // or 0.1 ~ 0.4, tuning parameter
+			const float kDistance = 0.5f;
+			for (uint32 constraintSubStep = 0; constraintSubStep < kConstraintSubStepCount; ++constraintSubStep)
 			{
-				const float kBeta = 0.2f; // or 0.1 ~ 0.4, tuning parameter
-				const float kDistance = 0.5f;
-
 				VectorF<2> xA{ transform0._translation._x, transform0._translation._y };
 				VectorF<2> xB{ transform1._translation._x, transform1._translation._y };
 				VectorF<2> r = xB - xA;
 				const float C = r.Dot(r) - kDistance * kDistance;
-				const float kPositionalCorrection = kBeta * C / kTimeStep;
+				if (::abs(C) < 0.0001f)
+				{
+					// Constraint is already satisfied
+					break;
+				}
 
 				VectorF<2> gradC_xA = -2.0f * r;
 				VectorF<2> gradC_xB = 2.0f * r;
@@ -736,8 +741,9 @@ bool RunPhysics2DTestWindow()
 
 				float numerator = -J * v;
 				// Baumgarte Stabilization
+				const float kPositionalCorrection = kBeta * C / kTimeStep;
 				numerator -= kPositionalCorrection;
-				
+
 				const float denominator = (J * inverseM * J.Transpose());
 				const float lambda = numerator / denominator;
 
