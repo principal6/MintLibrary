@@ -1,4 +1,5 @@
 ﻿# TODO
+## ECS 관련 클래스 ECS 프로젝트 사용하도록 리팩토링!! 특히 GUI...
 ## GUI 개편
 ### Manager classes for GUI system
 ControlRegistry
