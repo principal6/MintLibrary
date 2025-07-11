@@ -143,6 +143,12 @@ namespace mint
 		_y = y;
 		_z = z;
 	}
+	
+	void Float3::Set(const Float2& xy) noexcept
+	{
+		_x = xy._x;
+		_y = xy._y;
+	}
 
 	Float2 Float3::XY() const noexcept
 	{

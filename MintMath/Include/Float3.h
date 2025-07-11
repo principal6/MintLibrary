@@ -73,6 +73,7 @@ namespace mint
 
 	public:
 		void Set(const float x, const float y, const float z) noexcept;
+		void Set(const Float2& xy) noexcept;
 		Float2 XY() const noexcept;
 
 	public:
