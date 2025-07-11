@@ -80,7 +80,8 @@ namespace mint
 
 #pragma region World
 		World::World()
-			: _worldMin{ -2048.0, -2048.0f }
+			: _gravity{ 0.0f, -9.8f }
+			, _worldMin{ -2048.0, -2048.0f }
 			, _worldMax{ +2048.0, +2048.0f }
 			, _totalStepCount{ 0 }
 		{
@@ -367,7 +368,9 @@ namespace mint
 		{
 			_worldSizePreStepSolve = _worldSize;
 
-			StepSolveResolveCollisions(deltaTime);
+			//StepSolveResolveCollisions(deltaTime);
+			StepSolveSolveConstraints(deltaTime);
+
 			StepSolveIntegrate(deltaTime);
 			StepSolveAssignCollisionSectors();
 		}
@@ -419,6 +422,11 @@ namespace mint
 			}
 		}
 
+		void World::StepSolveSolveConstraints(float deltaTime)
+		{
+
+		}
+
 		void World::StepSolveIntegrate(float deltaTime)
 		{
 			const uint32 bodyCount = _bodyPool.GetObjects().Size();
@@ -430,17 +438,25 @@ namespace mint
 					continue;
 				}
 
-				if (body._bodyMotionType == BodyMotionType::Dynamic)
+				if (body._bodyMotionType != BodyMotionType::Static)
 				{
+					body._linearAcceleration += _gravity;
+
 					// integrate acceleration
 					body._linearVelocity += body._linearAcceleration * deltaTime;
 					body._angularVelocity += body._angularAcceleration * deltaTime;
+
+					body._linearAcceleration.SetZero();
+					body._angularAcceleration = 0.0f;
 
 					// integrate velocity
 					body._transform2D._translation += body._linearVelocity * deltaTime;
 					body._transform2D._rotation += body._angularVelocity * deltaTime;
 
-					body._linearVelocity *= (1.0f - body._linearDamping);
+					if (body._bodyMotionType == BodyMotionType::Dynamic)
+					{
+						body._linearVelocity *= (1.0f - body._linearDamping);
+					}
 				}
 
 				body._bodyAABB->Set(*body._shape._shapeAABB, body._transform2D);

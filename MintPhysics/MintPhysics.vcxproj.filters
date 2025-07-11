@@ -39,6 +39,9 @@
     <ClInclude Include="Include\PhysicsCommon.h">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="Include\ConstraintSolver.h">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\TimeStepCalculator.cpp">
@@ -57,6 +60,9 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\PhysicsWorld.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ConstraintSolver.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>

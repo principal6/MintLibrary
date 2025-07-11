@@ -57,7 +57,7 @@ namespace mint
 			float _inverseMass = 1.0f;
 			Float2 _linearVelocity;
 			Float2 _linearAcceleration;
-			float _linearDamping = 1.0f;
+			float _linearDamping = 0.0f;
 			float _angularVelocity;
 			float _angularAcceleration;
 		};
@@ -153,6 +153,9 @@ namespace mint
 			void Step(float deltaTime);
 			uint64 GetTotalStepCount() const { return _totalStepCount; }
 			uint64 GetCurrentStepIndex() const;
+		
+		public:
+			const Float2& GetGravity() const { return _gravity; }
 
 		public:
 			void RenderDebug(Rendering::ShapeRenderer& shapeRenderer) const;
@@ -173,6 +176,7 @@ namespace mint
 			void StepCollide_NarrowPhase_GenerateCollision(const Body& bodyA, const CollisionShape& bodyShapeA, const Body& bodyB, const CollisionShape& bodyShapeB, const Physics2D::GJKInfo& gjkInfo, CollisionManifold& outCollisionManifold) const;
 			void StepSolve(float deltaTime);
 			void StepSolveResolveCollisions(float deltaTime);
+			void StepSolveSolveConstraints(float deltaTime);
 			void StepSolveIntegrate(float deltaTime);
 			void StepSolveAssignCollisionSectors();
 			void StepRecordSnapshot();
@@ -194,6 +198,7 @@ namespace mint
 			PhysicsObjectPool<Body> _bodyPool;
 
 		private:
+			Float2 _gravity;
 			Float2 _worldMin;
 			Float2 _worldMax;
 			Float2 _worldSize;

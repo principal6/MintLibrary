@@ -154,6 +154,7 @@
     <ClInclude Include="Include\AllHeaders.h" />
     <ClInclude Include="Include\AllHpps.h" />
     <ClInclude Include="Include\CollisionShape.h" />
+    <ClInclude Include="Include\ConstraintSolver.h" />
     <ClInclude Include="Include\Intersection.h" />
     <ClInclude Include="Include\Intersection.hpp" />
     <ClInclude Include="Include\PhysicsCommon.h" />
@@ -169,6 +170,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="Source\ConstraintSolver.cpp" />
     <ClCompile Include="Source\Intersection.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
