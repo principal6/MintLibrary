@@ -626,13 +626,13 @@ bool RunPhysics2DTestWindow()
 		ShapeGenerator::GenerateRectangle(Float2(4.0f, 0.25f), ByteColor(64, 64, 64), mesh2DComponent._shape);
 		sceneObjectRegistry.AttachComponent(sceneObjectFloor, std::move(mesh2DComponent));
 	}
-	sceneObjectRegistry.GetComponentMust<TransformComponent>(sceneObjectFloor)._transform._translation = Float3(0.0f, -3.0f, 0.0f);
 	{
 		RigidBodyComponent rigidBodyComponent;
 		{
 			const Shape& shape = sceneObjectRegistry.GetComponentMust<Mesh2DComponent>(sceneObjectFloor)._shape;
 			BodyCreationDesc bodyCreationDesc;
 			bodyCreationDesc._collisionShape = MakeShared<CollisionShape>(ConvexCollisionShape::MakeFromRenderingShape(Float2::kZero, shape));
+			bodyCreationDesc._transform2D._translation = Float2(0.0f, -3.0f);
 			bodyCreationDesc._inverseMass = 0.0f; // Static body
 			rigidBodyComponent._bodyID = physicsWorld.CreateBody(bodyCreationDesc);
 		}
@@ -663,8 +663,10 @@ bool RunPhysics2DTestWindow()
 
 			const RigidBodyComponent& rigidBodyComponent0 = sceneObjectRegistry.GetComponentMust<RigidBodyComponent>(sceneObject0);
 			const RigidBodyComponent& rigidBodyComponent1 = sceneObjectRegistry.GetComponentMust<RigidBodyComponent>(sceneObject1);
+			const RigidBodyComponent& rigidBodyComponentFloor = sceneObjectRegistry.GetComponentMust<RigidBodyComponent>(sceneObjectFloor);
 			const Body& bodyA = physicsWorld.GetBody(rigidBodyComponent0._bodyID);
 			const Body& bodyB = physicsWorld.GetBody(rigidBodyComponent1._bodyID);
+			const Body& bodyFloor = physicsWorld.GetBody(rigidBodyComponentFloor._bodyID);
 
 			ParticleDistanceConstraint particleDistanceConstraint;
 			particleDistanceConstraint._bodyAID = bodyA._bodyID;
@@ -681,8 +683,10 @@ bool RunPhysics2DTestWindow()
 
 			Transform& transform0 = sceneObjectRegistry.GetComponentMust<TransformComponent>(sceneObject0)._transform;
 			Transform& transform1 = sceneObjectRegistry.GetComponentMust<TransformComponent>(sceneObject1)._transform;
+			Transform& transformFloor = sceneObjectRegistry.GetComponentMust<TransformComponent>(sceneObjectFloor)._transform;
 			transform0._translation.Set(bodyA._transform2D._translation);
 			transform1._translation.Set(bodyB._transform2D._translation);
+			transformFloor._translation.Set(bodyFloor._transform2D._translation);
 		}
 
 		// Rendering
