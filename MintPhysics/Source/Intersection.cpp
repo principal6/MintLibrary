@@ -355,8 +355,18 @@ namespace mint
 						{
 							indexB = i;
 							closestPoint = p;
-							closestEdgeNormal = ComputeEdgeNormal(v0, v1);
-							distanceToEdge = distance;
+							if (v1 - v0 == Float2::kZero)
+							{
+								// TODO: 이렇게 하는 게 맞나...?
+								// EDGE_CASE: v1 and v0 are colinear!
+								closestEdgeNormal = Float2(1, 0);
+								distanceToEdge = distance;
+							}
+							else
+							{
+								closestEdgeNormal = ComputeEdgeNormal(v0, v1);
+								distanceToEdge = distance;
+							}
 						}
 					}
 				}
