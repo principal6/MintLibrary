@@ -16,27 +16,27 @@ namespace mint
 		bool TestIntersections()
 		{
 			{
-				Physics::CircleCollisionShape2D a = Physics::CircleCollisionShape2D(Float2(70, 64), 2);
-				Physics::CircleCollisionShape2D b = Physics::CircleCollisionShape2D(Float2(64, 64), 16);
-				MINT_ASSURE(Physics::Intersect2D_GJK(a, b) == true);
+				Physics2D::CircleCollisionShape a = Physics2D::CircleCollisionShape(Float2(70, 64), 2);
+				Physics2D::CircleCollisionShape b = Physics2D::CircleCollisionShape(Float2(64, 64), 16);
+				MINT_ASSURE(Physics2D::Intersect2D_GJK(a, b) == true);
 			}
 
 			{
-				Physics::PointCollisionShape2D a = Physics::PointCollisionShape2D(Float2(80, 64));
-				Physics::CircleCollisionShape2D b = Physics::CircleCollisionShape2D(Float2(64, 64), 16);
-				MINT_ASSURE(Physics::Intersect2D_GJK(a, b) == true);
+				Physics2D::PointCollisionShape a = Physics2D::PointCollisionShape(Float2(80, 64));
+				Physics2D::CircleCollisionShape b = Physics2D::CircleCollisionShape(Float2(64, 64), 16);
+				MINT_ASSURE(Physics2D::Intersect2D_GJK(a, b) == true);
 			}
 
 			{
-				Physics::BoxCollisionShape2D a = Physics::BoxCollisionShape2D(Float2(32, 16), Transform2D(0.0f, Float2(112, 76)));
-				Physics::CircleCollisionShape2D b = Physics::CircleCollisionShape2D(Float2(64, 64), 16);
-				MINT_ASSURE(Physics::Intersect2D_GJK(a, b) == true);
+				Physics2D::BoxCollisionShape a = Physics2D::BoxCollisionShape(Float2(32, 16), Transform2D(0.0f, Float2(112, 76)));
+				Physics2D::CircleCollisionShape b = Physics2D::CircleCollisionShape(Float2(64, 64), 16);
+				MINT_ASSURE(Physics2D::Intersect2D_GJK(a, b) == true);
 			}
 
 			{
-				Physics::BoxCollisionShape2D a = Physics::BoxCollisionShape2D(Float2(16, 16), Transform2D::GetIdentity());
-				Physics::CircleCollisionShape2D b = Physics::CircleCollisionShape2D(Float2(0, 0), 1);
-				MINT_ASSURE(Physics::Intersect2D_GJK(a, b) == true);
+				Physics2D::BoxCollisionShape a = Physics2D::BoxCollisionShape(Float2(16, 16), Transform2D::GetIdentity());
+				Physics2D::CircleCollisionShape b = Physics2D::CircleCollisionShape(Float2(0, 0), 1);
+				MINT_ASSURE(Physics2D::Intersect2D_GJK(a, b) == true);
 			}
 
 			return true;

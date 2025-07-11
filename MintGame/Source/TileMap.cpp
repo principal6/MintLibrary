@@ -77,7 +77,7 @@ namespace mint
 						points[1] = Float2(x, -y - height) + coordsFixer;
 						points[2] = Float2(x + width, -y - height) + coordsFixer;
 						points[3] = Float2(x + width, -y) + coordsFixer;
-						_tileCollisionShapes[id] = MakeShared<Physics::ConvexCollisionShape2D>(Physics::ConvexCollisionShape2D::MakeFromPoints(points));
+						_tileCollisionShapes[id] = MakeShared<Physics2D::ConvexCollisionShape>(Physics2D::ConvexCollisionShape::MakeFromPoints(points));
 					}
 					else
 					{
@@ -96,7 +96,7 @@ namespace mint
 									points[i]._y = -(StringUtil::StringToFloat(coords[1]) - halfTileHeight);
 								}
 							}
-							_tileCollisionShapes[id] = MakeShared<Physics::ConvexCollisionShape2D>(Physics::ConvexCollisionShape2D::MakeFromPoints(points));
+							_tileCollisionShapes[id] = MakeShared<Physics2D::ConvexCollisionShape>(Physics2D::ConvexCollisionShape::MakeFromPoints(points));
 						}
 						else if (StringUtil::Equals(objectChildNode->GetName(), "polyline") == true)
 						{
@@ -117,18 +117,18 @@ namespace mint
 
 							if (points.Size() == 2)
 							{
-								_tileCollisionShapes[id] = MakeShared<Physics::EdgeCollisionShape2D>(Physics::EdgeCollisionShape2D(points[0], points[1]));
+								_tileCollisionShapes[id] = MakeShared<Physics2D::EdgeCollisionShape>(Physics2D::EdgeCollisionShape(points[0], points[1]));
 							}
 							else
 							{
 								const uint32 edgeCount = points.Size() - 1;
-								Vector<Physics::CompositeCollisionShape2D::ShapeInstance> shapeInstances;
+								Vector<Physics2D::CompositeCollisionShape::ShapeInstance> shapeInstances;
 								shapeInstances.Resize(edgeCount);
 								for (uint32 i = 0; i < edgeCount; ++i)
 								{
-									shapeInstances[i]._shape = MakeShared<Physics::EdgeCollisionShape2D>(Physics::EdgeCollisionShape2D(points[i], points[i + 1]));
+									shapeInstances[i]._shape = MakeShared<Physics2D::EdgeCollisionShape>(Physics2D::EdgeCollisionShape(points[i], points[i + 1]));
 								}
-								_tileCollisionShapes[id] = MakeShared<Physics::CompositeCollisionShape2D>(Physics::CompositeCollisionShape2D(shapeInstances));
+								_tileCollisionShapes[id] = MakeShared<Physics2D::CompositeCollisionShape>(Physics2D::CompositeCollisionShape(shapeInstances));
 							}
 						}
 						else

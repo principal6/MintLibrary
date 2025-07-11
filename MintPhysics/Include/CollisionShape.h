@@ -21,15 +21,15 @@ namespace mint
 		struct Shape;
 	}
 
-	namespace Physics
+	namespace Physics2D
 	{
-		class ConvexCollisionShape2D;
+		class ConvexCollisionShape;
 	}
 }
 
 namespace mint
 {
-	namespace Physics
+	namespace Physics2D
 	{
 		using mint::Rendering::ShapeRenderer;
 
@@ -44,14 +44,14 @@ namespace mint
 			Composite,
 		};
 
-		class CollisionShape2D
+		class CollisionShape
 		{
 		public:
-			static SharedPtr<CollisionShape2D> MakeTransformed(const SharedPtr<CollisionShape2D>& shape, const Transform2D& transform2D);
+			static SharedPtr<CollisionShape> MakeTransformed(const SharedPtr<CollisionShape>& shape, const Transform2D& transform2D);
 
 		public:
-			CollisionShape2D() = default;
-			virtual ~CollisionShape2D() = default;
+			CollisionShape() = default;
+			virtual ~CollisionShape() = default;
 
 		public:
 			virtual CollisionShapeType GetCollisionShapeType() const abstract;
@@ -62,10 +62,10 @@ namespace mint
 			virtual void DebugDrawShape(ShapeRenderer& shapeRenderer, const ByteColor& color, const Transform2D& transform2D) const { __noop; }
 		};
 
-		class PointCollisionShape2D : public CollisionShape2D
+		class PointCollisionShape : public CollisionShape
 		{
 		public:
-			PointCollisionShape2D(const Float2& center);
+			PointCollisionShape(const Float2& center);
 
 		public:
 			virtual CollisionShapeType GetCollisionShapeType() const override final { return CollisionShapeType::Point; }
@@ -79,11 +79,11 @@ namespace mint
 			Float2 _center;
 		};
 
-		class EdgeCollisionShape2D : public CollisionShape2D
+		class EdgeCollisionShape : public CollisionShape
 		{
 		public:
-			EdgeCollisionShape2D(const Float2& vertexA, const Float2& vertexB);
-			EdgeCollisionShape2D(const Float2& vertexA, const Float2& vertexB, const Transform2D& transform2D);
+			EdgeCollisionShape(const Float2& vertexA, const Float2& vertexB);
+			EdgeCollisionShape(const Float2& vertexA, const Float2& vertexB, const Transform2D& transform2D);
 
 		public:
 			virtual CollisionShapeType GetCollisionShapeType() const override final { return CollisionShapeType::Edge; }
@@ -98,11 +98,11 @@ namespace mint
 			Float2 _vertexB;
 		};
 
-		class CircleCollisionShape2D : public CollisionShape2D
+		class CircleCollisionShape : public CollisionShape
 		{
 		public:
-			CircleCollisionShape2D(const Float2& center, const float radius);
-			CircleCollisionShape2D(const float radius, const Transform2D& transform2D);
+			CircleCollisionShape(const Float2& center, const float radius);
+			CircleCollisionShape(const float radius, const Transform2D& transform2D);
 
 		public:
 			virtual CollisionShapeType GetCollisionShapeType() const override final { return CollisionShapeType::Circle; }
@@ -117,17 +117,17 @@ namespace mint
 			float _radius;
 		};
 
-		class AABBCollisionShape2D : public CollisionShape2D
+		class AABBCollisionShape : public CollisionShape
 		{
 		public:
-			AABBCollisionShape2D(const Float2& center, const Float2& halfSize);
-			AABBCollisionShape2D(const CollisionShape2D& collisionShape2D);
-			AABBCollisionShape2D(const AABBCollisionShape2D& aabbCollisionShape2D, const Transform2D& transform2D);
+			AABBCollisionShape(const Float2& center, const Float2& halfSize);
+			AABBCollisionShape(const CollisionShape& collisionShape);
+			AABBCollisionShape(const AABBCollisionShape& aabbCollisionShape, const Transform2D& transform2D);
 
 		public:
-			void Set(const AABBCollisionShape2D& aabbCollisionShape2D, const Transform2D& transform2D);
-			void SetExpanded(const AABBCollisionShape2D& aabbCollisionShape2D, const Transform2D& transform2D, const Float2& displacement);
-			void SetExpandedByRadius(const AABBCollisionShape2D& aabbCollisionShape2D, const Transform2D& transform2D, const Float2& displacement);
+			void Set(const AABBCollisionShape& aabbCollisionShape, const Transform2D& transform2D);
+			void SetExpanded(const AABBCollisionShape& aabbCollisionShape, const Transform2D& transform2D, const Float2& displacement);
+			void SetExpandedByRadius(const AABBCollisionShape& aabbCollisionShape, const Transform2D& transform2D, const Float2& displacement);
 			void SetExpandedByRadius(float radius, const Float2& center, const Float2& displacement);
 		
 		public:
@@ -143,11 +143,11 @@ namespace mint
 			Float2 _halfSize;
 		};
 
-		class BoxCollisionShape2D : public CollisionShape2D
+		class BoxCollisionShape : public CollisionShape
 		{
 		public:
-			BoxCollisionShape2D(const Float2& halfSize, const Transform2D& transform2D);
-			BoxCollisionShape2D(const Float2& center, const Float2& halfLengthedAxisX, const Float2& halfLengthedAxisY);
+			BoxCollisionShape(const Float2& halfSize, const Transform2D& transform2D);
+			BoxCollisionShape(const Float2& center, const Float2& halfLengthedAxisX, const Float2& halfLengthedAxisY);
 
 		public:
 			virtual CollisionShapeType GetCollisionShapeType() const override final { return CollisionShapeType::Box; }
@@ -168,23 +168,23 @@ namespace mint
 		};
 
 		// CCW winding
-		class ConvexCollisionShape2D : public CollisionShape2D
+		class ConvexCollisionShape : public CollisionShape
 		{
 		public:
-			static ConvexCollisionShape2D MakeFromPoints(const Vector<Float2>& points);
-			static ConvexCollisionShape2D MakeFromRenderingShape(const Float2& center, const Rendering::Shape& renderingShape);
-			static ConvexCollisionShape2D MakeMinkowskiDifferenceShape(const CollisionShape2D& a, const CollisionShape2D& b);
+			static ConvexCollisionShape MakeFromPoints(const Vector<Float2>& points);
+			static ConvexCollisionShape MakeFromRenderingShape(const Float2& center, const Rendering::Shape& renderingShape);
+			static ConvexCollisionShape MakeMinkowskiDifferenceShape(const CollisionShape& a, const CollisionShape& b);
 
 		private:
-			static ConvexCollisionShape2D MakeFromCollisionShape2D(const CollisionShape2D& shape);
-			static ConvexCollisionShape2D MakeFromAABBShape2D(const AABBCollisionShape2D& shape);
-			static ConvexCollisionShape2D MakeFromBoxShape2D(const BoxCollisionShape2D& shape);
-			static ConvexCollisionShape2D MakeFromCircleShape2D(const CircleCollisionShape2D& shape);
+			static ConvexCollisionShape MakeFromCollisionShape(const CollisionShape& shape);
+			static ConvexCollisionShape MakeFromAABBShape(const AABBCollisionShape& shape);
+			static ConvexCollisionShape MakeFromBoxShape(const BoxCollisionShape& shape);
+			static ConvexCollisionShape MakeFromCircleShape(const CircleCollisionShape& shape);
 
 		public:
-			ConvexCollisionShape2D(const Vector<Float2>& vertices);
-			ConvexCollisionShape2D(const Vector<Float2>& vertices, const Transform2D& transform2D);
-			ConvexCollisionShape2D(const ConvexCollisionShape2D& rhs, const Transform2D& transform2D);
+			ConvexCollisionShape(const Vector<Float2>& vertices);
+			ConvexCollisionShape(const Vector<Float2>& vertices, const Transform2D& transform2D);
+			ConvexCollisionShape(const ConvexCollisionShape& rhs, const Transform2D& transform2D);
 
 		public:
 			virtual CollisionShapeType GetCollisionShapeType() const override final { return CollisionShapeType::Convex; }
@@ -196,7 +196,7 @@ namespace mint
 			virtual void DebugDrawShape(ShapeRenderer& shapeRenderer, const ByteColor& color, const Transform2D& transform2D) const override final;
 
 		private:
-			ConvexCollisionShape2D();
+			ConvexCollisionShape();
 
 		private:
 			void ComputeSupportPointIndex(const Float2& direction, uint32& outIndex) const;
@@ -205,17 +205,17 @@ namespace mint
 			Vector<Float2> _vertices;
 		};
 
-		class CompositeCollisionShape2D : public CollisionShape2D
+		class CompositeCollisionShape : public CollisionShape
 		{
 		public:
 			struct ShapeInstance
 			{
-				SharedPtr<CollisionShape2D> _shape;
+				SharedPtr<CollisionShape> _shape;
 				Transform2D _transform2D;
 			};
 
 		public:
-			CompositeCollisionShape2D(const Vector<ShapeInstance>& shapeInstances);
+			CompositeCollisionShape(const Vector<ShapeInstance>& shapeInstances);
 		
 		public:
 			virtual CollisionShapeType GetCollisionShapeType() const override final { return CollisionShapeType::Composite; }

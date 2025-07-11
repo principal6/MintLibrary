@@ -12,16 +12,16 @@
 
 namespace mint
 {
-	namespace Physics
+	namespace Physics2D
 	{
-		class CollisionShape2D;
+		class CollisionShape;
 	}
 
 	namespace Game
 	{
 		struct Collision2DComponent
 		{
-			SharedPtr<Physics::CollisionShape2D> _collisionShape2D;
+			SharedPtr<Physics2D::CollisionShape> _collisionShape;
 		};
 	}
 }

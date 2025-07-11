@@ -21,16 +21,16 @@ namespace mint
 		class ShapeRenderer;
 	}
 
-	namespace Physics
+	namespace Physics2D
 	{
-		class CollisionShape2D;
-		class AABBCollisionShape2D;
+		class CollisionShape;
+		class AABBCollisionShape;
 	}
 }
 
 namespace mint
 {
-	namespace Physics
+	namespace Physics2D
 	{
 		using mint::Rendering::ShapeRenderer;
 
@@ -69,8 +69,8 @@ namespace mint
 
 		bool Intersect2D_Circle_Point(const Float2& circleCenter, const float circleRadius, const Float2& point);
 		bool Intersect2D_AABB_Point(const Rect& aabb, const Float2& point);
-		bool Intersect2D_AABB_AABB(const AABBCollisionShape2D& shapeA, const AABBCollisionShape2D& shapeB);
-		bool Intersect2D_GJK(const CollisionShape2D& shapeA, const CollisionShape2D& shapeB, GJK2DInfo* const outGJK2DInfo = nullptr);
+		bool Intersect2D_AABB_AABB(const AABBCollisionShape& shapeA, const AABBCollisionShape& shapeB);
+		bool Intersect2D_GJK(const CollisionShape& shapeA, const CollisionShape& shapeB, GJK2DInfo* const outGJK2DInfo = nullptr);
 
 		Float2 ComputeEdgeNormal(const Float2& edgeVertex0, const Float2& edgeVertex1);
 		Float2 ComputeClosestPointOnEdge(const Float2& point, const Float2& edgeVertex0, const Float2& edgeVertex1);
@@ -80,7 +80,7 @@ namespace mint
 			uint32 _iteration = 0;
 			Vector<Float2> _points;
 		};
-		void ComputePenetration_EPA(const CollisionShape2D& shapeA, const CollisionShape2D& shapeB, const GJK2DInfo& gjk2DInfo, Float2& outNormal, float& outDistance, EPA2DInfo& epa2DInfo);
+		void ComputePenetration_EPA(const CollisionShape& shapeA, const CollisionShape& shapeB, const GJK2DInfo& gjk2DInfo, Float2& outNormal, float& outDistance, EPA2DInfo& epa2DInfo);
 	}
 }
 

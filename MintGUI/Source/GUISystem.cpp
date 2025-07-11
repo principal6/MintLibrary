@@ -127,7 +127,7 @@ namespace mint
 			for (const GUIControl& control : controls)
 			{
 				GUITransform2DComponent* const transform2DComponent = GetComponent<GUITransform2DComponent>(control);
-				GUICollisionShape2DComponent* const collisionShape2DComponent = GetComponent<GUICollisionShape2DComponent>(control);
+				GUICollisionShapeComponent* const collisionShapeComponent = GetComponent<GUICollisionShapeComponent>(control);
 				GUIInteractionStateComponent* const interactionStateComponent = GetComponent<GUIInteractionStateComponent>(control);
 
 				if (isLeftMouseButtonReleasedOrUp)
@@ -136,7 +136,7 @@ namespace mint
 				}
 
 				const Float2 objectSpaceMousePosition = transform2DComponent->_transform2D.GetInverted() * mousePosition;
-				const bool intersects = Physics::Intersect2D_GJK(*collisionShape2DComponent->_collisionShape2D, Physics::PointCollisionShape2D(objectSpaceMousePosition));
+				const bool intersects = Physics2D::Intersect2D_GJK(*collisionShapeComponent->_collisionShape, Physics2D::PointCollisionShape(objectSpaceMousePosition));
 				if (intersects == true)
 				{
 					if (interactionStateComponent->_interactionState != GUIInteractionState::Pressed)
@@ -146,7 +146,7 @@ namespace mint
 					if (leftMouseButtonState == MouseButtonState::Pressed || leftMouseButtonState == MouseButtonState::Down || leftMouseButtonState == MouseButtonState::DoubleClicked)
 					{
 						const Float2 objectSpaceMouseLeftButtonPressedPosition = transform2DComponent->_transform2D.GetInverted() * sMouseLeftButtonPressedPosition;
-						const bool intersects1 = Physics::Intersect2D_GJK(*collisionShape2DComponent->_collisionShape2D, Physics::PointCollisionShape2D(objectSpaceMouseLeftButtonPressedPosition));
+						const bool intersects1 = Physics2D::Intersect2D_GJK(*collisionShapeComponent->_collisionShape, Physics2D::PointCollisionShape(objectSpaceMouseLeftButtonPressedPosition));
 						if (intersects1)
 						{
 							interactionStateComponent->_interactionState = GUIInteractionState::Pressed;

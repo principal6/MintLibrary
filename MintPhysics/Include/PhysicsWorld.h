@@ -18,7 +18,7 @@
 
 namespace mint
 {
-	namespace Physics
+	namespace Physics2D
 	{
 		class World;
 		struct GJK2DInfo;
@@ -27,7 +27,7 @@ namespace mint
 
 namespace mint
 {
-	namespace Physics
+	namespace Physics2D
 	{
 		class BodyID : public ID32
 		{
@@ -38,10 +38,10 @@ namespace mint
 			BodyID() = default;
 		};
 
-		struct BodyShape2D
+		struct BodyShape
 		{
-			SharedPtr<CollisionShape2D> _collisionShape;
-			SharedPtr<AABBCollisionShape2D> _shapeAABB;
+			SharedPtr<CollisionShape> _collisionShape;
+			SharedPtr<AABBCollisionShape> _shapeAABB;
 		};
 
 		enum class BodyMotionType
@@ -50,6 +50,7 @@ namespace mint
 			Dynamic,
 			KeyFramed,
 		};
+
 		class Body2D
 		{
 		public:
@@ -62,8 +63,8 @@ namespace mint
 
 		public:
 			BodyID _bodyID;
-			BodyShape2D _shape;
-			SharedPtr<AABBCollisionShape2D> _bodyAABB;
+			BodyShape _shape;
+			SharedPtr<AABBCollisionShape> _bodyAABB;
 			Transform2D _transform2D;
 
 			BodyMotionType _bodyMotionType;
@@ -79,7 +80,7 @@ namespace mint
 
 		struct Body2DCreationDesc
 		{
-			SharedPtr<CollisionShape2D> _collisionShape2D;
+			SharedPtr<CollisionShape> _collisionShape;
 			Transform2D _transform2D;
 			BodyMotionType _bodyMotionType = BodyMotionType::Static;
 		};
@@ -183,8 +184,8 @@ namespace mint
 			void StepCollide(float deltaTime);
 			void StepCollide_BroadPhase(float deltaTime);
 			void StepCollide_NarrowPhase(float deltaTime);
-			bool StepCollide_NarrowPhase_CCD(float deltaTime, const Body2D& bodyA, const Body2D& bodyB, Physics::GJK2DInfo& gjk2DInfo, SharedPtr<CollisionShape2D>& outShapeA, SharedPtr<CollisionShape2D>& outShapeB);
-			void StepCollide_NarrowPhase_GenerateCollision(const Body2D& bodyA, const CollisionShape2D& bodyShapeA, const Body2D& bodyB, const CollisionShape2D& bodyShapeB, const Physics::GJK2DInfo& gjk2DInfo, CollisionManifold2D& outCollisionManifold2D) const;
+			bool StepCollide_NarrowPhase_CCD(float deltaTime, const Body2D& bodyA, const Body2D& bodyB, Physics2D::GJK2DInfo& gjk2DInfo, SharedPtr<CollisionShape>& outShapeA, SharedPtr<CollisionShape>& outShapeB);
+			void StepCollide_NarrowPhase_GenerateCollision(const Body2D& bodyA, const CollisionShape& bodyShapeA, const Body2D& bodyB, const CollisionShape& bodyShapeB, const Physics2D::GJK2DInfo& gjk2DInfo, CollisionManifold2D& outCollisionManifold2D) const;
 			void StepSolve(float deltaTime);
 			void StepSolveResolveCollisions(float deltaTime);
 			void StepSolveIntegrate(float deltaTime);
@@ -192,8 +193,8 @@ namespace mint
 			void StepRecordSnapshot();
 
 		private:
-			void ComputeCollisionSectorIndices(const Physics::AABBCollisionShape2D& aabb, const Float2& worldMin, const Float2& collisionSectorSize, Vector<uint32>& outIndices) const;
-			uint32 ComputeCollisionSectorIndex(const Physics::AABBCollisionShape2D& aabb, const Float2& worldMin, const Float2& collisionSectorSize) const;
+			void ComputeCollisionSectorIndices(const Physics2D::AABBCollisionShape& aabb, const Float2& worldMin, const Float2& collisionSectorSize, Vector<uint32>& outIndices) const;
+			uint32 ComputeCollisionSectorIndex(const Physics2D::AABBCollisionShape& aabb, const Float2& worldMin, const Float2& collisionSectorSize) const;
 			uint32 ComputeCollisionSectorIndex(const Int2& collisionSectorIndex2) const;
 			CollisionSector* GetCollisionSector(const Int2& collisionSectorIndex2);
 			void GetAdjacentCollisionSectors(const CollisionSector& collisionSector, CollisionSector* (outAdjacentCollisionSectors)[8]);
@@ -205,7 +206,7 @@ namespace mint
 			void RenderDebugCollisionManifold(Rendering::ShapeRenderer& shapeRenderer, const CollisionManifold2D& collisionManifold) const;
 
 		public:
-			PhysicsObjectPool<Body2D> _bodyPool;
+			PhysicsCommon::PhysicsObjectPool<Body2D> _bodyPool;
 
 		private:
 			Float2 _worldMin;

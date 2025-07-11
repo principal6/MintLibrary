@@ -7,7 +7,7 @@
 
 namespace mint
 {
-	namespace Physics
+	namespace Physics2D
 	{
 #pragma region Intersection Free Functions
 		MINT_INLINE bool Intersect2D_Circle_Point(const Float2& circleCenter, const float circleRadius, const Float2& point)

@@ -10,7 +10,7 @@
 
 namespace mint
 {
-	namespace Physics
+	namespace PhysicsCommon
 	{
 		class FixedTimeStepCalculator
 		{

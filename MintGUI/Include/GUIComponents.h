@@ -17,9 +17,9 @@
 
 namespace mint
 {
-	namespace Physics
+	namespace Physics2D
 	{
-		class CollisionShape2D;
+		class CollisionShape;
 	}
 
 	namespace GUI
@@ -63,9 +63,9 @@ namespace mint
 			GUIInteractionState _interactionState;
 		};
 
-		struct GUICollisionShape2DComponent
+		struct GUICollisionShapeComponent
 		{
-			SharedPtr<Physics::CollisionShape2D> _collisionShape2D;
+			SharedPtr<Physics2D::CollisionShape> _collisionShape;
 		};
 
 		struct GUITransform2DComponent

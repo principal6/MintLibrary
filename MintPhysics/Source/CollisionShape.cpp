@@ -9,10 +9,10 @@
 
 namespace mint
 {
-	namespace Physics
+	namespace Physics2D
 	{
-#pragma region CollisionShape2D
-		SharedPtr<CollisionShape2D> CollisionShape2D::MakeTransformed(const SharedPtr<CollisionShape2D>& shape, const Transform2D& transform2D)
+#pragma region CollisionShape
+		SharedPtr<CollisionShape> CollisionShape::MakeTransformed(const SharedPtr<CollisionShape>& shape, const Transform2D& transform2D)
 		{
 			if (transform2D.IsIdentity())
 			{
@@ -21,61 +21,61 @@ namespace mint
 
 			switch (shape->GetCollisionShapeType())
 			{
-			case mint::Physics::CollisionShapeType::Point:
+			case mint::Physics2D::CollisionShapeType::Point:
 			{
-				const PointCollisionShape2D& castedShape = static_cast<const PointCollisionShape2D&>(*shape);
-				return MakeShared<PointCollisionShape2D>(PointCollisionShape2D(castedShape._center + transform2D._translation));
+				const PointCollisionShape& castedShape = static_cast<const PointCollisionShape&>(*shape);
+				return MakeShared<PointCollisionShape>(PointCollisionShape(castedShape._center + transform2D._translation));
 			}
-			case mint::Physics::CollisionShapeType::Edge:
+			case mint::Physics2D::CollisionShapeType::Edge:
 			{
-				const EdgeCollisionShape2D& castedShape = static_cast<const EdgeCollisionShape2D&>(*shape);
-				return MakeShared<EdgeCollisionShape2D>(EdgeCollisionShape2D(castedShape._vertexA, castedShape._vertexB, transform2D));
+				const EdgeCollisionShape& castedShape = static_cast<const EdgeCollisionShape&>(*shape);
+				return MakeShared<EdgeCollisionShape>(EdgeCollisionShape(castedShape._vertexA, castedShape._vertexB, transform2D));
 			}
-			case mint::Physics::CollisionShapeType::Circle:
+			case mint::Physics2D::CollisionShapeType::Circle:
 			{
-				const CircleCollisionShape2D& castedShape = static_cast<const CircleCollisionShape2D&>(*shape);
-				return MakeShared<CircleCollisionShape2D>(CircleCollisionShape2D(castedShape._center + transform2D._translation, castedShape._radius));
+				const CircleCollisionShape& castedShape = static_cast<const CircleCollisionShape&>(*shape);
+				return MakeShared<CircleCollisionShape>(CircleCollisionShape(castedShape._center + transform2D._translation, castedShape._radius));
 			}
-			case mint::Physics::CollisionShapeType::AABB:
+			case mint::Physics2D::CollisionShapeType::AABB:
 			{
-				const AABBCollisionShape2D& castedShape = static_cast<const AABBCollisionShape2D&>(*shape);
-				return MakeShared<AABBCollisionShape2D>(AABBCollisionShape2D(castedShape._center + transform2D._translation, castedShape._halfSize));
+				const AABBCollisionShape& castedShape = static_cast<const AABBCollisionShape&>(*shape);
+				return MakeShared<AABBCollisionShape>(AABBCollisionShape(castedShape._center + transform2D._translation, castedShape._halfSize));
 			}
-			case mint::Physics::CollisionShapeType::Box:
+			case mint::Physics2D::CollisionShapeType::Box:
 			{
-				const BoxCollisionShape2D& castedShape = static_cast<const BoxCollisionShape2D&>(*shape);
+				const BoxCollisionShape& castedShape = static_cast<const BoxCollisionShape&>(*shape);
 				const Float2x2 rotationMatrix{ Float2x2::RotationMatrix(transform2D._rotation) };
 				const Float2 halfLengthedAxisX = rotationMatrix * castedShape.GetHalfLengthedAxisX();
 				const Float2 halfLengthedAxisY = rotationMatrix * castedShape.GetHalfLengthedAxisY();
-				return MakeShared<BoxCollisionShape2D>(BoxCollisionShape2D(castedShape._center + transform2D._translation, halfLengthedAxisX, halfLengthedAxisY));
+				return MakeShared<BoxCollisionShape>(BoxCollisionShape(castedShape._center + transform2D._translation, halfLengthedAxisX, halfLengthedAxisY));
 			}
-			case mint::Physics::CollisionShapeType::Convex:
+			case mint::Physics2D::CollisionShapeType::Convex:
 			{
-				const ConvexCollisionShape2D& castedShape = static_cast<const ConvexCollisionShape2D&>(*shape);
-				return MakeShared<ConvexCollisionShape2D>(ConvexCollisionShape2D(castedShape, transform2D));
+				const ConvexCollisionShape& castedShape = static_cast<const ConvexCollisionShape&>(*shape);
+				return MakeShared<ConvexCollisionShape>(ConvexCollisionShape(castedShape, transform2D));
 			}
 			default:
 				break;
 			}
 			MINT_NEVER;
-			return SharedPtr<CollisionShape2D>();
+			return SharedPtr<CollisionShape>();
 		}
 #pragma endregion
 
-#pragma region CollisionShape2D - PointCollisionShape2D
-		PointCollisionShape2D::PointCollisionShape2D(const Float2& center)
-			: CollisionShape2D()
+#pragma region CollisionShape - PointCollisionShape
+		PointCollisionShape::PointCollisionShape(const Float2& center)
+			: CollisionShape()
 			, _center{ center }
 		{
 			__noop;
 		}
 
-		Float2 PointCollisionShape2D::ComputeSupportPoint(const Float2& direction) const
+		Float2 PointCollisionShape::ComputeSupportPoint(const Float2& direction) const
 		{
 			return _center;
 		}
 
-		void PointCollisionShape2D::ComputeSupportEdge(const Float2& direction, Float2& outVertexA, Float2& outVertexB) const
+		void PointCollisionShape::ComputeSupportEdge(const Float2& direction, Float2& outVertexA, Float2& outVertexB) const
 		{
 			outVertexA = _center;
 			outVertexB = _center;
@@ -86,29 +86,29 @@ namespace mint
 			MINT_ASSERT(tangent.Dot(direction) == 0.0f, "!!!");
 		}
 
-		void PointCollisionShape2D::DebugDrawShape(ShapeRenderer& shapeRenderer, const ByteColor& color, const Transform2D& transform2D) const
+		void PointCollisionShape::DebugDrawShape(ShapeRenderer& shapeRenderer, const ByteColor& color, const Transform2D& transform2D) const
 		{
 			shapeRenderer.SetColor(color);
 			shapeRenderer.DrawCircle(Float3(_center + transform2D._translation), 2.0f);
 		}
 #pragma endregion
 
-#pragma region CollisionShape2D - EdgeCollisionShape2D
-		EdgeCollisionShape2D::EdgeCollisionShape2D(const Float2& vertexA, const Float2& vertexB)
+#pragma region CollisionShape - EdgeCollisionShape
+		EdgeCollisionShape::EdgeCollisionShape(const Float2& vertexA, const Float2& vertexB)
 			: _vertexA{ vertexA }
 			, _vertexB{ vertexB }
 		{
 			__noop;
 		}
 
-		EdgeCollisionShape2D::EdgeCollisionShape2D(const Float2& vertexA, const Float2& vertexB, const Transform2D& transform2D)
+		EdgeCollisionShape::EdgeCollisionShape(const Float2& vertexA, const Float2& vertexB, const Transform2D& transform2D)
 			: _vertexA{ transform2D * vertexA }
 			, _vertexB{ transform2D * vertexB }
 		{
 			__noop;
 		}
 
-		Float2 EdgeCollisionShape2D::ComputeSupportPoint(const Float2& direction) const
+		Float2 EdgeCollisionShape::ComputeSupportPoint(const Float2& direction) const
 		{
 			Float2 directionBToA = _vertexA - _vertexB;
 			directionBToA.Normalize();
@@ -119,41 +119,41 @@ namespace mint
 			return _vertexB;
 		}
 
-		void EdgeCollisionShape2D::ComputeSupportEdge(const Float2& direction, Float2& outVertexA, Float2& outVertexB) const
+		void EdgeCollisionShape::ComputeSupportEdge(const Float2& direction, Float2& outVertexA, Float2& outVertexB) const
 		{
 			// This is a sided edge!
 			outVertexA = _vertexA;
 			outVertexB = _vertexB;
 		}
 
-		void EdgeCollisionShape2D::DebugDrawShape(ShapeRenderer& shapeRenderer, const ByteColor& color, const Transform2D& transform2D) const
+		void EdgeCollisionShape::DebugDrawShape(ShapeRenderer& shapeRenderer, const ByteColor& color, const Transform2D& transform2D) const
 		{
 			shapeRenderer.SetColor(color);
 			shapeRenderer.DrawLine(transform2D * _vertexA, transform2D * _vertexB, 4.0f);
 		}
 #pragma endregion
 
-#pragma region CollisionShape2D - CircleCollisionShape2D
-		CircleCollisionShape2D::CircleCollisionShape2D(const Float2& center, const float radius)
-			: CollisionShape2D()
+#pragma region CollisionShape - CircleCollisionShape
+		CircleCollisionShape::CircleCollisionShape(const Float2& center, const float radius)
+			: CollisionShape()
 			, _center{ center }
 			, _radius{ radius }
 		{
 			MINT_ASSERT(radius > 0.0f, "radius(%f) is 0 or less. Is it really intended?", radius);
 		}
 
-		CircleCollisionShape2D::CircleCollisionShape2D(const float radius, const Transform2D& transform2D)
-			: CircleCollisionShape2D(transform2D._translation, radius)
+		CircleCollisionShape::CircleCollisionShape(const float radius, const Transform2D& transform2D)
+			: CircleCollisionShape(transform2D._translation, radius)
 		{
 			__noop;
 		}
 
-		Float2 CircleCollisionShape2D::ComputeSupportPoint(const Float2& direction) const
+		Float2 CircleCollisionShape::ComputeSupportPoint(const Float2& direction) const
 		{
 			return _center + direction * _radius;
 		}
 
-		void CircleCollisionShape2D::ComputeSupportEdge(const Float2& direction, Float2& outVertexA, Float2& outVertexB) const
+		void CircleCollisionShape::ComputeSupportEdge(const Float2& direction, Float2& outVertexA, Float2& outVertexB) const
 		{
 			outVertexA = ComputeSupportPoint(direction);
 			outVertexB = outVertexA;
@@ -164,7 +164,7 @@ namespace mint
 			MINT_ASSERT(tangent.Dot(direction) == 0.0f, "!!!");
 		}
 
-		void CircleCollisionShape2D::DebugDrawShape(ShapeRenderer& shapeRenderer, const ByteColor& color, const Transform2D& transform2D) const
+		void CircleCollisionShape::DebugDrawShape(ShapeRenderer& shapeRenderer, const ByteColor& color, const Transform2D& transform2D) const
 		{
 			shapeRenderer.SetColor(color);
 
@@ -181,54 +181,54 @@ namespace mint
 		}
 #pragma endregion
 
-#pragma region CollisionShape2D - AABBCollisionShape2D
-		AABBCollisionShape2D::AABBCollisionShape2D(const Float2& center, const Float2& halfSize)
-			: CollisionShape2D()
+#pragma region CollisionShape - AABBCollisionShape
+		AABBCollisionShape::AABBCollisionShape(const Float2& center, const Float2& halfSize)
+			: CollisionShape()
 			, _center{ center }
 			, _halfSize{ halfSize }
 		{
 			__noop;
 		}
 
-		AABBCollisionShape2D::AABBCollisionShape2D(const CollisionShape2D& collisionShape2D)
-			: CollisionShape2D(collisionShape2D)
+		AABBCollisionShape::AABBCollisionShape(const CollisionShape& collisionShape)
+			: CollisionShape(collisionShape)
 		{
-			if (collisionShape2D.GetCollisionShapeType() == CollisionShapeType::Edge)
+			if (collisionShape.GetCollisionShapeType() == CollisionShapeType::Edge)
 			{
-				const EdgeCollisionShape2D& edgeCollisionShape2D = static_cast<const EdgeCollisionShape2D&>(collisionShape2D);
-				_center = (edgeCollisionShape2D._vertexA + edgeCollisionShape2D._vertexB) * 0.5f;
-				_halfSize = (edgeCollisionShape2D._vertexA - edgeCollisionShape2D._vertexB) * 0.5f;
+				const EdgeCollisionShape& edgeCollisionShape = static_cast<const EdgeCollisionShape&>(collisionShape);
+				_center = (edgeCollisionShape._vertexA + edgeCollisionShape._vertexB) * 0.5f;
+				_halfSize = (edgeCollisionShape._vertexA - edgeCollisionShape._vertexB) * 0.5f;
 				_halfSize._x = Max(::abs(_halfSize._x), 1.0f);
 				_halfSize._y = Max(::abs(_halfSize._y), 1.0f);
 			}
-			else if (collisionShape2D.GetCollisionShapeType() == CollisionShapeType::AABB)
+			else if (collisionShape.GetCollisionShapeType() == CollisionShapeType::AABB)
 			{
-				const AABBCollisionShape2D& aabbCollisionShape2D = static_cast<const AABBCollisionShape2D&>(collisionShape2D);
-				_center = aabbCollisionShape2D._center;
-				_halfSize = aabbCollisionShape2D._halfSize;
+				const AABBCollisionShape& aabbCollisionShape = static_cast<const AABBCollisionShape&>(collisionShape);
+				_center = aabbCollisionShape._center;
+				_halfSize = aabbCollisionShape._halfSize;
 			}
-			else if (collisionShape2D.GetCollisionShapeType() == CollisionShapeType::Circle)
+			else if (collisionShape.GetCollisionShapeType() == CollisionShapeType::Circle)
 			{
-				const CircleCollisionShape2D& circleCollisionShape2D = static_cast<const CircleCollisionShape2D&>(collisionShape2D);
-				_center = circleCollisionShape2D._center;
-				_halfSize = Float2(circleCollisionShape2D._radius, circleCollisionShape2D._radius);
+				const CircleCollisionShape& circleCollisionShape = static_cast<const CircleCollisionShape&>(collisionShape);
+				_center = circleCollisionShape._center;
+				_halfSize = Float2(circleCollisionShape._radius, circleCollisionShape._radius);
 			}
-			else if (collisionShape2D.GetCollisionShapeType() == CollisionShapeType::Box)
+			else if (collisionShape.GetCollisionShapeType() == CollisionShapeType::Box)
 			{
-				const BoxCollisionShape2D& boxCollisionShape2D = static_cast<const BoxCollisionShape2D&>(collisionShape2D);
-				_center = boxCollisionShape2D._center;
-				const Float2 max = _center + boxCollisionShape2D.GetHalfLengthedAxisX() + boxCollisionShape2D.GetHalfLengthedAxisY();
-				const Float2 min = _center - boxCollisionShape2D.GetHalfLengthedAxisX() - boxCollisionShape2D.GetHalfLengthedAxisY();
+				const BoxCollisionShape& boxCollisionShape = static_cast<const BoxCollisionShape&>(collisionShape);
+				_center = boxCollisionShape._center;
+				const Float2 max = _center + boxCollisionShape.GetHalfLengthedAxisX() + boxCollisionShape.GetHalfLengthedAxisY();
+				const Float2 min = _center - boxCollisionShape.GetHalfLengthedAxisX() - boxCollisionShape.GetHalfLengthedAxisY();
 
 				const Float2 center = (max + min) * 0.5f;
 				const Float2 size = max - min;
 				_center = center;
 				_halfSize = size * 0.5f;
 			}
-			else if (collisionShape2D.GetCollisionShapeType() == CollisionShapeType::Convex)
+			else if (collisionShape.GetCollisionShapeType() == CollisionShapeType::Convex)
 			{
-				const ConvexCollisionShape2D& convexCollisionShape2D = static_cast<const ConvexCollisionShape2D&>(collisionShape2D);
-				const Vector<Float2>& vertices = convexCollisionShape2D.GetVertices();
+				const ConvexCollisionShape& convexCollisionShape = static_cast<const ConvexCollisionShape&>(collisionShape);
+				const Vector<Float2>& vertices = convexCollisionShape.GetVertices();
 				Float2 min = +Float2::kMax;
 				Float2 max = -Float2::kMax;
 				for (const Float2& vertex : vertices)
@@ -248,20 +248,20 @@ namespace mint
 			}
 		}
 
-		AABBCollisionShape2D::AABBCollisionShape2D(const AABBCollisionShape2D& aabbCollisionShape2D, const Transform2D& transform2D)
-			: CollisionShape2D(aabbCollisionShape2D)
+		AABBCollisionShape::AABBCollisionShape(const AABBCollisionShape& aabbCollisionShape, const Transform2D& transform2D)
+			: CollisionShape(aabbCollisionShape)
 		{
-			Set(aabbCollisionShape2D, transform2D);
+			Set(aabbCollisionShape, transform2D);
 		}
 
-		void AABBCollisionShape2D::Set(const AABBCollisionShape2D& aabbCollisionShape2D, const Transform2D& transform2D)
+		void AABBCollisionShape::Set(const AABBCollisionShape& aabbCollisionShape, const Transform2D& transform2D)
 		{
-			_center = aabbCollisionShape2D._center + transform2D._translation;
+			_center = aabbCollisionShape._center + transform2D._translation;
 			const Float2x2 rotationMatrix = Float2x2::RotationMatrix(transform2D._rotation);
 			const Float2& x = rotationMatrix._row[0];
 			const Float2& y = rotationMatrix._row[1];
-			const Float2 rotatedHalfSizeX = x * aabbCollisionShape2D._halfSize._x;
-			const Float2 rotatedHalfSizeY = y * aabbCollisionShape2D._halfSize._y;
+			const Float2 rotatedHalfSizeX = x * aabbCollisionShape._halfSize._x;
+			const Float2 rotatedHalfSizeY = y * aabbCollisionShape._halfSize._y;
 			const Float2 p0 = -rotatedHalfSizeX + +rotatedHalfSizeY;
 			const Float2 p1 = -rotatedHalfSizeX + -rotatedHalfSizeY;
 			const Float2 p2 = +rotatedHalfSizeX + -rotatedHalfSizeY;
@@ -275,11 +275,11 @@ namespace mint
 			_halfSize *= 0.5f;
 		}
 
-		void AABBCollisionShape2D::SetExpanded(const AABBCollisionShape2D& aabbCollisionShape2D, const Transform2D& transform2D, const Float2& displacement)
+		void AABBCollisionShape::SetExpanded(const AABBCollisionShape& aabbCollisionShape, const Transform2D& transform2D, const Float2& displacement)
 		{
-			Set(aabbCollisionShape2D, transform2D);
+			Set(aabbCollisionShape, transform2D);
 
-			const Float2& position0 = aabbCollisionShape2D._center + transform2D._translation;
+			const Float2& position0 = aabbCollisionShape._center + transform2D._translation;
 			const Float2 position1 = position0 + displacement;
 			Float2 min = _center - _halfSize;
 			Float2 max = _center + _halfSize;
@@ -303,15 +303,15 @@ namespace mint
 			_halfSize = (max - min) * 0.5f;
 		}
 
-		void AABBCollisionShape2D::SetExpandedByRadius(const AABBCollisionShape2D& aabbCollisionShape2D, const Transform2D& transform2D, const Float2& displacement)
+		void AABBCollisionShape::SetExpandedByRadius(const AABBCollisionShape& aabbCollisionShape, const Transform2D& transform2D, const Float2& displacement)
 		{
-			const float radiusSq = aabbCollisionShape2D._halfSize._x * aabbCollisionShape2D._halfSize._x + aabbCollisionShape2D._halfSize._y * aabbCollisionShape2D._halfSize._y;
+			const float radiusSq = aabbCollisionShape._halfSize._x * aabbCollisionShape._halfSize._x + aabbCollisionShape._halfSize._y * aabbCollisionShape._halfSize._y;
 			const float radius = ::sqrt(radiusSq);
-			const Float2 position0 = aabbCollisionShape2D._center + transform2D._translation;
+			const Float2 position0 = aabbCollisionShape._center + transform2D._translation;
 			SetExpandedByRadius(radius, position0, displacement);
 		}
 
-		void AABBCollisionShape2D::SetExpandedByRadius(float radius, const Float2& center, const Float2& displacement)
+		void AABBCollisionShape::SetExpandedByRadius(float radius, const Float2& center, const Float2& displacement)
 		{
 			const Float2& position0 = center;
 			const Float2 position1 = position0 + displacement;
@@ -349,7 +349,7 @@ namespace mint
 			_halfSize._y += radius;
 		}
 
-		Float2 AABBCollisionShape2D::ComputeSupportPoint(const Float2& direction) const
+		Float2 AABBCollisionShape::ComputeSupportPoint(const Float2& direction) const
 		{
 			if (direction._x >= 0.0f)
 			{
@@ -358,7 +358,7 @@ namespace mint
 			return _center + Float2(-_halfSize._x, (direction._y >= 0.0f ? +_halfSize._y : -_halfSize._y));
 		}
 
-		void AABBCollisionShape2D::ComputeSupportEdge(const Float2& direction, Float2& outVertexA, Float2& outVertexB) const
+		void AABBCollisionShape::ComputeSupportEdge(const Float2& direction, Float2& outVertexA, Float2& outVertexB) const
 		{
 			const float diagonalLength = ::sqrt(_halfSize._x * _halfSize._x + _halfSize._y * _halfSize._y);
 			const Float2 diagonalLengthedDirection = direction * diagonalLength;
@@ -392,7 +392,7 @@ namespace mint
 			}
 		}
 
-		void AABBCollisionShape2D::DebugDrawShape(ShapeRenderer& shapeRenderer, const ByteColor& color, const Transform2D& transform2D) const
+		void AABBCollisionShape::DebugDrawShape(ShapeRenderer& shapeRenderer, const ByteColor& color, const Transform2D& transform2D) const
 		{
 			shapeRenderer.SetColor(color);
 
@@ -405,9 +405,9 @@ namespace mint
 		}
 #pragma endregion
 
-#pragma region CollisionShape2D - BoxCollisionShape2D
-		BoxCollisionShape2D::BoxCollisionShape2D(const Float2& halfSize, const Transform2D& transform2D)
-			: CollisionShape2D()
+#pragma region CollisionShape - BoxCollisionShape
+		BoxCollisionShape::BoxCollisionShape(const Float2& halfSize, const Transform2D& transform2D)
+			: CollisionShape()
 			, _center{ transform2D._translation }
 			, _halfLengthedAxisX{ Float2::kZero }
 			, _halfLengthedAxisY{ Float2::kZero }
@@ -419,8 +419,8 @@ namespace mint
 			_halfLengthedAxisY = y * halfSize._y;
 		}
 
-		BoxCollisionShape2D::BoxCollisionShape2D(const Float2& center, const Float2& halfLengthedAxisX, const Float2& halfLengthedAxisY)
-			: CollisionShape2D()
+		BoxCollisionShape::BoxCollisionShape(const Float2& center, const Float2& halfLengthedAxisX, const Float2& halfLengthedAxisY)
+			: CollisionShape()
 			, _center{ center }
 			, _halfLengthedAxisX{ halfLengthedAxisX }
 			, _halfLengthedAxisY{ halfLengthedAxisY }
@@ -428,7 +428,7 @@ namespace mint
 			__noop;
 		}
 
-		Float2 BoxCollisionShape2D::ComputeSupportPoint(const Float2& direction) const
+		Float2 BoxCollisionShape::ComputeSupportPoint(const Float2& direction) const
 		{
 			const Float2& halfSizeX = GetHalfLengthedAxisX();
 			const Float2& halfSizeY = GetHalfLengthedAxisY();
@@ -442,7 +442,7 @@ namespace mint
 			}
 		}
 
-		void BoxCollisionShape2D::ComputeSupportEdge(const Float2& direction, Float2& outVertexA, Float2& outVertexB) const
+		void BoxCollisionShape::ComputeSupportEdge(const Float2& direction, Float2& outVertexA, Float2& outVertexB) const
 		{
 			const Float2& halfSizeX = GetHalfLengthedAxisX();
 			const Float2& halfSizeY = GetHalfLengthedAxisY();
@@ -481,7 +481,7 @@ namespace mint
 			}
 		}
 
-		void BoxCollisionShape2D::DebugDrawShape(ShapeRenderer& shapeRenderer, const ByteColor& color, const Transform2D& transform2D) const
+		void BoxCollisionShape::DebugDrawShape(ShapeRenderer& shapeRenderer, const ByteColor& color, const Transform2D& transform2D) const
 		{
 			shapeRenderer.SetColor(color);
 
@@ -496,16 +496,16 @@ namespace mint
 		}
 #pragma endregion
 
-#pragma region CollisionShape2D - ConvexCollisionShape2D
-		ConvexCollisionShape2D::ConvexCollisionShape2D(const Vector<Float2>& vertices)
-			: CollisionShape2D()
+#pragma region CollisionShape - ConvexCollisionShape
+		ConvexCollisionShape::ConvexCollisionShape(const Vector<Float2>& vertices)
+			: CollisionShape()
 			, _vertices{ vertices }
 		{
 			__noop;
 		}
 
-		ConvexCollisionShape2D::ConvexCollisionShape2D(const Vector<Float2>& vertices, const Transform2D& transform2D)
-			: CollisionShape2D()
+		ConvexCollisionShape::ConvexCollisionShape(const Vector<Float2>& vertices, const Transform2D& transform2D)
+			: CollisionShape()
 			, _vertices{ vertices }
 		{
 			for (Float2& vertex : _vertices)
@@ -514,8 +514,8 @@ namespace mint
 			}
 		}
 
-		ConvexCollisionShape2D::ConvexCollisionShape2D(const ConvexCollisionShape2D& rhs, const Transform2D& transform2D)
-			: CollisionShape2D()
+		ConvexCollisionShape::ConvexCollisionShape(const ConvexCollisionShape& rhs, const Transform2D& transform2D)
+			: CollisionShape()
 			, _vertices{ rhs._vertices }
 		{
 			for (Float2& vertex : _vertices)
@@ -524,25 +524,25 @@ namespace mint
 			}
 		}
 
-		ConvexCollisionShape2D::ConvexCollisionShape2D()
-			: CollisionShape2D()
+		ConvexCollisionShape::ConvexCollisionShape()
+			: CollisionShape()
 		{
 			__noop;
 		}
 
-		ConvexCollisionShape2D ConvexCollisionShape2D::MakeFromPoints(const Vector<Float2>& points)
+		ConvexCollisionShape ConvexCollisionShape::MakeFromPoints(const Vector<Float2>& points)
 		{
-			ConvexCollisionShape2D shape(points);
+			ConvexCollisionShape shape(points);
 			GrahamScan_Convexify(shape._vertices);
 			return shape;
 		}
 
-		ConvexCollisionShape2D ConvexCollisionShape2D::MakeFromRenderingShape(const Float2& center, const Rendering::Shape& renderingShape)
+		ConvexCollisionShape ConvexCollisionShape::MakeFromRenderingShape(const Float2& center, const Rendering::Shape& renderingShape)
 		{
 			const uint32 vertexCount = renderingShape._vertices.Size();
 			if (vertexCount == 0)
 			{
-				return ConvexCollisionShape2D(Vector<Float2>());
+				return ConvexCollisionShape(Vector<Float2>());
 			}
 
 			Vector<Float2> points;
@@ -551,16 +551,16 @@ namespace mint
 			{
 				points[i] = center + renderingShape._vertices[i]._position.GetXY();
 			}
-			ConvexCollisionShape2D shape(points);
+			ConvexCollisionShape shape(points);
 			GrahamScan_Convexify(shape._vertices);
 			return shape;
 		}
 
-		ConvexCollisionShape2D ConvexCollisionShape2D::MakeMinkowskiDifferenceShape(const CollisionShape2D& a, const CollisionShape2D& b)
+		ConvexCollisionShape ConvexCollisionShape::MakeMinkowskiDifferenceShape(const CollisionShape& a, const CollisionShape& b)
 		{
 			constexpr const uint32 kSampleCount = 128;
 			const Float2x2 rotationMatrix = Float2x2::RotationMatrix(Math::kTwoPi / static_cast<float>(kSampleCount));
-			ConvexCollisionShape2D shape;
+			ConvexCollisionShape shape;
 			shape._vertices.Clear();
 			Float2 direction = Float2(1, 0);
 			for (uint32 i = 0; i < kSampleCount; ++i)
@@ -572,34 +572,34 @@ namespace mint
 			return shape;
 		}
 
-		ConvexCollisionShape2D ConvexCollisionShape2D::MakeFromCollisionShape2D(const CollisionShape2D& shape)
+		ConvexCollisionShape ConvexCollisionShape::MakeFromCollisionShape(const CollisionShape& shape)
 		{
 			if (shape.GetCollisionShapeType() == CollisionShapeType::Convex)
 			{
-				return static_cast<const ConvexCollisionShape2D&>(shape);
+				return static_cast<const ConvexCollisionShape&>(shape);
 			}
 			else if (shape.GetCollisionShapeType() == CollisionShapeType::Circle)
 			{
-				return MakeFromCircleShape2D(static_cast<const CircleCollisionShape2D&>(shape));
+				return MakeFromCircleShape(static_cast<const CircleCollisionShape&>(shape));
 			}
 			else if (shape.GetCollisionShapeType() == CollisionShapeType::Box)
 			{
-				return MakeFromBoxShape2D(static_cast<const BoxCollisionShape2D&>(shape));
+				return MakeFromBoxShape(static_cast<const BoxCollisionShape&>(shape));
 			}
 			else if (shape.GetCollisionShapeType() == CollisionShapeType::AABB)
 			{
-				return MakeFromAABBShape2D(static_cast<const AABBCollisionShape2D&>(shape));
+				return MakeFromAABBShape(static_cast<const AABBCollisionShape&>(shape));
 			}
 			else
 			{
 				MINT_NEVER;
 			}
-			return ConvexCollisionShape2D();
+			return ConvexCollisionShape();
 		}
 
-		ConvexCollisionShape2D ConvexCollisionShape2D::MakeFromAABBShape2D(const AABBCollisionShape2D& shape)
+		ConvexCollisionShape ConvexCollisionShape::MakeFromAABBShape(const AABBCollisionShape& shape)
 		{
-			ConvexCollisionShape2D result;
+			ConvexCollisionShape result;
 			result._vertices.PushBack(shape._center + Float2(-shape._halfSize._x, +shape._halfSize._y));
 			result._vertices.PushBack(shape._center + Float2(-shape._halfSize._x, -shape._halfSize._y));
 			result._vertices.PushBack(shape._center + Float2(+shape._halfSize._x, -shape._halfSize._y));
@@ -607,12 +607,12 @@ namespace mint
 			return result;
 		}
 
-		ConvexCollisionShape2D ConvexCollisionShape2D::MakeFromBoxShape2D(const BoxCollisionShape2D& shape)
+		ConvexCollisionShape ConvexCollisionShape::MakeFromBoxShape(const BoxCollisionShape& shape)
 		{
 			const Float2& halfX = shape.GetHalfLengthedAxisX();
 			const Float2& halfY = shape.GetHalfLengthedAxisY();
 
-			ConvexCollisionShape2D result;
+			ConvexCollisionShape result;
 			result._vertices.PushBack(shape._center + +halfX + +halfY);
 			result._vertices.PushBack(shape._center + -halfX + +halfY);
 			result._vertices.PushBack(shape._center + -halfX + -halfY);
@@ -620,9 +620,9 @@ namespace mint
 			return result;
 		}
 
-		ConvexCollisionShape2D ConvexCollisionShape2D::MakeFromCircleShape2D(const CircleCollisionShape2D& shape)
+		ConvexCollisionShape ConvexCollisionShape::MakeFromCircleShape(const CircleCollisionShape& shape)
 		{
-			ConvexCollisionShape2D result;
+			ConvexCollisionShape result;
 			for (uint32 i = 0; i <= 32; i++)
 			{
 				float theta = (static_cast<float>(i) / 32.0f) * Math::kTwoPi;
@@ -633,7 +633,7 @@ namespace mint
 			return result;
 		}
 
-		Float2 ConvexCollisionShape2D::ComputeSupportPoint(const Float2& direction) const
+		Float2 ConvexCollisionShape::ComputeSupportPoint(const Float2& direction) const
 		{
 			if (_vertices.IsEmpty())
 			{
@@ -645,7 +645,7 @@ namespace mint
 			return _vertices[targetVertexIndex];
 		}
 
-		void ConvexCollisionShape2D::ComputeSupportEdge(const Float2& direction, Float2& outVertexA, Float2& outVertexB) const
+		void ConvexCollisionShape::ComputeSupportEdge(const Float2& direction, Float2& outVertexA, Float2& outVertexB) const
 		{
 			uint32 targetVertexIndex = 0;
 			ComputeSupportPointIndex(direction, targetVertexIndex);
@@ -687,7 +687,7 @@ namespace mint
 			}
 		}
 
-		void ConvexCollisionShape2D::ComputeSupportPointIndex(const Float2& direction, uint32& outIndex) const
+		void ConvexCollisionShape::ComputeSupportPointIndex(const Float2& direction, uint32& outIndex) const
 		{
 			float maxDotProduct = -Math::kFloatMax;
 			const uint32 vertexCount = _vertices.Size();
@@ -702,7 +702,7 @@ namespace mint
 			}
 		}
 
-		void ConvexCollisionShape2D::DebugDrawShape(ShapeRenderer& shapeRenderer, const ByteColor& color, const Transform2D& transform2D) const
+		void ConvexCollisionShape::DebugDrawShape(ShapeRenderer& shapeRenderer, const ByteColor& color, const Transform2D& transform2D) const
 		{
 			shapeRenderer.SetColor(color);
 
@@ -719,25 +719,25 @@ namespace mint
 		}
 #pragma endregion
 
-#pragma region CollisionShape2D - CompositeCollisionShape2D
-		CompositeCollisionShape2D::CompositeCollisionShape2D(const Vector<ShapeInstance>& shapeInstances)
+#pragma region CollisionShape - CompositeCollisionShape
+		CompositeCollisionShape::CompositeCollisionShape(const Vector<ShapeInstance>& shapeInstances)
 			: _shapeInstances{ shapeInstances }
 		{
 			__noop;
 		}
 
-		Float2 CompositeCollisionShape2D::ComputeSupportPoint(const Float2& direction) const
+		Float2 CompositeCollisionShape::ComputeSupportPoint(const Float2& direction) const
 		{
 			MINT_NEVER;
 			return Float2::kZero;
 		}
 
-		void CompositeCollisionShape2D::ComputeSupportEdge(const Float2& direction, Float2& outVertexA, Float2& outVertexB) const
+		void CompositeCollisionShape::ComputeSupportEdge(const Float2& direction, Float2& outVertexA, Float2& outVertexB) const
 		{
 			MINT_NEVER;
 		}
 
-		void CompositeCollisionShape2D::DebugDrawShape(ShapeRenderer& shapeRenderer, const ByteColor& color, const Transform2D& transform2D) const
+		void CompositeCollisionShape::DebugDrawShape(ShapeRenderer& shapeRenderer, const ByteColor& color, const Transform2D& transform2D) const
 		{
 			for (const ShapeInstance& shapeInstance : _shapeInstances)
 			{

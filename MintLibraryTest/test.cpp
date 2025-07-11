@@ -58,7 +58,7 @@ void RunGJKTestWindow()
 {
 	using namespace mint;
 	using namespace Rendering;
-	using namespace Physics;
+	using namespace Physics2D;
 
 	WindowCreationDesc windowCreationDesc;
 	windowCreationDesc._position.Set(200, 100);
@@ -172,10 +172,10 @@ void RunGJKTestWindow()
 			{
 				graphicsDevice.SetViewProjectionMatrix(Float4x4::kIdentity, Float4x4::ProjectionMatrix2DNormal(windowSize._x, windowSize._y));
 
-				CircleCollisionShape2D shapeA = CircleCollisionShape2D(64, shapeATransform2D);
-				//EdgeCollisionShape2D shapeB = EdgeCollisionShape2D(Float2(-64, 0), Float2(64, 0), shapeBTransform2D);
-				BoxCollisionShape2D shapeB = BoxCollisionShape2D(Float2(32, 32), shapeBTransform2D);
-				//ConvexCollisionShape2D shapeB = ConvexCollisionShape2D({ Float2(-10, 80), Float2(-10, -20), Float2(80, -10), Float2(40, 70) }, shapeBTransform2D);
+				CircleCollisionShape shapeA = CircleCollisionShape(64, shapeATransform2D);
+				//EdgeCollisionShape shapeB = EdgeCollisionShape(Float2(-64, 0), Float2(64, 0), shapeBTransform2D);
+				BoxCollisionShape shapeB = BoxCollisionShape(Float2(32, 32), shapeBTransform2D);
+				//ConvexCollisionShape shapeB = ConvexCollisionShape({ Float2(-10, 80), Float2(-10, -20), Float2(80, -10), Float2(40, 70) }, shapeBTransform2D);
 				const bool intersects = Intersect2D_GJK(shapeA, shapeB, &gjk2DInfo);
 
 				const ByteColor kShapeAColor(255, 0, 0);
@@ -186,7 +186,7 @@ void RunGJKTestWindow()
 
 				// Minkowski Difference Shape
 				const ByteColor kShapeMDColor(64, 64, 64);
-				ConvexCollisionShape2D shapeMD{ ConvexCollisionShape2D::MakeMinkowskiDifferenceShape(shapeA, shapeB) };
+				ConvexCollisionShape shapeMD{ ConvexCollisionShape::MakeMinkowskiDifferenceShape(shapeA, shapeB) };
 				shapeMD.DebugDrawShape(shapeRenderer, kShapeMDColor, Transform2D::GetIdentity());
 
 				// Simplex
@@ -281,9 +281,9 @@ void RunSplineTestWindow()
 		shapeComponent._shapes[static_cast<uint32>(GUIInteractionState::Pressed)] = pressedShape;
 		guiSystem.AttachComponent(guiControlPointControlTemplate, std::move(shapeComponent));
 
-		GUICollisionShape2DComponent collisionShape2DComponent;
-		collisionShape2DComponent._collisionShape2D = MakeShared<Physics::CollisionShape2D>(Physics::ConvexCollisionShape2D::MakeFromRenderingShape(Float2::kZero, defaultShape));
-		guiSystem.AttachComponent(guiControlPointControlTemplate, std::move(collisionShape2DComponent));
+		GUICollisionShapeComponent collisionShapeComponent;
+		collisionShapeComponent._collisionShape = MakeShared<Physics2D::CollisionShape>(Physics2D::ConvexCollisionShape::MakeFromRenderingShape(Float2::kZero, defaultShape));
+		guiSystem.AttachComponent(guiControlPointControlTemplate, std::move(collisionShapeComponent));
 
 		GUITextComponent textComponent;
 		textComponent._offset = Float2(0, 16);
@@ -331,7 +331,7 @@ bool Run2DTestWindow()
 {
 	using namespace mint;
 	using namespace Rendering;
-	using namespace Physics;
+	using namespace Physics2D;
 	using namespace Game;
 
 	WindowCreationDesc windowCreationDesc;
@@ -374,7 +374,7 @@ bool Run2DTestWindow()
 	{
 		const Shape& shape = sceneObjectRegistry.GetComponentMust<Mesh2DComponent>(sceneObject0)._shape;
 		Collision2DComponent collision2DComponent;
-		collision2DComponent._collisionShape2D = MakeShared<CollisionShape2D>(ConvexCollisionShape2D::MakeFromRenderingShape(Float2::kZero, shape));
+		collision2DComponent._collisionShape = MakeShared<CollisionShape>(ConvexCollisionShape::MakeFromRenderingShape(Float2::kZero, shape));
 		sceneObjectRegistry.AttachComponent(sceneObject0, std::move(collision2DComponent));
 	}
 
@@ -391,7 +391,7 @@ bool Run2DTestWindow()
 	{
 		const Shape& shape = sceneObjectRegistry.GetComponentMust<Mesh2DComponent>(sceneObject1)._shape;
 		Collision2DComponent collision2DComponent;
-		collision2DComponent._collisionShape2D = MakeShared<CollisionShape2D>(ConvexCollisionShape2D::MakeFromRenderingShape(Float2::kZero, shape));
+		collision2DComponent._collisionShape = MakeShared<CollisionShape>(ConvexCollisionShape::MakeFromRenderingShape(Float2::kZero, shape));
 		sceneObjectRegistry.AttachComponent(sceneObject1, std::move(collision2DComponent));
 	}
 
@@ -571,7 +571,7 @@ bool RunPhysics2DTestWindow()
 {
 	using namespace mint;
 	using namespace Rendering;
-	using namespace Physics;
+	using namespace Physics2D;
 	using namespace Game;
 
 	WindowCreationDesc windowCreationDesc;
@@ -609,7 +609,7 @@ bool RunPhysics2DTestWindow()
 	{
 		const Shape& shape = sceneObjectRegistry.GetComponentMust<Mesh2DComponent>(sceneObject0)._shape;
 		Collision2DComponent collision2DComponent;
-		collision2DComponent._collisionShape2D = MakeShared<CollisionShape2D>(ConvexCollisionShape2D::MakeFromRenderingShape(Float2::kZero, shape));
+		collision2DComponent._collisionShape = MakeShared<CollisionShape>(ConvexCollisionShape::MakeFromRenderingShape(Float2::kZero, shape));
 		sceneObjectRegistry.AttachComponent(sceneObject0, std::move(collision2DComponent));
 	}
 	{
@@ -627,7 +627,7 @@ bool RunPhysics2DTestWindow()
 	{
 		const Shape& shape = sceneObjectRegistry.GetComponentMust<Mesh2DComponent>(sceneObject1)._shape;
 		Collision2DComponent collision2DComponent;
-		collision2DComponent._collisionShape2D = MakeShared<CollisionShape2D>(ConvexCollisionShape2D::MakeFromRenderingShape(Float2::kZero, shape));
+		collision2DComponent._collisionShape = MakeShared<CollisionShape>(ConvexCollisionShape::MakeFromRenderingShape(Float2::kZero, shape));
 		sceneObjectRegistry.AttachComponent(sceneObject1, std::move(collision2DComponent));
 	}
 	sceneObjectRegistry.GetComponentMust<TransformComponent>(sceneObject1)._transform._translation = Float3(0.5f, 0.0f, 0.0f);
@@ -645,7 +645,7 @@ bool RunPhysics2DTestWindow()
 	{
 		const Shape& shape = sceneObjectRegistry.GetComponentMust<Mesh2DComponent>(sceneObjectFloor)._shape;
 		Collision2DComponent collision2DComponent;
-		collision2DComponent._collisionShape2D = MakeShared<CollisionShape2D>(ConvexCollisionShape2D::MakeFromRenderingShape(Float2::kZero, shape));
+		collision2DComponent._collisionShape = MakeShared<CollisionShape>(ConvexCollisionShape::MakeFromRenderingShape(Float2::kZero, shape));
 		sceneObjectRegistry.AttachComponent(sceneObjectFloor, std::move(collision2DComponent));
 	}
 	sceneObjectRegistry.GetComponentMust<TransformComponent>(sceneObjectFloor)._transform._translation = Float3(0.0f, -3.0f, 0.0f);

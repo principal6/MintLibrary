@@ -10,7 +10,7 @@
 
 namespace mint
 {
-	namespace Physics
+	namespace PhysicsCommon
 	{
 		template<typename T>
 		class PhysicsObjectPool

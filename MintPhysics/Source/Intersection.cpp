@@ -8,7 +8,7 @@
 
 namespace mint
 {
-	namespace Physics
+	namespace Physics2D
 	{
 		GJK2DSimplex::GJK2DSimplex()
 			: _validPointCount{ 0 }
@@ -93,7 +93,7 @@ namespace mint
 			return _points[closestPointIndex];
 		}
 
-		MINT_INLINE Float2 GJK2D_ComputeMinkowskiDifferencePoint(const CollisionShape2D& shapeA, const CollisionShape2D& shapeB, const Float2& direction)
+		MINT_INLINE Float2 GJK2D_ComputeMinkowskiDifferencePoint(const CollisionShape& shapeA, const CollisionShape& shapeB, const Float2& direction)
 		{
 			return shapeA.ComputeSupportPoint(direction) - shapeB.ComputeSupportPoint(-direction);
 		}
@@ -187,7 +187,7 @@ namespace mint
 			return false;
 		}
 
-		bool Intersect2D_AABB_AABB(const AABBCollisionShape2D& shapeA, const AABBCollisionShape2D& shapeB)
+		bool Intersect2D_AABB_AABB(const AABBCollisionShape& shapeA, const AABBCollisionShape& shapeB)
 		{
 			Float2 minA = shapeA._center - shapeA._halfSize;
 			Float2 maxA = shapeA._center + shapeA._halfSize;
@@ -200,7 +200,7 @@ namespace mint
 			return true;
 		}
 
-		bool Intersect2D_GJK(const CollisionShape2D& shapeA, const CollisionShape2D& shapeB, GJK2DInfo* const outGJK2DInfo)
+		bool Intersect2D_GJK(const CollisionShape& shapeA, const CollisionShape& shapeB, GJK2DInfo* const outGJK2DInfo)
 		{
 			Float2 direction = Float2(1, 0);
 			if (outGJK2DInfo != nullptr)
@@ -292,7 +292,7 @@ namespace mint
 			return edgeVertex1 + tangent * Max(0.0f, Min(d, edgeLength));
 		}
 
-		void ComputePenetration_EPA(const CollisionShape2D& shapeA, const CollisionShape2D& shapeB, const GJK2DInfo& gjk2DInfo, Float2& outNormal, float& outDistance, EPA2DInfo& epa2DInfo)
+		void ComputePenetration_EPA(const CollisionShape& shapeA, const CollisionShape& shapeB, const GJK2DInfo& gjk2DInfo, Float2& outNormal, float& outDistance, EPA2DInfo& epa2DInfo)
 		{
 			epa2DInfo._iteration = 0;
 			epa2DInfo._points.Clear();

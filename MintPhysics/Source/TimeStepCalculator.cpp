@@ -3,7 +3,7 @@
 
 namespace mint
 {
-	namespace Physics
+	namespace PhysicsCommon
 	{
 		FixedTimeStepCalculator::FixedTimeStepCalculator(const float fixedDeltaTime)
 			: kFixedDeltaTime{ fixedDeltaTime }

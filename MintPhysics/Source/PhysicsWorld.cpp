@@ -11,7 +11,7 @@
 
 namespace mint
 {
-	namespace Physics
+	namespace Physics2D
 	{
 #pragma region Body2D
 		Body2D::Body2D()
@@ -113,10 +113,10 @@ namespace mint
 			{
 				Body2D body;
 				body._bodyID = bodyID;
-				body._shape._collisionShape = body2DCreationDesc._collisionShape2D;
-				body._shape._shapeAABB = MakeShared<AABBCollisionShape2D>(AABBCollisionShape2D(*body._shape._collisionShape));
+				body._shape._collisionShape = body2DCreationDesc._collisionShape;
+				body._shape._shapeAABB = MakeShared<AABBCollisionShape>(AABBCollisionShape(*body._shape._collisionShape));
 				body._transform2D = body2DCreationDesc._transform2D;
-				body._bodyAABB = MakeShared<AABBCollisionShape2D>(AABBCollisionShape2D(*body._shape._shapeAABB, body._transform2D));
+				body._bodyAABB = MakeShared<AABBCollisionShape>(AABBCollisionShape(*body._shape._shapeAABB, body._transform2D));
 				body._bodyMotionType = body2DCreationDesc._bodyMotionType;
 				_bodyPool.Create(slotIndex, std::move(body));
 
@@ -242,7 +242,7 @@ namespace mint
 			}
 		}
 
-		bool World::StepCollide_NarrowPhase_CCD(float deltaTime, const Body2D& bodyA, const Body2D& bodyB, Physics::GJK2DInfo& gjk2DInfo, SharedPtr<CollisionShape2D>& outShapeA, SharedPtr<CollisionShape2D>& outShapeB)
+		bool World::StepCollide_NarrowPhase_CCD(float deltaTime, const Body2D& bodyA, const Body2D& bodyB, Physics2D::GJK2DInfo& gjk2DInfo, SharedPtr<CollisionShape>& outShapeA, SharedPtr<CollisionShape>& outShapeB)
 		{
 			float fraction = 1.0f;
 			float range = 2.0f;
@@ -255,8 +255,8 @@ namespace mint
 				Transform2D predictedBodyTransformA = PredictBodyTransform(bodyA, fractionDeltaTime);
 				Transform2D predictedBodyTransformB = PredictBodyTransform(bodyB, fractionDeltaTime);
 
-				outShapeA = CollisionShape2D::MakeTransformed(bodyA._shape._collisionShape, predictedBodyTransformA);
-				outShapeB = CollisionShape2D::MakeTransformed(bodyB._shape._collisionShape, predictedBodyTransformB);
+				outShapeA = CollisionShape::MakeTransformed(bodyA._shape._collisionShape, predictedBodyTransformA);
+				outShapeB = CollisionShape::MakeTransformed(bodyB._shape._collisionShape, predictedBodyTransformB);
 				const bool intersected = Intersect2D_GJK(*outShapeA, *outShapeB, &gjk2DInfo);
 				if (intersected)
 				{
@@ -302,8 +302,8 @@ namespace mint
 				if (relativeLinearVelocity != Float2::kZero)
 				{
 					// Continuous collision detection
-					SharedPtr<CollisionShape2D> transformedShapeA;
-					SharedPtr<CollisionShape2D> transformedShapeB;
+					SharedPtr<CollisionShape> transformedShapeA;
+					SharedPtr<CollisionShape> transformedShapeB;
 					if (StepCollide_NarrowPhase_CCD(deltaTime, bodyA, bodyB, gjk2DInfo, transformedShapeA, transformedShapeB))
 					{
 						StepCollide_NarrowPhase_GenerateCollision(bodyA, *transformedShapeA, bodyB, *transformedShapeB, gjk2DInfo, collisionManifold2D);
@@ -312,8 +312,8 @@ namespace mint
 				else
 				{
 					// Discrete collision detection
-					SharedPtr<CollisionShape2D> transformedShapeA{ CollisionShape2D::MakeTransformed(bodyA._shape._collisionShape, bodyA._transform2D) };
-					SharedPtr<CollisionShape2D> transformedShapeB{ CollisionShape2D::MakeTransformed(bodyB._shape._collisionShape, bodyB._transform2D) };
+					SharedPtr<CollisionShape> transformedShapeA{ CollisionShape::MakeTransformed(bodyA._shape._collisionShape, bodyA._transform2D) };
+					SharedPtr<CollisionShape> transformedShapeB{ CollisionShape::MakeTransformed(bodyB._shape._collisionShape, bodyB._transform2D) };
 					if (Intersect2D_GJK(*transformedShapeA, *transformedShapeB, &gjk2DInfo))
 					{
 						StepCollide_NarrowPhase_GenerateCollision(bodyA, *transformedShapeA, bodyB, *transformedShapeB, gjk2DInfo, collisionManifold2D);
@@ -335,7 +335,7 @@ namespace mint
 			}
 		}
 
-		void World::StepCollide_NarrowPhase_GenerateCollision(const Body2D& bodyA, const CollisionShape2D& bodyShapeA, const Body2D& bodyB, const CollisionShape2D& bodyShapeB, const Physics::GJK2DInfo& gjk2DInfo, CollisionManifold2D& outCollisionManifold2D) const
+		void World::StepCollide_NarrowPhase_GenerateCollision(const Body2D& bodyA, const CollisionShape& bodyShapeA, const Body2D& bodyB, const CollisionShape& bodyShapeB, const Physics2D::GJK2DInfo& gjk2DInfo, CollisionManifold2D& outCollisionManifold2D) const
 		{
 			outCollisionManifold2D._bodyIDA = bodyA._bodyID;
 			outCollisionManifold2D._bodyIDB = bodyB._bodyID;
@@ -396,8 +396,8 @@ namespace mint
 						// TODO: Resolve Penetration!
 						if (collisionManifold2D._signedDistance < 0.0f)
 						{
-							SharedPtr<CollisionShape2D> transformedShapeA{ CollisionShape2D::MakeTransformed(bodyA->_shape._collisionShape, bodyA->_transform2D) };
-							SharedPtr<CollisionShape2D> transformedShapeB{ CollisionShape2D::MakeTransformed(bodyB->_shape._collisionShape, bodyB->_transform2D) };
+							SharedPtr<CollisionShape> transformedShapeA{ CollisionShape::MakeTransformed(bodyA->_shape._collisionShape, bodyA->_transform2D) };
+							SharedPtr<CollisionShape> transformedShapeB{ CollisionShape::MakeTransformed(bodyB->_shape._collisionShape, bodyB->_transform2D) };
 							if (Intersect2D_GJK(*transformedShapeA, *transformedShapeB, &gjk2DInfo))
 							{
 								CollisionManifold2D newCollisionManifold2D;
@@ -508,7 +508,7 @@ namespace mint
 			_worldHistory._stepSnapshots.Push(stepSnapshot);
 		}
 
-		void World::ComputeCollisionSectorIndices(const Physics::AABBCollisionShape2D& aabb, const Float2& worldMin, const Float2& collisionSectorSize, Vector<uint32>& outIndices) const
+		void World::ComputeCollisionSectorIndices(const Physics2D::AABBCollisionShape& aabb, const Float2& worldMin, const Float2& collisionSectorSize, Vector<uint32>& outIndices) const
 		{
 			const Float2 aabbMax = aabb._center + aabb._halfSize;
 			const Float2 aabbMin = aabb._center - aabb._halfSize;
@@ -527,7 +527,7 @@ namespace mint
 			outIndices[3] = ComputeCollisionSectorIndex(Int2(p3FromMin / collisionSectorSize));
 		}
 
-		uint32 World::ComputeCollisionSectorIndex(const Physics::AABBCollisionShape2D& aabb, const Float2& worldMin, const Float2& collisionSectorSize) const
+		uint32 World::ComputeCollisionSectorIndex(const Physics2D::AABBCollisionShape& aabb, const Float2& worldMin, const Float2& collisionSectorSize) const
 		{
 			const Float2 centerFromMin = aabb._center - worldMin;
 			return ComputeCollisionSectorIndex(Int2(centerFromMin / collisionSectorSize));
