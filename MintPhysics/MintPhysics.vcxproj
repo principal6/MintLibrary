@@ -156,6 +156,7 @@
     <ClInclude Include="Include\CollisionShape.h" />
     <ClInclude Include="Include\Intersection.h" />
     <ClInclude Include="Include\Intersection.hpp" />
+    <ClInclude Include="Include\PhysicsCommon.h" />
     <ClInclude Include="Include\PhysicsObjectPool.h" />
     <ClInclude Include="Include\PhysicsWorld.h" />
     <ClInclude Include="Include\TestPhysics.h" />

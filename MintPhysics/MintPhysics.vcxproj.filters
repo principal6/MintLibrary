@@ -36,6 +36,9 @@
     <ClInclude Include="Include\PhysicsObjectPool.h">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="Include\PhysicsCommon.h">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\TimeStepCalculator.cpp">

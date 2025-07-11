@@ -12,6 +12,7 @@
 #include <MintContainer/Include/ID.h>
 #include <MintMath/Include/Float3.h>
 #include <MintMath/Include/Transform.h>
+#include <MintPhysics/Include/PhysicsCommon.h>
 #include <MintPhysics/Include/CollisionShape.h>
 #include <MintPhysics/Include/PhysicsObjectPool.h>
 
@@ -20,7 +21,6 @@ namespace mint
 {
 	namespace Physics2D
 	{
-		class World;
 		struct GJKInfo;
 	}
 }
@@ -29,26 +29,10 @@ namespace mint
 {
 	namespace Physics2D
 	{
-		class BodyID : public ID32
-		{
-			friend World;
-			BodyID(uint32 value) : ID32() { Assign(value); }
-
-		public:
-			BodyID() = default;
-		};
-
 		struct BodyShape
 		{
 			SharedPtr<CollisionShape> _collisionShape;
 			SharedPtr<AABBCollisionShape> _shapeAABB;
-		};
-
-		enum class BodyMotionType
-		{
-			Static,
-			Dynamic,
-			KeyFramed,
 		};
 
 		class Body
@@ -206,7 +190,7 @@ namespace mint
 			void RenderDebugCollisionManifold(Rendering::ShapeRenderer& shapeRenderer, const CollisionManifold& collisionManifold) const;
 
 		public:
-			PhysicsCommon::PhysicsObjectPool<Body> _bodyPool;
+			PhysicsObjectPool<Body> _bodyPool;
 
 		private:
 			Float2 _worldMin;

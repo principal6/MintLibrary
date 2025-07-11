@@ -5,6 +5,7 @@
 #define _MINT_PHYSICS_ALL_HEADERS_H_
 
 
+#include <MintPhysics/Include/PhysicsCommon.h>
 #include <MintPhysics/Include/CollisionShape.h>
 #include <MintPhysics/Include/Intersection.h>
 #include <MintPhysics/Include/TimeStepCalculator.h>
