@@ -98,7 +98,7 @@ namespace mint
 		{
 			for (int32 i = 0; i < N; ++i)
 			{
-				vec[i] = Math::getNAN();
+				vec[i] = Math::GetNAN();
 			}
 		}
 
@@ -581,7 +581,7 @@ namespace mint
 		{
 			for (uint32 i = 0; i < N; ++i)
 			{
-				in.SetComponent(i, Math::getNAN());
+				in.SetComponent(i, Math::GetNAN());
 			}
 		}
 

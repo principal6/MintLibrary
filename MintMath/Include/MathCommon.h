@@ -59,7 +59,7 @@ namespace mint
 			return Clamp(value, 0.0, 1.0);
 		}
 
-		MINT_INLINE constexpr float getNAN() noexcept
+		MINT_INLINE constexpr float GetNAN() noexcept
 		{
 			return static_cast<float>(1e+300 * 1e+300) * 0.0f;
 		}

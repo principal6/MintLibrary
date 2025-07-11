@@ -10,7 +10,7 @@ namespace mint
 	const Float2 Float2::kOne = Float2(+1.0f);
 	const Float2 Float2::kNegativeOne = Float2(-1.0f);
 	const Float2 Float2::kMax = Float2(Math::kFloatMax);
-	const Float2 Float2::kNan = Float2(Math::getNAN());
+	const Float2 Float2::kNan = Float2(Math::GetNAN());
 
 	Float2::Float2(const Int2& rhs)
 		: Float2(static_cast<float>(rhs._x), static_cast<float>(rhs._y))

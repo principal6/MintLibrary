@@ -286,7 +286,7 @@ namespace mint
 		}
 
 		template<typename T>
-		MINT_INLINE T determinantOfMinor(const T(&mat)[3][3], const int32 row, const int32 col) noexcept
+		MINT_INLINE T DeterminantOfMinor(const T(&mat)[3][3], const int32 row, const int32 col) noexcept
 		{
 			// 0 => 1 2
 			// 1 => 0 2
@@ -299,7 +299,7 @@ namespace mint
 		}
 
 		template<typename T>
-		MINT_INLINE T determinantOfMinor(const T(&mat)[4][4], const int32 row, const int32 col) noexcept
+		MINT_INLINE T DeterminantOfMinor(const T(&mat)[4][4], const int32 row, const int32 col) noexcept
 		{
 			// 0 => 1 2 3
 			// 1 => 0 2 3
@@ -317,27 +317,27 @@ namespace mint
 		template<typename T>
 		MINT_INLINE T Determinant(const T(&mat)[4][4]) noexcept
 		{
-			return mat[0][0] * determinantOfMinor(mat, 0, 0) - mat[0][1] * determinantOfMinor(mat, 0, 1)
-				+ mat[0][2] * determinantOfMinor(mat, 0, 2) - mat[0][3] * determinantOfMinor(mat, 0, 3);
+			return mat[0][0] * DeterminantOfMinor(mat, 0, 0) - mat[0][1] * DeterminantOfMinor(mat, 0, 1)
+				+ mat[0][2] * DeterminantOfMinor(mat, 0, 2) - mat[0][3] * DeterminantOfMinor(mat, 0, 3);
 		}
 
 		// transpose of cofactor
 		template<typename T>
 		MINT_INLINE void Adjugate(const T(&in)[3][3], T(&out)[3][3]) noexcept
 		{
-			out[0][0] = +determinantOfMinor(in, 0, 0); out[1][0] = -determinantOfMinor(in, 0, 1); out[2][0] = +determinantOfMinor(in, 0, 2);
-			out[0][1] = -determinantOfMinor(in, 1, 0); out[1][1] = +determinantOfMinor(in, 1, 1); out[2][1] = -determinantOfMinor(in, 1, 2);
-			out[0][2] = +determinantOfMinor(in, 2, 0); out[1][2] = -determinantOfMinor(in, 2, 1); out[2][2] = +determinantOfMinor(in, 2, 2);
+			out[0][0] = +DeterminantOfMinor(in, 0, 0); out[1][0] = -DeterminantOfMinor(in, 0, 1); out[2][0] = +DeterminantOfMinor(in, 0, 2);
+			out[0][1] = -DeterminantOfMinor(in, 1, 0); out[1][1] = +DeterminantOfMinor(in, 1, 1); out[2][1] = -DeterminantOfMinor(in, 1, 2);
+			out[0][2] = +DeterminantOfMinor(in, 2, 0); out[1][2] = -DeterminantOfMinor(in, 2, 1); out[2][2] = +DeterminantOfMinor(in, 2, 2);
 		}
 
 		// transpose of cofactor
 		template<typename T>
 		MINT_INLINE void Adjugate(const T(&in)[4][4], T(&out)[4][4]) noexcept
 		{
-			out[0][0] = +determinantOfMinor(in, 0, 0); out[1][0] = -determinantOfMinor(in, 0, 1); out[2][0] = +determinantOfMinor(in, 0, 2); out[3][0] = -determinantOfMinor(in, 0, 3);
-			out[0][1] = -determinantOfMinor(in, 1, 0); out[1][1] = +determinantOfMinor(in, 1, 1); out[2][1] = -determinantOfMinor(in, 1, 2); out[3][1] = +determinantOfMinor(in, 1, 3);
-			out[0][2] = +determinantOfMinor(in, 2, 0); out[1][2] = -determinantOfMinor(in, 2, 1); out[2][2] = +determinantOfMinor(in, 2, 2); out[3][2] = -determinantOfMinor(in, 2, 3);
-			out[0][3] = -determinantOfMinor(in, 3, 0); out[1][3] = +determinantOfMinor(in, 3, 1); out[2][3] = -determinantOfMinor(in, 3, 2); out[3][3] = +determinantOfMinor(in, 3, 3);
+			out[0][0] = +DeterminantOfMinor(in, 0, 0); out[1][0] = -DeterminantOfMinor(in, 0, 1); out[2][0] = +DeterminantOfMinor(in, 0, 2); out[3][0] = -DeterminantOfMinor(in, 0, 3);
+			out[0][1] = -DeterminantOfMinor(in, 1, 0); out[1][1] = +DeterminantOfMinor(in, 1, 1); out[2][1] = -DeterminantOfMinor(in, 1, 2); out[3][1] = +DeterminantOfMinor(in, 1, 3);
+			out[0][2] = +DeterminantOfMinor(in, 2, 0); out[1][2] = -DeterminantOfMinor(in, 2, 1); out[2][2] = +DeterminantOfMinor(in, 2, 2); out[3][2] = -DeterminantOfMinor(in, 2, 3);
+			out[0][3] = -DeterminantOfMinor(in, 3, 0); out[1][3] = +DeterminantOfMinor(in, 3, 1); out[2][3] = -DeterminantOfMinor(in, 3, 2); out[3][3] = +DeterminantOfMinor(in, 3, 3);
 		}
 	}
 
