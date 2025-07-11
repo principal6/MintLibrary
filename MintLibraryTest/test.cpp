@@ -663,10 +663,12 @@ bool RunPhysics2DTestWindow()
 
 			const RigidBodyComponent& rigidBodyComponent0 = sceneObjectRegistry.GetComponentMust<RigidBodyComponent>(sceneObject0);
 			const RigidBodyComponent& rigidBodyComponent1 = sceneObjectRegistry.GetComponentMust<RigidBodyComponent>(sceneObject1);
-			
+			const Body& bodyA = physicsWorld.GetBody(rigidBodyComponent0._bodyID);
+			const Body& bodyB = physicsWorld.GetBody(rigidBodyComponent1._bodyID);
+
 			ParticleDistanceConstraint particleDistanceConstraint;
-			particleDistanceConstraint._bodyAID = rigidBodyComponent0._bodyID;
-			particleDistanceConstraint._bodyBID = rigidBodyComponent1._bodyID;
+			particleDistanceConstraint._bodyAID = bodyA._bodyID;
+			particleDistanceConstraint._bodyBID = bodyB._bodyID;
 			particleDistanceConstraint._distance = 0.5f;
 
 			const uint32 kConstraintSubStepCount = 4;
@@ -677,11 +679,8 @@ bool RunPhysics2DTestWindow()
 
 			physicsWorld.Step(kTimeStep);
 
-			const Body& bodyA = physicsWorld.GetBody(rigidBodyComponent0._bodyID);
-			const Body& bodyB = physicsWorld.GetBody(rigidBodyComponent1._bodyID);
 ;			const Transform2D& transformA = bodyA._transform2D;
 			const Transform2D& transformB = bodyB._transform2D;
-
 			Transform& transform0 = sceneObjectRegistry.GetComponentMust<TransformComponent>(sceneObject0)._transform;
 			transform0._translation = Float3(transformA._translation._x, transformA._translation._y, 0.0f);
 			Transform& transform1 = sceneObjectRegistry.GetComponentMust<TransformComponent>(sceneObject1)._transform;
