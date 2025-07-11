@@ -70,8 +70,8 @@ void RunGJKTestWindow()
 	appCreationDesc._appType = AppType::Default2D;
 	mint::App app{ windowCreationDesc, appCreationDesc };
 
-	GJK2DInfo gjk2DInfo;
-	EPA2DInfo epa2DInfo;
+	GJKInfo gjkInfo;
+	EPAInfo epaInfo;
 	GraphicsDevice& graphicsDevice = app.GetGraphicsDevice();
 	FontRenderer& fontRenderer = graphicsDevice.GetFontRenderer();
 	ShapeRenderer& shapeRenderer = graphicsDevice.GetShapeRenderer();
@@ -99,19 +99,19 @@ void RunGJKTestWindow()
 
 			if (inputContext.IsKeyDown(KeyCode::W) == true)
 			{
-				++gjk2DInfo._maxLoopCount;
+				++gjkInfo._maxLoopCount;
 			}
 			else if (inputContext.IsKeyDown(KeyCode::Q) == true)
 			{
-				--gjk2DInfo._maxLoopCount;
+				--gjkInfo._maxLoopCount;
 			}
 			else if (inputContext.IsKeyDown(KeyCode::S) == true)
 			{
-				++epa2DInfo._maxIterationCount;
+				++epaInfo._maxIterationCount;
 			}
 			else if (inputContext.IsKeyDown(KeyCode::A) == true)
 			{
-				--epa2DInfo._maxIterationCount;
+				--epaInfo._maxIterationCount;
 			}
 			else if (inputContext.IsKeyDown(KeyCode::Num1) == true)
 			{
@@ -176,7 +176,7 @@ void RunGJKTestWindow()
 				//EdgeCollisionShape shapeB = EdgeCollisionShape(Float2(-64, 0), Float2(64, 0), shapeBTransform2D);
 				BoxCollisionShape shapeB = BoxCollisionShape(Float2(32, 32), shapeBTransform2D);
 				//ConvexCollisionShape shapeB = ConvexCollisionShape({ Float2(-10, 80), Float2(-10, -20), Float2(80, -10), Float2(40, 70) }, shapeBTransform2D);
-				const bool intersects = Intersect2D_GJK(shapeA, shapeB, &gjk2DInfo);
+				const bool intersects = Intersect_GJK(shapeA, shapeB, &gjkInfo);
 
 				const ByteColor kShapeAColor(255, 0, 0);
 				const ByteColor kShapeBColor(64, 128, 0);
@@ -190,7 +190,7 @@ void RunGJKTestWindow()
 				shapeMD.DebugDrawShape(shapeRenderer, kShapeMDColor, Transform2D::GetIdentity());
 
 				// Simplex
-				gjk2DInfo._simplex.DebugDrawShape(shapeRenderer, ByteColor(255, 0, 255), Transform2D::GetIdentity());
+				gjkInfo._simplex.DebugDrawShape(shapeRenderer, ByteColor(255, 0, 255), Transform2D::GetIdentity());
 
 				// Grid
 				shapeRenderer.SetColor(kShapeMDColor);
@@ -198,29 +198,29 @@ void RunGJKTestWindow()
 				shapeRenderer.DrawLine(Float2(-800, 0), Float2(800, 0), 1.0f);
 
 				//// Direction
-				//shapeRenderer.DrawArrow(shapeATransform2D._translation, shapeATransform2D._translation + gjk2DInfo._direction * 50.0f, 1.0f, 0.125f, 4.0f);
-				//shapeRenderer.DrawArrow(shapeBTransform2D._translation, shapeBTransform2D._translation - gjk2DInfo._direction * 50.0f, 1.0f, 0.125f, 4.0f);
-				//shapeRenderer.DrawArrow(Float2::kZero, gjk2DInfo._direction * 100.0f, 2.0f, 0.125f, 4.0f);
+				//shapeRenderer.DrawArrow(shapeATransform2D._translation, shapeATransform2D._translation + gjkInfo._direction * 50.0f, 1.0f, 0.125f, 4.0f);
+				//shapeRenderer.DrawArrow(shapeBTransform2D._translation, shapeBTransform2D._translation - gjkInfo._direction * 50.0f, 1.0f, 0.125f, 4.0f);
+				//shapeRenderer.DrawArrow(Float2::kZero, gjkInfo._direction * 100.0f, 2.0f, 0.125f, 4.0f);
 
 				if (intersects)
 				{
 					Float2 normal = Float2(0, 1);
 					float distance = 0.0f;
-					ComputePenetration_EPA(shapeA, shapeB, gjk2DInfo, normal, distance, epa2DInfo);
-					//epa2DInfo._simplex.DebugDrawShape(shapeRenderer, ByteColor(0, 64, 255), Transform2D::GetIdentity());
+					ComputePenetration_EPA(shapeA, shapeB, gjkInfo, normal, distance, epaInfo);
+					//epaInfo._simplex.DebugDrawShape(shapeRenderer, ByteColor(0, 64, 255), Transform2D::GetIdentity());
 
 					shapeRenderer.SetColor(ByteColor(0, 64, 255));
 					shapeRenderer.DrawCircle(Float3(shapeA.ComputeSupportPoint(+normal)), 4.0f);
 					shapeRenderer.DrawCircle(Float3(shapeB.ComputeSupportPoint(-normal)), 4.0f);
 
-					const uint32 pointCount = epa2DInfo._points.Size();
+					const uint32 pointCount = epaInfo._points.Size();
 					for (uint32 i = 1; i < pointCount; ++i)
 					{
-						shapeRenderer.DrawLine(epa2DInfo._points[i - 1], epa2DInfo._points[i], 2.0f);
+						shapeRenderer.DrawLine(epaInfo._points[i - 1], epaInfo._points[i], 2.0f);
 					}
 					if (pointCount > 0)
 					{
-						shapeRenderer.DrawLine(epa2DInfo._points.Back(), epa2DInfo._points[0], 2.0f);
+						shapeRenderer.DrawLine(epaInfo._points.Back(), epaInfo._points[0], 2.0f);
 					}
 
 					shapeRenderer.SetColor(ByteColor(255, 64, 0));
@@ -231,9 +231,9 @@ void RunGJKTestWindow()
 			{
 				fontRenderer.SetTextColor(Color::kBlack);
 				StackStringW<100> buffer;
-				FormatString(buffer, L"GJK Iteration: %d / Max %u (Q/W)", gjk2DInfo._loopCount, gjk2DInfo._maxLoopCount);
+				FormatString(buffer, L"GJK Iteration: %d / Max %u (Q/W)", gjkInfo._loopCount, gjkInfo._maxLoopCount);
 				fontRenderer.DrawDynamicText(buffer.CString(), Float2(10, 10), FontRenderingOption());
-				FormatString(buffer, L"EPA Iteration: %d / Max %u (A/S)", epa2DInfo._iteration, epa2DInfo._maxIterationCount);
+				FormatString(buffer, L"EPA Iteration: %d / Max %u (A/S)", epaInfo._iteration, epaInfo._maxIterationCount);
 				fontRenderer.DrawDynamicText(buffer.CString(), Float2(10, 30), FontRenderingOption());
 				FormatString(buffer, L"Selected: %s (1: None / 2: A / 3: B)", (selectionMode == SelectionMode::None ? L"None" : (selectionMode == SelectionMode::ShapeA ? L"ShapeA" : L"ShapeB")));
 				fontRenderer.DrawDynamicText(buffer.CString(), Float2(10, 50), FontRenderingOption());

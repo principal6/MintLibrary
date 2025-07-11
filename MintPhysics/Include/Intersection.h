@@ -36,12 +36,12 @@ namespace mint
 
 		// Newest ---- Oldest
 		//   A  -  B  -  C
-		class GJK2DSimplex
+		class GJKSimplex
 		{
 		public:
-			GJK2DSimplex();
-			GJK2DSimplex(const Float2& pointA);
-			GJK2DSimplex(const Float2& pointB, const Float2& pointA);
+			GJKSimplex();
+			GJKSimplex(const Float2& pointA);
+			GJKSimplex(const Float2& pointB, const Float2& pointA);
 
 		public:
 			void AppendPoint(const Float2& pointA);
@@ -59,28 +59,28 @@ namespace mint
 			uint8 _validPointCount;
 		};
 
-		struct GJK2DInfo
+		struct GJKInfo
 		{
 			uint32 _maxLoopCount = kUint32Max;
 			uint32 _loopCount = 0;
 			Float2 _direction;
-			GJK2DSimplex _simplex;
+			GJKSimplex _simplex;
 		};
 
-		bool Intersect2D_Circle_Point(const Float2& circleCenter, const float circleRadius, const Float2& point);
-		bool Intersect2D_AABB_Point(const Rect& aabb, const Float2& point);
-		bool Intersect2D_AABB_AABB(const AABBCollisionShape& shapeA, const AABBCollisionShape& shapeB);
-		bool Intersect2D_GJK(const CollisionShape& shapeA, const CollisionShape& shapeB, GJK2DInfo* const outGJK2DInfo = nullptr);
+		bool Intersect_Circle_Point(const Float2& circleCenter, const float circleRadius, const Float2& point);
+		bool Intersect_AABB_Point(const Rect& aabb, const Float2& point);
+		bool Intersect_AABB_AABB(const AABBCollisionShape& shapeA, const AABBCollisionShape& shapeB);
+		bool Intersect_GJK(const CollisionShape& shapeA, const CollisionShape& shapeB, GJKInfo* const outGJKInfo = nullptr);
 
 		Float2 ComputeEdgeNormal(const Float2& edgeVertex0, const Float2& edgeVertex1);
 		Float2 ComputeClosestPointOnEdge(const Float2& point, const Float2& edgeVertex0, const Float2& edgeVertex1);
-		struct EPA2DInfo
+		struct EPAInfo
 		{
 			uint32 _maxIterationCount = kUint32Max;
 			uint32 _iteration = 0;
 			Vector<Float2> _points;
 		};
-		void ComputePenetration_EPA(const CollisionShape& shapeA, const CollisionShape& shapeB, const GJK2DInfo& gjk2DInfo, Float2& outNormal, float& outDistance, EPA2DInfo& epa2DInfo);
+		void ComputePenetration_EPA(const CollisionShape& shapeA, const CollisionShape& shapeB, const GJKInfo& gjkInfo, Float2& outNormal, float& outDistance, EPAInfo& epaInfo);
 	}
 }
 

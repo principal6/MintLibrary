@@ -13,8 +13,8 @@ namespace mint
 {
 	namespace Physics2D
 	{
-#pragma region Body2D
-		Body2D::Body2D()
+#pragma region Body
+		Body::Body()
 			: _bodyMotionType{ BodyMotionType::Static }
 			, _angularVelocity{ 0.0f }
 			, _angularAcceleration{ 0.0f }
@@ -22,12 +22,12 @@ namespace mint
 			__noop;
 		}
 
-		Body2D::~Body2D()
+		Body::~Body()
 		{
 			__noop;
 		}
 
-		bool Body2D::IsValid() const
+		bool Body::IsValid() const
 		{
 			return _bodyID.IsValid();
 		}
@@ -103,7 +103,7 @@ namespace mint
 			__noop;
 		}
 
-		BodyID World::CreateBody(const Body2DCreationDesc& body2DCreationDesc)
+		BodyID World::CreateBody(const BodyCreationDesc& bodyCreationDesc)
 		{
 			_bodyPool.GrowIfFull();
 
@@ -111,13 +111,13 @@ namespace mint
 			BodyID bodyID;
 			bodyID.Assign(slotIndex);
 			{
-				Body2D body;
+				Body body;
 				body._bodyID = bodyID;
-				body._shape._collisionShape = body2DCreationDesc._collisionShape;
+				body._shape._collisionShape = bodyCreationDesc._collisionShape;
 				body._shape._shapeAABB = MakeShared<AABBCollisionShape>(AABBCollisionShape(*body._shape._collisionShape));
-				body._transform2D = body2DCreationDesc._transform2D;
+				body._transform2D = bodyCreationDesc._transform2D;
 				body._bodyAABB = MakeShared<AABBCollisionShape>(AABBCollisionShape(*body._shape._shapeAABB, body._transform2D));
-				body._bodyMotionType = body2DCreationDesc._bodyMotionType;
+				body._bodyMotionType = bodyCreationDesc._bodyMotionType;
 				_bodyPool.Create(slotIndex, std::move(body));
 
 				_worldMin = Float2::Min(_worldMin, body._bodyAABB->_center - body._bodyAABB->_halfSize);
@@ -128,13 +128,13 @@ namespace mint
 			return bodyID;
 		}
 
-		Body2D& World::AccessBody(BodyID bodyID)
+		Body& World::AccessBody(BodyID bodyID)
 		{
 			MINT_ASSERT(bodyID.IsValid(), "!!!");
 			return _bodyPool.GetObject_(bodyID.Value());
 		}
 
-		const Body2D& World::GetBody(BodyID bodyID) const
+		const Body& World::GetBody(BodyID bodyID) const
 		{
 			MINT_ASSERT(bodyID.IsValid(), "!!!");
 			return _bodyPool.GetObject_(bodyID.Value());
@@ -186,7 +186,7 @@ namespace mint
 			const uint32 bodyCount = _bodyPool.GetObjects().Size();
 			for (uint32 i = 0; i < bodyCount; ++i)
 			{
-				Body2D& body = _bodyPool.GetObject_(i);
+				Body& body = _bodyPool.GetObject_(i);
 				if (body.IsValid() == false || body._bodyMotionType != BodyMotionType::Dynamic)
 				{
 					continue;
@@ -212,14 +212,14 @@ namespace mint
 
 						BodyID bodyIDA = _collisionSectors[i]._bodyIDs[indexA];
 						BodyID bodyIDB = _collisionSectors[i]._bodyIDs[indexB];
-						const Body2D& bodyA = GetBody(bodyIDA);
-						const Body2D& bodyB = GetBody(bodyIDB);
+						const Body& bodyA = GetBody(bodyIDA);
+						const Body& bodyB = GetBody(bodyIDB);
 						if (bodyA._bodyMotionType != BodyMotionType::Dynamic && bodyB._bodyMotionType != BodyMotionType::Dynamic)
 						{
 							continue;
 						}
 
-						if (Intersect2D_AABB_AABB(*bodyA._bodyAABB, *bodyB._bodyAABB) == false)
+						if (Intersect_AABB_AABB(*bodyA._bodyAABB, *bodyB._bodyAABB) == false)
 						{
 							continue;
 						}
@@ -242,7 +242,7 @@ namespace mint
 			}
 		}
 
-		bool World::StepCollide_NarrowPhase_CCD(float deltaTime, const Body2D& bodyA, const Body2D& bodyB, Physics2D::GJK2DInfo& gjk2DInfo, SharedPtr<CollisionShape>& outShapeA, SharedPtr<CollisionShape>& outShapeB)
+		bool World::StepCollide_NarrowPhase_CCD(float deltaTime, const Body& bodyA, const Body& bodyB, Physics2D::GJKInfo& gjkInfo, SharedPtr<CollisionShape>& outShapeA, SharedPtr<CollisionShape>& outShapeB)
 		{
 			float fraction = 1.0f;
 			float range = 2.0f;
@@ -257,13 +257,13 @@ namespace mint
 
 				outShapeA = CollisionShape::MakeTransformed(bodyA._shape._collisionShape, predictedBodyTransformA);
 				outShapeB = CollisionShape::MakeTransformed(bodyB._shape._collisionShape, predictedBodyTransformB);
-				const bool intersected = Intersect2D_GJK(*outShapeA, *outShapeB, &gjk2DInfo);
+				const bool intersected = Intersect_GJK(*outShapeA, *outShapeB, &gjkInfo);
 				if (intersected)
 				{
-					EPA2DInfo epa2DInfo;
+					EPAInfo epaInfo;
 					Float2 normal;
 					float distance = 0.0f;
-					ComputePenetration_EPA(*outShapeA, *outShapeB, gjk2DInfo, normal, distance, epa2DInfo);
+					ComputePenetration_EPA(*outShapeA, *outShapeB, gjkInfo, normal, distance, epaInfo);
 					if (distance < 1.0f || range < 0.0625f)
 					{
 						return true;
@@ -289,24 +289,24 @@ namespace mint
 		{
 			const float deltaTimeSq = deltaTime * deltaTime;
 
-			_collisionManifold2DsMap.Clear();
+			_collisionManifoldMap.Clear();
 
-			GJK2DInfo gjk2DInfo;
+			GJKInfo gjkInfo;
 			for (const auto& iter : _broadPhaseBodyPairs)
 			{
-				const Body2D& bodyA = GetBody(iter._bodyIDA);
-				const Body2D& bodyB = GetBody(iter._bodyIDB);
+				const Body& bodyA = GetBody(iter._bodyIDA);
+				const Body& bodyB = GetBody(iter._bodyIDB);
 
-				CollisionManifold2D collisionManifold2D;
+				CollisionManifold collisionManifold;
 				const Float2 relativeLinearVelocity = bodyA._linearVelocity - bodyB._linearVelocity;
 				if (relativeLinearVelocity != Float2::kZero)
 				{
 					// Continuous collision detection
 					SharedPtr<CollisionShape> transformedShapeA;
 					SharedPtr<CollisionShape> transformedShapeB;
-					if (StepCollide_NarrowPhase_CCD(deltaTime, bodyA, bodyB, gjk2DInfo, transformedShapeA, transformedShapeB))
+					if (StepCollide_NarrowPhase_CCD(deltaTime, bodyA, bodyB, gjkInfo, transformedShapeA, transformedShapeB))
 					{
-						StepCollide_NarrowPhase_GenerateCollision(bodyA, *transformedShapeA, bodyB, *transformedShapeB, gjk2DInfo, collisionManifold2D);
+						StepCollide_NarrowPhase_GenerateCollision(bodyA, *transformedShapeA, bodyB, *transformedShapeB, gjkInfo, collisionManifold);
 					}
 				}
 				else
@@ -314,47 +314,47 @@ namespace mint
 					// Discrete collision detection
 					SharedPtr<CollisionShape> transformedShapeA{ CollisionShape::MakeTransformed(bodyA._shape._collisionShape, bodyA._transform2D) };
 					SharedPtr<CollisionShape> transformedShapeB{ CollisionShape::MakeTransformed(bodyB._shape._collisionShape, bodyB._transform2D) };
-					if (Intersect2D_GJK(*transformedShapeA, *transformedShapeB, &gjk2DInfo))
+					if (Intersect_GJK(*transformedShapeA, *transformedShapeB, &gjkInfo))
 					{
-						StepCollide_NarrowPhase_GenerateCollision(bodyA, *transformedShapeA, bodyB, *transformedShapeB, gjk2DInfo, collisionManifold2D);
+						StepCollide_NarrowPhase_GenerateCollision(bodyA, *transformedShapeA, bodyB, *transformedShapeB, gjkInfo, collisionManifold);
 					}
 				}
 
-				if (collisionManifold2D.IsValid() == true)
+				if (collisionManifold.IsValid() == true)
 				{
-					KeyValuePair found = _collisionManifold2DsMap.Find(bodyA._bodyID.Value());
+					KeyValuePair found = _collisionManifoldMap.Find(bodyA._bodyID.Value());
 					if (found.IsValid())
 					{
-						found._value->PushBack(collisionManifold2D);
+						found._value->PushBack(collisionManifold);
 					}
 					else
 					{
-						_collisionManifold2DsMap.Insert(bodyA._bodyID.Value(), { collisionManifold2D });
+						_collisionManifoldMap.Insert(bodyA._bodyID.Value(), { collisionManifold });
 					}
 				}
 			}
 		}
 
-		void World::StepCollide_NarrowPhase_GenerateCollision(const Body2D& bodyA, const CollisionShape& bodyShapeA, const Body2D& bodyB, const CollisionShape& bodyShapeB, const Physics2D::GJK2DInfo& gjk2DInfo, CollisionManifold2D& outCollisionManifold2D) const
+		void World::StepCollide_NarrowPhase_GenerateCollision(const Body& bodyA, const CollisionShape& bodyShapeA, const Body& bodyB, const CollisionShape& bodyShapeB, const Physics2D::GJKInfo& gjkInfo, CollisionManifold& outCollisionManifold) const
 		{
-			outCollisionManifold2D._bodyIDA = bodyA._bodyID;
-			outCollisionManifold2D._bodyIDB = bodyB._bodyID;
+			outCollisionManifold._bodyIDA = bodyA._bodyID;
+			outCollisionManifold._bodyIDB = bodyB._bodyID;
 
-			EPA2DInfo epa2DInfo;
+			EPAInfo epaInfo;
 			Float2 normal;
 			float distance = 0.0f;
-			ComputePenetration_EPA(bodyShapeA, bodyShapeB, gjk2DInfo, normal, distance, epa2DInfo);
+			ComputePenetration_EPA(bodyShapeA, bodyShapeB, gjkInfo, normal, distance, epaInfo);
 
 			Float2 edgeVertex0;
 			Float2 edgeVertex1;
 			bodyShapeB.ComputeSupportEdge(normal, edgeVertex0, edgeVertex1);
 			Float2 edgeDirection = edgeVertex0 - edgeVertex1;
 			edgeDirection.Normalize();
-			outCollisionManifold2D._collisionNormal = Float2(-edgeDirection._y, edgeDirection._x);
+			outCollisionManifold._collisionNormal = Float2(-edgeDirection._y, edgeDirection._x);
 
-			const Float2 bodyAPoint = bodyShapeA.ComputeSupportPoint(-outCollisionManifold2D._collisionNormal);
-			outCollisionManifold2D._collisionPosition = bodyAPoint;
-			outCollisionManifold2D._signedDistance = outCollisionManifold2D._collisionNormal.Dot(outCollisionManifold2D._collisionPosition - edgeVertex0);
+			const Float2 bodyAPoint = bodyShapeA.ComputeSupportPoint(-outCollisionManifold._collisionNormal);
+			outCollisionManifold._collisionPosition = bodyAPoint;
+			outCollisionManifold._signedDistance = outCollisionManifold._collisionNormal.Dot(outCollisionManifold._collisionPosition - edgeVertex0);
 		}
 
 		void World::StepSolve(float deltaTime)
@@ -369,15 +369,15 @@ namespace mint
 		void World::StepSolveResolveCollisions(float deltaTime)
 		{
 			// Resolve Collisions
-			GJK2DInfo gjk2DInfo;
-			for (Vector<CollisionManifold2D>& collisionManifold2Ds : _collisionManifold2DsMap)
+			GJKInfo gjkInfo;
+			for (Vector<CollisionManifold>& collisionManifolds : _collisionManifoldMap)
 			{
-				QuickSort(collisionManifold2Ds, CollisionManifold2D::AbsoluteDistanceComparator());
+				QuickSort(collisionManifolds, CollisionManifold::AbsoluteDistanceComparator());
 
-				for (CollisionManifold2D& collisionManifold2D : collisionManifold2Ds)
+				for (CollisionManifold& collisionManifold : collisionManifolds)
 				{
-					Body2D* bodyA = &AccessBody(collisionManifold2D._bodyIDA);
-					Body2D* bodyB = &AccessBody(collisionManifold2D._bodyIDB);
+					Body* bodyA = &AccessBody(collisionManifold._bodyIDA);
+					Body* bodyB = &AccessBody(collisionManifold._bodyIDB);
 					if (bodyA->_bodyMotionType == BodyMotionType::Dynamic && bodyB->_bodyMotionType == BodyMotionType::Dynamic)
 					{
 						// TODO
@@ -388,21 +388,21 @@ namespace mint
 						// Make sure bodyA is Dynamic!
 						if (bodyB->_bodyMotionType == BodyMotionType::Dynamic)
 						{
-							Body2D* bodyTemp = bodyA;
+							Body* bodyTemp = bodyA;
 							bodyA = bodyB;
 							bodyB = bodyTemp;
 						}
 
 						// TODO: Resolve Penetration!
-						if (collisionManifold2D._signedDistance < 0.0f)
+						if (collisionManifold._signedDistance < 0.0f)
 						{
 							SharedPtr<CollisionShape> transformedShapeA{ CollisionShape::MakeTransformed(bodyA->_shape._collisionShape, bodyA->_transform2D) };
 							SharedPtr<CollisionShape> transformedShapeB{ CollisionShape::MakeTransformed(bodyB->_shape._collisionShape, bodyB->_transform2D) };
-							if (Intersect2D_GJK(*transformedShapeA, *transformedShapeB, &gjk2DInfo))
+							if (Intersect_GJK(*transformedShapeA, *transformedShapeB, &gjkInfo))
 							{
-								CollisionManifold2D newCollisionManifold2D;
-								StepCollide_NarrowPhase_GenerateCollision(*bodyA, *transformedShapeA, *bodyB, *transformedShapeB, gjk2DInfo, newCollisionManifold2D);
-								const Float2 separatingVector = newCollisionManifold2D._collisionNormal * -newCollisionManifold2D._signedDistance;
+								CollisionManifold newCollisionManifold;
+								StepCollide_NarrowPhase_GenerateCollision(*bodyA, *transformedShapeA, *bodyB, *transformedShapeB, gjkInfo, newCollisionManifold);
+								const Float2 separatingVector = newCollisionManifold._collisionNormal * -newCollisionManifold._signedDistance;
 								bodyA->_transform2D._translation += separatingVector;
 
 								//bodyA->_linearVelocity += separatingVector / deltaTime;
@@ -418,7 +418,7 @@ namespace mint
 			const uint32 bodyCount = _bodyPool.GetObjects().Size();
 			for (uint32 i = 0; i < bodyCount; ++i)
 			{
-				Body2D& body = _bodyPool.GetObject_(i);
+				Body& body = _bodyPool.GetObject_(i);
 				if (body.IsValid() == false)
 				{
 					continue;
@@ -458,7 +458,7 @@ namespace mint
 			const uint32 bodyCount = _bodyPool.GetObjects().Size();
 			for (uint32 i = 0; i < bodyCount; ++i)
 			{
-				Body2D& body = _bodyPool.GetObject_(i);
+				Body& body = _bodyPool.GetObject_(i);
 				if (body.IsValid() == false)
 				{
 					continue;
@@ -490,7 +490,7 @@ namespace mint
 			const uint32 bodyCount = _bodyPool.GetObjects().Size();
 			for (uint32 i = 0; i < bodyCount; ++i)
 			{
-				const Body2D& body = _bodyPool.GetObject_(i);
+				const Body& body = _bodyPool.GetObject_(i);
 				if (body.IsValid() == false)
 				{
 					continue;
@@ -498,7 +498,7 @@ namespace mint
 
 				StepSnapshot::BodySnapshot bodySnapshot;
 				bodySnapshot._body = body;
-				KeyValuePair found = _collisionManifold2DsMap.Find(body._bodyID.Value());
+				KeyValuePair found = _collisionManifoldMap.Find(body._bodyID.Value());
 				if (found.IsValid())
 				{
 					bodySnapshot._collisionManifolds = *found._value;
@@ -572,7 +572,7 @@ namespace mint
 			outAdjacentCollisionSectors[7] = GetCollisionSector(index2 + Int2(+1, +1));
 		}
 
-		Transform2D World::PredictBodyTransform(const Body2D& body, float deltaTime) const
+		Transform2D World::PredictBodyTransform(const Body& body, float deltaTime) const
 		{
 			return PredictTransform(body._transform2D, body._linearVelocity, body._linearAcceleration, body._angularVelocity, body._angularAcceleration, deltaTime);
 		}
@@ -597,7 +597,7 @@ namespace mint
 				{
 					RenderDebugBody(shapeRenderer, bodySnapshot._body);
 
-					for (const CollisionManifold2D& collisionManifold : bodySnapshot._collisionManifolds)
+					for (const CollisionManifold& collisionManifold : bodySnapshot._collisionManifolds)
 					{
 						RenderDebugCollisionManifold(shapeRenderer, collisionManifold);
 					}
@@ -608,7 +608,7 @@ namespace mint
 				const uint32 bodyCount = _bodyPool.GetObjects().Size();
 				for (uint32 i = 0; i < bodyCount; ++i)
 				{
-					const Body2D& body = _bodyPool.GetObject_(i);
+					const Body& body = _bodyPool.GetObject_(i);
 					if (body.IsValid() == false)
 					{
 						continue;
@@ -617,17 +617,17 @@ namespace mint
 					RenderDebugBody(shapeRenderer, body);
 				}
 
-				for (const Vector<CollisionManifold2D>& collisionManifold2Ds : _collisionManifold2DsMap)
+				for (const Vector<CollisionManifold>& collisionManifolds : _collisionManifoldMap)
 				{
-					for (const CollisionManifold2D& collisionManifold2D : collisionManifold2Ds)
+					for (const CollisionManifold& collisionManifold : collisionManifolds)
 					{
-						RenderDebugCollisionManifold(shapeRenderer, collisionManifold2D);
+						RenderDebugCollisionManifold(shapeRenderer, collisionManifold);
 					}
 				}
 			}
 		}
 
-		void World::RenderDebugBody(Rendering::ShapeRenderer& shapeRenderer, const Body2D& body) const
+		void World::RenderDebugBody(Rendering::ShapeRenderer& shapeRenderer, const Body& body) const
 		{
 			MINT_ASSERT(body.IsValid() == true, "Caller must guarantee this!");
 
@@ -642,7 +642,7 @@ namespace mint
 			//shapeRenderer.DrawDynamicText(buffer.CString(), Float4(body._transform2D._translation), Rendering::FontRenderingOption());
 		}
 
-		void World::RenderDebugCollisionManifold(Rendering::ShapeRenderer& shapeRenderer, const CollisionManifold2D& collisionManifold) const
+		void World::RenderDebugCollisionManifold(Rendering::ShapeRenderer& shapeRenderer, const CollisionManifold& collisionManifold) const
 		{
 			const float kNormalLength = 64.0f;
 			const float kNormalThickness = 2.0f;
