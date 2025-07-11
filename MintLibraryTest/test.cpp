@@ -679,12 +679,10 @@ bool RunPhysics2DTestWindow()
 
 			physicsWorld.Step(kTimeStep);
 
-;			const Transform2D& transformA = bodyA._transform2D;
-			const Transform2D& transformB = bodyB._transform2D;
 			Transform& transform0 = sceneObjectRegistry.GetComponentMust<TransformComponent>(sceneObject0)._transform;
-			transform0._translation = Float3(transformA._translation._x, transformA._translation._y, 0.0f);
 			Transform& transform1 = sceneObjectRegistry.GetComponentMust<TransformComponent>(sceneObject1)._transform;
-			transform1._translation = Float3(transformB._translation._x, transformB._translation._y, 0.0f);
+			transform0._translation.Set(bodyA._transform2D._translation);
+			transform1._translation.Set(bodyB._transform2D._translation);
 		}
 
 		// Rendering
