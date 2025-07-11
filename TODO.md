@@ -1,5 +1,6 @@
 ﻿# TODO
 ## ECS 관련 클래스 ECS 프로젝트 사용하도록 리팩토링!! 특히 GUI...
+## StackVector => InlineVector 로 변경, 기능 확장!
 ## GUI 개편
 ### Manager classes for GUI system
 ControlRegistry
