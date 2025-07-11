@@ -41,6 +41,12 @@ namespace mint
 		public:
 			BodyID() = default;
 		};
+
+		struct RigidBodyComponent
+		{
+			BodyID _bodyID;
+		};
+
 	}
 }
 

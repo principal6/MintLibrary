@@ -21,9 +21,6 @@
     <ClInclude Include="Include\Animation\AnimationCore.h">
       <Filter>Include\Animation</Filter>
     </ClInclude>
-    <ClInclude Include="Include\CollisionComponent.h">
-      <Filter>Include</Filter>
-    </ClInclude>
     <ClInclude Include="Include\TileMap.h">
       <Filter>Include</Filter>
     </ClInclude>

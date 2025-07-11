@@ -54,7 +54,7 @@ namespace mint
 			BodyMotionType _bodyMotionType;
 
 			// TODO
-			float _mass = 1.0f;
+			float _inverseMass = 1.0f;
 			Float2 _linearVelocity;
 			Float2 _linearAcceleration;
 			float _linearDamping = 1.0f;
@@ -67,6 +67,7 @@ namespace mint
 			SharedPtr<CollisionShape> _collisionShape;
 			Transform2D _transform2D;
 			BodyMotionType _bodyMotionType = BodyMotionType::Static;
+			float _inverseMass = 1.0f;
 		};
 
 		struct CollisionSector

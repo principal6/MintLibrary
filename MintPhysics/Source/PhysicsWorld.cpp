@@ -117,7 +117,13 @@ namespace mint
 				body._shape._shapeAABB = MakeShared<AABBCollisionShape>(AABBCollisionShape(*body._shape._collisionShape));
 				body._transform2D = bodyCreationDesc._transform2D;
 				body._bodyAABB = MakeShared<AABBCollisionShape>(AABBCollisionShape(*body._shape._shapeAABB, body._transform2D));
+				body._inverseMass = bodyCreationDesc._inverseMass;
 				body._bodyMotionType = bodyCreationDesc._bodyMotionType;
+				if (body._inverseMass <= 0.0f)
+				{
+					body._bodyMotionType = BodyMotionType::Static;
+					body._inverseMass = 0.0f;
+				}
 				_bodyPool.Create(slotIndex, std::move(body));
 
 				_worldMin = Float2::Min(_worldMin, body._bodyAABB->_center - body._bodyAABB->_halfSize);

@@ -171,7 +171,6 @@
   <ItemGroup>
     <ClInclude Include="Include\AllHeaders.h" />
     <ClInclude Include="Include\Animation\AnimationCore.h" />
-    <ClInclude Include="Include\CollisionComponent.h" />
     <ClInclude Include="Include\TileMap.h" />
   </ItemGroup>
   <ItemGroup>
