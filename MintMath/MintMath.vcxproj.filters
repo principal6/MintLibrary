@@ -48,10 +48,10 @@
     <ClInclude Include="Include\Matrix.hpp">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="Include\VectorR.h">
+    <ClInclude Include="Include\Vec.h">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="Include\VectorR.hpp">
+    <ClInclude Include="Include\Vec.hpp">
       <Filter>Include</Filter>
     </ClInclude>
     <ClInclude Include="Include\AllHpps.h">

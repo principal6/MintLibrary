@@ -1,6 +1,6 @@
 ﻿#include <MintMath/Include/Float2.h>
 
-#include <MintMath/Include/VectorR.hpp>
+#include <MintMath/Include/Vec.hpp>
 #include <MintMath/Include/Int2.h>
 
 

@@ -6,7 +6,7 @@
 
 
 #include <MintMath/Include/Float4.h>
-#include <MintMath/Include/VectorR.h>
+#include <MintMath/Include/Vec.h>
 
 
 namespace mint
@@ -25,7 +25,7 @@ namespace mint
 
 	public:
 		static Quaternion MakeRotationQuaternion(const Float3& axis, const T angle) noexcept;
-		static Quaternion MakeRotationQuaternion(const VectorR3<T>& axis, const T angle) noexcept;
+		static Quaternion MakeRotationQuaternion(const Vec3<T>& axis, const T angle) noexcept;
 
 		// q^(-1)
 		static Quaternion Reciprocal(const Quaternion& q) noexcept;
@@ -55,7 +55,7 @@ namespace mint
 		// Hamilton product for vector rotation
 		Quaternion& operator*=(const Float4& v) noexcept;
 		// Hamilton product for vector rotation
-		Quaternion& operator*=(const VectorR4<T>& v) noexcept;
+		Quaternion& operator*=(const Vec4<T>& v) noexcept;
 
 	public:
 		// Hamilton product
@@ -67,14 +67,14 @@ namespace mint
 		Quaternion Conjugate() const noexcept;
 		Quaternion Reciprocal() const noexcept;
 		Float4 RotateVector(const Float4& inputVector) const noexcept;
-		VectorR4<T> RotateVector(const VectorR4<T>& inputVector) const noexcept;
+		Vec4<T> RotateVector(const Vec4<T>& inputVector) const noexcept;
 
 	public:
 		void SetAxisAngle(const Float3& axis, const T angle) noexcept;
-		void SetAxisAngle(const VectorR3<T>& axis, const T angle) noexcept;
+		void SetAxisAngle(const Vec3<T>& axis, const T angle) noexcept;
 		void GetAxisAngle(T(&axis)[3], T& angle) const noexcept;
 		void GetAxisAngle(Float3& axis, T& angle) const noexcept;
-		void GetAxisAngle(VectorR3<T>& axis, T& angle) const noexcept;
+		void GetAxisAngle(Vec3<T>& axis, T& angle) const noexcept;
 
 	public:
 		union

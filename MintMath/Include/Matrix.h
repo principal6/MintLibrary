@@ -7,7 +7,7 @@
 
 #include <MintCommon/Include/CommonDefinitions.h>
 
-#include <MintMath/Include/VectorR.h>
+#include <MintMath/Include/Vec.h>
 
 
 namespace std
@@ -172,14 +172,14 @@ namespace mint
 		T GetElement(const uint32 rowIndex, const uint32 columnIndex) const noexcept;
 
 	public:
-		void SetRow(const uint32 rowIndex, const VectorR<N, T>& row) noexcept;
-		VectorR<N, T> GetRow(const uint32 rowIndex) const noexcept;
-		void SetColumn(const uint32 columnIndex, const VectorR<M, T>& column) noexcept;
-		VectorR<M, T> GetColumn(const uint32 columnIndex) const noexcept;
+		void SetRow(const uint32 rowIndex, const Vec<N, T>& row) noexcept;
+		Vec<N, T> GetRow(const uint32 rowIndex) const noexcept;
+		void SetColumn(const uint32 columnIndex, const Vec<M, T>& column) noexcept;
+		Vec<M, T> GetColumn(const uint32 columnIndex) const noexcept;
 
 	public:
-		VectorR<N, T> MultiplyRowVector(const VectorR<M, T>& rowVector) const noexcept;
-		VectorR<M, T> MultiplyColumnVector(const VectorR<N, T>& columnVector) const noexcept;
+		Vec<N, T> MultiplyRowVector(const Vec<M, T>& rowVector) const noexcept;
+		Vec<M, T> MultiplyColumnVector(const Vec<N, T>& columnVector) const noexcept;
 
 	public:
 		Matrix<N, M, T> Transpose() const noexcept;
@@ -210,11 +210,11 @@ namespace mint
 
 	// Row vector multiplication
 	template <int32 M, int32 N, typename T>
-	VectorR<N, T> operator*(const VectorR<M, T>& rowVector, const Matrix<M, N, T>& matrix) noexcept;
+	Vec<N, T> operator*(const Vec<M, T>& rowVector, const Matrix<M, N, T>& matrix) noexcept;
 
 	// Column vector multiplication
 	template <int32 M, int32 N, typename T>
-	VectorR<M, T> operator*(const Matrix<M, N, T>& matrix, const VectorR<N, T>& columnVector) noexcept;
+	Vec<M, T> operator*(const Matrix<M, N, T>& matrix, const Vec<N, T>& columnVector) noexcept;
 
 
 	template <int32 M, int32 N>

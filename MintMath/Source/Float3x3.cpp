@@ -1,6 +1,6 @@
 ﻿#include <MintMath/Include/Float3x3.h>
 
-#include <MintMath/Include/VectorR.hpp>
+#include <MintMath/Include/Vec.hpp>
 #include <MintMath/Include/Matrix.hpp>
 
 

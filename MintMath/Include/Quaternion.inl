@@ -12,7 +12,7 @@ namespace mint
 	template<typename T>
 	MINT_INLINE T Quaternion<T>::Norm(const Quaternion& q) noexcept
 	{
-		return VectorR4<T>({ q._x, q._y, q._z, q._w }).Norm();
+		return Vec4<T>({ q._x, q._y, q._z, q._w }).Norm();
 		//return Float4(q._x, q._y, q._z, q._w).length();
 	}
 
@@ -35,9 +35,9 @@ namespace mint
 	}
 
 	template<typename T>
-	MINT_INLINE Quaternion<T> Quaternion<T>::MakeRotationQuaternion(const VectorR3<T>& axis, const T angle) noexcept
+	MINT_INLINE Quaternion<T> Quaternion<T>::MakeRotationQuaternion(const Vec3<T>& axis, const T angle) noexcept
 	{
-		const VectorR3<T>& r = axis.Normalize();
+		const Vec3<T>& r = axis.Normalize();
 		const T half_angle = static_cast<T>(angle * 0.5);
 		const T cos_half = ::cos(half_angle);
 		const T sin_half = ::sin(half_angle);
@@ -111,7 +111,7 @@ namespace mint
 	}
 
 	template<typename T>
-	MINT_INLINE Quaternion<T>& Quaternion<T>::operator*=(const VectorR4<T>& v) noexcept
+	MINT_INLINE Quaternion<T>& Quaternion<T>::operator*=(const Vec4<T>& v) noexcept
 	{
 		const T vx = v.GetComponent(0);
 		const T vy = v.GetComponent(1);
@@ -174,12 +174,12 @@ namespace mint
 	}
 
 	template<typename T>
-	inline VectorR4<T> Quaternion<T>::RotateVector(const VectorR4<T>& inputVector) const noexcept
+	inline Vec4<T> Quaternion<T>::RotateVector(const Vec4<T>& inputVector) const noexcept
 	{
 		Quaternion result = *this;
 		result *= inputVector;
 		result *= Conjugate();
-		return VectorR4<T>(result._x, result._y, result._z, inputVector.GetComponent(3));
+		return Vec4<T>(result._x, result._y, result._z, inputVector.GetComponent(3));
 	}
 
 	template<typename T>
@@ -196,9 +196,9 @@ namespace mint
 	}
 
 	template<typename T>
-	MINT_INLINE void Quaternion<T>::SetAxisAngle(const VectorR3<T>& axis, const T angle) noexcept
+	MINT_INLINE void Quaternion<T>::SetAxisAngle(const Vec3<T>& axis, const T angle) noexcept
 	{
-		const VectorR3<T>& normalizedAxis = axis.Normalize();
+		const Vec3<T>& normalizedAxis = axis.Normalize();
 		const T halfAngle = static_cast<T>(angle * 0.5);
 		const T cosHalfAngle = ::cos(halfAngle);
 		const T sinHalfAngle = static_cast<T>(1.0 - cosHalfAngle * cosHalfAngle);
@@ -241,7 +241,7 @@ namespace mint
 	}
 
 	template<typename T>
-	MINT_INLINE void Quaternion<T>::GetAxisAngle(VectorR3<T>& axis, T& angle) const noexcept
+	MINT_INLINE void Quaternion<T>::GetAxisAngle(Vec3<T>& axis, T& angle) const noexcept
 	{
 		GetAxisAngle(axis._c, angle);
 	}

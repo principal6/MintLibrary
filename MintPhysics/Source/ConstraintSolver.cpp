@@ -1,6 +1,6 @@
 #include <MintPhysics/Include/ConstraintSolver.h>
 #include <MintPhysics/Include/PhysicsWorld.h>
-#include <MintMath/Include/VectorR.hpp>
+#include <MintMath/Include/Vec.hpp>
 #include <MintMath/Include/Matrix.hpp>
 
 

@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 
-#ifndef _MINT_MATH_VECTOR_R_H_
-#define _MINT_MATH_VECTOR_R_H_
+#ifndef _MINT_MATH_VEC_H_
+#define _MINT_MATH_VEC_H_
 
 
 #include <MintCommon/Include/CommonDefinitions.h>
@@ -73,49 +73,49 @@ namespace mint
 
 
 	template <int32 N, typename T>
-	class VectorR
+	class Vec
 	{
 		static_assert(N > 0, "N must be greater than 0!");
 
 	public:
-		constexpr VectorR();
+		constexpr Vec();
 		template <class ...Args>
-		constexpr VectorR(Args ... args);
-		constexpr VectorR(const std::initializer_list<T>& initializerList);
-		constexpr VectorR(const VectorR& rhs) = default;
-		constexpr VectorR(VectorR&& rhs) noexcept = default;
-		~VectorR() = default;
+		constexpr Vec(Args ... args);
+		constexpr Vec(const std::initializer_list<T>& initializerList);
+		constexpr Vec(const Vec& rhs) = default;
+		constexpr Vec(Vec&& rhs) noexcept = default;
+		~Vec() = default;
 
 	public:
-		static VectorR<N, T> StandardUnitVector(const int32 math_i) noexcept;
-		static T Dot(const VectorR& lhs, const VectorR& rhs) noexcept;
-		static T Distance(const VectorR& lhs, const VectorR& rhs) noexcept;
-		static T Angle(const VectorR& lhs, const VectorR& rhs) noexcept;
-		static bool IsOrthogonal(const VectorR& lhs, const VectorR& rhs) noexcept;
-		static VectorR<N, T> ProjectUOntoV(const VectorR& u, const VectorR& v) noexcept;
+		static Vec<N, T> StandardUnitVector(const int32 math_i) noexcept;
+		static T Dot(const Vec& lhs, const Vec& rhs) noexcept;
+		static T Distance(const Vec& lhs, const Vec& rhs) noexcept;
+		static T Angle(const Vec& lhs, const Vec& rhs) noexcept;
+		static bool IsOrthogonal(const Vec& lhs, const Vec& rhs) noexcept;
+		static Vec<N, T> ProjectUOntoV(const Vec& u, const Vec& v) noexcept;
 
 	public:
 		operator float() const requires (N == 1);
 		
 	public:
-		VectorR& operator=(const VectorR& rhs) = default;
-		VectorR& operator=(VectorR&& rhs) noexcept = default;
+		Vec& operator=(const Vec& rhs) = default;
+		Vec& operator=(Vec&& rhs) noexcept = default;
 
 	public:
-		VectorR& operator*=(const T scalar) noexcept;
-		VectorR& operator/=(const T scalar) noexcept;
-		VectorR& operator+=(const VectorR& rhs) noexcept;
-		VectorR& operator-=(const VectorR& rhs) noexcept;
-		VectorR operator*(const T scalar) const noexcept;
-		VectorR operator/(const T scalar) const noexcept;
-		VectorR operator+(const VectorR& rhs) const noexcept;
-		VectorR operator-(const VectorR& rhs) const noexcept;
-		const VectorR& operator+() const noexcept;
-		VectorR operator-() const noexcept;
+		Vec& operator*=(const T scalar) noexcept;
+		Vec& operator/=(const T scalar) noexcept;
+		Vec& operator+=(const Vec& rhs) noexcept;
+		Vec& operator-=(const Vec& rhs) noexcept;
+		Vec operator*(const T scalar) const noexcept;
+		Vec operator/(const T scalar) const noexcept;
+		Vec operator+(const Vec& rhs) const noexcept;
+		Vec operator-(const Vec& rhs) const noexcept;
+		const Vec& operator+() const noexcept;
+		Vec operator-() const noexcept;
 
 	public:
-		bool operator==(const VectorR& rhs) const noexcept;
-		bool operator!=(const VectorR& rhs) const noexcept;
+		bool operator==(const Vec& rhs) const noexcept;
+		bool operator!=(const Vec& rhs) const noexcept;
 
 	public:
 		T& operator[](const uint32 index) noexcept;
@@ -133,8 +133,8 @@ namespace mint
 
 	public:
 		void SetZero() noexcept;
-		VectorR<N, T>& SetComponent(const uint32 index, const T value) noexcept;
-		VectorR<N, T>& SetNormalized() noexcept;
+		Vec<N, T>& SetComponent(const uint32 index, const T value) noexcept;
+		Vec<N, T>& SetNormalized() noexcept;
 
 	public:
 		T GetComponent(const uint32 index) const noexcept;
@@ -142,16 +142,16 @@ namespace mint
 		T GetMinComponent() const noexcept;
 		T NormSq() const noexcept;
 		T Norm() const noexcept;
-		VectorR<N, T> Normalize() const noexcept;
+		Vec<N, T> Normalize() const noexcept;
 		bool IsUnitVector() const noexcept;
 
 	public:
-		T Dot(const VectorR& rhs) const noexcept;
-		T Distance(const VectorR& rhs) const noexcept;
-		T Angle(const VectorR& rhs) const noexcept;
-		bool IsOrthogonalTo(const VectorR& rhs) const noexcept;
-		VectorR<N, T> ProjectOnto(const VectorR& rhs) const noexcept;
-		VectorR<N - 1, T> Shrink() const noexcept;
+		T Dot(const Vec& rhs) const noexcept;
+		T Distance(const Vec& rhs) const noexcept;
+		T Angle(const Vec& rhs) const noexcept;
+		bool IsOrthogonalTo(const Vec& rhs) const noexcept;
+		Vec<N, T> ProjectOnto(const Vec& rhs) const noexcept;
+		Vec<N - 1, T> Shrink() const noexcept;
 
 	public:
 		T _c[N];
@@ -159,35 +159,35 @@ namespace mint
 
 
 	template <typename T>
-	VectorR<3, T> Cross(const VectorR<3, T>& lhs, const VectorR<3, T>& rhs) noexcept;
+	Vec<3, T> Cross(const Vec<3, T>& lhs, const Vec<3, T>& rhs) noexcept;
 
 	template <int32 N, typename T>
-	VectorR<N, T> operator*(const T scalar, const VectorR<N, T>& vector) noexcept;
+	Vec<N, T> operator*(const T scalar, const Vec<N, T>& vector) noexcept;
 
 
 	template <int32 N>
-	using VectorF = VectorR<N, float>;
+	using VectorF = Vec<N, float>;
 
 	template <int32 N>
-	using VectorD = VectorR<N, double>;
+	using VectorD = Vec<N, double>;
 
 
 	template <typename T>
-	using VectorR3 = VectorR<3, T>;
+	using Vec3 = Vec<3, T>;
 
 	template <typename T>
-	using VectorR4 = VectorR<4, T>;
+	using Vec4 = Vec<4, T>;
 
 
 	namespace VectorUtils
 	{
 		template <int32 N, typename T>
-		void SetNAN(VectorR<N, T>& in) noexcept;
+		void SetNAN(Vec<N, T>& in) noexcept;
 
 		template <int32 N, typename T>
-		bool IsNAN(const VectorR<N, T>& in) noexcept;
+		bool IsNAN(const Vec<N, T>& in) noexcept;
 	}
 }
 
 
-#endif // !_MINT_MATH_VECTOR_R_H_
+#endif // !_MINT_MATH_VEC_H_

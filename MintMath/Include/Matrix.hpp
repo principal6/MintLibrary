@@ -3,7 +3,7 @@
 
 #include <MintMath/Include/Matrix.h>
 
-#include <MintMath/Include/VectorR.hpp>
+#include <MintMath/Include/Vec.hpp>
 #include <MintMath/Include/Quaternion.h>
 
 #include <initializer_list>
@@ -539,7 +539,7 @@ namespace mint
 	}
 
 	template<int32 M, int32 N, typename T>
-	MINT_INLINE void Matrix<M, N, T>::SetRow(const uint32 rowIndex, const VectorR<N, T>& row) noexcept
+	MINT_INLINE void Matrix<M, N, T>::SetRow(const uint32 rowIndex, const Vec<N, T>& row) noexcept
 	{
 		if (rowIndex < static_cast<uint32>(M))
 		{
@@ -548,17 +548,17 @@ namespace mint
 	}
 
 	template<int32 M, int32 N, typename T>
-	MINT_INLINE VectorR<N, T> Matrix<M, N, T>::GetRow(const uint32 rowIndex) const noexcept
+	MINT_INLINE Vec<N, T> Matrix<M, N, T>::GetRow(const uint32 rowIndex) const noexcept
 	{
 		MINT_ASSERT(rowIndex < static_cast<uint32>(M), "범위를 벗어난 접근입니다!");
 
-		VectorR<N, T> result;
+		Vec<N, T> result;
 		Math::GetRow(_m, rowIndex, result._c);
 		return result;
 	}
 
 	template<int32 M, int32 N, typename T>
-	MINT_INLINE void Matrix<M, N, T>::SetColumn(const uint32 columnIndex, const VectorR<M, T>& column) noexcept
+	MINT_INLINE void Matrix<M, N, T>::SetColumn(const uint32 columnIndex, const Vec<M, T>& column) noexcept
 	{
 		if (columnIndex < static_cast<uint32>(N))
 		{
@@ -567,27 +567,27 @@ namespace mint
 	}
 
 	template<int32 M, int32 N, typename T>
-	MINT_INLINE VectorR<M, T> Matrix<M, N, T>::GetColumn(const uint32 columnIndex) const noexcept
+	MINT_INLINE Vec<M, T> Matrix<M, N, T>::GetColumn(const uint32 columnIndex) const noexcept
 	{
 		MINT_ASSERT(columnIndex < static_cast<uint32>(N), "범위를 벗어난 접근입니다!");
 
-		VectorR<M, T> result;
+		Vec<M, T> result;
 		Math::GetCol(_m, columnIndex, result._c);
 		return result;
 	}
 
 	template<int32 M, int32 N, typename T>
-	MINT_INLINE VectorR<N, T> Matrix<M, N, T>::MultiplyRowVector(const VectorR<M, T>& rowVector) const noexcept
+	MINT_INLINE Vec<N, T> Matrix<M, N, T>::MultiplyRowVector(const Vec<M, T>& rowVector) const noexcept
 	{
-		VectorR<N, T> result;
+		Vec<N, T> result;
 		Math::Mul(rowVector._c, _m, result._c);
 		return result;
 	}
 
 	template<int32 M, int32 N, typename T>
-	MINT_INLINE VectorR<M, T> Matrix<M, N, T>::MultiplyColumnVector(const VectorR<N, T>& columnVector) const noexcept
+	MINT_INLINE Vec<M, T> Matrix<M, N, T>::MultiplyColumnVector(const Vec<N, T>& columnVector) const noexcept
 	{
-		VectorR<M, T> result;
+		Vec<M, T> result;
 		Math::Mul(_m, columnVector._c, result._c);
 		return result;
 	}
@@ -815,13 +815,13 @@ namespace mint
 	}
 
 	template<int32 M, int32 N, typename T>
-	MINT_INLINE VectorR<N, T> operator*(const VectorR<M, T>& rowVector, const Matrix<M, N, T>& matrix) noexcept
+	MINT_INLINE Vec<N, T> operator*(const Vec<M, T>& rowVector, const Matrix<M, N, T>& matrix) noexcept
 	{
 		return matrix.MultiplyRowVector(rowVector);
 	}
 
 	template<int32 M, int32 N, typename T>
-	MINT_INLINE VectorR<M, T> operator*(const Matrix<M, N, T>& matrix, const VectorR<N, T>& columnVector) noexcept
+	MINT_INLINE Vec<M, T> operator*(const Matrix<M, N, T>& matrix, const Vec<N, T>& columnVector) noexcept
 	{
 		return matrix.MultiplyColumnVector(columnVector);
 	}

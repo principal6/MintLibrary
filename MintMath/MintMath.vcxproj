@@ -113,8 +113,8 @@
     <ClInclude Include="Include\AffineVec.h" />
     <ClInclude Include="Include\TestMath.h" />
     <ClInclude Include="Include\Transform.h" />
-    <ClInclude Include="Include\VectorR.h" />
-    <ClInclude Include="Include\VectorR.hpp" />
+    <ClInclude Include="Include\Vec.h" />
+    <ClInclude Include="Include\Vec.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Include\Easing.inl" />
