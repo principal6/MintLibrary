@@ -154,51 +154,51 @@ namespace mint
 		{
 			using namespace mint;
 
-			VectorD<3> vec0(1.0, 1.0, 0.0);
+			VecD<3> vec0(1.0, 1.0, 0.0);
 			vec0 = 5.0 * vec0;
-			VectorD<3> vec1(0.0, 3.0, 0.0);
-			VectorD<3> vec2 = Cross(vec0, vec1).SetNormalized();
+			VecD<3> vec1(0.0, 3.0, 0.0);
+			VecD<3> vec2 = Cross(vec0, vec1).SetNormalized();
 			const bool trueValue = vec2.IsUnitVector();
 			const bool falseValue = Math::Equals(1.00002f, 1.0f);
 			const double distance = vec1.Normalize().Distance(vec2);
 			const double theta = vec1.Angle(vec2);
 			const bool orthogonality = vec1.IsOrthogonalTo(vec2);
 
-			VectorD<1> vec3(3.0);
+			VecD<1> vec3(3.0);
 			MatrixD<1, 3> mat0;
-			mat0.SetRow(0, VectorD<3>(4.0, 5.0, 6.0));
+			mat0.SetRow(0, VecD<3>(4.0, 5.0, 6.0));
 			constexpr bool isMat0Square = mat0.IsSquareMatrix();
 
 			MatrixD<3, 3> mat1;
-			mat1.SetRow(0, VectorD<3>(3.0, 0.0, 0.0));
-			mat1.SetRow(1, VectorD<3>(0.0, 3.0, 0.0));
-			mat1.SetRow(2, VectorD<3>(0.0, 0.0, 3.0));
+			mat1.SetRow(0, VecD<3>(3.0, 0.0, 0.0));
+			mat1.SetRow(1, VecD<3>(0.0, 3.0, 0.0));
+			mat1.SetRow(2, VecD<3>(0.0, 0.0, 3.0));
 			const bool isMat1Scalar = mat1.IsScalarMatrix();
 			mat1.SetIdentity();
 			const bool isMat1Identity = mat1.IsIdentityMatrix();
 			mat1.SetZero();
 			const bool isMat1Zero = mat1.IsZeroMatrix();
 
-			VectorD<3> a = VectorD<3>(1.0, 2.0, 3.0);
-			mat1.SetRow(0, VectorD<3>(1.0, 2.0, 3.0));
-			mat1.SetRow(1, VectorD<3>(4.0, 5.0, 6.0));
-			mat1.SetRow(2, VectorD<3>(7.0, 8.0, 9.0));
-			VectorD<3> e1 = VectorD<3>::StandardUnitVector(1);
-			VectorD<3> row1 = e1 * mat1;
-			VectorD<3> col1 = mat1 * e1;
+			VecD<3> a = VecD<3>(1.0, 2.0, 3.0);
+			mat1.SetRow(0, VecD<3>(1.0, 2.0, 3.0));
+			mat1.SetRow(1, VecD<3>(4.0, 5.0, 6.0));
+			mat1.SetRow(2, VecD<3>(7.0, 8.0, 9.0));
+			VecD<3> e1 = VecD<3>::StandardUnitVector(1);
+			VecD<3> row1 = e1 * mat1;
+			VecD<3> col1 = mat1 * e1;
 			vec0 = vec3 * mat0;
 
-			mat1.SetRow(1, VectorD<3>(2.0, 5.0, 6.0));
-			mat1.SetRow(2, VectorD<3>(3.0, 6.0, 9.0));
+			mat1.SetRow(1, VecD<3>(2.0, 5.0, 6.0));
+			mat1.SetRow(2, VecD<3>(3.0, 6.0, 9.0));
 			const bool isMat1Symmetric = mat1.IsSymmetricMatrix();
 
-			mat1.SetRow(1, VectorD<3>(-2.0, 5.0, 6.0));
-			mat1.SetRow(2, VectorD<3>(-3.0, -6.0, 9.0));
+			mat1.SetRow(1, VecD<3>(-2.0, 5.0, 6.0));
+			mat1.SetRow(2, VecD<3>(-3.0, -6.0, 9.0));
 			const bool isMat1SkewSymmetric = mat1.IsSkewSymmetricMatrix();
 
 			MatrixD<2, 3> mat2;
-			mat2.SetRow(0, VectorD<3>(0.0, 1.0, 2.0));
-			mat2.SetRow(1, VectorD<3>(3.0, 4.0, 5.0));
+			mat2.SetRow(0, VecD<3>(0.0, 1.0, 2.0));
+			mat2.SetRow(1, VecD<3>(3.0, 4.0, 5.0));
 			MatrixD<3, 2> mat2Transpose = mat2.Transpose();
 
 			MatrixD<2, 2> mat3;

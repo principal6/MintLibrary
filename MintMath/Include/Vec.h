@@ -166,10 +166,10 @@ namespace mint
 
 
 	template <int32 N>
-	using VectorF = Vec<N, float>;
+	using VecF = Vec<N, float>;
 
 	template <int32 N>
-	using VectorD = Vec<N, double>;
+	using VecD = Vec<N, double>;
 
 
 	template <typename T>

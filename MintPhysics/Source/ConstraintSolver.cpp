@@ -20,13 +20,13 @@ namespace mint
 			Transform2D& transformA = bodyA._transform2D;
 			Transform2D& transformB = bodyB._transform2D;
 
-			VectorF<2> xA{ transformA._translation._x, transformA._translation._y };
-			VectorF<2> xB{ transformB._translation._x, transformB._translation._y };
-			VectorF<2> r = xB - xA;
+			VecF<2> xA{ transformA._translation._x, transformA._translation._y };
+			VecF<2> xB{ transformB._translation._x, transformB._translation._y };
+			VecF<2> r = xB - xA;
 			const float C = r.Dot(r) - particleDistanceConstraint._distance * particleDistanceConstraint._distance;
 
-			VectorF<2> gradC_xA = -2.0f * r;
-			VectorF<2> gradC_xB = 2.0f * r;
+			VecF<2> gradC_xA = -2.0f * r;
+			VecF<2> gradC_xB = 2.0f * r;
 			MatrixF<4, 1> JT; // == gradC
 			JT.SetElement(0, 0, gradC_xA.X());
 			JT.SetElement(1, 0, gradC_xA.Y());
@@ -34,9 +34,9 @@ namespace mint
 			JT.SetElement(3, 0, gradC_xB.Y());
 
 			MatrixF<1, 4> J = JT.Transpose();
-			VectorF<2> vA{ bodyA._linearVelocity._x, bodyA._linearVelocity._y };
-			VectorF<2> vB{ bodyB._linearVelocity._x, bodyB._linearVelocity._y };
-			VectorF<4> v;
+			VecF<2> vA{ bodyA._linearVelocity._x, bodyA._linearVelocity._y };
+			VecF<2> vB{ bodyB._linearVelocity._x, bodyB._linearVelocity._y };
+			VecF<4> v;
 			v.SetComponent(0, vA.X());
 			v.SetComponent(1, vA.Y());
 			v.SetComponent(2, vB.X());
@@ -78,8 +78,8 @@ namespace mint
 			const float lambda = numerator / denominator;
 
 			const auto delta_v = inverseM * JT * lambda;
-			VectorF<2> delta_vA;
-			VectorF<2> delta_vB;
+			VecF<2> delta_vA;
+			VecF<2> delta_vB;
 			delta_vA.SetComponent(0, delta_v.GetElement(0, 0));
 			delta_vA.SetComponent(1, delta_v.GetElement(1, 0));
 			delta_vB.SetComponent(0, delta_v.GetElement(2, 0));
