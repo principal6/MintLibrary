@@ -78,14 +78,6 @@ namespace mint
 		static_assert(N > 0, "N must be greater than 0!");
 
 	public:
-		static VectorR<N, T> StandardUnitVector(const int32 math_i) noexcept;
-		static T Dot(const VectorR& lhs, const VectorR& rhs) noexcept;
-		static T Distance(const VectorR& lhs, const VectorR& rhs) noexcept;
-		static T Angle(const VectorR& lhs, const VectorR& rhs) noexcept;
-		static bool IsOrthogonal(const VectorR& lhs, const VectorR& rhs) noexcept;
-		static VectorR<N, T> ProjectUOntoV(const VectorR& u, const VectorR& v) noexcept;
-
-	public:
 		constexpr VectorR();
 		template <class ...Args>
 		constexpr VectorR(Args ... args);
@@ -93,6 +85,14 @@ namespace mint
 		constexpr VectorR(const VectorR& rhs) = default;
 		constexpr VectorR(VectorR&& rhs) noexcept = default;
 		~VectorR() = default;
+
+	public:
+		static VectorR<N, T> StandardUnitVector(const int32 math_i) noexcept;
+		static T Dot(const VectorR& lhs, const VectorR& rhs) noexcept;
+		static T Distance(const VectorR& lhs, const VectorR& rhs) noexcept;
+		static T Angle(const VectorR& lhs, const VectorR& rhs) noexcept;
+		static bool IsOrthogonal(const VectorR& lhs, const VectorR& rhs) noexcept;
+		static VectorR<N, T> ProjectUOntoV(const VectorR& u, const VectorR& v) noexcept;
 
 	public:
 		operator float() const requires (N == 1);
@@ -106,31 +106,22 @@ namespace mint
 		VectorR& operator/=(const T scalar) noexcept;
 		VectorR& operator+=(const VectorR& rhs) noexcept;
 		VectorR& operator-=(const VectorR& rhs) noexcept;
-
-	public:
 		VectorR operator*(const T scalar) const noexcept;
 		VectorR operator/(const T scalar) const noexcept;
 		VectorR operator+(const VectorR& rhs) const noexcept;
 		VectorR operator-(const VectorR& rhs) const noexcept;
-
-	public:
 		const VectorR& operator+() const noexcept;
 		VectorR operator-() const noexcept;
-
-	public:
-		T& operator[](const uint32 index) noexcept;
-		const T& operator[](const uint32 index) const noexcept;
 
 	public:
 		bool operator==(const VectorR& rhs) const noexcept;
 		bool operator!=(const VectorR& rhs) const noexcept;
 
 	public:
-		void SetZero() noexcept;
+		T& operator[](const uint32 index) noexcept;
+		const T& operator[](const uint32 index) const noexcept;
 
 	public:
-		VectorR<N, T>& SetComponent(const uint32 index, const T value) noexcept;
-		T GetComponent(const uint32 index) const noexcept;
 		T& X() noexcept;
 		T& Y() noexcept;
 		T& Z() noexcept;
@@ -141,13 +132,16 @@ namespace mint
 		const T& W() const noexcept;
 
 	public:
-		T GetMaxComponent() const noexcept;
-		T GetMinComponent() const noexcept;
+		void SetZero() noexcept;
+		VectorR<N, T>& SetComponent(const uint32 index, const T value) noexcept;
+		VectorR<N, T>& SetNormalized() noexcept;
 
 	public:
+		T GetComponent(const uint32 index) const noexcept;
+		T GetMaxComponent() const noexcept;
+		T GetMinComponent() const noexcept;
 		T NormSq() const noexcept;
 		T Norm() const noexcept;
-		VectorR<N, T>& SetNormalized() noexcept;
 		VectorR<N, T> Normalize() const noexcept;
 		bool IsUnitVector() const noexcept;
 
@@ -157,8 +151,6 @@ namespace mint
 		T Angle(const VectorR& rhs) const noexcept;
 		bool IsOrthogonalTo(const VectorR& rhs) const noexcept;
 		VectorR<N, T> ProjectOnto(const VectorR& rhs) const noexcept;
-
-	public:
 		VectorR<N - 1, T> Shrink() const noexcept;
 
 	public:
