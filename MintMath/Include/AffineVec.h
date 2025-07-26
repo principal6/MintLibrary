@@ -19,24 +19,6 @@ namespace mint
 	};
 
 
-#pragma region Free functions
-	template<typename T>
-	AffineVec<T> operator*(const T scalar, const AffineVec<T>& vec) noexcept;
-
-	template<typename T>
-	AffineVec<T> Normalize(const AffineVec<T>& in) noexcept;
-
-	template<typename T>
-	void Normalize(AffineVec<T>& inOut) noexcept;
-
-	float Dot(const AffineVec<float>& lhs, const AffineVec<float>& rhs) noexcept;
-	AffineVec<float> Cross(const AffineVec<float>& lhs, const AffineVec<float>& rhs) noexcept;
-
-	double Dot(const AffineVec<double>& lhs, const AffineVec<double>& rhs) noexcept;
-	AffineVec<double> Cross(const AffineVec<double>& lhs, const AffineVec<double>& rhs) noexcept;
-#pragma endregion
-
-
 	template<>
 	class AffineVec<float>
 	{
@@ -163,6 +145,24 @@ namespace mint
 	private:
 		__m256d _raw;
 	};
+
+
+#pragma region Free functions
+	template<typename T>
+	AffineVec<T> operator*(const T scalar, const AffineVec<T>& vec) noexcept;
+
+	template<typename T>
+	AffineVec<T> Normalize(const AffineVec<T>& in) noexcept;
+
+	template<typename T>
+	void Normalize(AffineVec<T>& inOut) noexcept;
+
+	float Dot(const AffineVec<float>& lhs, const AffineVec<float>& rhs) noexcept;
+	AffineVec<float> Cross(const AffineVec<float>& lhs, const AffineVec<float>& rhs) noexcept;
+
+	double Dot(const AffineVec<double>& lhs, const AffineVec<double>& rhs) noexcept;
+	AffineVec<double> Cross(const AffineVec<double>& lhs, const AffineVec<double>& rhs) noexcept;
+#pragma endregion
 
 
 	using AffineVecF = AffineVec<float>;
