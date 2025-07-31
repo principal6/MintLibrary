@@ -48,8 +48,8 @@ int main()
 	//RunGJKTestWindow();
 	//RunSplineTestWindow();
 	//Run2DTestWindow();
-	//Run3DTestWindow();
-	RunPhysics2DTestWindow();
+	Run3DTestWindow();
+	//RunPhysics2DTestWindow();
 	return 0;
 }
 
@@ -462,11 +462,11 @@ bool Run3DTestWindow()
 	SceneObject testObject = sceneObjectRegistry.CreateSceneObject();
 	{
 		MeshComponent meshComponent;
-		Rendering::MeshGenerator::GeoSphereParam geosphereParam;
-		geosphereParam._radius = 1.0f;
-		geosphereParam._subdivisionIteration = 3;
-		geosphereParam._smooth = true;
-		Rendering::MeshGenerator::GenerateGeoSphere(geosphereParam, meshComponent._meshData);
+		Rendering::MeshGenerator::BoxParam boxParam;
+		boxParam._width = 1.0f;
+		boxParam._height = 1.0f;
+		boxParam._depth = 1.0f;
+		Rendering::MeshGenerator::GenerateBox(boxParam, meshComponent._meshData);
 		sceneObjectRegistry.AttachComponent(testObject, std::move(meshComponent));
 
 		Transform& transform = sceneObjectRegistry.GetTransform(testObject);
