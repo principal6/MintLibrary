@@ -90,7 +90,7 @@ namespace mint
 		}
 
 		template<typename T>
-		MINT_INLINE void Construct(T& at) noexcept
+		MINT_INLINE void ConstructAt(T& at) noexcept
 		{
 			static_assert(IsDefaultConstructible<T>(), "T is not default-constructible!!!");
 
@@ -112,23 +112,7 @@ namespace mint
 		}
 
 		template<typename T>
-		MINT_INLINE void CopyAssign(T& to, const T& from) noexcept
-		{
-			static_assert(IsCopyAssignable<T>(), "T is not copy-assignable!!!");
-
-			to = from;
-		}
-
-		template<typename T>
-		MINT_INLINE void MoveAssign(T& to, T&& from) noexcept
-		{
-			static_assert(IsMoveAssignable<T>(), "T is not move-assignable!!!");
-
-			to = std::move(from);
-		}
-
-		template<typename T>
-		MINT_INLINE void CopyConstruct(T& to, const T& from) noexcept
+		MINT_INLINE void CopyConstructAt(T& to, const T& from) noexcept
 		{
 			static_assert(IsCopyConstructible<T>() || (IsDefaultConstructible<T>() == true && IsCopyAssignable<T>() == true), "T is not copiable!!!");
 
@@ -138,14 +122,14 @@ namespace mint
 			}
 			else if constexpr (IsDefaultConstructible<T>() == true && IsCopyAssignable<T>() == true)
 			{
-				Construct<T>(to);
+				ConstructAt<T>(to);
 
 				to = from;
 			}
 		}
 
 		template<typename T>
-		MINT_INLINE void MoveConstruct(T& to, T&& from) noexcept
+		MINT_INLINE void MoveConstructAt(T& to, T&& from) noexcept
 		{
 			static_assert(IsMoveConstructible<T>() || (IsDefaultConstructible<T>() == true && IsMoveAssignable<T>() == true), "T is not movable!!!");
 
@@ -155,14 +139,14 @@ namespace mint
 			}
 			else if constexpr (IsDefaultConstructible<T>() == true && IsMoveAssignable<T>() == true)
 			{
-				Construct<T>(to);
+				ConstructAt<T>(to);
 
 				to = std::move(from);
 			}
 		}
 
 		template<typename T>
-		MINT_INLINE void Destroy(T& at) noexcept
+		MINT_INLINE void DestroyAt(T& at) noexcept
 		{
 			at.~T();
 		}

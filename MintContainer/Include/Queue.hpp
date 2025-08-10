@@ -116,13 +116,13 @@ namespace mint
 
 		if (_tailAt == _capacity - 1)
 		{
-			MemoryRaw::CopyConstruct<T>(_rawPointer[0], newEntry);
+			MemoryRaw::CopyConstructAt<T>(_rawPointer[0], newEntry);
 
 			_tailAt = 0;
 		}
 		else
 		{
-			MemoryRaw::CopyConstruct<T>(_rawPointer[_tailAt + 1], newEntry);
+			MemoryRaw::CopyConstructAt<T>(_rawPointer[_tailAt + 1], newEntry);
 
 			++_tailAt;
 		}
@@ -140,13 +140,13 @@ namespace mint
 
 		if (_tailAt == _capacity - 1)
 		{
-			MemoryRaw::MoveConstruct<T>(_rawPointer[0], std::move(newEntry));
+			MemoryRaw::MoveConstructAt<T>(_rawPointer[0], std::move(newEntry));
 
 			_tailAt = 0;
 		}
 		else
 		{
-			MemoryRaw::MoveConstruct<T>(_rawPointer[_tailAt + 1], std::move(newEntry));
+			MemoryRaw::MoveConstructAt<T>(_rawPointer[_tailAt + 1], std::move(newEntry));
 
 			++_tailAt;
 		}
@@ -162,7 +162,7 @@ namespace mint
 			return;
 		}
 
-		MemoryRaw::Destroy<T>(_rawPointer[_headAt]);
+		MemoryRaw::DestroyAt<T>(_rawPointer[_headAt]);
 		++_headAt;
 
 		if (_headAt == _capacity)

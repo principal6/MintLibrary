@@ -141,7 +141,7 @@ namespace mint
 			Reserve(size);
 			for (uint32 index = _size; index < size; ++index)
 			{
-				MemoryRaw::Construct(_rawPointer[index]);
+				MemoryRaw::ConstructAt(_rawPointer[index]);
 			}
 			_size = size;
 		}
@@ -187,7 +187,7 @@ namespace mint
 	{
 		ExpandCapacityIfNecessary();
 
-		MemoryRaw::CopyConstruct<T>(_rawPointer[_size], newEntry);
+		MemoryRaw::CopyConstructAt<T>(_rawPointer[_size], newEntry);
 
 		++_size;
 	}
@@ -197,7 +197,7 @@ namespace mint
 	{
 		ExpandCapacityIfNecessary();
 
-		MemoryRaw::MoveConstruct<T>(_rawPointer[_size], std::move(newEntry));
+		MemoryRaw::MoveConstructAt<T>(_rawPointer[_size], std::move(newEntry));
 
 		++_size;
 	}
@@ -213,7 +213,7 @@ namespace mint
 		// valid 한 범위 내 [0, _size - 1] element 는
 		// 모두 ctor 의 호출이 보장되었으므로
 		// 반드시 Destroy() 를 호출해야 한다.
-		MemoryRaw::Destroy<T>(_rawPointer[_size - 1]);
+		MemoryRaw::DestroyAt<T>(_rawPointer[_size - 1]);
 
 		--_size;
 	}
@@ -231,24 +231,24 @@ namespace mint
 
 			if constexpr (IsMovable<T>() == true)
 			{
-				MemoryRaw::MoveConstruct<T>(_rawPointer[_size], std::move(_rawPointer[_size - 1]));
+				MemoryRaw::MoveConstructAt<T>(_rawPointer[_size], std::move(_rawPointer[_size - 1]));
 
 				for (uint32 iter = _size - 1; iter > at; --iter)
 				{
-					MemoryRaw::MoveAssign<T>(_rawPointer[iter], std::move(_rawPointer[iter - 1]));
+					_rawPointer[iter] = std::move(_rawPointer[iter - 1]);
 				}
 			}
 			else // 비효율적이지만 동작은 하도록 한다.
 			{
-				MemoryRaw::CopyConstruct<T>(_rawPointer[_size], _rawPointer[_size - 1]);
+				MemoryRaw::CopyConstructAt<T>(_rawPointer[_size], _rawPointer[_size - 1]);
 
 				for (uint32 iter = _size - 1; iter > at; --iter)
 				{
-					MemoryRaw::CopyAssign<T>(_rawPointer[iter], _rawPointer[iter - 1]);
+					_rawPointer[iter] = _rawPointer[iter - 1];
 				}
 			}
 
-			MemoryRaw::CopyAssign<T>(_rawPointer[at], newEntry);
+			_rawPointer[at] = newEntry;
 
 			++_size;
 		}
@@ -267,25 +267,25 @@ namespace mint
 
 			if constexpr (IsMovable<T>() == true)
 			{
-				MemoryRaw::MoveConstruct<T>(_rawPointer[_size], std::move(_rawPointer[_size - 1]));
+				MemoryRaw::MoveConstructAt<T>(_rawPointer[_size], std::move(_rawPointer[_size - 1]));
 
 				for (uint32 iter = _size - 1; iter > at; --iter)
 				{
-					MemoryRaw::MoveAssign<T>(_rawPointer[iter], std::move(_rawPointer[iter - 1]));
+					_rawPointer[iter] = std::move(_rawPointer[iter - 1]);
 				}
 
-				MemoryRaw::MoveAssign<T>(_rawPointer[at], std::move(newEntry));
+				_rawPointer[at] = std::move(newEntry);
 			}
 			else // 비효율적이지만 동작은 하도록 한다.
 			{
-				MemoryRaw::CopyConstruct<T>(_rawPointer[_size], _rawPointer[_size - 1]);
+				MemoryRaw::CopyConstructAt<T>(_rawPointer[_size], _rawPointer[_size - 1]);
 
 				for (uint32 iter = _size - 1; iter > at; --iter)
 				{
-					MemoryRaw::CopyAssign<T>(_rawPointer[iter], _rawPointer[iter - 1]);
+					_rawPointer[iter] = _rawPointer[iter - 1];
 				}
 
-				MemoryRaw::CopyAssign<T>(_rawPointer[at], newEntry);
+				_rawPointer[at] = newEntry;
 			}
 
 			++_size;
@@ -310,18 +310,18 @@ namespace mint
 			{
 				for (uint32 iter = at + 1; iter < _size; ++iter)
 				{
-					MemoryRaw::MoveAssign<T>(_rawPointer[iter - 1], std::move(_rawPointer[iter]));
+					_rawPointer[iter - 1] = std::move(_rawPointer[iter]);
 				}
 			}
 			else // 비효율적이지만 동작은 하도록 한다.
 			{
 				for (uint32 iter = at + 1; iter < _size; ++iter)
 				{
-					MemoryRaw::CopyAssign<T>(_rawPointer[iter - 1], _rawPointer[iter]);
+					_rawPointer[iter - 1] = _rawPointer[iter];
 				}
 			}
 
-			MemoryRaw::Destroy<T>(_rawPointer[_size - 1]);
+			MemoryRaw::DestroyAt<T>(_rawPointer[_size - 1]);
 
 			--_size;
 		}
@@ -344,9 +344,9 @@ namespace mint
 			return;
 		}
 
-		for(uint32 index = 0; index < _size; ++index)
+		for (uint32 index = 0; index < _size; ++index)
 		{
-			MemoryRaw::Destroy<T>(_rawPointer[index]);
+			MemoryRaw::DestroyAt<T>(_rawPointer[index]);
 		}
 		_size = 0;
 	}

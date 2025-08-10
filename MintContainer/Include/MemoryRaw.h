@@ -57,33 +57,25 @@ namespace mint
 		// placement new 를 사용하여 at 에 대해 default ctor 를 호출한다.
 		// - at 이 살아있는 instance 라면 이 함수 호출 전에 반드시 dtor 를 명시적으로 호출했어야 한다!
 		template<typename T>
-		void Construct(T& at) noexcept;
-
-		// to 가 살아있는 instance 여야만 한다!
-		template<typename T>
-		void CopyAssign(T& to, const T& from) noexcept;
-
-		// to 가 살아있는 instance 여야만 한다!
-		template<typename T>
-		void MoveAssign(T& to, T&& from) noexcept;
+		void ConstructAt(T& at) noexcept;
 
 		// placement new 를 사용하여 to 에 대해 copy ctor 를 호출한다.
 		// - ctor 가 반드시 호출되는 것을 보장한다.
 		// - to 가 살아있는 instance 라면 이 함수 호출 전에 반드시 dtor 를 명시적으로 호출했어야 한다!
 		template<typename T>
-		void CopyConstruct(T& to, const T& from) noexcept;
+		void CopyConstructAt(T& to, const T& from) noexcept;
 
 		// placement new 를 사용하여 to 에 대해 move ctor 를 호출한다.
 		// - ctor 가 반드시 호출되는 것을 보장한다.
 		// - to 가 살아있는 instance 라면 이 함수 호출 전에 반드시 dtor 를 명시적으로 호출했어야 한다!
 		template<typename T>
-		void MoveConstruct(T& to, T&& from) noexcept;
+		void MoveConstructAt(T& to, T&& from) noexcept;
 
 		// at 에 대해 dtor 를 호출한다.
 		// - 반드시 placement new 로 생성된 instance 에 대해서만 사용되어야 한다.
 		// - 반드시 at 이 살아있는 instance 여야만 한다.
 		template<typename T>
-		void Destroy(T& at) noexcept;
+		void DestroyAt(T& at) noexcept;
 	}
 }
 
