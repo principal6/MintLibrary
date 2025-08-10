@@ -5,7 +5,7 @@
 #define _MINT_CONTAINER_VECTOR_H_
 
 
-#include <MintCommon/Include/CommonDefinitions.h>
+#include <MintContainer/Include/BasicVector.h>
 
 
 namespace std
@@ -18,21 +18,26 @@ namespace std
 namespace mint
 {
 	template <typename T>
-	class Vector final
+	class VectorStorage;
+
+	template<typename T>
+	using Vector = BasicVector<T, VectorStorage<T>>;
+
+	template <typename T>
+	class VectorStorage final
 	{
-		static constexpr uint32 kBaseCapacity = 8;
+		friend BasicVector;
 
 	public:
-		Vector();
-		Vector(const uint32 size);
-		Vector(const std::initializer_list<T>& initializerList);
-		Vector(const Vector& rhs) noexcept;
-		Vector(Vector&& rhs) noexcept;
-		~Vector();
+		VectorStorage();
+		VectorStorage(const std::initializer_list<T>& initializerList);
+		VectorStorage(const VectorStorage& rhs) noexcept;
+		VectorStorage(VectorStorage&& rhs) noexcept;
+		~VectorStorage();
 
 	public:
-		Vector& operator=(const Vector& rhs) noexcept;
-		Vector& operator=(Vector&& rhs) noexcept;
+		VectorStorage& operator=(const VectorStorage& rhs) noexcept;
+		VectorStorage& operator=(VectorStorage&& rhs) noexcept;
 
 	public:
 		T& operator[](const uint32 index) noexcept;
@@ -70,81 +75,14 @@ namespace mint
 		uint32 Size() const noexcept;
 		bool IsEmpty() const noexcept;
 
-	public:
-		template<typename T>
-		class Iterator
-		{
-		public:
-			Iterator(T* rawPointer) : _rawPointer{ rawPointer } { __noop; }
-
-		public:
-			bool operator==(const Iterator& rhs) const noexcept
-			{
-				return _rawPointer == rhs._rawPointer;
-			}
-
-			bool operator!=(const Iterator& rhs) const noexcept
-			{
-				return !(*this == rhs);
-			}
-
-			Iterator& operator++() noexcept
-			{
-				++_rawPointer;
-				return *this;
-			}
-
-			T& operator*() noexcept
-			{
-				return *_rawPointer;
-			}
-
-		private:
-			T* _rawPointer;
-		};
-
-		template<typename T>
-		class ConstIterator
-		{
-		public:
-			ConstIterator(const T* rawPointer) : _rawPointer{ rawPointer } { __noop; }
-
-		public:
-			bool operator==(const ConstIterator& rhs) const noexcept
-			{
-				return _rawPointer == rhs._rawPointer;
-			}
-
-			bool operator!=(const ConstIterator& rhs) const noexcept
-			{
-				return !(*this == rhs);
-			}
-
-			ConstIterator& operator++() noexcept
-			{
-				++_rawPointer;
-				return *this;
-			}
-
-			const T& operator*() const noexcept
-			{
-				return *_rawPointer;
-			}
-
-		private:
-			const T* _rawPointer;
-		};
-
-		Iterator<T> begin() noexcept;
-		Iterator<T> end() noexcept;
-		
-		ConstIterator<T> begin() const noexcept;
-		ConstIterator<T> end() const noexcept;
-
 	private:
 		T* _rawPointer;
 		uint32 _capacity;
 		uint32 _size;
+
+	private:
+		static constexpr bool kSupportsDynamicCapacity = true;
+		static constexpr uint32 kBaseCapacity = 8;
 	};
 }
 

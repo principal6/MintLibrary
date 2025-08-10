@@ -14,7 +14,7 @@
 namespace mint
 {
 	template <typename T>
-	inline Vector<T>::Vector()
+	inline VectorStorage<T>::VectorStorage()
 		: _rawPointer{ nullptr }
 		, _capacity{ 0 }
 		, _size{ 0 }
@@ -23,15 +23,8 @@ namespace mint
 	}
 
 	template<typename T>
-	inline Vector<T>::Vector(const uint32 size)
-		: Vector()
-	{
-		Resize(size);
-	}
-
-	template<typename T>
-	inline Vector<T>::Vector(const std::initializer_list<T>& initializerList)
-		: Vector()
+	inline VectorStorage<T>::VectorStorage(const std::initializer_list<T>& initializerList)
+		: VectorStorage()
 	{
 		const uint32 count = static_cast<uint32>(initializerList.size());
 		Reserve(count);
@@ -44,8 +37,8 @@ namespace mint
 	}
 
 	template<typename T>
-	inline Vector<T>::Vector(const Vector& rhs) noexcept
-		: Vector()
+	inline VectorStorage<T>::VectorStorage(const VectorStorage& rhs) noexcept
+		: VectorStorage()
 	{
 		Reserve(rhs._size);
 
@@ -56,7 +49,7 @@ namespace mint
 	}
 
 	template<typename T>
-	inline Vector<T>::Vector(Vector&& rhs) noexcept
+	inline VectorStorage<T>::VectorStorage(VectorStorage&& rhs) noexcept
 		: _rawPointer{ rhs._rawPointer }
 		, _capacity{ rhs._capacity }
 		, _size{ rhs._size }
@@ -67,7 +60,7 @@ namespace mint
 	}
 
 	template<typename T>
-	inline Vector<T>::~Vector()
+	inline VectorStorage<T>::~VectorStorage()
 	{
 		Clear();
 
@@ -75,7 +68,7 @@ namespace mint
 	}
 
 	template<typename T>
-	MINT_INLINE Vector<T>& Vector<T>::operator=(const Vector<T>& rhs) noexcept
+	MINT_INLINE VectorStorage<T>& VectorStorage<T>::operator=(const VectorStorage<T>& rhs) noexcept
 	{
 		if (this != &rhs)
 		{
@@ -92,7 +85,7 @@ namespace mint
 	}
 
 	template<typename T>
-	MINT_INLINE Vector<T>& Vector<T>::operator=(Vector<T>&& rhs) noexcept
+	MINT_INLINE VectorStorage<T>& VectorStorage<T>::operator=(VectorStorage<T>&& rhs) noexcept
 	{
 		if (this != &rhs)
 		{
@@ -112,21 +105,21 @@ namespace mint
 	}
 
 	template<typename T>
-	MINT_INLINE T& Vector<T>::operator[](const uint32 index) noexcept
+	MINT_INLINE T& VectorStorage<T>::operator[](const uint32 index) noexcept
 	{
 		MINT_ASSERT(index < _size, "범위를 벗어난 접근입니다. [index: %d / size: %d]", index, _size);
 		return _rawPointer[index];
 	}
 
 	template<typename T>
-	MINT_INLINE const T& Vector<T>::operator[](const uint32 index) const noexcept
+	MINT_INLINE const T& VectorStorage<T>::operator[](const uint32 index) const noexcept
 	{
 		MINT_ASSERT(index < _size, "범위를 벗어난 접근입니다. [index: %d / size: %d]", index, _size);
 		return _rawPointer[index];
 	}
 
 	template<typename T>
-	MINT_INLINE void Vector<T>::Reserve(const uint32 capacity) noexcept
+	MINT_INLINE void VectorStorage<T>::Reserve(const uint32 capacity) noexcept
 	{
 		if (capacity <= _capacity)
 		{
@@ -155,7 +148,7 @@ namespace mint
 	}
 
 	template<typename T>
-	MINT_INLINE void Vector<T>::Resize(const uint32 size) noexcept
+	MINT_INLINE void VectorStorage<T>::Resize(const uint32 size) noexcept
 	{
 		if (_size < size)
 		{
@@ -177,7 +170,7 @@ namespace mint
 	}
 
 	template<typename T>
-	MINT_INLINE void Vector<T>::ShrinkToFit() noexcept
+	MINT_INLINE void VectorStorage<T>::ShrinkToFit() noexcept
 	{
 		if (_capacity <= _size)
 		{
@@ -204,7 +197,7 @@ namespace mint
 	}
 
 	template<typename T>
-	MINT_INLINE void Vector<T>::Clear() noexcept
+	MINT_INLINE void VectorStorage<T>::Clear() noexcept
 	{
 		while (IsEmpty() == false)
 		{
@@ -213,7 +206,7 @@ namespace mint
 	}
 
 	template<typename T>
-	MINT_INLINE void Vector<T>::PushBack(const T& newEntry) noexcept
+	MINT_INLINE void VectorStorage<T>::PushBack(const T& newEntry) noexcept
 	{
 		ExpandCapacityIfNecessary();
 
@@ -223,7 +216,7 @@ namespace mint
 	}
 
 	template<typename T>
-	MINT_INLINE void Vector<T>::PushBack(T&& newEntry) noexcept
+	MINT_INLINE void VectorStorage<T>::PushBack(T&& newEntry) noexcept
 	{
 		ExpandCapacityIfNecessary();
 
@@ -233,7 +226,7 @@ namespace mint
 	}
 
 	template<typename T>
-	MINT_INLINE void Vector<T>::PopBack() noexcept
+	MINT_INLINE void VectorStorage<T>::PopBack() noexcept
 	{
 		if (_size == 0)
 		{
@@ -249,7 +242,7 @@ namespace mint
 	}
 
 	template<typename T>
-	MINT_INLINE void Vector<T>::Insert(const T& newEntry, const uint32 at) noexcept
+	MINT_INLINE void VectorStorage<T>::Insert(const T& newEntry, const uint32 at) noexcept
 	{
 		if (_size <= at)
 		{
@@ -285,7 +278,7 @@ namespace mint
 	}
 
 	template<typename T>
-	MINT_INLINE void Vector<T>::Insert(T&& newEntry, const uint32 at) noexcept
+	MINT_INLINE void VectorStorage<T>::Insert(T&& newEntry, const uint32 at) noexcept
 	{
 		if (_size <= at)
 		{
@@ -323,7 +316,7 @@ namespace mint
 	}
 
 	template<typename T>
-	MINT_INLINE void Vector<T>::Erase(const uint32 at) noexcept
+	MINT_INLINE void VectorStorage<T>::Erase(const uint32 at) noexcept
 	{
 		if (_size == 0)
 		{
@@ -358,7 +351,7 @@ namespace mint
 	}
 
 	template<typename T>
-	MINT_INLINE void Vector<T>::ExpandCapacityIfNecessary() noexcept
+	MINT_INLINE void VectorStorage<T>::ExpandCapacityIfNecessary() noexcept
 	{
 		if (_size == _capacity)
 		{
@@ -367,99 +360,75 @@ namespace mint
 	}
 
 	template<typename T>
-	MINT_INLINE T& Vector<T>::Front() noexcept
+	MINT_INLINE T& VectorStorage<T>::Front() noexcept
 	{
 		MINT_ASSERT(_size > 0, "범위를 벗어난 접근입니다.");
 		return _rawPointer[0];
 	}
 
 	template<typename T>
-	MINT_INLINE const T& Vector<T>::Front() const noexcept
+	MINT_INLINE const T& VectorStorage<T>::Front() const noexcept
 	{
 		MINT_ASSERT(_size > 0, "범위를 벗어난 접근입니다.");
 		return _rawPointer[0];
 	}
 
 	template<typename T>
-	MINT_INLINE T& Vector<T>::Back() noexcept
+	MINT_INLINE T& VectorStorage<T>::Back() noexcept
 	{
 		MINT_ASSERT(_size > 0, "범위를 벗어난 접근입니다.");
 		return _rawPointer[_size - 1];
 	}
 
 	template<typename T>
-	MINT_INLINE const T& Vector<T>::Back() const noexcept
+	MINT_INLINE const T& VectorStorage<T>::Back() const noexcept
 	{
 		MINT_ASSERT(_size > 0, "범위를 벗어난 접근입니다.");
 		return _rawPointer[_size - 1];
 	}
 
 	template<typename T>
-	MINT_INLINE T& Vector<T>::At(const uint32 index) noexcept
+	MINT_INLINE T& VectorStorage<T>::At(const uint32 index) noexcept
 	{
 		MINT_ASSERT(index < _size, "범위를 벗어난 접근입니다.");
 		return _rawPointer[Min(index, _size - 1)];
 	}
 
 	template<typename T>
-	MINT_INLINE const T& Vector<T>::At(const uint32 index) const noexcept
+	MINT_INLINE const T& VectorStorage<T>::At(const uint32 index) const noexcept
 	{
 		MINT_ASSERT(index < _size, "범위를 벗어난 접근입니다.");
 		return _rawPointer[Min(index, _size - 1)];
 	}
 
 	template<typename T>
-	MINT_INLINE T* Vector<T>::Data() noexcept
+	MINT_INLINE T* VectorStorage<T>::Data() noexcept
 	{
 		return _rawPointer;
 	}
 
 	template<typename T>
-	MINT_INLINE const T* Vector<T>::Data() const noexcept
+	MINT_INLINE const T* VectorStorage<T>::Data() const noexcept
 	{
 		return _rawPointer;
 	}
 
 	template<typename T>
-	MINT_INLINE uint32 Vector<T>::Capacity() const noexcept
+	MINT_INLINE uint32 VectorStorage<T>::Capacity() const noexcept
 	{
 		return _capacity;
 	}
 
 	template<typename T>
-	MINT_INLINE uint32 Vector<T>::Size() const noexcept
+	MINT_INLINE uint32 VectorStorage<T>::Size() const noexcept
 	{
 		return _size;
 	}
 
 	template<typename T>
-	MINT_INLINE bool Vector<T>::IsEmpty() const noexcept
+	MINT_INLINE bool VectorStorage<T>::IsEmpty() const noexcept
 	{
 		return (_size == 0);
-	}
-
-	template<typename T>
-	MINT_INLINE Vector<T>::Iterator<T> Vector<T>::begin() noexcept
-	{
-		return Iterator(&_rawPointer[0]);
-	}
-
-	template<typename T>
-	MINT_INLINE Vector<T>::Iterator<T> Vector<T>::end() noexcept
-	{
-		return Iterator(&_rawPointer[_size]);
-	}
-
-	template<typename T>
-	MINT_INLINE Vector<T>::ConstIterator<T> Vector<T>::begin() const noexcept
-	{
-		return ConstIterator(&_rawPointer[0]);
-	}
-
-	template<typename T>
-	MINT_INLINE Vector<T>::ConstIterator<T> Vector<T>::end() const noexcept
-	{
-		return ConstIterator(&_rawPointer[_size]);
 	}
 }
 

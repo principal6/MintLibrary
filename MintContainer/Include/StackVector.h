@@ -19,8 +19,11 @@ namespace mint
 	template<typename T, const uint32 kCapacity>
 	class StackVectorStorage final
 	{
+		friend BasicVector;
+
 	public:
 		StackVectorStorage();
+		StackVectorStorage(const std::initializer_list<T>& initializerList);
 		~StackVectorStorage();
 
 	public:
@@ -32,6 +35,9 @@ namespace mint
 		void PushBack(const T& entry);
 		void PushBack(T&& entry);
 		void PopBack();
+		void Insert(const T& newEntry, const uint32 at) noexcept;
+		void Insert(T&& newEntry, const uint32 at) noexcept;
+		void Erase(const uint32 at) noexcept;
 		void Clear();
 
 	public:
@@ -41,6 +47,7 @@ namespace mint
 		const T& Back() const;
 		T& At(const uint32 index) noexcept;
 		const T& At(const uint32 index) const noexcept;
+		T* Data() noexcept { return _array; }
 		const T* Data() const noexcept { return _array; }
 
 	public:
@@ -52,6 +59,10 @@ namespace mint
 	private:
 		T _array[kCapacity];
 		uint32 _size;
+	
+	private:
+		static_assert(kCapacity > 0, "kCapacity must be greater than 0");
+		static constexpr bool kSupportsDynamicCapacity = false;
 	};
 }
 
