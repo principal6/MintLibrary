@@ -35,12 +35,12 @@ namespace mint
 	public:
 		MINT_INLINE T& operator[](const uint32 index)
 		{
-			MINT_ASSERT(index < Size(), "범위를 벗어난 접근입니다. [index: %d / size: %d]", index, Size());
+			MINT_ASSERT(index < Size(), "Access out of range! [index: %d / size: %d]", index, Size());
 			return _storage.Data()[index];
 		}
 		MINT_INLINE const T& operator[](const uint32 index) const
 		{
-			MINT_ASSERT(index < Size(), "범위를 벗어난 접근입니다. [index: %d / size: %d]", index, Size());
+			MINT_ASSERT(index < Size(), "Access out of range! [index: %d / size: %d]", index, Size());
 			return _storage.Data()[index];
 		}
 
@@ -67,32 +67,32 @@ namespace mint
 		MINT_INLINE const T* Data() const noexcept { return _storage.Data(); }
 		MINT_INLINE T& Front()
 		{
-			MINT_ASSERT(Size() > 0, "범위를 벗어난 접근입니다.");
+			MINT_ASSERT(Size() > 0, "Access out of range!");
 			return Data()[0];
 		}
 		MINT_INLINE const T& Front() const
 		{
-			MINT_ASSERT(Size() > 0, "범위를 벗어난 접근입니다.");
+			MINT_ASSERT(Size() > 0, "Access out of range!");
 			return Data()[0];
 		}
 		MINT_INLINE T& Back()
 		{
-			MINT_ASSERT(Size() > 0, "범위를 벗어난 접근입니다.");
+			MINT_ASSERT(Size() > 0, "Access out of range!");
 			return Data()[Size() - 1];
 		}
 		MINT_INLINE const T& Back() const
 		{
-			MINT_ASSERT(Size() > 0, "범위를 벗어난 접근입니다.");
+			MINT_ASSERT(Size() > 0, "Access out of range!");
 			return Data()[Size() - 1];
 		}
 		MINT_INLINE T& At(const uint32 index) noexcept
 		{
-			MINT_ASSERT(index < Size(), "범위를 벗어난 접근입니다.");
+			MINT_ASSERT(index < Size(), "Access out of range!");
 			return Data()[index];
 		}
 		MINT_INLINE const T& At(const uint32 index) const noexcept
 		{
-			MINT_ASSERT(index < Size(), "범위를 벗어난 접근입니다.");
+			MINT_ASSERT(index < Size(), "Access out of range!");
 			return Data()[index];
 		}
 
