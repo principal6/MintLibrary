@@ -350,36 +350,6 @@ namespace mint
 		}
 		_size = 0;
 	}
-
-	template<typename T>
-	MINT_INLINE T* VectorStorage<T>::Data() noexcept
-	{
-		return _rawPointer;
-	}
-
-	template<typename T>
-	MINT_INLINE const T* VectorStorage<T>::Data() const noexcept
-	{
-		return _rawPointer;
-	}
-
-	template<typename T>
-	MINT_INLINE uint32 VectorStorage<T>::Capacity() const noexcept
-	{
-		return _capacity;
-	}
-
-	template<typename T>
-	MINT_INLINE uint32 VectorStorage<T>::Size() const noexcept
-	{
-		return _size;
-	}
-
-	template<typename T>
-	MINT_INLINE bool VectorStorage<T>::IsEmpty() const noexcept
-	{
-		return (_size == 0);
-	}
 }
 
 

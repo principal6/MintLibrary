@@ -57,13 +57,13 @@ namespace mint
 		void DestroyAll() noexcept;
 
 	public:
-		T* Data() noexcept;
-		const T* Data() const noexcept;
+		MINT_INLINE T* Data() noexcept { return _rawPointer; }
+		MINT_INLINE const T* Data() const noexcept { return _rawPointer; }
 
 	public:
-		uint32 Capacity() const noexcept;
-		uint32 Size() const noexcept;
-		bool IsEmpty() const noexcept;
+		MINT_INLINE uint32 Capacity() const noexcept { return _capacity; }
+		MINT_INLINE uint32 Size() const noexcept { return _size; }
+		MINT_INLINE bool IsEmpty() const noexcept { return _size == 0; }
 
 	private:
 		T* _rawPointer;
