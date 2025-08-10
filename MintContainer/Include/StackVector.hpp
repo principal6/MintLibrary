@@ -95,7 +95,7 @@ namespace mint
 			return;
 		}
 
-		if constexpr (MemoryRaw::IsMovable<T>() == true)
+		if constexpr (IsMovable<T>() == true)
 		{
 			for (uint32 iter = _size; iter > at; --iter)
 			{
@@ -123,7 +123,7 @@ namespace mint
 			return;
 		}
 
-		if constexpr (MemoryRaw::IsMovable<T>() == true)
+		if constexpr (IsMovable<T>() == true)
 		{
 			for (uint32 iter = _size; iter > at; --iter)
 			{
@@ -152,7 +152,7 @@ namespace mint
 			return;
 		}
 
-		if constexpr (MemoryRaw::IsMovable<T>() == true)
+		if constexpr (IsMovable<T>() == true)
 		{
 			for (uint32 iter = at + 1; iter < _size; ++iter)
 			{

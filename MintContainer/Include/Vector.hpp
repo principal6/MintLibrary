@@ -229,7 +229,7 @@ namespace mint
 		{
 			ExpandCapacityIfNecessary();
 
-			if constexpr (MemoryRaw::IsMovable<T>() == true)
+			if constexpr (IsMovable<T>() == true)
 			{
 				MemoryRaw::MoveConstruct<T>(_rawPointer[_size], std::move(_rawPointer[_size - 1]));
 
@@ -265,7 +265,7 @@ namespace mint
 		{
 			ExpandCapacityIfNecessary();
 
-			if constexpr (MemoryRaw::IsMovable<T>() == true)
+			if constexpr (IsMovable<T>() == true)
 			{
 				MemoryRaw::MoveConstruct<T>(_rawPointer[_size], std::move(_rawPointer[_size - 1]));
 
@@ -306,7 +306,7 @@ namespace mint
 		}
 		else
 		{
-			if constexpr (MemoryRaw::IsMovable<T>() == true)
+			if constexpr (IsMovable<T>() == true)
 			{
 				for (uint32 iter = at + 1; iter < _size; ++iter)
 				{

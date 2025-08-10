@@ -12,59 +12,58 @@
 
 namespace mint
 {
-	namespace MemoryRaw
+#pragma region Type Traitsㅊ
+	template<typename T>
+	MINT_INLINE constexpr bool IsConstructible() noexcept
 	{
-#pragma region Type Traits
-		template<typename T>
-		MINT_INLINE constexpr bool IsConstructible() noexcept
-		{
-			return (IsDefaultConstructible<T>() || IsCopyConstructible<T>() || IsMoveConstructible<T>());
-		}
+		return (IsDefaultConstructible<T>() || IsCopyConstructible<T>() || IsMoveConstructible<T>());
+	}
 
-		template<typename T>
-		MINT_INLINE constexpr bool IsDefaultConstructible() noexcept
-		{
-			return (std::is_default_constructible<T>::value == true);
-		}
+	template<typename T>
+	MINT_INLINE constexpr bool IsDefaultConstructible() noexcept
+	{
+		return (std::is_default_constructible<T>::value == true);
+	}
 
-		template<typename T>
-		MINT_INLINE constexpr bool IsCopyConstructible() noexcept
-		{
-			return (std::is_copy_constructible<T>::value == true);
-		}
+	template<typename T>
+	MINT_INLINE constexpr bool IsCopyConstructible() noexcept
+	{
+		return (std::is_copy_constructible<T>::value == true);
+	}
 
-		template<typename T>
-		MINT_INLINE constexpr bool IsCopyAssignable() noexcept
-		{
-			return (std::is_copy_assignable<T>::value == true);
-		}
+	template<typename T>
+	MINT_INLINE constexpr bool IsCopyAssignable() noexcept
+	{
+		return (std::is_copy_assignable<T>::value == true);
+	}
 
-		template<typename T>
-		MINT_INLINE constexpr bool IsCopiable() noexcept
-		{
-			return (IsCopyConstructible<T>() || IsCopyAssignable<T>());
-		}
+	template<typename T>
+	MINT_INLINE constexpr bool IsCopiable() noexcept
+	{
+		return (IsCopyConstructible<T>() || IsCopyAssignable<T>());
+	}
 
-		template<typename T>
-		MINT_INLINE constexpr bool IsMoveConstructible() noexcept
-		{
-			return (std::is_move_constructible<T>::value == true);
-		}
+	template<typename T>
+	MINT_INLINE constexpr bool IsMoveConstructible() noexcept
+	{
+		return (std::is_move_constructible<T>::value == true);
+	}
 
-		template<typename T>
-		MINT_INLINE constexpr bool IsMoveAssignable() noexcept
-		{
-			return (std::is_move_assignable<T>::value == true);
-		}
+	template<typename T>
+	MINT_INLINE constexpr bool IsMoveAssignable() noexcept
+	{
+		return (std::is_move_assignable<T>::value == true);
+	}
 
-		template<typename T>
-		MINT_INLINE constexpr bool IsMovable() noexcept
-		{
-			return (IsMoveConstructible<T>() || IsMoveAssignable<T>());
-		}
+	template<typename T>
+	MINT_INLINE constexpr bool IsMovable() noexcept
+	{
+		return (IsMoveConstructible<T>() || IsMoveAssignable<T>());
+	}
 #pragma endregion
 
-
+	namespace MemoryRaw
+	{
 		template<typename T>
 		MINT_INLINE T* AllocateMemory(const uint32 size) noexcept
 		{

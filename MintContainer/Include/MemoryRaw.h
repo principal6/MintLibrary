@@ -10,34 +10,34 @@
 
 namespace mint
 {
-	namespace MemoryRaw
-	{
 #pragma region Type Traits
-		template<typename T>
-		constexpr bool IsConstructible() noexcept;
+	template<typename T>
+	constexpr bool IsConstructible() noexcept;
 
-		template<typename T>
-		constexpr bool IsDefaultConstructible() noexcept;
+	template<typename T>
+	constexpr bool IsDefaultConstructible() noexcept;
 
-		template<typename T>
-		constexpr bool IsCopyConstructible() noexcept;
+	template<typename T>
+	constexpr bool IsCopyConstructible() noexcept;
 
-		template<typename T>
-		constexpr bool IsCopyAssignable() noexcept;
+	template<typename T>
+	constexpr bool IsCopyAssignable() noexcept;
 
-		template<typename T>
-		constexpr bool IsCopiable() noexcept;
+	template<typename T>
+	constexpr bool IsCopiable() noexcept;
 
-		template<typename T>
-		constexpr bool IsMoveConstructible() noexcept;
+	template<typename T>
+	constexpr bool IsMoveConstructible() noexcept;
 
-		template<typename T>
-		constexpr bool IsMoveAssignable() noexcept;
+	template<typename T>
+	constexpr bool IsMoveAssignable() noexcept;
 
-		template<typename T>
-		constexpr bool IsMovable() noexcept;
+	template<typename T>
+	constexpr bool IsMovable() noexcept;
 #pragma endregion
 
+	namespace MemoryRaw
+	{
 		// malloc 을 이용하여 ctor 를 호출하지 않고 메모리만 할당한다.
 		// - 반드시 이 함수 호출 후에 명시적으로 ctor 를 호출해야 한다!
 		template<typename T>
