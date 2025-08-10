@@ -17,7 +17,7 @@ namespace mint
 	{
 		__noop;
 	}
-	
+
 	template<typename T, const uint32 Capacity>
 	inline StackVectorStorage<T, Capacity>::StackVectorStorage(const std::initializer_list<T>& initializerList)
 		: _array{}
@@ -97,23 +97,19 @@ namespace mint
 
 		if constexpr (MemoryRaw::IsMovable<T>() == true)
 		{
-			MemoryRaw::MoveConstruct<T>(_array[_size], std::move(_array[_size - 1]));
-
-			for (uint32 iter = _size - 1; iter > at; --iter)
+			for (uint32 iter = _size; iter > at; --iter)
 			{
-				MemoryRaw::MoveAssign<T>(_array[iter], std::move(_array[iter - 1]));
+				_array[iter] = std::move(_array[iter - 1]);
 			}
 		}
 		else // 비효율적이지만 동작은 하도록 한다.
 		{
-			MemoryRaw::CopyConstruct<T>(_array[_size], _array[_size - 1]);
-
-			for (uint32 iter = _size - 1; iter > at; --iter)
+			for (uint32 iter = _size; iter > at; --iter)
 			{
-				MemoryRaw::CopyAssign<T>(_array[iter], _array[iter - 1]);
+				_array[iter] = _array[iter - 1];
 			}
 		}
-		MemoryRaw::CopyAssign<T>(_array[at], newEntry);
+		_array[at] = newEntry;
 		++_size;
 	}
 
@@ -129,25 +125,19 @@ namespace mint
 
 		if constexpr (MemoryRaw::IsMovable<T>() == true)
 		{
-			MemoryRaw::MoveConstruct<T>(_array[_size], std::move(_array[_size - 1]));
-
-			for (uint32 iter = _size - 1; iter > at; --iter)
+			for (uint32 iter = _size; iter > at; --iter)
 			{
-				MemoryRaw::MoveAssign<T>(_array[iter], std::move(_array[iter - 1]));
+				_array[iter] = std::move(_array[iter - 1]);
 			}
-
-			MemoryRaw::MoveAssign<T>(_array[at], std::move(newEntry));
+			_array[at] = std::move(newEntry);
 		}
 		else // 비효율적이지만 동작은 하도록 한다.
 		{
-			MemoryRaw::CopyConstruct<T>(_array[_size], _array[_size - 1]);
-
-			for (uint32 iter = _size - 1; iter > at; --iter)
+			for (uint32 iter = _size; iter > at; --iter)
 			{
-				MemoryRaw::CopyAssign<T>(_array[iter], _array[iter - 1]);
+				_array[iter] = _array[iter - 1];
 			}
-
-			MemoryRaw::CopyAssign<T>(_array[at], newEntry);
+			_array[at] = newEntry;
 		}
 		++_size;
 	}
@@ -166,18 +156,16 @@ namespace mint
 		{
 			for (uint32 iter = at + 1; iter < _size; ++iter)
 			{
-				MemoryRaw::MoveAssign<T>(_array[iter - 1], std::move(_array[iter]));
+				_array[iter - 1] = std::move(_array[iter]);
 			}
 		}
 		else // 비효율적이지만 동작은 하도록 한다.
 		{
 			for (uint32 iter = at + 1; iter < _size; ++iter)
 			{
-				MemoryRaw::CopyAssign<T>(_array[iter - 1], _array[iter]);
+				_array[iter - 1] = _array[iter];
 			}
 		}
-
-		//MemoryRaw::Destroy<T>(_array[_size - 1]);
 
 		--_size;
 	}
