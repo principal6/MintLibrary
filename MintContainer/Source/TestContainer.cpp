@@ -504,6 +504,25 @@ namespace mint
 			c.Erase(2);
 			c.ShrinkToFit();
 
+			StackVector<uint32, 8> stackVector0;
+			MINT_ASSURE(stackVector0.IsEmpty() == true);
+			stackVector0.PushBack(0);
+			MINT_ASSURE(stackVector0.IsEmpty() == false);
+			stackVector0.PushBack(1);
+			stackVector0.PushBack(2);
+			stackVector0.PushBack(3);
+			stackVector0.PushBack(4);
+			stackVector0.PushBack(5);
+			MINT_ASSURE(stackVector0.IsFull() == false);
+			stackVector0.PushBack(6);
+			stackVector0.PushBack(7);
+			MINT_ASSURE(stackVector0.IsFull() == true);
+			StackStringA<256> testBuffer;
+			for (const uint32& item : stackVector0)
+			{
+				testBuffer += StringUtil::ToStringA(item);
+			}
+			MINT_ASSURE(testBuffer == "01234567");
 			return true;
 		}
 

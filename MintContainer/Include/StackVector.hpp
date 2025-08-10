@@ -11,7 +11,7 @@
 namespace mint
 {
 	template<typename T, const uint32 Capacity>
-	inline StackVector<T, Capacity>::StackVector()
+	inline StackVectorStorage<T, Capacity>::StackVectorStorage()
 		: _array{}
 		, _size{ 0 }
 	{
@@ -19,27 +19,27 @@ namespace mint
 	}
 
 	template<typename T, uint32 Capacity>
-	inline StackVector<T, Capacity>::~StackVector()
+	inline StackVectorStorage<T, Capacity>::~StackVectorStorage()
 	{
 		__noop;
 	}
 
 	template<typename T, uint32 Capacity>
-	inline T& StackVector<T, Capacity>::operator[](const uint32 index)
+	inline T& StackVectorStorage<T, Capacity>::operator[](const uint32 index)
 	{
 		MINT_ASSERT(index < _size, "범위를 벗어난 접근입니다. [index: %d / size: %d]", index, _size);
 		return _array[index];
 	}
 
 	template<typename T, uint32 Capacity>
-	inline const T& StackVector<T, Capacity>::operator[](const uint32 index) const
+	inline const T& StackVectorStorage<T, Capacity>::operator[](const uint32 index) const
 	{
 		MINT_ASSERT(index < _size, "범위를 벗어난 접근입니다. [index: %d / size: %d]", index, _size);
 		return _array[index];
 	}
 
 	template<typename T, uint32 Capacity>
-	inline void StackVector<T, Capacity>::Resize(const uint32 size)
+	inline void StackVectorStorage<T, Capacity>::Resize(const uint32 size)
 	{
 		MINT_ASSERT(size <= Capacity, "size 는 Capacity 보다 커질 수 없습니다!", size, Capacity);
 		if (size == _size)
@@ -51,11 +51,11 @@ namespace mint
 	}
 
 	template<typename T, uint32 Capacity>
-	inline void StackVector<T, Capacity>::PushBack(const T& entry)
+	inline void StackVectorStorage<T, Capacity>::PushBack(const T& entry)
 	{
 		if (IsFull())
 		{
-			MINT_ASSERT(false, "StackVector 가 이미 가득 차있습니다!");
+			MINT_ASSERT(false, "StackVectorStorage 가 이미 가득 차있습니다!");
 			return;
 		}
 
@@ -64,11 +64,11 @@ namespace mint
 	}
 
 	template<typename T, uint32 Capacity>
-	inline void StackVector<T, Capacity>::PushBack(T&& entry)
+	inline void StackVectorStorage<T, Capacity>::PushBack(T&& entry)
 	{
 		if (IsFull())
 		{
-			MINT_ASSERT(false, "StackVector 가 이미 가득 차있습니다!");
+			MINT_ASSERT(false, "StackVectorStorage 가 이미 가득 차있습니다!");
 			return;
 		}
 
@@ -77,11 +77,11 @@ namespace mint
 	}
 
 	template<typename T, uint32 Capacity>
-	inline void StackVector<T, Capacity>::PopBack()
+	inline void StackVectorStorage<T, Capacity>::PopBack()
 	{
 		if (IsEmpty())
 		{
-			MINT_ASSERT(false, "StackVector 가 이미 비어 있습니다!");
+			MINT_ASSERT(false, "StackVectorStorage 가 이미 비어 있습니다!");
 			return;
 		}
 
@@ -89,7 +89,7 @@ namespace mint
 	}
 
 	template<typename T, uint32 Capacity>
-	inline void StackVector<T, Capacity>::Clear()
+	inline void StackVectorStorage<T, Capacity>::Clear()
 	{
 		while (IsEmpty() == false)
 		{
@@ -98,7 +98,7 @@ namespace mint
 	}
 
 	template<typename T, uint32 Capacity>
-	inline T& StackVector<T, Capacity>::Front()
+	inline T& StackVectorStorage<T, Capacity>::Front()
 	{
 		if (_size == 0)
 		{
@@ -108,7 +108,7 @@ namespace mint
 	}
 
 	template<typename T, uint32 Capacity>
-	inline const T& StackVector<T, Capacity>::Front() const
+	inline const T& StackVectorStorage<T, Capacity>::Front() const
 	{
 		if (_size == 0)
 		{
@@ -118,7 +118,7 @@ namespace mint
 	}
 
 	template<typename T, uint32 Capacity>
-	inline T& StackVector<T, Capacity>::Back()
+	inline T& StackVectorStorage<T, Capacity>::Back()
 	{
 		if (_size == 0)
 		{
@@ -128,7 +128,7 @@ namespace mint
 	}
 
 	template<typename T, uint32 Capacity>
-	inline const T& StackVector<T, Capacity>::Back() const
+	inline const T& StackVectorStorage<T, Capacity>::Back() const
 	{
 		if (_size == 0)
 		{
@@ -138,14 +138,14 @@ namespace mint
 	}
 
 	template<typename T, uint32 Capacity>
-	MINT_INLINE T& StackVector<T, Capacity>::At(const uint32 index) noexcept
+	MINT_INLINE T& StackVectorStorage<T, Capacity>::At(const uint32 index) noexcept
 	{
 		MINT_ASSERT(index < _size, "범위를 벗어난 접근입니다.");
 		return _array[Min(index, _size - 1)];
 	}
 
 	template<typename T, uint32 Capacity>
-	MINT_INLINE const T& StackVector<T, Capacity>::At(const uint32 index) const noexcept
+	MINT_INLINE const T& StackVectorStorage<T, Capacity>::At(const uint32 index) const noexcept
 	{
 		MINT_ASSERT(index < _size, "범위를 벗어난 접근입니다.");
 		return _array[Min(index, _size - 1)];

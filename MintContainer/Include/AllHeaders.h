@@ -5,6 +5,7 @@
 #define _MINT_CONTAINER_ALL_HEADERS_H_
 
 
+#include <MintContainer/Include/BasicVector.h>
 #include <MintContainer/Include/BitVector.h>
 #include <MintContainer/Include/StringReference.h>
 #include <MintContainer/Include/StackString.h>
@@ -14,6 +15,7 @@
 #include <MintContainer/Include/StringUtil.h>
 #include <MintContainer/Include/Tree.h>
 #include <MintContainer/Include/Vector.h>
+#include <MintContainer/Include/StackVector.h>
 #include <MintContainer/Include/ID.h>
 #include <MintContainer/Include/Index.h>
 #include <MintContainer/Include/HashMap.h>

@@ -14,6 +14,7 @@
 #include <MintContainer/Include/StringUtil.hpp>
 #include <MintContainer/Include/Tree.hpp>
 #include <MintContainer/Include/Vector.hpp>
+#include <MintContainer/Include/StackVector.hpp>
 #include <MintContainer/Include/HashMap.hpp>
 #include <MintContainer/Include/Queue.hpp>
 #include <MintContainer/Include/RefCounted.hpp>

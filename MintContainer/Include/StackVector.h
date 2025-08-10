@@ -5,17 +5,23 @@
 #define _MINT_CONTAINER_STACK_VECTOR_H_
 
 
-#include <MintCommon/Include/CommonDefinitions.h>
+#include <MintContainer/Include/BasicVector.h>
 
 
 namespace mint
 {
 	template<typename T, const uint32 kCapacity>
-	class StackVector
+	class StackVectorStorage;
+
+	template<typename T, const uint32 kCapacity>
+	using StackVector = BasicVector<T, StackVectorStorage<T, kCapacity>>;
+
+	template<typename T, const uint32 kCapacity>
+	class StackVectorStorage final
 	{
 	public:
-		StackVector();
-		~StackVector();
+		StackVectorStorage();
+		~StackVectorStorage();
 
 	public:
 		T& operator[](const uint32 index);
