@@ -45,7 +45,6 @@ namespace mint
 		void ShrinkToFit() noexcept;
 
 	public:
-		void Clear() noexcept;
 		void PushBack(const T& newEntry) noexcept;
 		void PushBack(T&& newEntry) noexcept;
 		void PopBack() noexcept;
@@ -55,14 +54,9 @@ namespace mint
 
 	private:
 		void ExpandCapacityIfNecessary() noexcept;
+		void DestroyAll() noexcept;
 
 	public:
-		T& Front() noexcept;
-		const T& Front() const noexcept;
-		T& Back() noexcept;
-		const T& Back() const noexcept;
-		T& At(const uint32 index) noexcept;
-		const T& At(const uint32 index) const noexcept;
 		T* Data() noexcept;
 		const T* Data() const noexcept;
 

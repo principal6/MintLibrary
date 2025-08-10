@@ -34,15 +34,8 @@ namespace mint
 		void Insert(const T& newEntry, const uint32 at) noexcept;
 		void Insert(T&& newEntry, const uint32 at) noexcept;
 		void Erase(const uint32 at) noexcept;
-		void Clear();
 
 	public:
-		T& Front();
-		const T& Front() const;
-		T& Back();
-		const T& Back() const;
-		T& At(const uint32 index) noexcept;
-		const T& At(const uint32 index) const noexcept;
 		T* Data() noexcept { return _array; }
 		const T* Data() const noexcept { return _array; }
 

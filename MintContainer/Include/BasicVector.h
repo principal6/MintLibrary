@@ -33,12 +33,12 @@ namespace mint
 		BasicVector& operator=(BasicVector&& rhs) noexcept = default;
 
 	public:
-		MINT_INLINE T& operator[](const uint32 index) 
+		MINT_INLINE T& operator[](const uint32 index)
 		{
 			MINT_ASSERT(index < Size(), "범위를 벗어난 접근입니다. [index: %d / size: %d]", index, Size());
 			return _storage.Data()[index];
 		}
-		MINT_INLINE const T& operator[](const uint32 index) const 
+		MINT_INLINE const T& operator[](const uint32 index) const
 		{
 			MINT_ASSERT(index < Size(), "범위를 벗어난 접근입니다. [index: %d / size: %d]", index, Size());
 			return _storage.Data()[index];
@@ -54,17 +54,47 @@ namespace mint
 		MINT_INLINE void Insert(const T& newEntry, const uint32 at) noexcept { _storage.Insert(newEntry, at); }
 		MINT_INLINE void Insert(T&& newEntry, const uint32 at) noexcept { _storage.Insert(std::move(newEntry), at); }
 		MINT_INLINE void Erase(const uint32 at) noexcept { _storage.Erase(at); }
-		MINT_INLINE void Clear() { _storage.Clear(); }
+		MINT_INLINE void Clear()
+		{
+			while (IsEmpty() == false)
+			{
+				PopBack();
+			}
+		}
 
 	public:
 		MINT_INLINE T* Data() noexcept { return _storage.Data(); }
 		MINT_INLINE const T* Data() const noexcept { return _storage.Data(); }
-		MINT_INLINE T& Front() { return _storage.Front(); }
-		MINT_INLINE const T& Front() const { return _storage.Front(); }
-		MINT_INLINE T& Back() { return _storage.Back(); }
-		MINT_INLINE const T& Back() const { return _storage.Back(); }
-		MINT_INLINE T& At(const uint32 index) noexcept { return _storage.At(index); }
-		MINT_INLINE const T& At(const uint32 index) const noexcept { return _storage.At(index); }
+		MINT_INLINE T& Front()
+		{
+			MINT_ASSERT(Size() > 0, "범위를 벗어난 접근입니다.");
+			return Data()[0];
+		}
+		MINT_INLINE const T& Front() const
+		{
+			MINT_ASSERT(Size() > 0, "범위를 벗어난 접근입니다.");
+			return Data()[0];
+		}
+		MINT_INLINE T& Back()
+		{
+			MINT_ASSERT(Size() > 0, "범위를 벗어난 접근입니다.");
+			return Data()[Size() - 1];
+		}
+		MINT_INLINE const T& Back() const
+		{
+			MINT_ASSERT(Size() > 0, "범위를 벗어난 접근입니다.");
+			return Data()[Size() - 1];
+		}
+		MINT_INLINE T& At(const uint32 index) noexcept
+		{
+			MINT_ASSERT(index < Size(), "범위를 벗어난 접근입니다.");
+			return Data()[index];
+		}
+		MINT_INLINE const T& At(const uint32 index) const noexcept
+		{
+			MINT_ASSERT(index < Size(), "범위를 벗어난 접근입니다.");
+			return Data()[index];
+		}
 
 	public:
 		MINT_INLINE constexpr uint32 Capacity() const { return _storage.Capacity(); }
