@@ -33,8 +33,16 @@ namespace mint
 		BasicVector& operator=(BasicVector&& rhs) noexcept = default;
 
 	public:
-		MINT_INLINE T& operator[](const uint32 index) { return _storage[index]; }
-		MINT_INLINE const T& operator[](const uint32 index) const { return _storage[index]; }
+		MINT_INLINE T& operator[](const uint32 index) 
+		{
+			MINT_ASSERT(index < Size(), "범위를 벗어난 접근입니다. [index: %d / size: %d]", index, Size());
+			return _storage.Data()[index];
+		}
+		MINT_INLINE const T& operator[](const uint32 index) const 
+		{
+			MINT_ASSERT(index < Size(), "범위를 벗어난 접근입니다. [index: %d / size: %d]", index, Size());
+			return _storage.Data()[index];
+		}
 
 	public:
 		MINT_INLINE void Reserve(const uint32 capacity) requires(Storage::kSupportsDynamicCapacity) { _storage.Reserve(capacity); }

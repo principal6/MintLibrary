@@ -36,20 +36,6 @@ namespace mint
 	}
 
 	template<typename T, uint32 Capacity>
-	inline T& StackVectorStorage<T, Capacity>::operator[](const uint32 index)
-	{
-		MINT_ASSERT(index < _size, "범위를 벗어난 접근입니다. [index: %d / size: %d]", index, _size);
-		return _array[index];
-	}
-
-	template<typename T, uint32 Capacity>
-	inline const T& StackVectorStorage<T, Capacity>::operator[](const uint32 index) const
-	{
-		MINT_ASSERT(index < _size, "범위를 벗어난 접근입니다. [index: %d / size: %d]", index, _size);
-		return _array[index];
-	}
-
-	template<typename T, uint32 Capacity>
 	inline void StackVectorStorage<T, Capacity>::Resize(const uint32 size)
 	{
 		MINT_ASSERT(size <= Capacity, "size 는 Capacity 보다 커질 수 없습니다!", size, Capacity);

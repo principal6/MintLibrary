@@ -105,20 +105,6 @@ namespace mint
 	}
 
 	template<typename T>
-	MINT_INLINE T& VectorStorage<T>::operator[](const uint32 index) noexcept
-	{
-		MINT_ASSERT(index < _size, "범위를 벗어난 접근입니다. [index: %d / size: %d]", index, _size);
-		return _rawPointer[index];
-	}
-
-	template<typename T>
-	MINT_INLINE const T& VectorStorage<T>::operator[](const uint32 index) const noexcept
-	{
-		MINT_ASSERT(index < _size, "범위를 벗어난 접근입니다. [index: %d / size: %d]", index, _size);
-		return _rawPointer[index];
-	}
-
-	template<typename T>
 	MINT_INLINE void VectorStorage<T>::Reserve(const uint32 capacity) noexcept
 	{
 		if (capacity <= _capacity)

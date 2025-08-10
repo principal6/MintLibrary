@@ -27,10 +27,6 @@ namespace mint
 		~StackVectorStorage();
 
 	public:
-		T& operator[](const uint32 index);
-		const T& operator[](const uint32 index) const;
-
-	public:
 		void Resize(const uint32 size);
 		void PushBack(const T& entry);
 		void PushBack(T&& entry);

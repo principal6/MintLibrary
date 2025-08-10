@@ -40,10 +40,6 @@ namespace mint
 		VectorStorage& operator=(VectorStorage&& rhs) noexcept;
 
 	public:
-		T& operator[](const uint32 index) noexcept;
-		const T& operator[](const uint32 index) const noexcept;
-
-	public:
 		void Reserve(const uint32 capacity) noexcept;
 		void Resize(const uint32 size) noexcept; // default-constructible 의 경우에만 호출 가능하다!
 		void ShrinkToFit() noexcept;
