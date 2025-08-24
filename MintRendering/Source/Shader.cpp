@@ -14,7 +14,7 @@
 #include <MintRendering/Include/GraphicsDevice.h>
 #include <MintRendering/Include/DxShaderHeaderMemory.h>
 
-#include <MintRendering/Include/CppHlsl/Parser.h>
+#include <MintRendering/Include/CppHlsl/CppHlslParser.h>
 
 
 #pragma comment(lib, "d3dcompiler.lib")

@@ -63,13 +63,13 @@
     <ClInclude Include="Include\MeshData.h">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="Include\CppHlsl\Interpreter.h">
+    <ClInclude Include="Include\CppHlsl\CppHlslInterpreter.h">
       <Filter>Include\CppHlsl</Filter>
     </ClInclude>
-    <ClInclude Include="Include\CppHlsl\Lexer.h">
+    <ClInclude Include="Include\CppHlsl\CppHlslLexer.h">
       <Filter>Include\CppHlsl</Filter>
     </ClInclude>
-    <ClInclude Include="Include\CppHlsl\Parser.h">
+    <ClInclude Include="Include\CppHlsl\CppHlslParser.h">
       <Filter>Include\CppHlsl</Filter>
     </ClInclude>
     <ClInclude Include="Include\CppHlsl\CppHlslTypes.h">
@@ -131,7 +131,7 @@
     <None Include="Include\GraphicsDevice.inl">
       <Filter>Include</Filter>
     </None>
-    <None Include="Include\CppHlsl\Parser.inl">
+    <None Include="Include\CppHlsl\CppHlslParser.inl">
       <Filter>Include\CppHlsl</Filter>
     </None>
     <None Include="Include\IRenderer.inl">
@@ -163,13 +163,13 @@
     <ClCompile Include="Source\RenderingBaseCommon.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Source\CppHlsl\Interpreter.cpp">
+    <ClCompile Include="Source\CppHlsl\CppHlslInterpreter.cpp">
       <Filter>Source\CppHlsl</Filter>
     </ClCompile>
-    <ClCompile Include="Source\CppHlsl\Lexer.cpp">
+    <ClCompile Include="Source\CppHlsl\CppHlslLexer.cpp">
       <Filter>Source\CppHlsl</Filter>
     </ClCompile>
-    <ClCompile Include="Source\CppHlsl\Parser.cpp">
+    <ClCompile Include="Source\CppHlsl\CppHlslParser.cpp">
       <Filter>Source\CppHlsl</Filter>
     </ClCompile>
     <ClCompile Include="Source\_UnityBuild.cpp">

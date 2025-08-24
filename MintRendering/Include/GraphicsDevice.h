@@ -19,7 +19,7 @@
 #include <MintRendering/Include/Material.h>
 #include <MintRendering/Include/LowLevelRenderer.h>
 
-#include <MintRendering/Include/CppHlsl/Interpreter.h>
+#include <MintRendering/Include/CppHlsl/CppHlslInterpreter.h>
 
 #include <MintMath/Include/Float4x4.h>
 

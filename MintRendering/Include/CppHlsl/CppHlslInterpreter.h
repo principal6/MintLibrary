@@ -7,8 +7,8 @@
 
 #include <MintCommon/Include/CommonDefinitions.h>
 
-#include <MintRendering/Include/CppHlsl/Lexer.h>
-#include <MintRendering/Include/CppHlsl/Parser.h>
+#include <MintRendering/Include/CppHlsl/CppHlslLexer.h>
+#include <MintRendering/Include/CppHlsl/CppHlslParser.h>
 
 
 namespace mint

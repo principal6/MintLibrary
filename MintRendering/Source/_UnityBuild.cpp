@@ -15,9 +15,10 @@
 #include <MintRendering/Source/ShapeRenderer.cpp>
 #include <MintRendering/Source/ShapeGenerator.cpp>
 #include <MintRendering/Source/SpriteAnimation.cpp>
-#include <MintRendering/Source/CppHlsl/Interpreter.cpp>
-#include <MintRendering/Source/CppHlsl/Lexer.cpp>
-#include <MintRendering/Source/CppHlsl/Parser.cpp>
+
+#include <MintRendering/Source/CppHlsl/CppHlslInterpreter.cpp>
+#include <MintRendering/Source/CppHlsl/CppHlslLexer.cpp>
+#include <MintRendering/Source/CppHlsl/CppHlslParser.cpp>
 
 #include <MintRendering/Source/Utilities/InstantRenderer.cpp>
 #include <MintRendering/Source/Utilities/MeshGenerator.cpp>

@@ -116,7 +116,7 @@ namespace mint
 }
 
 
-#include <MintRendering/Include/CppHlsl/Parser.inl>
+#include <MintRendering/Include/CppHlsl/CppHlslParser.inl>
 
 
 #endif // !_MINT_RENDERING_BASE_CPP_HLSL_PARSER_H_

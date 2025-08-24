@@ -196,9 +196,9 @@
     <ClInclude Include="..\Assets\Include\CppHlsl\CppHlslStreamData.h" />
     <ClInclude Include="..\Assets\Include\CppHlsl\CppHlslStructuredBuffers.h" />
     <ClInclude Include="Include\AllHpps.h" />
-    <ClInclude Include="Include\CppHlsl\Interpreter.h" />
-    <ClInclude Include="Include\CppHlsl\Lexer.h" />
-    <ClInclude Include="Include\CppHlsl\Parser.h" />
+    <ClInclude Include="Include\CppHlsl\CppHlslInterpreter.h" />
+    <ClInclude Include="Include\CppHlsl\CppHlslLexer.h" />
+    <ClInclude Include="Include\CppHlsl\CppHlslParser.h" />
     <ClInclude Include="Include\CppHlsl\CppHlslTypes.h" />
     <ClInclude Include="Include\FontRenderer.h" />
     <ClInclude Include="Include\GraphicsResource.h" />
@@ -227,24 +227,24 @@
     <ClInclude Include="Include\Utilities\SplineGenerator.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Include\CppHlsl\Parser.inl" />
+    <None Include="Include\CppHlsl\CppHlslParser.inl" />
     <None Include="Include\GraphicsDevice.inl" />
     <None Include="Include\IRenderer.inl" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\CppHlsl\Interpreter.cpp">
+    <ClCompile Include="Source\CppHlsl\CppHlslInterpreter.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="Source\CppHlsl\Lexer.cpp">
+    <ClCompile Include="Source\CppHlsl\CppHlslLexer.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="Source\CppHlsl\Parser.cpp">
+    <ClCompile Include="Source\CppHlsl\CppHlslParser.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
