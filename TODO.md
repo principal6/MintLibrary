@@ -1,5 +1,4 @@
 ﻿# TODO
-## StackVector 말고 InlineVector 구현 추가! ( Stack 메모리 사용하다가 Size 초과하면 Heap 메모리로 전환하는 방식 )
 ## CppHlsl 파일들에 CppHlsl prefix 붙이기
 ## CppHlsl Parser 에 SkipParsingIf 함수 구현하기( 구조를 입력받아 같은 경우에 Skip 다른 경우 실패 처리! )
 ## SceneObect 렌더링 개선 - Material 세팅 정식으로 적용하기!
