@@ -150,6 +150,12 @@
     <ClInclude Include="Include\BasicVector.h">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="Include\InlineVector.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\InlineVector.hpp">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Include\Array.inl">

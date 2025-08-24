@@ -190,6 +190,8 @@
     <ClInclude Include="Include\HashMap.hpp" />
     <ClInclude Include="Include\ID.h" />
     <ClInclude Include="Include\Index.h" />
+    <ClInclude Include="Include\InlineVector.h" />
+    <ClInclude Include="Include\InlineVector.hpp" />
     <ClInclude Include="Include\MemoryRaw.h" />
     <ClInclude Include="Include\MemoryRaw.hpp" />
     <ClInclude Include="Include\OwnPtr.h" />

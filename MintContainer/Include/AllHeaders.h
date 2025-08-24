@@ -16,6 +16,7 @@
 #include <MintContainer/Include/Tree.h>
 #include <MintContainer/Include/Vector.h>
 #include <MintContainer/Include/StackVector.h>
+#include <MintContainer/Include/InlineVector.h>
 #include <MintContainer/Include/ID.h>
 #include <MintContainer/Include/Index.h>
 #include <MintContainer/Include/HashMap.h>

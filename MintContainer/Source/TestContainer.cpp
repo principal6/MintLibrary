@@ -373,7 +373,7 @@ namespace mint
 			Index32 index2 = 1;
 			MINT_ASSURE(index2 != index0);
 			MINT_ASSURE(index2 != index1);
-			
+
 			const uint32 u32_0 = uint32(index0);
 			const uint32 u32_1 = uint32(index1);
 			const uint32 u32_2 = uint32(index2);
@@ -443,86 +443,146 @@ namespace mint
 
 		bool Test_Vector()
 		{
-			using Type = int32;
-			//using Type = Notable<int32>;
+			class TestClass
 			{
-				Type notableA(11);
-				Type notableB = std::move(notableA);
-			}
+			public:
+				TestClass() : _isCreated(true), _isDestroyed(false) {}
+				~TestClass() { _isDestroyed = true; }
+			private:
+				bool _isCreated;
+				bool _isDestroyed;
+			};
+
 			{
-				std::vector<Type> strVector;
-				strVector.reserve(5);
-				strVector.push_back(0);
-				strVector.push_back(1);
-				strVector.push_back(2);
-				strVector.push_back(3);
+				std::vector<int32> v_str;
+				v_str.reserve(5);
+				v_str.push_back(0);
+				v_str.push_back(1);
+				v_str.push_back(2);
+				v_str.push_back(3);
 				//strVector.erase(t.begin() + 1);
-				strVector.insert(strVector.begin() + 1, 4);
+				v_str.insert(v_str.begin() + 1, 4);
 
-				Vector<Type> mintVector;
-				mintVector.Reserve(5);
-				mintVector.PushBack(0);
-				mintVector.PushBack(1);
-				mintVector.PushBack(2);
-				mintVector.PushBack(3);
+				Vector<int32> v_int;
+				v_int.Reserve(5);
+				v_int.PushBack(0);
+				v_int.PushBack(1);
+				v_int.PushBack(2);
+				v_int.PushBack(3);
 				//mintVector.erase(1);
-				mintVector.Insert(4, 1);
+				v_int.Insert(4, 1);
 			}
 
 
-			Vector<uint32> a(5);
-			a.PushBack(1);
-			a.PushBack(2);
-			a.PushBack(3);
-			a.Insert(2, 5);
-			a.Erase(1);
+			Vector<uint32> v_a(5);
+			v_a.PushBack(1);
+			v_a.PushBack(2);
+			v_a.PushBack(3);
+			v_a.Insert(2, 5);
+			v_a.Erase(1);
 
-			Vector<Type> resizeTest;
-			resizeTest.PushBack(1);
-			resizeTest.PushBack(2);
-			resizeTest.PushBack(3);
-			resizeTest.PushBack(4);
-			resizeTest.PushBack(5);
-			resizeTest.PushBack(6);
-			resizeTest.PushBack(7);
-			resizeTest.Resize(1);
-			MINT_ASSURE(resizeTest.Size() == 1);
+			Vector<int32> v_resize;
+			v_resize.PushBack(1);
+			v_resize.PushBack(2);
+			v_resize.PushBack(3);
+			v_resize.PushBack(4);
+			v_resize.PushBack(5);
+			v_resize.PushBack(6);
+			v_resize.PushBack(7);
+			v_resize.Resize(1);
+			MINT_ASSURE(v_resize.Size() == 1);
 
-			Vector<uint32> b(20);
-			b.PushBack(9);
-
+			Vector<uint32> v_move(20);
+			v_move.PushBack(9);
 			// Move semantic 점검!
-			std::swap(a, b);
+			std::swap(v_a, v_move);
 
-			Vector<uint32> c(3);
-			c.Insert(3, 10);
-			c.Insert(2, 0);
-			c.Insert(99, 1);
-			c.Insert(1, 0);
-			c.Insert(0, 100);
-			c.Erase(100);
-			c.Erase(2);
-			c.ShrinkToFit();
+			Vector<uint32> v_insert_erase(3);
+			v_insert_erase.Insert(3, 10);
+			v_insert_erase.Insert(2, 0);
+			v_insert_erase.Insert(99, 1);
+			v_insert_erase.Insert(1, 0);
+			v_insert_erase.Insert(0, 100);
+			v_insert_erase.Erase(100);
+			v_insert_erase.Erase(2);
+			v_insert_erase.ShrinkToFit();
 
-			StackVector<uint32, 8> stackVector0;
-			MINT_ASSURE(stackVector0.IsEmpty() == true);
-			stackVector0.PushBack(0);
-			MINT_ASSURE(stackVector0.IsEmpty() == false);
-			stackVector0.PushBack(1);
-			stackVector0.PushBack(2);
-			stackVector0.PushBack(3);
-			stackVector0.PushBack(4);
-			stackVector0.PushBack(5);
-			MINT_ASSURE(stackVector0.IsFull() == false);
-			stackVector0.PushBack(6);
-			stackVector0.PushBack(7);
-			MINT_ASSURE(stackVector0.IsFull() == true);
+			Vector<SharedPtr<TestClass>> v_destruction(4);
+			v_destruction.PushBack(MakeShared<TestClass>());
+			{
+				SharedPtrViewer<TestClass> spv = v_destruction[0];
+				v_destruction.PopBack();
+				MINT_ASSURE(spv.IsValid() == false);
+			}
+
+			StackVector<uint32, 8> sv0;
+			MINT_ASSURE(sv0.IsEmpty() == true);
+			sv0.PushBack(0);
+			MINT_ASSURE(sv0.IsEmpty() == false);
+			sv0.PushBack(1);
+			sv0.PushBack(2);
+			sv0.PushBack(3);
+			sv0.PushBack(4);
+			sv0.PushBack(5);
+			MINT_ASSURE(sv0.IsFull() == false);
+			sv0.PushBack(6);
+			sv0.PushBack(7);
+			MINT_ASSURE(sv0.IsFull() == true);
 			StackStringA<256> testBuffer;
-			for (const uint32& item : stackVector0)
+			for (const uint32& item : sv0)
 			{
 				testBuffer += StringUtil::ToStringA(item);
 			}
 			MINT_ASSURE(testBuffer == "01234567");
+
+			InlineVector<uint32, 1> iv0;
+			MINT_ASSURE(iv0.Capacity() == 1);
+			iv0.PushBack(2);
+			iv0.PushBack(4);
+			MINT_ASSURE(iv0.Capacity() == 2);
+			iv0.PushBack(8);
+			MINT_ASSURE(iv0.Capacity() == 4);
+			iv0.PushBack(16);
+			MINT_ASSURE(iv0.Capacity() == 4);
+			iv0.PushBack(32);
+			MINT_ASSURE(iv0.Capacity() == 8);
+			iv0.Erase(0);
+			iv0.Erase(100);
+
+			{
+				using T = Teller<SharedPtr<uint32>>;
+				T* ptr = MINT_MALLOC(T, 4);
+				{
+					T stackTellers[2]{ T("StackTeller0", MakeShared<uint32>(0u)), T("StackTeller1", MakeShared<uint32>(1u)) };
+					MINT_PLACEMNT_NEW(&ptr[0], T("PlacementTeller", MakeShared<uint32>(2u)));
+					//ptr[1] = std::move(stackTellers[0]);
+					MemoryRaw::MoveConstructAt(ptr[1], std::move(stackTellers[0]));
+					MemoryRaw::MoveConstructAt(ptr[2], std::move(stackTellers[1]));
+					ptr[0].~T();
+					ptr[1].~T();
+					ptr[2].~T();
+				}
+				MINT_FREE(ptr);
+			}
+
+			InlineVector<SharedPtr<TestClass>, 1> iv1;
+			iv1.PushBack(MakeShared<TestClass>());
+			iv1.PushBack(MakeShared<TestClass>());
+			iv1.PushBack(MakeShared<TestClass>());
+			MINT_ASSURE(iv1.Capacity() == 4);
+			{
+				SharedPtrViewer<TestClass> spv0 = iv1[0];
+				SharedPtrViewer<TestClass> spv1 = iv1[1];
+				SharedPtrViewer<TestClass> spv2 = iv1[2];
+				iv1.PopBack();
+				MINT_ASSURE(spv2.IsValid() == false);
+				iv1.PopBack();
+				MINT_ASSURE(spv1.IsValid() == false);
+				iv1.PopBack();
+				MINT_ASSURE(spv0.IsValid() == false);
+			}
+			MINT_ASSURE(iv1.Size() == 0);
+			MINT_ASSURE(iv1.IsEmpty() == true);
 			return true;
 		}
 
