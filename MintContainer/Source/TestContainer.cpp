@@ -459,6 +459,33 @@ namespace mint
 		}
 
 		template<template<typename, auto> class VectorType>
+		bool Test_Vector_Common()
+		{
+			VectorType<int32, 16> vector0;
+			MINT_ASSURE(vector0.Size() == 0);
+			vector0.PushBack(1);
+			MINT_ASSURE(vector0.Size() == 1);
+			vector0.PushBack(2);
+			vector0.PushBack(3);
+			vector0.PushBack(4);
+			MINT_ASSURE(vector0.Size() == 4);
+			vector0.PopBack();
+			MINT_ASSURE(vector0.Size() == 3);
+			vector0.PopBack();
+			vector0.PopBack();
+			vector0.PopBack();
+			MINT_ASSURE(vector0.Size() == 0);
+			vector0.PushBack(4);
+			vector0.PushBack(3);
+			vector0.PushBack(2);
+			vector0.PushBack(1);
+			MINT_ASSURE(vector0.Size() == 4);
+			vector0.Clear();
+			MINT_ASSURE(vector0.Size() == 0);
+			return true;
+		}
+
+		template<template<typename, auto> class VectorType>
 		bool Test_Vector_DynamicAllocation()
 		{
 			VectorType<int32, 1> vector0;
@@ -538,14 +565,17 @@ namespace mint
 			// Move semantic 점검!
 			std::swap(vector_move0, vector_move1);
 
+			Test_Vector_Common<VectorWrapper>();
 			Test_Vector_DynamicAllocation<VectorWrapper>();
 			Test_Vector_InsertErase<VectorWrapper>();
 			Test_Vector_Resize<VectorWrapper>();
 
+			Test_Vector_Common<InlineVector>();
 			Test_Vector_DynamicAllocation<InlineVector>();
 			Test_Vector_InsertErase<InlineVector>();
 			Test_Vector_Resize<InlineVector>();
 
+			Test_Vector_Common<StackVector>();
 			Test_Vector_InsertErase<StackVector>();
 			Test_Vector_Resize<StackVector>();
 
