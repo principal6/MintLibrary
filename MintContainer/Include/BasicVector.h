@@ -95,6 +95,11 @@ namespace mint
 			MINT_ASSERT(index < Size(), "Access out of range!");
 			return Data()[index];
 		}
+		MINT_INLINE const T& AtUnsafe(const uint32 index) const noexcept
+		{
+			MINT_ASSERT(index < Capacity(), "Access out of capacity range!!!");
+			return Data()[index];
+		}
 
 	public:
 		MINT_INLINE constexpr uint32 Capacity() const { return _storage.Capacity(); }
