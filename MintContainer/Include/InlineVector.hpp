@@ -50,29 +50,28 @@ namespace mint
 			return;
 		}
 
+		const uint32 sizeCache = _size;
+		T* newPtr = MINT_MALLOC(T, newCapacity);
 		if constexpr (IsMovable<T>() == true)
 		{
-			T* newPtr = MINT_MALLOC(T, newCapacity);
-			for (uint32 at = 0; at < _size; ++at)
+			for (uint32 at = 0; at < sizeCache; ++at)
 			{
 				MemoryRaw::MoveConstructAt(newPtr[at], std::move(_ptr[at]));
 			}
 			Clear();
-			_ptr = newPtr;
 		}
 		else // though inefficient, make it work.
 		{
-			T* newPtr = MINT_MALLOC(T, newCapacity);
-			for (uint32 at = 0; at < _size; ++at)
+			for (uint32 at = 0; at < sizeCache; ++at)
 			{
-				MemoryRaw::CopyConstructAt(newPtr[at], std::move(_ptr[at]));
+				MemoryRaw::CopyConstructAt(newPtr[at], _ptr[at]);
 			}
 			Clear();
-			_ptr = newPtr;
 		}
-		MINT_ASSERT(IsUsingHeap() == true, "This must be guaranteed when Reserve() is processed.");
-
+		_ptr = newPtr;
+		_size = sizeCache;
 		_capacity = newCapacity;
+		MINT_ASSERT(IsUsingHeap() == true, "This must be guaranteed when Reserve() is processed.");
 	}
 
 	template<typename T, const uint32 kCapacity>
@@ -89,7 +88,7 @@ namespace mint
 
 			for (uint32 at = _size; at < newSize; ++at)
 			{
-				MINT_PLACEMNT_NEW(&_ptr[at], T());
+				MemoryRaw::ConstructAt(_ptr[at]);
 			}
 		}
 		else
@@ -141,12 +140,17 @@ namespace mint
 	}
 
 	template<typename T, const uint32 kCapacity>
-	inline void InlineVectorStorage<T, kCapacity>::Insert(const uint32 at, const T& newEntry)
+	inline bool InlineVectorStorage<T, kCapacity>::Insert(const uint32 at, const T& newEntry)
 	{
-		if (at >= _size)
+		if (at > _size)
+		{
+			return false;
+		}
+
+		if (at == _size)
 		{
 			PushBack(newEntry);
-			return;
+			return true;
 		}
 		MINT_ASSERT(_size > 0, "This must be guaranteed by if statement above!");
 
@@ -172,15 +176,21 @@ namespace mint
 		}
 		_ptr[at] = newEntry;
 		++_size;
+		return true;
 	}
 
 	template<typename T, const uint32 kCapacity>
-	inline void InlineVectorStorage<T, kCapacity>::Insert(const uint32 at, T&& newEntry)
+	inline bool InlineVectorStorage<T, kCapacity>::Insert(const uint32 at, T&& newEntry)
 	{
+		if (at > _size)
+		{
+			return false;
+		}
+
 		if (at >= _size)
 		{
 			PushBack(std::move(newEntry));
-			return;
+			return true;
 		}
 		MINT_ASSERT(_size > 0, "This must be guaranteed by if statement above!");
 
@@ -195,6 +205,7 @@ namespace mint
 		}
 		_ptr[at] = std::move(newEntry);
 		++_size;
+		return true;
 	}
 
 	template<typename T, const uint32 kCapacity>
@@ -204,9 +215,13 @@ namespace mint
 		{
 			return;
 		}
-		MINT_ASSERT(_size > 0, "This must be guaranteed by IsEmpty() above!");
 
-		if (at >= _size - 1)
+		if (at >= _size)
+		{
+			return;
+		}
+
+		if (at == _size - 1)
 		{
 			PopBack();
 			return;

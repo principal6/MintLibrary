@@ -485,22 +485,26 @@ namespace mint
 		bool Test_Vector_InsertErase()
 		{
 			VectorType<int32, 32> vector0;
-			vector0.Insert(10, 2);
+			vector0.Insert(0, 2);
 			MINT_ASSURE(vector0.Size() == 1 && vector0[0] == 2);
-			vector0.Insert(100, 3);
-			MINT_ASSURE(vector0.Size() == 2 && vector0[0] == 2 && vector0[1] == 3);
+			MINT_ASSURE(vector0.Insert(100, 3) == false);
 			vector0.Insert(0, 1);
-			MINT_ASSURE(vector0.Size() == 3 && vector0[0] == 1 && vector0[1] == 2 && vector0[2] == 3);
+			MINT_ASSURE(vector0.Size() == 2 && vector0[0] == 1 && vector0[1] == 2);
 			vector0.Erase(1);
-			MINT_ASSURE(vector0.Size() == 2 && vector0[0] == 1 && vector0[1] == 3);
+			MINT_ASSURE(vector0.Size() == 1 && vector0[0] == 1);
 
-			vector0.Insert(10, 3);
+			MINT_ASSURE(vector0.Insert(10, 3) == false);
 			vector0.Insert(0, 2);
 			vector0.Insert(1, 99);
 			vector0.Insert(0, 1);
-			vector0.Insert(100, 0);
+			MINT_ASSURE(vector0.Insert(100, 0) == false);
+			MINT_ASSURE(vector0.Size() == 4);
+
 			vector0.Erase(100);
+			MINT_ASSURE(vector0.Size() == 4);
+
 			vector0.Erase(2);
+			MINT_ASSURE(vector0.Size() == 3);
 			return true;
 		}
 
@@ -537,13 +541,13 @@ namespace mint
 			Test_Vector_DynamicAllocation<VectorWrapper>();
 			Test_Vector_InsertErase<VectorWrapper>();
 			Test_Vector_Resize<VectorWrapper>();
-			
+
 			Test_Vector_DynamicAllocation<InlineVector>();
 			Test_Vector_InsertErase<InlineVector>();
 			Test_Vector_Resize<InlineVector>();
-			
-			//Test_Vector_InsertErase<StackVector>();
-			//Test_Vector_Resize<StackVector>();
+
+			Test_Vector_InsertErase<StackVector>();
+			Test_Vector_Resize<StackVector>();
 
 			Vector<SharedPtr<CreateDestroyTester>> v_destruction(4);
 			v_destruction.PushBack(MakeShared<CreateDestroyTester>());

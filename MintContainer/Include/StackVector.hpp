@@ -86,14 +86,19 @@ namespace mint
 	}
 
 	template<typename T, const uint32 kCapacity>
-	inline void StackVectorStorage<T, kCapacity>::Insert(const uint32 at, const T& newEntry) noexcept
+	inline bool StackVectorStorage<T, kCapacity>::Insert(const uint32 at, const T& newEntry) noexcept
 	{
-		MINT_ASSERT(at <= _size, "범위를 벗어난 접근입니다. [at: %d / size: %d]", at, _size);
-		if (IsFull())
+		if (at > _size)
 		{
-			MINT_ASSERT(false, "StackVectorStorage 가 이미 가득 차있습니다!");
-			return;
+			return false;
 		}
+
+		if (at == _size)
+		{
+			PushBack(newEntry);
+			return true;
+		}
+		MINT_ASSERT(_size > 0, "This must be guaranteed by if statement above!");
 
 		if constexpr (IsMovable<T>() == true)
 		{
@@ -111,17 +116,23 @@ namespace mint
 		}
 		_array[at] = newEntry;
 		++_size;
+		return true;
 	}
 
 	template<typename T, const uint32 kCapacity>
-	inline void StackVectorStorage<T, kCapacity>::Insert(const uint32 at, T&& newEntry) noexcept
+	inline bool StackVectorStorage<T, kCapacity>::Insert(const uint32 at, T&& newEntry) noexcept
 	{
-		MINT_ASSERT(at <= _size, "범위를 벗어난 접근입니다. [at: %d / size: %d]", at, _size);
-		if (IsFull())
+		if (at > _size)
 		{
-			MINT_ASSERT(false, "StackVectorStorage 가 이미 가득 차있습니다!");
-			return;
+			return false;
 		}
+
+		if (at == _size)
+		{
+			PushBack(std::move(newEntry));
+			return true;
+		}
+		MINT_ASSERT(_size > 0, "This must be guaranteed by if statement above!");
 
 		if constexpr (IsMovable<T>() == true)
 		{
@@ -140,15 +151,19 @@ namespace mint
 			_array[at] = newEntry;
 		}
 		++_size;
+		return true;
 	}
 
 	template<typename T, const uint32 kCapacity>
 	inline void StackVectorStorage<T, kCapacity>::Erase(const uint32 at) noexcept
 	{
-		MINT_ASSERT(at < _size, "범위를 벗어난 접근입니다. [at: %d / size: %d]", at, _size);
 		if (IsEmpty())
 		{
-			MINT_ASSERT(false, "StackVectorStorage 가 이미 비어 있습니다!");
+			return;
+		}
+
+		if (at >= _size)
+		{
 			return;
 		}
 

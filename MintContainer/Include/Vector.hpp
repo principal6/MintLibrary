@@ -219,83 +219,100 @@ namespace mint
 	}
 
 	template<typename T>
-	MINT_INLINE void VectorStorage<T>::Insert(const uint32 at, const T& newEntry) noexcept
+	MINT_INLINE bool VectorStorage<T>::Insert(const uint32 at, const T& newEntry) noexcept
 	{
-		if (_size <= at)
+		if (at > _size)
+		{
+			return false;
+		}
+
+		if (at == _size)
 		{
 			PushBack(newEntry);
+			return true;
 		}
-		else
+		MINT_ASSERT(_size > 0, "This must be guaranteed by if statements above!");
+
+		ExpandCapacityIfNecessary();
+
+		if constexpr (IsMovable<T>() == true)
 		{
-			ExpandCapacityIfNecessary();
+			MemoryRaw::MoveConstructAt<T>(_rawPointer[_size], std::move(_rawPointer[_size - 1]));
 
-			if constexpr (IsMovable<T>() == true)
+			for (uint32 iter = _size - 1; iter > at; --iter)
 			{
-				MemoryRaw::MoveConstructAt<T>(_rawPointer[_size], std::move(_rawPointer[_size - 1]));
-
-				for (uint32 iter = _size - 1; iter > at; --iter)
-				{
-					_rawPointer[iter] = std::move(_rawPointer[iter - 1]);
-				}
+				_rawPointer[iter] = std::move(_rawPointer[iter - 1]);
 			}
-			else // 비효율적이지만 동작은 하도록 한다.
-			{
-				MemoryRaw::CopyConstructAt<T>(_rawPointer[_size], _rawPointer[_size - 1]);
-
-				for (uint32 iter = _size - 1; iter > at; --iter)
-				{
-					_rawPointer[iter] = _rawPointer[iter - 1];
-				}
-			}
-
-			_rawPointer[at] = newEntry;
-
-			++_size;
 		}
+		else // 비효율적이지만 동작은 하도록 한다.
+		{
+			MemoryRaw::CopyConstructAt<T>(_rawPointer[_size], _rawPointer[_size - 1]);
+
+			for (uint32 iter = _size - 1; iter > at; --iter)
+			{
+				_rawPointer[iter] = _rawPointer[iter - 1];
+			}
+		}
+
+		_rawPointer[at] = newEntry;
+
+		++_size;
+		return true;
 	}
 
 	template<typename T>
-	MINT_INLINE void VectorStorage<T>::Insert(const uint32 at, T&& newEntry) noexcept
+	MINT_INLINE bool VectorStorage<T>::Insert(const uint32 at, T&& newEntry) noexcept
 	{
-		if (_size <= at)
+		if (at > _size)
 		{
-			PushBack(newEntry);
+			return false;
 		}
-		else
+
+		if (at == _size)
 		{
-			ExpandCapacityIfNecessary();
+			PushBack(std::move(newEntry));
+			return true;
+		}
+		MINT_ASSERT(_size > 0, "This must be guaranteed by if statements above!");
 
-			if constexpr (IsMovable<T>() == true)
+		ExpandCapacityIfNecessary();
+
+		if constexpr (IsMovable<T>() == true)
+		{
+			MemoryRaw::MoveConstructAt<T>(_rawPointer[_size], std::move(_rawPointer[_size - 1]));
+
+			for (uint32 iter = _size - 1; iter > at; --iter)
 			{
-				MemoryRaw::MoveConstructAt<T>(_rawPointer[_size], std::move(_rawPointer[_size - 1]));
-
-				for (uint32 iter = _size - 1; iter > at; --iter)
-				{
-					_rawPointer[iter] = std::move(_rawPointer[iter - 1]);
-				}
-
-				_rawPointer[at] = std::move(newEntry);
-			}
-			else // 비효율적이지만 동작은 하도록 한다.
-			{
-				MemoryRaw::CopyConstructAt<T>(_rawPointer[_size], _rawPointer[_size - 1]);
-
-				for (uint32 iter = _size - 1; iter > at; --iter)
-				{
-					_rawPointer[iter] = _rawPointer[iter - 1];
-				}
-
-				_rawPointer[at] = newEntry;
+				_rawPointer[iter] = std::move(_rawPointer[iter - 1]);
 			}
 
-			++_size;
+			_rawPointer[at] = std::move(newEntry);
 		}
+		else // 비효율적이지만 동작은 하도록 한다.
+		{
+			MemoryRaw::CopyConstructAt<T>(_rawPointer[_size], _rawPointer[_size - 1]);
+
+			for (uint32 iter = _size - 1; iter > at; --iter)
+			{
+				_rawPointer[iter] = _rawPointer[iter - 1];
+			}
+
+			_rawPointer[at] = newEntry;
+		}
+
+		++_size;
+		return true;
 	}
 
 	template<typename T>
 	MINT_INLINE void VectorStorage<T>::Erase(const uint32 at) noexcept
 	{
-		if (_size == 0)
+		if (IsEmpty())
+		{
+			return;
+		}
+
+		if (at >= _size)
 		{
 			return;
 		}
@@ -303,28 +320,26 @@ namespace mint
 		if (at == _size - 1)
 		{
 			PopBack();
+			return;
 		}
-		else
+		
+		if constexpr (IsMovable<T>() == true)
 		{
-			if constexpr (IsMovable<T>() == true)
+			for (uint32 iter = at + 1; iter < _size; ++iter)
 			{
-				for (uint32 iter = at + 1; iter < _size; ++iter)
-				{
-					_rawPointer[iter - 1] = std::move(_rawPointer[iter]);
-				}
+				_rawPointer[iter - 1] = std::move(_rawPointer[iter]);
 			}
-			else // 비효율적이지만 동작은 하도록 한다.
-			{
-				for (uint32 iter = at + 1; iter < _size; ++iter)
-				{
-					_rawPointer[iter - 1] = _rawPointer[iter];
-				}
-			}
-
-			MemoryRaw::DestroyAt<T>(_rawPointer[_size - 1]);
-
-			--_size;
 		}
+		else // Though inefficient, make it work.
+		{
+			for (uint32 iter = at + 1; iter < _size; ++iter)
+			{
+				_rawPointer[iter - 1] = _rawPointer[iter];
+			}
+		}
+
+		MemoryRaw::DestroyAt<T>(_rawPointer[_size - 1]);
+		--_size;
 	}
 
 	template<typename T>
