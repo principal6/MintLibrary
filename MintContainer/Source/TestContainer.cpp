@@ -458,10 +458,10 @@ namespace mint
 			return true;
 		}
 
-		template<template<typename> class VectorType>
+		template<template<typename, auto> class VectorType>
 		bool Test_Vector_DynamicAllocation()
 		{
-			VectorType<int32> vector0;
+			VectorType<int32, 1> vector0;
 			MINT_ASSURE(vector0.Size() == 0);
 			MINT_ASSURE(vector0.IsEmpty() == true);
 			vector0.Reserve(16);
@@ -478,19 +478,13 @@ namespace mint
 
 			vector0.Clear();
 			MINT_ASSURE(vector0.Size() == 0);
-
-			Vector<int32> vector_move(20);
-			vector_move.PushBack(9);
-			// Move semantic 점검!
-			std::swap(vector0, vector_move);
-
 			return true;
 		}
 
-		template<template<typename> class VectorType>
+		template<template<typename, auto> class VectorType>
 		bool Test_Vector_InsertErase()
 		{
-			VectorType<int32> vector0;
+			VectorType<int32, 32> vector0;
 			vector0.Insert(10, 2);
 			MINT_ASSURE(vector0.Size() == 1 && vector0[0] == 2);
 			vector0.Insert(100, 3);
@@ -510,10 +504,10 @@ namespace mint
 			return true;
 		}
 
-		template<template<typename> class VectorType>
+		template<template<typename, auto> class VectorType>
 		bool Test_Vector_Resize()
 		{
-			VectorType<int32> vector0;
+			VectorType<int32, 32> vector0;
 			MINT_ASSURE(vector0.Size() == 0);
 			vector0.PushBack(9);
 			vector0.PushBack(8);
@@ -527,11 +521,29 @@ namespace mint
 			return true;
 		}
 
+		template<typename T, uint32 N>
+		using VectorWrapper = Vector<T>;
+
 		bool Test_Vector()
 		{
-			Test_Vector_DynamicAllocation<Vector>();
-			Test_Vector_InsertErase<Vector>();
-			Test_Vector_Resize<Vector>();
+			// TODO: InlineVector, StackVector 의 move 에 대해 처리 필요!!!
+
+			Vector<int32> vector_move0(4);
+			Vector<int32> vector_move1(20);
+			vector_move1.PushBack(9);
+			// Move semantic 점검!
+			std::swap(vector_move0, vector_move1);
+
+			Test_Vector_DynamicAllocation<VectorWrapper>();
+			Test_Vector_InsertErase<VectorWrapper>();
+			Test_Vector_Resize<VectorWrapper>();
+			
+			Test_Vector_DynamicAllocation<InlineVector>();
+			Test_Vector_InsertErase<InlineVector>();
+			Test_Vector_Resize<InlineVector>();
+			
+			//Test_Vector_InsertErase<StackVector>();
+			//Test_Vector_Resize<StackVector>();
 
 			Vector<SharedPtr<CreateDestroyTester>> v_destruction(4);
 			v_destruction.PushBack(MakeShared<CreateDestroyTester>());
