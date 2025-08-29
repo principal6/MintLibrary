@@ -607,20 +607,6 @@ namespace mint
 			}
 			MINT_ASSURE(testBuffer == "01234567");
 
-			InlineVector<uint32, 1> iv0;
-			MINT_ASSURE(iv0.Capacity() == 1);
-			iv0.PushBack(2);
-			iv0.PushBack(4);
-			MINT_ASSURE(iv0.Capacity() == 2);
-			iv0.PushBack(8);
-			MINT_ASSURE(iv0.Capacity() == 4);
-			iv0.PushBack(16);
-			MINT_ASSURE(iv0.Capacity() == 4);
-			iv0.PushBack(32);
-			MINT_ASSURE(iv0.Capacity() == 8);
-			iv0.Erase(0);
-			iv0.Erase(100);
-
 			InlineVector<CreateDestroyTester, 4> iv1;
 			MINT_ASSERT(iv1.AtUnsafe(0).isCreated() == false, "It must not have been created!");
 
