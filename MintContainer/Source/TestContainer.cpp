@@ -458,61 +458,80 @@ namespace mint
 			return true;
 		}
 
+		template<template<typename> class VectorType>
+		bool Test_Vector_DynamicAllocation()
+		{
+			VectorType<int32> vector0;
+			MINT_ASSURE(vector0.Size() == 0);
+			MINT_ASSURE(vector0.IsEmpty() == true);
+			vector0.Reserve(16);
+			MINT_ASSURE(vector0.Capacity() == 16);
+			vector0.PushBack(0);
+			MINT_ASSURE(vector0.Size() == 1);
+			vector0.PushBack(1);
+			vector0.PushBack(2);
+			vector0.PushBack(3);
+			MINT_ASSURE(vector0.Size() == 4);
+			vector0.Insert(4, 1);
+			MINT_ASSURE(vector0.Size() == 5);
+			MINT_ASSURE(vector0[4] == 1);
+
+			vector0.Clear();
+			MINT_ASSURE(vector0.Size() == 0);
+
+			Vector<int32> vector_move(20);
+			vector_move.PushBack(9);
+			// Move semantic 점검!
+			std::swap(vector0, vector_move);
+
+			return true;
+		}
+
+		template<template<typename> class VectorType>
+		bool Test_Vector_InsertErase()
+		{
+			VectorType<int32> vector0;
+			vector0.Insert(10, 2);
+			MINT_ASSURE(vector0.Size() == 1 && vector0[0] == 2);
+			vector0.Insert(100, 3);
+			MINT_ASSURE(vector0.Size() == 2 && vector0[0] == 2 && vector0[1] == 3);
+			vector0.Insert(0, 1);
+			MINT_ASSURE(vector0.Size() == 3 && vector0[0] == 1 && vector0[1] == 2 && vector0[2] == 3);
+			vector0.Erase(1);
+			MINT_ASSURE(vector0.Size() == 2 && vector0[0] == 1 && vector0[1] == 3);
+
+			vector0.Insert(10, 3);
+			vector0.Insert(0, 2);
+			vector0.Insert(1, 99);
+			vector0.Insert(0, 1);
+			vector0.Insert(100, 0);
+			vector0.Erase(100);
+			vector0.Erase(2);
+			return true;
+		}
+
+		template<template<typename> class VectorType>
+		bool Test_Vector_Resize()
+		{
+			VectorType<int32> vector0;
+			MINT_ASSURE(vector0.Size() == 0);
+			vector0.PushBack(9);
+			vector0.PushBack(8);
+			vector0.PushBack(7);
+			vector0.PushBack(6);
+			MINT_ASSURE(vector0.Size() == 4);
+			vector0.Resize(1);
+			MINT_ASSURE(vector0.Size() == 1);
+			vector0.Resize(8);
+			MINT_ASSURE(vector0.Size() == 8);
+			return true;
+		}
+
 		bool Test_Vector()
 		{
-			{
-				std::vector<int32> v_str;
-				v_str.reserve(5);
-				v_str.push_back(0);
-				v_str.push_back(1);
-				v_str.push_back(2);
-				v_str.push_back(3);
-				//strVector.erase(t.begin() + 1);
-				v_str.insert(v_str.begin() + 1, 4);
-
-				Vector<int32> v_int;
-				v_int.Reserve(5);
-				v_int.PushBack(0);
-				v_int.PushBack(1);
-				v_int.PushBack(2);
-				v_int.PushBack(3);
-				//mintVector.erase(1);
-				v_int.Insert(1, 4);
-			}
-
-
-			Vector<uint32> v_a(5);
-			v_a.PushBack(1);
-			v_a.PushBack(2);
-			v_a.PushBack(3);
-			v_a.Insert(5, 2);
-			v_a.Erase(1);
-
-			Vector<int32> v_resize;
-			v_resize.PushBack(1);
-			v_resize.PushBack(2);
-			v_resize.PushBack(3);
-			v_resize.PushBack(4);
-			v_resize.PushBack(5);
-			v_resize.PushBack(6);
-			v_resize.PushBack(7);
-			v_resize.Resize(1);
-			MINT_ASSURE(v_resize.Size() == 1);
-
-			Vector<uint32> v_move(20);
-			v_move.PushBack(9);
-			// Move semantic 점검!
-			std::swap(v_a, v_move);
-
-			Vector<uint32> v_insert_erase(3);
-			v_insert_erase.Insert(10, 3);
-			v_insert_erase.Insert(0, 2);
-			v_insert_erase.Insert(1, 99);
-			v_insert_erase.Insert(0, 1);
-			v_insert_erase.Insert(100, 0);
-			v_insert_erase.Erase(100);
-			v_insert_erase.Erase(2);
-			v_insert_erase.ShrinkToFit();
+			Test_Vector_DynamicAllocation<Vector>();
+			Test_Vector_InsertErase<Vector>();
+			Test_Vector_Resize<Vector>();
 
 			Vector<SharedPtr<CreateDestroyTester>> v_destruction(4);
 			v_destruction.PushBack(MakeShared<CreateDestroyTester>());
@@ -555,22 +574,6 @@ namespace mint
 			MINT_ASSURE(iv0.Capacity() == 8);
 			iv0.Erase(0);
 			iv0.Erase(100);
-
-			{
-				using T = Teller<SharedPtr<uint32>>;
-				T* ptr = MINT_MALLOC(T, 4);
-				{
-					T stackTellers[2]{ T("StackTeller0", MakeShared<uint32>(0u)), T("StackTeller1", MakeShared<uint32>(1u)) };
-					MINT_PLACEMNT_NEW(&ptr[0], T("PlacementTeller", MakeShared<uint32>(2u)));
-					//ptr[1] = std::move(stackTellers[0]);
-					MemoryRaw::MoveConstructAt(ptr[1], std::move(stackTellers[0]));
-					MemoryRaw::MoveConstructAt(ptr[2], std::move(stackTellers[1]));
-					ptr[0].~T();
-					ptr[1].~T();
-					ptr[2].~T();
-				}
-				MINT_FREE(ptr);
-			}
 
 			InlineVector<CreateDestroyTester, 4> iv1;
 			MINT_ASSERT(iv1.AtUnsafe(0).isCreated() == false, "It must not have been created!");
