@@ -82,7 +82,8 @@ namespace mint
 		{
 			return;
 		}
-		else if (newSize > _size)
+		
+		if (newSize > _size)
 		{
 			Reserve(newSize);
 
@@ -110,6 +111,7 @@ namespace mint
 		{
 			Reserve(Capacity() * 2);
 		}
+
 		MemoryRaw::CopyConstructAt(_ptr[_size], entry);
 		++_size;
 	}
@@ -121,6 +123,7 @@ namespace mint
 		{
 			Reserve(Capacity() * 2);
 		}
+
 		MemoryRaw::MoveConstructAt(_ptr[_size], std::move(entry));
 		++_size;
 	}
@@ -132,6 +135,7 @@ namespace mint
 		{
 			return;
 		}
+
 		MemoryRaw::DestroyAt(_ptr[_size - 1]);
 		--_size;
 	}
@@ -139,60 +143,58 @@ namespace mint
 	template<typename T, const uint32 kCapacity>
 	inline void InlineVectorStorage<T, kCapacity>::Insert(const uint32 at, const T& newEntry)
 	{
-		if (_size <= at)
+		if (at >= _size)
 		{
 			PushBack(newEntry);
+			return;
 		}
-		else
-		{
-			MINT_ASSERT(_size > 0, "This must be guaranteed by if statement above!");
-			if (IsFull())
-			{
-				Reserve(Capacity() * 2);
-			}
-			if constexpr (IsMovable<T>() == true)
-			{
-				MemoryRaw::MoveConstructAt(_ptr[_size], std::move(_ptr[_size - 1]));
-				for (uint32 iter = _size - 1; iter > at; --iter)
-				{
-					_ptr[iter] = std::move(_ptr[iter - 1]);
-				}
-			}
-			else // Though inefficient, make it work.
-			{
-				MemoryRaw::CopyConstructAt(_ptr[_size], _ptr[_size - 1]);
-				for (uint32 iter = _size; iter > at; --iter)
-				{
-					_ptr[iter] = _ptr[iter - 1];
-				}
-			}
-			_ptr[at] = newEntry;
-			++_size;
-		}
-	}
+		MINT_ASSERT(_size > 0, "This must be guaranteed by if statement above!");
 
-	template<typename T, const uint32 kCapacity>
-	inline void InlineVectorStorage<T, kCapacity>::Insert(const uint32 at, T&& newEntry)
-	{
-		if (_size <= at)
+		if (IsFull())
 		{
-			PushBack(std::move(newEntry));
+			Reserve(Capacity() * 2);
 		}
-		else
+		if constexpr (IsMovable<T>() == true)
 		{
-			MINT_ASSERT(_size > 0, "This must be guaranteed by if statement above!");
-			if (IsFull())
-			{
-				Reserve(Capacity() * 2);
-			}
 			MemoryRaw::MoveConstructAt(_ptr[_size], std::move(_ptr[_size - 1]));
 			for (uint32 iter = _size - 1; iter > at; --iter)
 			{
 				_ptr[iter] = std::move(_ptr[iter - 1]);
 			}
-			_ptr[at] = std::move(newEntry);
-			++_size;
 		}
+		else // Though inefficient, make it work.
+		{
+			MemoryRaw::CopyConstructAt(_ptr[_size], _ptr[_size - 1]);
+			for (uint32 iter = _size; iter > at; --iter)
+			{
+				_ptr[iter] = _ptr[iter - 1];
+			}
+		}
+		_ptr[at] = newEntry;
+		++_size;
+	}
+
+	template<typename T, const uint32 kCapacity>
+	inline void InlineVectorStorage<T, kCapacity>::Insert(const uint32 at, T&& newEntry)
+	{
+		if (at >= _size)
+		{
+			PushBack(std::move(newEntry));
+			return;
+		}
+		MINT_ASSERT(_size > 0, "This must be guaranteed by if statement above!");
+
+		if (IsFull())
+		{
+			Reserve(Capacity() * 2);
+		}
+		MemoryRaw::MoveConstructAt(_ptr[_size], std::move(_ptr[_size - 1]));
+		for (uint32 iter = _size - 1; iter > at; --iter)
+		{
+			_ptr[iter] = std::move(_ptr[iter - 1]);
+		}
+		_ptr[at] = std::move(newEntry);
+		++_size;
 	}
 
 	template<typename T, const uint32 kCapacity>
@@ -202,32 +204,31 @@ namespace mint
 		{
 			return;
 		}
-
 		MINT_ASSERT(_size > 0, "This must be guaranteed by IsEmpty() above!");
+
 		if (at >= _size - 1)
 		{
 			PopBack();
+			return;
 		}
-		else
+		MINT_ASSERT(at < _size - 1, "This must be guaranteed by if statement above!");
+		
+		if constexpr (IsMovable<T>() == true)
 		{
-			MINT_ASSERT(at < _size - 1, "This must be guaranteed by if statement above!");
-			if constexpr (IsMovable<T>() == true)
+			for (uint32 iter = at + 1; iter < _size; ++iter)
 			{
-				for (uint32 iter = at + 1; iter < _size; ++iter)
-				{
-					_ptr[iter - 1] = std::move(_ptr[iter]);
-				}
+				_ptr[iter - 1] = std::move(_ptr[iter]);
 			}
-			else // Though inefficient, make it work.
-			{
-				for (uint32 iter = at + 1; iter < _size; ++iter)
-				{
-					_ptr[iter - 1] = _ptr[iter];
-				}
-			}
-			MemoryRaw::DestroyAt(_ptr[_size - 1]);
-			--_size;
 		}
+		else // Though inefficient, make it work.
+		{
+			for (uint32 iter = at + 1; iter < _size; ++iter)
+			{
+				_ptr[iter - 1] = _ptr[iter];
+			}
+		}
+		MemoryRaw::DestroyAt(_ptr[_size - 1]);
+		--_size;
 	}
 
 	template<typename T, const uint32 kCapacity>
@@ -244,7 +245,10 @@ namespace mint
 			_ptr = reinterpret_cast<T*>(__array);
 		}
 
+		_size = 0;
+		_capacity = kCapacity;
 		MINT_ASSERT(IsUsingHeap() == false, "This must be guaranteed after Clear() is processed.");
+		MINT_ASSERT(IsEmpty() == true, "This must be guaranteed after Clear() is processed.");
 	}
 }
 
