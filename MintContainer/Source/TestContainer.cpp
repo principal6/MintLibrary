@@ -6,14 +6,31 @@
 #include <MintCommon/Include/ScopedCPUProfiler.h>
 
 
-#pragma optimize("", off)
-
-
 //#define MINT_TEST_PERFORMANCE
 
 
 namespace mint
 {
+	class CreateDestroyTester
+	{
+	public:
+		CreateDestroyTester()
+		{
+			_isCreated = true;
+			_isDestroyed = false;
+		}
+		~CreateDestroyTester()
+		{
+			_isDestroyed = true;
+		}
+	public:
+		MINT_INLINE bool isCreated() const { return _isCreated; }
+		MINT_INLINE bool isDestroyed() const { return _isDestroyed; }
+	private:
+		bool _isCreated;
+		bool _isDestroyed;
+	};
+
 	template <typename T>
 	class Teller
 	{
@@ -443,16 +460,6 @@ namespace mint
 
 		bool Test_Vector()
 		{
-			class TestClass
-			{
-			public:
-				TestClass() : _isCreated(true), _isDestroyed(false) {}
-				~TestClass() { _isDestroyed = true; }
-			private:
-				bool _isCreated;
-				bool _isDestroyed;
-			};
-
 			{
 				std::vector<int32> v_str;
 				v_str.reserve(5);
@@ -507,10 +514,10 @@ namespace mint
 			v_insert_erase.Erase(2);
 			v_insert_erase.ShrinkToFit();
 
-			Vector<SharedPtr<TestClass>> v_destruction(4);
-			v_destruction.PushBack(MakeShared<TestClass>());
+			Vector<SharedPtr<CreateDestroyTester>> v_destruction(4);
+			v_destruction.PushBack(MakeShared<CreateDestroyTester>());
 			{
-				SharedPtrViewer<TestClass> spv = v_destruction[0];
+				SharedPtrViewer<CreateDestroyTester> spv = v_destruction[0];
 				v_destruction.PopBack();
 				MINT_ASSURE(spv.IsValid() == false);
 			}
@@ -565,24 +572,27 @@ namespace mint
 				MINT_FREE(ptr);
 			}
 
-			InlineVector<SharedPtr<TestClass>, 1> iv1;
-			iv1.PushBack(MakeShared<TestClass>());
-			iv1.PushBack(MakeShared<TestClass>());
-			iv1.PushBack(MakeShared<TestClass>());
-			MINT_ASSURE(iv1.Capacity() == 4);
+			InlineVector<CreateDestroyTester, 4> iv1;
+			MINT_ASSERT(iv1.AtUnsafe(0).isCreated() == false, "It must not have been created!");
+
+			InlineVector<SharedPtr<CreateDestroyTester>, 1> iv2;
+			iv2.PushBack(MakeShared<CreateDestroyTester>());
+			iv2.PushBack(MakeShared<CreateDestroyTester>());
+			iv2.PushBack(MakeShared<CreateDestroyTester>());
+			MINT_ASSURE(iv2.Capacity() == 4);
 			{
-				SharedPtrViewer<TestClass> spv0 = iv1[0];
-				SharedPtrViewer<TestClass> spv1 = iv1[1];
-				SharedPtrViewer<TestClass> spv2 = iv1[2];
-				iv1.PopBack();
+				SharedPtrViewer<CreateDestroyTester> spv0 = iv2[0];
+				SharedPtrViewer<CreateDestroyTester> spv1 = iv2[1];
+				SharedPtrViewer<CreateDestroyTester> spv2 = iv2[2];
+				iv2.PopBack();
 				MINT_ASSURE(spv2.IsValid() == false);
-				iv1.PopBack();
+				iv2.PopBack();
 				MINT_ASSURE(spv1.IsValid() == false);
-				iv1.PopBack();
+				iv2.PopBack();
 				MINT_ASSURE(spv0.IsValid() == false);
 			}
-			MINT_ASSURE(iv1.Size() == 0);
-			MINT_ASSURE(iv1.IsEmpty() == true);
+			MINT_ASSURE(iv2.Size() == 0);
+			MINT_ASSURE(iv2.IsEmpty() == true);
 			return true;
 		}
 
