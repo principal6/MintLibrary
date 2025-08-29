@@ -10,16 +10,16 @@
 
 namespace mint
 {
-	template<typename T, const uint32 Capacity>
-	inline StackVectorStorage<T, Capacity>::StackVectorStorage()
+	template<typename T, const uint32 kCapacity>
+	inline StackVectorStorage<T, kCapacity>::StackVectorStorage()
 		: _array{}
 		, _size{ 0 }
 	{
 		__noop;
 	}
 
-	template<typename T, const uint32 Capacity>
-	inline StackVectorStorage<T, Capacity>::StackVectorStorage(const std::initializer_list<T>& initializerList)
+	template<typename T, const uint32 kCapacity>
+	inline StackVectorStorage<T, kCapacity>::StackVectorStorage(const std::initializer_list<T>& initializerList)
 		: _array{}
 		, _size{ 0 }
 	{
@@ -29,16 +29,16 @@ namespace mint
 		}
 	}
 
-	template<typename T, uint32 Capacity>
-	inline StackVectorStorage<T, Capacity>::~StackVectorStorage()
+	template<typename T, const uint32 kCapacity>
+	inline StackVectorStorage<T, kCapacity>::~StackVectorStorage()
 	{
 		__noop;
 	}
 
-	template<typename T, uint32 Capacity>
-	inline void StackVectorStorage<T, Capacity>::Resize(const uint32 size)
+	template<typename T, const uint32 kCapacity>
+	inline void StackVectorStorage<T, kCapacity>::Resize(const uint32 size)
 	{
-		MINT_ASSERT(size <= Capacity, "size 는 Capacity 보다 커질 수 없습니다!", size, Capacity);
+		MINT_ASSERT(size <= kCapacity, "size(%u) 는 kCapacity(%u) 보다 커질 수 없습니다!", size, kCapacity);
 		if (size == _size)
 		{
 			return;
@@ -47,8 +47,8 @@ namespace mint
 		_size = size;
 	}
 
-	template<typename T, uint32 Capacity>
-	inline void StackVectorStorage<T, Capacity>::PushBack(const T& entry)
+	template<typename T, const uint32 kCapacity>
+	inline void StackVectorStorage<T, kCapacity>::PushBack(const T& entry)
 	{
 		if (IsFull())
 		{
@@ -60,8 +60,8 @@ namespace mint
 		++_size;
 	}
 
-	template<typename T, uint32 Capacity>
-	inline void StackVectorStorage<T, Capacity>::PushBack(T&& entry)
+	template<typename T, const uint32 kCapacity>
+	inline void StackVectorStorage<T, kCapacity>::PushBack(T&& entry)
 	{
 		if (IsFull())
 		{
@@ -73,8 +73,8 @@ namespace mint
 		++_size;
 	}
 
-	template<typename T, uint32 Capacity>
-	inline void StackVectorStorage<T, Capacity>::PopBack()
+	template<typename T, const uint32 kCapacity>
+	inline void StackVectorStorage<T, kCapacity>::PopBack()
 	{
 		if (IsEmpty())
 		{
@@ -85,8 +85,8 @@ namespace mint
 		--_size;
 	}
 
-	template<typename T, uint32 Capacity>
-	inline void StackVectorStorage<T, Capacity>::Insert(const uint32 at, const T& newEntry) noexcept
+	template<typename T, const uint32 kCapacity>
+	inline void StackVectorStorage<T, kCapacity>::Insert(const uint32 at, const T& newEntry) noexcept
 	{
 		MINT_ASSERT(at <= _size, "범위를 벗어난 접근입니다. [at: %d / size: %d]", at, _size);
 		if (IsFull())
@@ -113,8 +113,8 @@ namespace mint
 		++_size;
 	}
 
-	template<typename T, uint32 Capacity>
-	inline void StackVectorStorage<T, Capacity>::Insert(const uint32 at, T&& newEntry) noexcept
+	template<typename T, const uint32 kCapacity>
+	inline void StackVectorStorage<T, kCapacity>::Insert(const uint32 at, T&& newEntry) noexcept
 	{
 		MINT_ASSERT(at <= _size, "범위를 벗어난 접근입니다. [at: %d / size: %d]", at, _size);
 		if (IsFull())
@@ -142,8 +142,8 @@ namespace mint
 		++_size;
 	}
 
-	template<typename T, uint32 Capacity>
-	inline void StackVectorStorage<T, Capacity>::Erase(const uint32 at) noexcept
+	template<typename T, const uint32 kCapacity>
+	inline void StackVectorStorage<T, kCapacity>::Erase(const uint32 at) noexcept
 	{
 		MINT_ASSERT(at < _size, "범위를 벗어난 접근입니다. [at: %d / size: %d]", at, _size);
 		if (IsEmpty())
