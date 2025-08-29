@@ -15,7 +15,7 @@ namespace mint
 	inline InlineVectorStorage<T, kCapacity>::InlineVectorStorage()
 		: _capacity{ kCapacity }
 		, _size{ 0 }
-		, _ptr{ __array }
+		, _ptr{ reinterpret_cast<T*>(__array) }
 		, __array{}
 	{
 		__noop;
@@ -25,9 +25,11 @@ namespace mint
 	inline InlineVectorStorage<T, kCapacity>::InlineVectorStorage(const std::initializer_list<T>& initializerList)
 		: _capacity{ kCapacity }
 		, _size{ 0 }
-		, _ptr{ __array }
+		, _ptr{ reinterpret_cast<T*>(__array) }
 		, __array{}
 	{
+		Reserve(static_cast<uint32>(initializerList.size()));
+
 		for (const T& item : initializerList)
 		{
 			PushBack(item);
@@ -37,89 +39,68 @@ namespace mint
 	template<typename T, const uint32 kCapacity>
 	inline InlineVectorStorage<T, kCapacity>::~InlineVectorStorage()
 	{
-		if (IsUsingHeap())
-		{
-			for (uint32 at = 0; at < _size; ++at)
-			{
-				MemoryRaw::DestroyAt(_ptr[at]);
-			}
-			MINT_FREE(_ptr);
-		}
+		Clear();
 	}
 
 	template<typename T, const uint32 kCapacity>
-	inline void InlineVectorStorage<T, kCapacity>::Reserve(const uint32 capacity)
+	inline void InlineVectorStorage<T, kCapacity>::Reserve(const uint32 newCapacity)
 	{
-		if (capacity <= _capacity)
+		if (newCapacity <= _capacity)
 		{
 			return;
 		}
 
 		if constexpr (IsMovable<T>() == true)
 		{
-			T* newPtr = MINT_MALLOC(T, capacity);
+			T* newPtr = MINT_MALLOC(T, newCapacity);
 			for (uint32 at = 0; at < _size; ++at)
 			{
 				MemoryRaw::MoveConstructAt(newPtr[at], std::move(_ptr[at]));
 			}
-			if (IsUsingHeap())
-			{
-				for (uint32 at = 0; at < _size; ++at)
-				{
-					MemoryRaw::DestroyAt(_ptr[at]);
-				}
-				MINT_FREE(_ptr);
-			}
+			Clear();
 			_ptr = newPtr;
 		}
 		else // though inefficient, make it work.
 		{
-			T* newPtr = MINT_MALLOC(T, capacity);
+			T* newPtr = MINT_MALLOC(T, newCapacity);
 			for (uint32 at = 0; at < _size; ++at)
 			{
 				MemoryRaw::CopyConstructAt(newPtr[at], std::move(_ptr[at]));
 			}
-			if (IsUsingHeap())
-			{
-				for (uint32 at = 0; at < _size; ++at)
-				{
-					MemoryRaw::DestroyAt(_ptr[at]);
-				}
-				MINT_FREE(_ptr);
-			}
+			Clear();
 			_ptr = newPtr;
 		}
-		MINT_ASSERT(IsUsingHeap() == true, "This must be guaranteed when Reserve is processed.");
+		MINT_ASSERT(IsUsingHeap() == true, "This must be guaranteed when Reserve() is processed.");
 
-		_capacity = capacity;
+		_capacity = newCapacity;
 	}
 
 	template<typename T, const uint32 kCapacity>
-	inline void InlineVectorStorage<T, kCapacity>::Resize(const uint32 size) requires (IsDefaultConstructible<T>() == true)
+	inline void InlineVectorStorage<T, kCapacity>::Resize(const uint32 newSize) requires (IsDefaultConstructible<T>() == true)
 	{
-		if (size == _size)
+		if (newSize == _size)
 		{
 			return;
 		}
-		else if (size > _size)
+		else if (newSize > _size)
 		{
-			Reserve(size);
+			Reserve(newSize);
 
-			for (uint32 at = _size; at < size; ++at)
+			for (uint32 at = _size; at < newSize; ++at)
 			{
 				MINT_PLACEMNT_NEW(&_ptr[at], T());
 			}
 		}
 		else
 		{
-			MINT_ASSERT(size < _size, "This must be guaranteed by if statement above!");
-			for (uint32 at = size; at < _size; ++at)
+			MINT_ASSERT(newSize < _size, "This must be guaranteed by if statement above!");
+			for (uint32 at = newSize; at < _size; ++at)
 			{
 				MemoryRaw::DestroyAt(_ptr[at]);
 			}
 		}
 
-		_size = size;
+		_size = newSize;
 	}
 
 	template<typename T, const uint32 kCapacity>
@@ -156,7 +137,7 @@ namespace mint
 	}
 
 	template<typename T, const uint32 kCapacity>
-	inline void InlineVectorStorage<T, kCapacity>::Insert(const T& newEntry, const uint32 at) noexcept
+	inline void InlineVectorStorage<T, kCapacity>::Insert(const T& newEntry, const uint32 at)
 	{
 		if (_size <= at)
 		{
@@ -176,7 +157,6 @@ namespace mint
 				{
 					_ptr[iter] = std::move(_ptr[iter - 1]);
 				}
-				_ptr[at] = std::move(newEntry);
 			}
 			else // Though inefficient, make it work.
 			{
@@ -185,14 +165,14 @@ namespace mint
 				{
 					_ptr[iter] = _ptr[iter - 1];
 				}
-				_ptr[at] = newEntry;
 			}
+			_ptr[at] = newEntry;
 			++_size;
 		}
 	}
 
 	template<typename T, const uint32 kCapacity>
-	inline void InlineVectorStorage<T, kCapacity>::Insert(T&& newEntry, const uint32 at) noexcept
+	inline void InlineVectorStorage<T, kCapacity>::Insert(T&& newEntry, const uint32 at)
 	{
 		if (_size <= at)
 		{
@@ -248,6 +228,23 @@ namespace mint
 			MemoryRaw::DestroyAt(_ptr[_size - 1]);
 			--_size;
 		}
+	}
+
+	template<typename T, const uint32 kCapacity>
+	inline void InlineVectorStorage<T, kCapacity>::Clear() noexcept
+	{
+		for (uint32 at = 0; at < _size; ++at)
+		{
+			MemoryRaw::DestroyAt(_ptr[at]);
+		}
+
+		if (IsUsingHeap())
+		{
+			MINT_FREE(_ptr);
+			_ptr = reinterpret_cast<T*>(__array);
+		}
+
+		MINT_ASSERT(IsUsingHeap() == false, "This must be guaranteed after Clear() is processed.");
 	}
 }
 

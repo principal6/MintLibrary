@@ -28,14 +28,15 @@ namespace mint
 		~InlineVectorStorage();
 
 	public:
-		void Reserve(const uint32 capacity);
-		void Resize(const uint32 size) requires (IsDefaultConstructible<T>() == true);
+		void Reserve(const uint32 newCapacity);
+		void Resize(const uint32 newSize) requires (IsDefaultConstructible<T>() == true);
 		void PushBack(const T& entry);
 		void PushBack(T&& entry);
 		void PopBack();
-		void Insert(const T& newEntry, const uint32 at) noexcept;
-		void Insert(T&& newEntry, const uint32 at) noexcept;
+		void Insert(const T& newEntry, const uint32 at);
+		void Insert(T&& newEntry, const uint32 at);
 		void Erase(const uint32 at) noexcept;
+		void Clear() noexcept;
 
 	public:
 		T* Data() noexcept { return _ptr; }
@@ -48,11 +49,11 @@ namespace mint
 		bool IsFull() const { return Size() == _capacity; }
 
 	private:
-		MINT_INLINE bool IsUsingHeap() const noexcept { return _ptr != __array; }
+		MINT_INLINE bool IsUsingHeap() const noexcept { return _ptr != reinterpret_cast<const T*>(__array); }
 		uint32 _capacity;
 		uint32 _size;
 		T* _ptr = nullptr;
-		T __array[kCapacity];
+		alignas(T) byte __array[sizeof(T) * kCapacity];
 
 	private:
 		static_assert(kCapacity > 0, "kCapacity must be greater than 0");
