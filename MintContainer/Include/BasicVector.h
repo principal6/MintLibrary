@@ -51,8 +51,8 @@ namespace mint
 		MINT_INLINE void PushBack(const T& entry) { _storage.PushBack(entry); }
 		MINT_INLINE void PushBack(T&& entry) { _storage.PushBack(std::move(entry)); }
 		MINT_INLINE void PopBack() { _storage.PopBack(); }
-		MINT_INLINE void Insert(const T& newEntry, const uint32 at) noexcept { _storage.Insert(newEntry, at); }
-		MINT_INLINE void Insert(T&& newEntry, const uint32 at) noexcept { _storage.Insert(std::move(newEntry), at); }
+		MINT_INLINE void Insert(const uint32 at, const T& newEntry) noexcept { _storage.Insert(at, newEntry); }
+		MINT_INLINE void Insert(const uint32 at, T&& newEntry) noexcept { _storage.Insert(at, std::move(newEntry)); }
 		MINT_INLINE void Erase(const uint32 at) noexcept { _storage.Erase(at); }
 		MINT_INLINE void Clear()
 		{

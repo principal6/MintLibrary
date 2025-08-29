@@ -381,7 +381,7 @@ namespace mint
 				}
 				else
 				{
-					epaInfo._points.Insert(support, indexB);
+					epaInfo._points.Insert(indexB, support);
 				}
 			}
 		}

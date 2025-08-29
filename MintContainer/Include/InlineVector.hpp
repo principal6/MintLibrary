@@ -137,7 +137,7 @@ namespace mint
 	}
 
 	template<typename T, const uint32 kCapacity>
-	inline void InlineVectorStorage<T, kCapacity>::Insert(const T& newEntry, const uint32 at)
+	inline void InlineVectorStorage<T, kCapacity>::Insert(const uint32 at, const T& newEntry)
 	{
 		if (_size <= at)
 		{
@@ -172,7 +172,7 @@ namespace mint
 	}
 
 	template<typename T, const uint32 kCapacity>
-	inline void InlineVectorStorage<T, kCapacity>::Insert(T&& newEntry, const uint32 at)
+	inline void InlineVectorStorage<T, kCapacity>::Insert(const uint32 at, T&& newEntry)
 	{
 		if (_size <= at)
 		{

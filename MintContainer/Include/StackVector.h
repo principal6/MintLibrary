@@ -31,8 +31,8 @@ namespace mint
 		void PushBack(const T& entry);
 		void PushBack(T&& entry);
 		void PopBack();
-		void Insert(const T& newEntry, const uint32 at) noexcept;
-		void Insert(T&& newEntry, const uint32 at) noexcept;
+		void Insert(const uint32 at, const T& newEntry) noexcept;
+		void Insert(const uint32 at, T&& newEntry) noexcept;
 		void Erase(const uint32 at) noexcept;
 
 	public:

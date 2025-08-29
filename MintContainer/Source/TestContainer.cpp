@@ -477,7 +477,7 @@ namespace mint
 				v_int.PushBack(2);
 				v_int.PushBack(3);
 				//mintVector.erase(1);
-				v_int.Insert(4, 1);
+				v_int.Insert(1, 4);
 			}
 
 
@@ -485,7 +485,7 @@ namespace mint
 			v_a.PushBack(1);
 			v_a.PushBack(2);
 			v_a.PushBack(3);
-			v_a.Insert(2, 5);
+			v_a.Insert(5, 2);
 			v_a.Erase(1);
 
 			Vector<int32> v_resize;
@@ -505,11 +505,11 @@ namespace mint
 			std::swap(v_a, v_move);
 
 			Vector<uint32> v_insert_erase(3);
-			v_insert_erase.Insert(3, 10);
-			v_insert_erase.Insert(2, 0);
-			v_insert_erase.Insert(99, 1);
-			v_insert_erase.Insert(1, 0);
-			v_insert_erase.Insert(0, 100);
+			v_insert_erase.Insert(10, 3);
+			v_insert_erase.Insert(0, 2);
+			v_insert_erase.Insert(1, 99);
+			v_insert_erase.Insert(0, 1);
+			v_insert_erase.Insert(100, 0);
 			v_insert_erase.Erase(100);
 			v_insert_erase.Erase(2);
 			v_insert_erase.ShrinkToFit();

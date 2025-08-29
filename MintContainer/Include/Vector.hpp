@@ -219,7 +219,7 @@ namespace mint
 	}
 
 	template<typename T>
-	MINT_INLINE void VectorStorage<T>::Insert(const T& newEntry, const uint32 at) noexcept
+	MINT_INLINE void VectorStorage<T>::Insert(const uint32 at, const T& newEntry) noexcept
 	{
 		if (_size <= at)
 		{
@@ -255,7 +255,7 @@ namespace mint
 	}
 
 	template<typename T>
-	MINT_INLINE void VectorStorage<T>::Insert(T&& newEntry, const uint32 at) noexcept
+	MINT_INLINE void VectorStorage<T>::Insert(const uint32 at, T&& newEntry) noexcept
 	{
 		if (_size <= at)
 		{

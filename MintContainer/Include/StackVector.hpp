@@ -86,7 +86,7 @@ namespace mint
 	}
 
 	template<typename T, uint32 Capacity>
-	inline void StackVectorStorage<T, Capacity>::Insert(const T& newEntry, const uint32 at) noexcept
+	inline void StackVectorStorage<T, Capacity>::Insert(const uint32 at, const T& newEntry) noexcept
 	{
 		MINT_ASSERT(at <= _size, "범위를 벗어난 접근입니다. [at: %d / size: %d]", at, _size);
 		if (IsFull())
@@ -114,7 +114,7 @@ namespace mint
 	}
 
 	template<typename T, uint32 Capacity>
-	inline void StackVectorStorage<T, Capacity>::Insert(T&& newEntry, const uint32 at) noexcept
+	inline void StackVectorStorage<T, Capacity>::Insert(const uint32 at, T&& newEntry) noexcept
 	{
 		MINT_ASSERT(at <= _size, "범위를 벗어난 접근입니다. [at: %d / size: %d]", at, _size);
 		if (IsFull())
