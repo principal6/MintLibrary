@@ -54,13 +54,7 @@ namespace mint
 		MINT_INLINE bool Insert(const uint32 at, const T& newEntry) noexcept { return _storage.Insert(at, newEntry); }
 		MINT_INLINE bool Insert(const uint32 at, T&& newEntry) noexcept { return _storage.Insert(at, std::move(newEntry)); }
 		MINT_INLINE void Erase(const uint32 at) noexcept { _storage.Erase(at); }
-		MINT_INLINE void Clear()
-		{
-			while (IsEmpty() == false)
-			{
-				PopBack();
-			}
-		}
+		MINT_INLINE void Clear() { _storage.Clear(); }
 
 	public:
 		MINT_INLINE T* Data() noexcept { return _storage.Data(); }
@@ -104,8 +98,8 @@ namespace mint
 	public:
 		MINT_INLINE constexpr uint32 Capacity() const { return _storage.Capacity(); }
 		MINT_INLINE uint32 Size() const { return _storage.Size(); }
-		MINT_INLINE bool IsEmpty() const { return _storage.Size() == 0; }
-		MINT_INLINE bool IsFull() const { return _storage.Size() == _storage.Capacity(); }
+		MINT_INLINE bool IsEmpty() const { return _storage.IsEmpty(); }
+		MINT_INLINE bool IsFull() const { return _storage.IsFull(); }
 
 	public:
 		// TODO: Iterator, ConstIterator 를 클래스로 만들기???
@@ -119,6 +113,22 @@ namespace mint
 
 	private:
 		Storage _storage;
+	};
+
+	template <typename T>
+	class BasicVectorStorage abstract
+	{
+	public:
+		BasicVectorStorage() = default;
+		virtual ~BasicVectorStorage() = default;
+
+	public:
+		virtual T* Data() noexcept abstract;
+		virtual const T* Data() const noexcept abstract;
+		virtual uint32 Capacity() const noexcept abstract;
+		virtual uint32 Size() const noexcept abstract;
+		bool IsEmpty() const noexcept { return Size() == 0; }
+		bool IsFull() const noexcept { return Size() == Capacity(); }
 	};
 }
 #endif // !_MINT_CONTAINER_BASIC_VECTOR_H_

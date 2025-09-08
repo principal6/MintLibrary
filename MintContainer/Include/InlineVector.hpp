@@ -40,6 +40,16 @@ namespace mint
 	inline InlineVectorStorage<T, kCapacity>::~InlineVectorStorage()
 	{
 		Clear();
+
+		if (IsUsingHeap() == true)
+		{
+			MINT_FREE(_ptr);
+
+			// Though not necessary, make it clear that we are back to using inline array.
+			_ptr = reinterpret_cast<T*>(__array);
+			_capacity = kCapacity;
+			MINT_ASSERT(IsUsingHeap() == false, "This must be guaranteed after destructor is done.");
+		}
 	}
 
 	template<typename T, const uint32 kCapacity>
@@ -58,7 +68,6 @@ namespace mint
 			{
 				MemoryRaw::MoveConstructAt(newPtr[at], std::move(_ptr[at]));
 			}
-			Clear();
 		}
 		else // though inefficient, make it work.
 		{
@@ -66,8 +75,14 @@ namespace mint
 			{
 				MemoryRaw::CopyConstructAt(newPtr[at], _ptr[at]);
 			}
-			Clear();
 		}
+
+		Clear();
+		if (IsUsingHeap() == true)
+		{
+			MINT_FREE(_ptr);
+		}
+
 		_ptr = newPtr;
 		_size = sizeCache;
 		_capacity = newCapacity;
@@ -106,7 +121,7 @@ namespace mint
 	template<typename T, const uint32 kCapacity>
 	inline void InlineVectorStorage<T, kCapacity>::PushBack(const T& entry)
 	{
-		if (IsFull())
+		if (BasicVectorStorage<T>::IsFull())
 		{
 			Reserve(Capacity() * 2);
 		}
@@ -118,7 +133,7 @@ namespace mint
 	template<typename T, const uint32 kCapacity>
 	inline void InlineVectorStorage<T, kCapacity>::PushBack(T&& entry)
 	{
-		if (IsFull())
+		if (BasicVectorStorage<T>::IsFull())
 		{
 			Reserve(Capacity() * 2);
 		}
@@ -128,9 +143,9 @@ namespace mint
 	}
 
 	template<typename T, const uint32 kCapacity>
-	inline void InlineVectorStorage<T, kCapacity>::PopBack()
+	inline void InlineVectorStorage<T, kCapacity>::PopBack() noexcept
 	{
-		if (IsEmpty())
+		if (BasicVectorStorage<T>::IsEmpty())
 		{
 			return;
 		}
@@ -154,7 +169,7 @@ namespace mint
 		}
 		MINT_ASSERT(_size > 0, "This must be guaranteed by if statement above!");
 
-		if (IsFull())
+		if (BasicVectorStorage<T>::IsFull())
 		{
 			Reserve(Capacity() * 2);
 		}
@@ -194,7 +209,7 @@ namespace mint
 		}
 		MINT_ASSERT(_size > 0, "This must be guaranteed by if statement above!");
 
-		if (IsFull())
+		if (BasicVectorStorage<T>::IsFull())
 		{
 			Reserve(Capacity() * 2);
 		}
@@ -211,7 +226,7 @@ namespace mint
 	template<typename T, const uint32 kCapacity>
 	inline void InlineVectorStorage<T, kCapacity>::Erase(const uint32 at) noexcept
 	{
-		if (IsEmpty())
+		if (BasicVectorStorage<T>::IsEmpty())
 		{
 			return;
 		}
@@ -249,21 +264,18 @@ namespace mint
 	template<typename T, const uint32 kCapacity>
 	inline void InlineVectorStorage<T, kCapacity>::Clear() noexcept
 	{
+#if defined(MINT_DEBUG)
+		const uint32 oldCapacity = _capacity;
+		const bool wasUsingHeap = IsUsingHeap();
+#endif // defined(MINT_DEBUG)
 		for (uint32 at = 0; at < _size; ++at)
 		{
 			MemoryRaw::DestroyAt(_ptr[at]);
 		}
-
-		if (IsUsingHeap())
-		{
-			MINT_FREE(_ptr);
-			_ptr = reinterpret_cast<T*>(__array);
-		}
-
 		_size = 0;
-		_capacity = kCapacity;
-		MINT_ASSERT(IsUsingHeap() == false, "This must be guaranteed after Clear() is processed.");
-		MINT_ASSERT(IsEmpty() == true, "This must be guaranteed after Clear() is processed.");
+		MINT_ASSERT(BasicVectorStorage<T>::IsEmpty() == true, "This must be guaranteed after Clear() is processed.");
+		MINT_ASSERT(oldCapacity == _capacity, "This must be guaranteed after Clear() is processed.");
+		MINT_ASSERT(wasUsingHeap == IsUsingHeap(), "This must be guaranteed after Clear() is processed.");
 	}
 }
 

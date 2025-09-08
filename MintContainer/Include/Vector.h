@@ -24,10 +24,8 @@ namespace mint
 	using Vector = BasicVector<T, VectorStorage<T>>;
 
 	template <typename T>
-	class VectorStorage final
+	class VectorStorage final : public BasicVectorStorage<T>
 	{
-		friend BasicVector;
-
 	public:
 		VectorStorage();
 		VectorStorage(const std::initializer_list<T>& initializerList);
@@ -45,25 +43,25 @@ namespace mint
 		void ShrinkToFit() noexcept;
 
 	public:
-		void PushBack(const T& newEntry) noexcept;
-		void PushBack(T&& newEntry) noexcept;
+		void PushBack(const T& newEntry);
+		void PushBack(T&& newEntry);
 		void PopBack() noexcept;
-		bool Insert(const uint32 at, const T& newEntry) noexcept;
-		bool Insert(const uint32 at, T&& newEntry) noexcept;
+		bool Insert(const uint32 at, const T& newEntry);
+		bool Insert(const uint32 at, T&& newEntry);
 		void Erase(const uint32 at) noexcept;
+		void Clear() noexcept;
 
 	private:
 		void ExpandCapacityIfNecessary() noexcept;
-		void DestroyAll() noexcept;
 
 	public:
-		MINT_INLINE T* Data() noexcept { return _rawPointer; }
-		MINT_INLINE const T* Data() const noexcept { return _rawPointer; }
+		MINT_INLINE virtual T* Data() noexcept override final { return _rawPointer; }
+		MINT_INLINE virtual const T* Data() const noexcept override final { return _rawPointer; }
+		MINT_INLINE virtual uint32 Capacity() const noexcept override final { return _capacity; }
+		MINT_INLINE virtual uint32 Size() const noexcept override final { return _size; }
 
 	public:
-		MINT_INLINE uint32 Capacity() const noexcept { return _capacity; }
-		MINT_INLINE uint32 Size() const noexcept { return _size; }
-		MINT_INLINE bool IsEmpty() const noexcept { return _size == 0; }
+		static constexpr bool kSupportsDynamicCapacity = true;
 
 	private:
 		T* _rawPointer;
@@ -71,7 +69,6 @@ namespace mint
 		uint32 _size;
 
 	private:
-		static constexpr bool kSupportsDynamicCapacity = true;
 		static constexpr uint32 kBaseCapacity = 8;
 	};
 }

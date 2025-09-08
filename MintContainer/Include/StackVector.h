@@ -17,10 +17,8 @@ namespace mint
 	using StackVector = BasicVector<T, StackVectorStorage<T, kCapacity>>;
 
 	template<typename T, const uint32 kCapacity>
-	class StackVectorStorage final
+	class StackVectorStorage final : public BasicVectorStorage<T>
 	{
-		friend BasicVector;
-
 	public:
 		StackVectorStorage();
 		StackVectorStorage(const std::initializer_list<T>& initializerList);
@@ -28,22 +26,24 @@ namespace mint
 
 	public:
 		void Resize(const uint32 size);
+	
+	public:
 		void PushBack(const T& entry);
 		void PushBack(T&& entry);
-		void PopBack();
-		bool Insert(const uint32 at, const T& newEntry) noexcept;
-		bool Insert(const uint32 at, T&& newEntry) noexcept;
+		void PopBack() noexcept;
+		bool Insert(const uint32 at, const T& newEntry);
+		bool Insert(const uint32 at, T&& newEntry);
 		void Erase(const uint32 at) noexcept;
+		void Clear() noexcept;
 
 	public:
-		T* Data() noexcept { return _array; }
-		const T* Data() const noexcept { return _array; }
+		MINT_INLINE virtual T* Data() noexcept { return _array; }
+		MINT_INLINE virtual const T* Data() const noexcept { return _array; }
+		MINT_INLINE virtual constexpr uint32 Capacity() const noexcept override final { return kCapacity; }
+		MINT_INLINE virtual uint32 Size() const noexcept override final { return _size; }
 
 	public:
-		constexpr uint32 Capacity() const { return kCapacity; }
-		uint32 Size() const { return _size; }
-		bool IsEmpty() const { return Size() == 0; }
-		bool IsFull() const { return Size() == kCapacity; }
+		static constexpr bool kSupportsDynamicCapacity = false;
 
 	private:
 		T _array[kCapacity];
@@ -51,7 +51,6 @@ namespace mint
 	
 	private:
 		static_assert(kCapacity > 0, "kCapacity must be greater than 0");
-		static constexpr bool kSupportsDynamicCapacity = false;
 	};
 }
 

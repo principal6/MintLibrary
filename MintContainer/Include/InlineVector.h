@@ -18,10 +18,8 @@ namespace mint
 	using InlineVector = BasicVector<T, InlineVectorStorage<T, kCapacity>>;
 
 	template<typename T, const uint32 kCapacity>
-	class InlineVectorStorage final
+	class InlineVectorStorage final : public BasicVectorStorage<T>
 	{
-		friend BasicVector;
-
 	public:
 		InlineVectorStorage();
 		InlineVectorStorage(const std::initializer_list<T>& initializerList);
@@ -30,26 +28,29 @@ namespace mint
 	public:
 		void Reserve(const uint32 newCapacity);
 		void Resize(const uint32 newSize) requires (IsDefaultConstructible<T>() == true);
+	
+	public:
 		void PushBack(const T& entry);
 		void PushBack(T&& entry);
-		void PopBack();
+		void PopBack() noexcept;
 		bool Insert(const uint32 at, const T& newEntry);
 		bool Insert(const uint32 at, T&& newEntry);
 		void Erase(const uint32 at) noexcept;
 		void Clear() noexcept;
 
 	public:
-		T* Data() noexcept { return _ptr; }
-		const T* Data() const noexcept { return _ptr; }
-
-	public:
-		constexpr uint32 Capacity() const { return _capacity; }
-		uint32 Size() const { return _size; }
-		bool IsEmpty() const { return Size() == 0; }
-		bool IsFull() const { return Size() == _capacity; }
+		MINT_INLINE virtual T* Data() noexcept override final { return _ptr; }
+		MINT_INLINE virtual const T* Data() const noexcept override final { return _ptr; }
+		MINT_INLINE virtual constexpr uint32 Capacity() const noexcept override final { return _capacity; }
+		MINT_INLINE virtual uint32 Size() const noexcept override final { return _size; }
 
 	private:
 		MINT_INLINE bool IsUsingHeap() const noexcept { return _ptr != reinterpret_cast<const T*>(__array); }
+
+	public:
+		static constexpr bool kSupportsDynamicCapacity = true;
+
+	private:
 		uint32 _capacity;
 		uint32 _size;
 		T* _ptr = nullptr;
@@ -57,7 +58,6 @@ namespace mint
 
 	private:
 		static_assert(kCapacity > 0, "kCapacity must be greater than 0");
-		static constexpr bool kSupportsDynamicCapacity = true;
 	};
 }
 

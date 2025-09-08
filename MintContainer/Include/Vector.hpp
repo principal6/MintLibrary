@@ -62,7 +62,7 @@ namespace mint
 	template<typename T>
 	inline VectorStorage<T>::~VectorStorage()
 	{
-		DestroyAll();
+		Clear();
 
 		MemoryRaw::DeallocateMemory<T>(_rawPointer);
 	}
@@ -72,7 +72,7 @@ namespace mint
 	{
 		if (this != &rhs)
 		{
-			DestroyAll();
+			Clear();
 
 			Reserve(rhs._size);
 
@@ -89,7 +89,7 @@ namespace mint
 	{
 		if (this != &rhs)
 		{
-			DestroyAll();
+			Clear();
 
 			MemoryRaw::DeallocateMemory<T>(_rawPointer);
 
@@ -183,7 +183,7 @@ namespace mint
 	}
 
 	template<typename T>
-	MINT_INLINE void VectorStorage<T>::PushBack(const T& newEntry) noexcept
+	MINT_INLINE void VectorStorage<T>::PushBack(const T& newEntry)
 	{
 		ExpandCapacityIfNecessary();
 
@@ -193,7 +193,7 @@ namespace mint
 	}
 
 	template<typename T>
-	MINT_INLINE void VectorStorage<T>::PushBack(T&& newEntry) noexcept
+	MINT_INLINE void VectorStorage<T>::PushBack(T&& newEntry)
 	{
 		ExpandCapacityIfNecessary();
 
@@ -219,7 +219,7 @@ namespace mint
 	}
 
 	template<typename T>
-	MINT_INLINE bool VectorStorage<T>::Insert(const uint32 at, const T& newEntry) noexcept
+	MINT_INLINE bool VectorStorage<T>::Insert(const uint32 at, const T& newEntry)
 	{
 		if (at > _size)
 		{
@@ -261,7 +261,7 @@ namespace mint
 	}
 
 	template<typename T>
-	MINT_INLINE bool VectorStorage<T>::Insert(const uint32 at, T&& newEntry) noexcept
+	MINT_INLINE bool VectorStorage<T>::Insert(const uint32 at, T&& newEntry)
 	{
 		if (at > _size)
 		{
@@ -307,7 +307,7 @@ namespace mint
 	template<typename T>
 	MINT_INLINE void VectorStorage<T>::Erase(const uint32 at) noexcept
 	{
-		if (IsEmpty())
+		if (BasicVectorStorage<T>::IsEmpty())
 		{
 			return;
 		}
@@ -352,13 +352,8 @@ namespace mint
 	}
 
 	template<typename T>
-	MINT_INLINE void VectorStorage<T>::DestroyAll() noexcept
+	MINT_INLINE void VectorStorage<T>::Clear() noexcept
 	{
-		if (_size == 0)
-		{
-			return;
-		}
-
 		for (uint32 index = 0; index < _size; ++index)
 		{
 			MemoryRaw::DestroyAt<T>(_rawPointer[index]);

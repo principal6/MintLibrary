@@ -458,7 +458,7 @@ namespace mint
 			return true;
 		}
 
-		template<template<typename, auto> class VectorType>
+		template<template<typename, uint32> class VectorType>
 		bool Test_Vector_Common()
 		{
 			VectorType<int32, 16> vector0;
@@ -485,7 +485,7 @@ namespace mint
 			return true;
 		}
 
-		template<template<typename, auto> class VectorType>
+		template<template<typename, uint32> class VectorType>
 		bool Test_Vector_DynamicAllocation()
 		{
 			VectorType<int32, 1> vector0;
@@ -508,7 +508,7 @@ namespace mint
 			return true;
 		}
 
-		template<template<typename, auto> class VectorType>
+		template<template<typename, uint32> class VectorType>
 		bool Test_Vector_InsertErase()
 		{
 			VectorType<int32, 32> vector0;
@@ -535,7 +535,7 @@ namespace mint
 			return true;
 		}
 
-		template<template<typename, auto> class VectorType>
+		template<template<typename, uint32> class VectorType>
 		bool Test_Vector_Resize()
 		{
 			VectorType<int32, 32> vector0;
