@@ -36,12 +36,29 @@ namespace mint
 	}
 
 	template<typename T, const uint32 kCapacity>
-	inline void StackVectorStorage<T, kCapacity>::Resize(const uint32 size)
+	inline void StackVectorStorage<T, kCapacity>::Resize(uint32 size)
 	{
-		MINT_ASSERT(size <= kCapacity, "size(%u) 는 kCapacity(%u) 보다 커질 수 없습니다!", size, kCapacity);
+		MINT_ASSERT(size <= kCapacity, "size(%u) cannot be bigger than kCapacity(%u)!", size, kCapacity);
 		if (size == _size)
 		{
 			return;
+		}
+
+		T* const data = Data();
+		if (size > _size)
+		{
+			for (uint32 at = _size; at < size; ++at)
+			{
+				MemoryRaw::ConstructAt(data[at]);
+			}
+		}
+		else
+		{
+			MINT_ASSERT(size < _size, "This must be guaranteed by if statements above!");
+			for (uint32 at = size; at < _size; ++at)
+			{
+				MemoryRaw::DestroyAt(data[at]);
+			}
 		}
 
 		_size = size;
@@ -52,11 +69,12 @@ namespace mint
 	{
 		if (BasicVectorStorage<T>::IsFull())
 		{
-			MINT_ASSERT(false, "StackVectorStorage 가 이미 가득 차있습니다!");
+			MINT_ASSERT(false, "StackVectorStorage is already full! PushBack failed.");
 			return;
 		}
 
-		_array[_size] = entry;
+		T* const data = Data();
+		MemoryRaw::CopyConstructAt(data[_size], entry);
 		++_size;
 	}
 
@@ -65,11 +83,12 @@ namespace mint
 	{
 		if (BasicVectorStorage<T>::IsFull())
 		{
-			MINT_ASSERT(false, "StackVectorStorage 가 이미 가득 차있습니다!");
+			MINT_ASSERT(false, "StackVectorStorage is already full! PushBack failed.");
 			return;
 		}
 
-		_array[_size] = std::move(entry);
+		T* const data = Data();
+		MemoryRaw::MoveConstructAt(data[_size], std::move(entry));
 		++_size;
 	}
 
@@ -78,10 +97,12 @@ namespace mint
 	{
 		if (BasicVectorStorage<T>::IsEmpty())
 		{
-			MINT_ASSERT(false, "StackVectorStorage 가 이미 비어 있습니다!");
+			MINT_ASSERT(false, "StackVectorStorage is already empty! PopBack failed.");
 			return;
 		}
 
+		T* const data = Data();
+		MemoryRaw::DestroyAt(data[_size - 1]);
 		--_size;
 	}
 
@@ -100,21 +121,30 @@ namespace mint
 		}
 		MINT_ASSERT(_size > 0, "This must be guaranteed by if statement above!");
 
+		if (BasicVectorStorage<T>::IsFull())
+		{
+			MINT_ASSERT(false, "StackVectorStorage is already full! Insert failed.");
+			return false;
+		}
+
+		T* const data = Data();
 		if constexpr (IsMovable<T>() == true)
 		{
-			for (uint32 iter = _size; iter > at; --iter)
+			MemoryRaw::MoveConstructAt(data[_size], std::move(data[_size - 1]));
+			for (uint32 iter = _size - 1; iter > at; --iter)
 			{
-				_array[iter] = std::move(_array[iter - 1]);
+				data[iter] = std::move(data[iter - 1]);
 			}
 		}
-		else // 비효율적이지만 동작은 하도록 한다.
+		else // Though inefficient, make it work.
 		{
+			MemoryRaw::CopyConstructAt(data[_size], data[_size - 1]);
 			for (uint32 iter = _size; iter > at; --iter)
 			{
-				_array[iter] = _array[iter - 1];
+				data[iter] = data[iter - 1];
 			}
 		}
-		_array[at] = newEntry;
+		data[at] = newEntry;
 		++_size;
 		return true;
 	}
@@ -134,22 +164,30 @@ namespace mint
 		}
 		MINT_ASSERT(_size > 0, "This must be guaranteed by if statement above!");
 
+		if (BasicVectorStorage<T>::IsFull())
+		{
+			MINT_ASSERT(false, "StackVectorStorage is already full! Insert failed.");
+			return false;
+		}
+
+		T* const data = Data();
 		if constexpr (IsMovable<T>() == true)
 		{
-			for (uint32 iter = _size; iter > at; --iter)
+			MemoryRaw::MoveConstructAt(data[_size], std::move(data[_size - 1]));
+			for (uint32 iter = _size - 1; iter > at; --iter)
 			{
-				_array[iter] = std::move(_array[iter - 1]);
+				data[iter] = std::move(data[iter - 1]);
 			}
-			_array[at] = std::move(newEntry);
 		}
-		else // 비효율적이지만 동작은 하도록 한다.
+		else // Though inefficient, make it work.
 		{
+			MemoryRaw::CopyConstructAt(data[_size], data[_size - 1]);
 			for (uint32 iter = _size; iter > at; --iter)
 			{
-				_array[iter] = _array[iter - 1];
+				data[iter] = data[iter - 1];
 			}
-			_array[at] = newEntry;
 		}
+		data[at] = std::move(newEntry);
 		++_size;
 		return true;
 	}
@@ -167,31 +205,41 @@ namespace mint
 			return;
 		}
 
+		if (at == _size - 1)
+		{
+			PopBack();
+			return;
+		}
+		MINT_ASSERT(at < _size - 1, "This must be guaranteed by if statement above!");
+
+		T* const data = Data();
 		if constexpr (IsMovable<T>() == true)
 		{
 			for (uint32 iter = at + 1; iter < _size; ++iter)
 			{
-				_array[iter - 1] = std::move(_array[iter]);
+				data[iter - 1] = std::move(data[iter]);
 			}
 		}
 		else // 비효율적이지만 동작은 하도록 한다.
 		{
 			for (uint32 iter = at + 1; iter < _size; ++iter)
 			{
-				_array[iter - 1] = _array[iter];
+				data[iter - 1] = data[iter];
 			}
 		}
-
+		MemoryRaw::DestroyAt(data[_size - 1]);
 		--_size;
 	}
 
 	template<typename T, const uint32 kCapacity>
 	inline void StackVectorStorage<T, kCapacity>::Clear() noexcept
 	{
-		while (BasicVectorStorage<T>::IsEmpty() == false)
+		T* const data = Data();
+		for (uint32 at = 0; at < _size; ++at)
 		{
-			PopBack();
+			MemoryRaw::DestroyAt(data[at]);
 		}
+		_size = 0;
 	}
 }
 

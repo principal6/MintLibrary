@@ -25,7 +25,7 @@ namespace mint
 		~StackVectorStorage();
 
 	public:
-		void Resize(const uint32 size);
+		void Resize(uint32 size);
 	
 	public:
 		void PushBack(const T& entry);
@@ -37,8 +37,8 @@ namespace mint
 		void Clear() noexcept;
 
 	public:
-		MINT_INLINE virtual T* Data() noexcept { return _array; }
-		MINT_INLINE virtual const T* Data() const noexcept { return _array; }
+		MINT_INLINE virtual T* Data() noexcept { return reinterpret_cast<T*>(_array); }
+		MINT_INLINE virtual const T* Data() const noexcept { return reinterpret_cast<const T*>(_array); }
 		MINT_INLINE virtual constexpr uint32 Capacity() const noexcept override final { return kCapacity; }
 		MINT_INLINE virtual uint32 Size() const noexcept override final { return _size; }
 
@@ -46,7 +46,7 @@ namespace mint
 		static constexpr bool kSupportsDynamicCapacity = false;
 
 	private:
-		T _array[kCapacity];
+		alignas(T) byte _array[sizeof(T) * kCapacity];
 		uint32 _size;
 	
 	private:
