@@ -1,6 +1,6 @@
 ﻿# TODO
-## CppHlsl Parser 에 SkipParsingIf 함수 구현하기( 구조를 입력받아 같은 경우에 Skip 다른 경우 실패 처리! )
 ## SceneObect 렌더링 개선 - Material 세팅 정식으로 적용하기!
+## CppHlsl Parser 에 SkipParsingIf 함수 구현하기( 구조를 입력받아 같은 경우에 Skip 다른 경우 실패 처리! )
 ## ECS 관련 클래스 ECS 프로젝트 사용하도록 리팩토링!! 특히 GUI...
 ## GUI 개편
 ### Manager classes for GUI system
