@@ -18,7 +18,7 @@ namespace mint
 
 namespace mint
 {
-	class SceneObject : public ECS::EntityBase<uint64, 40> {};
+	class SceneObject : public ECS::EntityBase<uint64, 32> {};
 
 	template<typename ComponentType>
 	using SceneObjectComponentPool = ECS::EntityComponentPool<SceneObject, ComponentType>;
