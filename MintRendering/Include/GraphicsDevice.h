@@ -82,7 +82,7 @@ namespace mint
 			~ScopedRenderPhase();
 
 		public:
-			bool Is(const RenderPhaseLabel& renderPhaseLabel) const;
+			bool IsPhase(const RenderPhaseLabel& renderPhaseLabel) const;
 
 		private:
 			ScopedRenderPhase(RenderPhaseIterator& renderPhaseIterator);

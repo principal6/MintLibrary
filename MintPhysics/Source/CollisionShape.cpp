@@ -139,7 +139,7 @@ namespace mint
 			, _center{ center }
 			, _radius{ radius }
 		{
-			MINT_ASSERT(radius > 0.0f, "radius(%f) is 0 or less. Is it really intended?", radius);
+			MINT_ASSERT(radius > 0.0f, "radius(%f) is 0 or less. IsPhase it really intended?", radius);
 		}
 
 		CircleCollisionShape::CircleCollisionShape(const float radius, const Transform2D& transform2D)

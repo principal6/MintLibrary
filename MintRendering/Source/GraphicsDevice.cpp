@@ -128,7 +128,7 @@ namespace mint
 			}
 		}
 
-		bool ScopedRenderPhase::Is(const RenderPhaseLabel& renderPhaseLabel) const
+		bool ScopedRenderPhase::IsPhase(const RenderPhaseLabel& renderPhaseLabel) const
 		{
 			return _renderPhaseLabel == renderPhaseLabel;
 		}

@@ -168,7 +168,7 @@ void RunGJKTestWindow()
 		// Rendering
 		for (ScopedRenderPhase renderPhase : graphicsDevice.IterateRenderPhases())
 		{
-			if (renderPhase.Is(RenderPhaseLabel::WorldSpace))
+			if (renderPhase.IsPhase(RenderPhaseLabel::WorldSpace))
 			{
 				graphicsDevice.SetViewProjectionMatrix(Float4x4::kIdentity, Float4x4::ProjectionMatrix2DNormal(windowSize._x, windowSize._y));
 
@@ -227,7 +227,7 @@ void RunGJKTestWindow()
 					shapeRenderer.DrawCircle(Float3(normal * distance), 4.0f);
 				}
 			}
-			else if (renderPhase.Is(RenderPhaseLabel::ScreenSpace))
+			else if (renderPhase.IsPhase(RenderPhaseLabel::ScreenSpace))
 			{
 				fontRenderer.SetTextColor(Color::kBlack);
 				StackStringW<100> buffer;
@@ -314,7 +314,7 @@ void RunSplineTestWindow()
 		// RenderingSS
 		for (ScopedRenderPhase renderPhase : graphicsDevice.IterateRenderPhases())
 		{
-			if (renderPhase.Is(RenderPhaseLabel::ScreenSpace))
+			if (renderPhase.IsPhase(RenderPhaseLabel::ScreenSpace))
 			{
 				StackStringW<100> fpsString;
 				FormatString(fpsString, L"FPS: %d", Profiler::FPSCounter::GetFPS());
@@ -421,7 +421,7 @@ bool Run2DTestWindow()
 		// Rendering
 		for (ScopedRenderPhase renderPhase : graphicsDevice.IterateRenderPhases())
 		{
-			if (renderPhase.Is(RenderPhaseLabel::ScreenSpace))
+			if (renderPhase.IsPhase(RenderPhaseLabel::ScreenSpace))
 			{
 				spriteRenderer.SetMaterial(corgiMaterialID);
 				corgiAnimationSet.Update(deltaTime);
@@ -549,7 +549,7 @@ bool Run3DTestWindow()
 		// Rendering
 		for (ScopedRenderPhase renderPhase : graphicsDevice.IterateRenderPhases())
 		{
-			if (renderPhase.Is(RenderPhaseLabel::ScreenSpace))
+			if (renderPhase.IsPhase(RenderPhaseLabel::ScreenSpace))
 			{
 				StackStringW<100> fpsString;
 				FormatString(fpsString, L"FPS: %d", Profiler::FPSCounter::GetFPS());
@@ -700,7 +700,7 @@ bool RunPhysics2DTestWindow()
 		// Rendering
 		for (ScopedRenderPhase renderPhase : graphicsDevice.IterateRenderPhases())
 		{
-			if (renderPhase.Is(RenderPhaseLabel::ScreenSpace))
+			if (renderPhase.IsPhase(RenderPhaseLabel::ScreenSpace))
 			{
 				StackStringW<100> fpsString;
 				FormatString(fpsString, L"FPS: %d", Profiler::FPSCounter::GetFPS());

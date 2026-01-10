@@ -107,7 +107,7 @@ namespace mint
 
 	void App::ExecuteRenderPhase(const Rendering::ScopedRenderPhase& scopedRenderPhase)
 	{
-		if (scopedRenderPhase.Is(Rendering::RenderPhaseLabel::WorldSpace))
+		if (scopedRenderPhase.IsPhase(Rendering::RenderPhaseLabel::WorldSpace))
 		{
 			const SceneObject currentCameraObject = _sceneObjectSystems->GetCameraSystem().GetCurrentCameraObject();
 			const Float4x4& viewMatrix = _sceneObjectSystems->GetCameraSystem().MakeViewMatrix(currentCameraObject);
@@ -116,7 +116,7 @@ namespace mint
 
 			_sceneObjectRenderer->Render(*_sceneObjectRegistry);
 		}
-		else if (scopedRenderPhase.Is(Rendering::RenderPhaseLabel::ScreenSpace))
+		else if (scopedRenderPhase.IsPhase(Rendering::RenderPhaseLabel::ScreenSpace))
 		{
 			_guiSystem->Render();
 		}
