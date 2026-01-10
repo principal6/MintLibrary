@@ -36,10 +36,10 @@
       <Filter>Include</Filter>
     </ClInclude>
     <ClInclude Include="Include\SceneObjectRegistry.h">
-      <Filter>Source</Filter>
+      <Filter>Include</Filter>
     </ClInclude>
     <ClInclude Include="Include\SceneObjectRegistry.hpp">
-      <Filter>Source</Filter>
+      <Filter>Include</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
