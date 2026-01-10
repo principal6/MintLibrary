@@ -34,6 +34,7 @@ namespace mint
 
 			TestDerived testDerived;
 			MINT_ASSERT(TestEnable<TestDerived>()(testDerived) == 1llu, "!!!");
+			MINT_LOG("sizeof(testDerived): %d", sizeof(testDerived));
 
 			class EntityDerived : public ECS::EntityBase<uint64, 40> {};
 			static_assert(std::is_base_of<ECS::EntityBase<uint64, 40>, EntityDerived>::value == true);

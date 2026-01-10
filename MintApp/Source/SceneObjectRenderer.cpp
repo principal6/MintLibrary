@@ -45,10 +45,10 @@ namespace mint
 			cbTransform.BindToShader(GraphicsShaderType::VertexShader, cbTransform.GetRegisterIndex());
 			cbTransform.BindToShader(GraphicsShaderType::GeometryShader, cbTransform.GetRegisterIndex());
 
-			GraphicsResource& sbMaterial = resourcePool.GetResource(_graphicsDevice.GetCommonSBMaterialID());
-			sbMaterial.BindToShader(GraphicsShaderType::PixelShader, sbMaterial.GetRegisterIndex());
+			GraphicsResource& cbMaterial = resourcePool.GetResource(_graphicsDevice.GetCommonCBMaterialID());
+			cbMaterial.BindToShader(GraphicsShaderType::PixelShader, cbMaterial.GetRegisterIndex());
 
-			SB_Material sbMaterialData;
+			CB_Material cbMaterialData;
 			for (auto iter = meshComponentMap.begin(); iter != meshComponentMap.end(); ++iter)
 			{
 				const SceneObject& sceneObject = iter.GetKey();
@@ -59,8 +59,8 @@ namespace mint
 
 				_lowLevelRenderer.PushMesh(meshComponent._meshData);
 
-				sbMaterialData._diffuseColor = Color::kBlue;
-				sbMaterial.UpdateBuffer(&sbMaterialData, 1);
+				cbMaterialData._cbDiffuseColor = Color::kBlue;
+				cbMaterial.UpdateBuffer(&cbMaterialData, 1);
 
 				shaderPipelineDefault.BindShaderPipeline();
 				_lowLevelRenderer.Render(_graphicsDevice, RenderingPrimitive::TriangleList);
@@ -81,7 +81,7 @@ namespace mint
 			}
 
 			cbTransform.UnbindFromShader();
-			sbMaterial.UnbindFromShader();
+			cbMaterial.UnbindFromShader();
 		}
 
 		const SceneObjectComponentPool<Mesh2DComponent>& mesh2DComponentPool = sceneObjectRegistry.GetComponentPool<Mesh2DComponent>();

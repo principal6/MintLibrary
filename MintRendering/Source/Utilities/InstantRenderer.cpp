@@ -36,7 +36,7 @@ namespace mint
 
 		void InstantRenderer::DrawLine(const Float3& a, const Float3& b, const Color& color) noexcept
 		{
-			const uint32 materialID = _sbMaterialDatas.Size();
+			const uint32 materialID = _cbMaterialDatas.Size();
 			auto& vertices = _lowLevelRendererLine.Vertices();
 			auto& indices = _lowLevelRendererLine.Indices();
 
@@ -53,9 +53,9 @@ namespace mint
 			indices.PushBack(index + 0);
 			indices.PushBack(index + 1);
 
-			SB_Material sbMaterialData;
-			sbMaterialData._diffuseColor = color;
-			_sbMaterialDatas.PushBack(sbMaterialData);
+			CB_Material cbMaterialData;
+			cbMaterialData._cbDiffuseColor = color;
+			_cbMaterialDatas.PushBack(cbMaterialData);
 		}
 
 		void InstantRenderer::DrawTriangle(const Float3(&vertices)[3], const Float2(&uvs)[3], const Color& color) noexcept
@@ -204,14 +204,14 @@ namespace mint
 
 		void InstantRenderer::PushMeshWithMaterial(MeshData& meshData, const Color& diffuseColor) noexcept
 		{
-			const uint32 materialID = _sbMaterialDatas.Size();
+			const uint32 materialID = _cbMaterialDatas.Size();
 			MeshGenerator::SetMaterialID(meshData, materialID);
 
 			_lowLevelRendererMesh.PushMesh(meshData);
 
-			SB_Material sbMaterialData;
-			sbMaterialData._diffuseColor = diffuseColor;
-			_sbMaterialDatas.PushBack(sbMaterialData);
+			CB_Material cbMaterialData;
+			cbMaterialData._cbDiffuseColor = diffuseColor;
+			_cbMaterialDatas.PushBack(cbMaterialData);
 		}
 
 		void InstantRenderer::Render() noexcept
@@ -229,11 +229,11 @@ namespace mint
 				cbTransform.UpdateBuffer(&_cbTransformData, 1);
 			}
 
-			if (_sbMaterialDatas.Size() > 0)
+			if (_cbMaterialDatas.Size() > 0)
 			{
-				GraphicsResource& sbMaterial = resourcePool.GetResource(_graphicsDevice.GetCommonSBMaterialID());
-				sbMaterial.BindToShader(GraphicsShaderType::PixelShader, sbMaterial.GetRegisterIndex());
-				sbMaterial.UpdateBuffer(&_sbMaterialDatas[0], _sbMaterialDatas.Size());
+				GraphicsResource& cbMaterial = resourcePool.GetResource(_graphicsDevice.GetCommonCBMaterialID());
+				cbMaterial.BindToShader(GraphicsShaderType::PixelShader, cbMaterial.GetRegisterIndex());
+				cbMaterial.UpdateBuffer(&_cbMaterialDatas[0], _cbMaterialDatas.Size());
 			}
 
 			shaderPipelinePool.GetShaderPipeline(_shaderPipelineLineID).BindShaderPipeline();
@@ -244,7 +244,7 @@ namespace mint
 			_lowLevelRendererMesh.Render(_graphicsDevice, RenderingPrimitive::TriangleList);
 			_lowLevelRendererMesh.Flush();
 
-			_sbMaterialDatas.Clear();
+			_cbMaterialDatas.Clear();
 		}
 	}
 }

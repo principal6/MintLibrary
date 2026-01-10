@@ -23,6 +23,11 @@ namespace mint
 		{
 			float4x4 _cbWorldMatrix;
 		};
+
+		struct CB_Material CPP_HLSL_REGISTER_INDEX(2)
+		{
+			float4 _cbDiffuseColor;
+		};
 	}
 }
 

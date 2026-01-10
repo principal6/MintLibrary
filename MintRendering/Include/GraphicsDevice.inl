@@ -35,14 +35,14 @@ namespace mint
 			return _cbTransformID;
 		}
 
+		MINT_INLINE GraphicsObjectID GraphicsDevice::GetCommonCBMaterialID() const noexcept
+		{
+			return _cbMaterialID;
+		}
+
 		MINT_INLINE GraphicsObjectID GraphicsDevice::GetCommonSBTransformID() const noexcept
 		{
 			return _sbTransformID;
-		}
-
-		MINT_INLINE GraphicsObjectID GraphicsDevice::GetCommonSBMaterialID() const noexcept
-		{
-			return _sbMaterialID;
 		}
 
 		MINT_INLINE ID3D11Device* GraphicsDevice::GetDxDevice() noexcept

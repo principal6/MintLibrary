@@ -21,7 +21,7 @@ namespace mint
 	namespace Rendering
 	{
 		class GraphicsDevice;
-		struct SB_Material;
+		struct CB_Material;
 
 
 		class InstantRenderer final
@@ -61,7 +61,7 @@ namespace mint
 
 		private:
 			CB_Transform _cbTransformData;
-			Vector<SB_Material> _sbMaterialDatas;
+			Vector<CB_Material> _cbMaterialDatas;
 			GraphicsObjectID _shaderPipelineTriangleID;
 			GraphicsObjectID _shaderPipelineLineID;
 		};

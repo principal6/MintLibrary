@@ -25,6 +25,9 @@
     <Filter Include="Source\Utilities">
       <UniqueIdentifier>{22c7f0b8-ec68-4128-90de-62aca9ef2bb2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Assets\Hlsl">
+      <UniqueIdentifier>{647eb9c4-2bab-4fa8-88ba-45542fbaf0c9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\GraphicsResource.h">
@@ -217,5 +220,25 @@
     <ClCompile Include="Source\TestRendering.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\Assets\Include\Hlsl\GsNormal.hlsl">
+      <Filter>Assets\Hlsl</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Assets\Include\Hlsl\GsTriangleEdge.hlsl">
+      <Filter>Assets\Hlsl</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Assets\Include\Hlsl\PsColor.hlsl">
+      <Filter>Assets\Hlsl</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Assets\Include\Hlsl\PsDefault.hlsl">
+      <Filter>Assets\Hlsl</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Assets\Include\Hlsl\PsTexCoordAsColor.hlsl">
+      <Filter>Assets\Hlsl</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Assets\Include\Hlsl\VsDefault.hlsl">
+      <Filter>Assets\Hlsl</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

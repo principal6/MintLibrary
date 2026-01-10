@@ -246,8 +246,8 @@ namespace mint
 
 		public: // Common buffers
 			GraphicsObjectID GetCommonCBTransformID() const noexcept;
+			GraphicsObjectID GetCommonCBMaterialID() const noexcept;
 			GraphicsObjectID GetCommonSBTransformID() const noexcept;
-			GraphicsObjectID GetCommonSBMaterialID() const noexcept;
 
 		public:
 			void SetViewProjectionMatrix(const Float4x4& viewMatrix, const Float4x4& projectionMatrix) noexcept;
@@ -312,7 +312,7 @@ namespace mint
 		private: // Common buffers
 			GraphicsObjectID _cbTransformID;
 			GraphicsObjectID _sbTransformID;
-			GraphicsObjectID _sbMaterialID;
+			GraphicsObjectID _cbMaterialID;
 
 		private:
 			ComPtr<ID3D11SamplerState> _pointSamplerState;

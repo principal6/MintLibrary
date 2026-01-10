@@ -727,6 +727,12 @@ namespace mint
 					_cbTransformID = _resourcePool.AddConstantBuffer(&cbTransformData, sizeof(cbTransformData), typeMetaData._customData.GetRegisterIndex());
 				}
 
+				{
+					CB_Material cbMaterialData;
+					const TypeMetaData<CppHlsl::TypeCustomData>& typeMetaData = _cppHlslConstantBuffers.GetTypeMetaData(typeid(cbMaterialData));
+					_cbMaterialID = _resourcePool.AddConstantBuffer(&cbMaterialData, sizeof(cbMaterialData), typeMetaData._customData.GetRegisterIndex());
+				}
+
 				SetViewProjectionMatrix(Float4x4::kIdentity, GetScreenSpace2DProjectionMatrix());
 			}
 
@@ -740,12 +746,6 @@ namespace mint
 					SB_Transform sbTransformData;
 					const TypeMetaData<CppHlsl::TypeCustomData>& typeMetaData = _cppHlslStructuredBuffers.GetTypeMetaData(typeid(sbTransformData));
 					_sbTransformID = _resourcePool.AddStructuredBuffer(&sbTransformData, sizeof(sbTransformData), 1, typeMetaData._customData.GetRegisterIndex());
-				}
-
-				{
-					SB_Material sbMaterialData;
-					const TypeMetaData<CppHlsl::TypeCustomData>& typeMetaData = _cppHlslStructuredBuffers.GetTypeMetaData(typeid(sbMaterialData));
-					_sbMaterialID = _resourcePool.AddStructuredBuffer(&sbMaterialData, sizeof(sbMaterialData), 1, typeMetaData._customData.GetRegisterIndex());
 				}
 			}
 		}

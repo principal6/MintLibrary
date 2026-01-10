@@ -18,11 +18,6 @@ namespace mint
 		{
 			float4x4 _transformMatrix;
 		};
-
-		struct SB_Material CPP_HLSL_REGISTER_INDEX(1)
-		{
-			float4 _diffuseColor;
-		};
 	}
 }
 
