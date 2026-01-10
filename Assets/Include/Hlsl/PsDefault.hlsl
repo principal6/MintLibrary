@@ -7,6 +7,6 @@ float4 main(VS_OUTPUT input) : SV_TARGET
     const float4 toLight = normalize(float4(2.0, 3.0, 1.0, 0.0));
     const float ambientIntensity = 0.25;
     const float dotProduct = dot(input._worldNormal, toLight);
-    const float3 diffuseColor = _cbDiffuseColor.xyz; //float3(0.0, 0.5, 1.0);
-    return float4((saturate(dotProduct) + ambientIntensity) * diffuseColor, 1.0);
+    const float3 baseColor = _cbBaseColor.xyz; //float3(0.0, 0.5, 1.0);
+    return float4((saturate(dotProduct) + ambientIntensity) * baseColor, 1.0);
 }

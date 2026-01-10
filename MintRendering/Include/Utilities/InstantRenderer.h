@@ -47,7 +47,7 @@ namespace mint
 		private:
 			void Initialize() noexcept;
 			void Terminate() noexcept;
-			void PushMeshWithMaterial(MeshData& meshData, const Color& diffuseColor) noexcept;
+			void PushMeshWithMaterial(MeshData& meshData, const Color& baseColor) noexcept;
 
 		public:
 			void Render() noexcept;

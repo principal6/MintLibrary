@@ -51,7 +51,7 @@ namespace mint
 			indices.PushBack(index + 1);
 
 			CB_Material cbMaterialData;
-			cbMaterialData._cbDiffuseColor = color;
+			cbMaterialData._cbBaseColor = color;
 			_cbMaterialDatas.PushBack(cbMaterialData);
 		}
 
@@ -199,12 +199,12 @@ namespace mint
 			}
 		}
 
-		void InstantRenderer::PushMeshWithMaterial(MeshData& meshData, const Color& diffuseColor) noexcept
+		void InstantRenderer::PushMeshWithMaterial(MeshData& meshData, const Color& baseColor) noexcept
 		{
 			_lowLevelRendererMesh.PushMesh(meshData);
 
 			CB_Material cbMaterialData;
-			cbMaterialData._cbDiffuseColor = diffuseColor;
+			cbMaterialData._cbBaseColor = baseColor;
 			_cbMaterialDatas.PushBack(cbMaterialData);
 		}
 

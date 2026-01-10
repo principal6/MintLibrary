@@ -59,7 +59,7 @@ namespace mint
 
 				_lowLevelRenderer.PushMesh(meshComponent._meshData);
 
-				cbMaterialData._cbDiffuseColor = Color::kBlue;
+				cbMaterialData._cbBaseColor = Color::kBlue;
 				cbMaterial.UpdateBuffer(&cbMaterialData, 1);
 
 				shaderPipelineDefault.BindShaderPipeline();
