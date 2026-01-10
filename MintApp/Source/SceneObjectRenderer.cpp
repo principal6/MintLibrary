@@ -38,7 +38,6 @@ namespace mint
 		const ContiguousHashMap<SceneObject, MeshComponent>& meshComponentMap = meshComponentPool.GetComponentMap();
 		if (meshComponentMap.IsEmpty() == false)
 		{
-			const ShaderPipeline& shaderPipelineTriangle = shaderPipelinePool.GetShaderPipeline(_graphicsDevice.GetShaderPipelineTriangleID());
 			const ShaderPipeline& shaderPipelineTriangleDrawEdges = shaderPipelinePool.GetShaderPipeline(_graphicsDevice.GetShaderPipelineTriangleDrawEdgesID());
 			const ShaderPipeline& shaderPipelineTriangleDrawNormals = shaderPipelinePool.GetShaderPipeline(_graphicsDevice.GetShaderPipelineTriangleDrawNormalsID());
 
@@ -49,6 +48,7 @@ namespace mint
 			GraphicsResource& cbMaterial = resourcePool.GetResource(_graphicsDevice.GetCommonCBMaterialID());
 			cbMaterial.BindToShader(GraphicsShaderType::PixelShader, cbMaterial.GetRegisterIndex());
 
+			const Material& defaultMaterial = *materialPool.GetMaterial(_defaultMaterialID);
 			for (auto iter = meshComponentMap.begin(); iter != meshComponentMap.end(); ++iter)
 			{
 				const SceneObject& sceneObject = iter.GetKey();
@@ -71,7 +71,8 @@ namespace mint
 				}
 				else
 				{
-					shaderPipelineTriangle.BindShaderPipeline();
+					const ShaderPipeline& defaultMaterialShaderPipeline = shaderPipelinePool.GetShaderPipeline(defaultMaterial.GetShaderPipelineID());
+					defaultMaterialShaderPipeline.BindShaderPipeline();
 				}
 				_lowLevelRenderer.Render(_graphicsDevice, RenderingPrimitive::TriangleList);
 
@@ -111,7 +112,14 @@ namespace mint
 
 	void SceneObjectRenderer::Initialize() noexcept
 	{
-		__noop;
+		using namespace Rendering;
+		MaterialPool& materialPool = _graphicsDevice.GetMaterialPool();
+		{
+			MaterialDesc materialDesc;
+			materialDesc._materialName = "SceneObjectRendererDefault";
+			materialDesc._baseColor = Color(255, 64, 32);
+			_defaultMaterialID = materialPool.CreateMaterial(materialDesc);
+		}
 	}
 
 	void SceneObjectRenderer::Terminate() noexcept

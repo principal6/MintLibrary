@@ -44,7 +44,7 @@ namespace mint
 	private:
 		Rendering::LowLevelRenderer<Rendering::VS_INPUT> _lowLevelRenderer;
 		Rendering::CB_Transform _cbTransformData;
-		Vector<Rendering::CB_MaterialData> _cbMaterialDatas;
+		Rendering::GraphicsObjectID _defaultMaterialID;
 	};
 }
 

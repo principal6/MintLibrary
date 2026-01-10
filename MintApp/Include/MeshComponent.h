@@ -20,9 +20,9 @@ namespace mint
 	struct MeshComponent
 	{
 		Rendering::MeshData _meshData;
+		Rendering::GraphicsObjectID _materialID;
 		bool _shouldDrawNormals = false;
 		bool _shouldDrawEdges = false;
-		Rendering::GraphicsObjectID _materialID;
 	};
 
 	struct Mesh2DComponent
