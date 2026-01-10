@@ -29,18 +29,21 @@ namespace mint
 		template<typename EntityType, typename ComponentType>
 		inline void EntityComponentPool<EntityType, ComponentType>::AddComponentTo(const EntityType& entity, const ComponentType& component)
 		{
+			MINT_ASSERT(HasComponent(entity) == false, "This entity already has the component.");
 			_componentMap.Insert(entity, component);
 		}
 
 		template<typename EntityType, typename ComponentType>
 		inline void EntityComponentPool<EntityType, ComponentType>::AddComponentTo(const EntityType& entity, ComponentType&& component)
 		{
+			MINT_ASSERT(HasComponent(entity) == false, "This entity already has the component.");
 			_componentMap.Insert(entity, std::move(component));
 		}
 
 		template<typename EntityType, typename ComponentType>
 		inline void EntityComponentPool<EntityType, ComponentType>::RemoveComponentFrom(const EntityType& entity)
 		{
+			MINT_ASSERT(HasComponent(entity) == true, "This entity does not have the component.");
 			_componentMap.Erase(entity);
 		}
 
@@ -53,6 +56,7 @@ namespace mint
 		template<typename EntityType, typename ComponentType>
 		inline void EntityComponentPool<EntityType, ComponentType>::CopyComponent(const EntityType& sourceEntity, const EntityType& targetEntity)
 		{
+			MINT_ASSERT(HasComponent(sourceEntity) == true, "SourceEntity does not have the component.");
 			const ComponentType* const sourceComponent = GetComponent(sourceEntity);
 			AddComponentTo(targetEntity, ComponentType(*sourceComponent));
 		}
@@ -154,6 +158,11 @@ namespace mint
 
 			for (OwnPtr<IEntityComponentPool<EntityType>>& componentPool : _componentPools)
 			{
+				if (componentPool->HasComponent(entity) == false)
+				{
+					continue;
+				}
+
 				componentPool->RemoveComponentFrom(entity);
 			}
 		}
