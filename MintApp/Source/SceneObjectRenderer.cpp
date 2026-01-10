@@ -59,21 +59,20 @@ namespace mint
 
 				_lowLevelRenderer.PushMesh(meshComponent._meshData);
 
-				const Material* const material = materialPool.GetMaterial(meshComponent._materialID);
-				if (material != nullptr)
+				GraphicsObjectID meshMaterialID = meshComponent._materialID;
+				if (meshMaterialID.IsValid() == false)
 				{
-					CB_MaterialData cbMaterialData;
-					cbMaterialData._cbBaseColor = material->GetBaseColor();
-					cbMaterial.UpdateBuffer(&cbMaterialData, 1);
+					meshMaterialID = _defaultMaterialID;
+				}
 
-					const ShaderPipeline& materialShaderPipeline = shaderPipelinePool.GetShaderPipeline(material->GetShaderPipelineID());
-					materialShaderPipeline.BindShaderPipeline();
-				}
-				else
-				{
-					const ShaderPipeline& defaultMaterialShaderPipeline = shaderPipelinePool.GetShaderPipeline(defaultMaterial.GetShaderPipelineID());
-					defaultMaterialShaderPipeline.BindShaderPipeline();
-				}
+				const Material* const material = materialPool.GetMaterial(meshMaterialID);
+				MINT_ASSERT(material != nullptr, "Material must not be null");
+				CB_MaterialData cbMaterialData;
+				cbMaterialData._cbBaseColor = material->GetBaseColor();
+				cbMaterial.UpdateBuffer(&cbMaterialData, 1);
+
+				const ShaderPipeline& materialShaderPipeline = shaderPipelinePool.GetShaderPipeline(material->GetShaderPipelineID());
+				materialShaderPipeline.BindShaderPipeline();
 				_lowLevelRenderer.Render(_graphicsDevice, RenderingPrimitive::TriangleList);
 
 				if (meshComponent._shouldDrawNormals == true)
