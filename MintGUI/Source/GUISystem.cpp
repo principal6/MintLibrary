@@ -206,6 +206,8 @@ namespace mint
 					shapeRenderer.AddShape(shapeComponent->_shapes[shapeIndex], transform2DComponent->_transform2D);
 				}
 			}
+
+			shapeRenderer.SetMaterial(shapeRenderer.GetDefaultMaterialID());
 		}
 #pragma endregion
 	}
