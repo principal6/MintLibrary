@@ -31,6 +31,7 @@ namespace mint
 		ShaderPool& shaderPool = _graphicsDevice.GetShaderPool();
 		ShaderPipelinePool& shaderPipelinePool = _graphicsDevice.GetShaderPipelinePool();
 		GraphicsResourcePool& resourcePool = _graphicsDevice.GetResourcePool();
+		MaterialPool& materialPool = _graphicsDevice.GetMaterialPool();
 
 		const SceneObjectComponentPool<TransformComponent>& transformComponentPool = sceneObjectRegistry.GetComponentPool<TransformComponent>();
 		const SceneObjectComponentPool<MeshComponent>& meshComponentPool = sceneObjectRegistry.GetComponentPool<MeshComponent>();
@@ -48,7 +49,6 @@ namespace mint
 			GraphicsResource& cbMaterial = resourcePool.GetResource(_graphicsDevice.GetCommonCBMaterialID());
 			cbMaterial.BindToShader(GraphicsShaderType::PixelShader, cbMaterial.GetRegisterIndex());
 
-			CB_Material cbMaterialData;
 			for (auto iter = meshComponentMap.begin(); iter != meshComponentMap.end(); ++iter)
 			{
 				const SceneObject& sceneObject = iter.GetKey();
@@ -59,8 +59,13 @@ namespace mint
 
 				_lowLevelRenderer.PushMesh(meshComponent._meshData);
 
-				cbMaterialData._cbBaseColor = Color::kBlue;
-				cbMaterial.UpdateBuffer(&cbMaterialData, 1);
+				const Material* const material = materialPool.GetMaterial(meshComponent._materialID);
+				if (material != nullptr)
+				{
+					CB_MaterialData cbMaterialData;
+					cbMaterialData._cbBaseColor = material->GetBaseColor();
+					cbMaterial.UpdateBuffer(&cbMaterialData, 1);
+				}
 
 				shaderPipelineDefault.BindShaderPipeline();
 				_lowLevelRenderer.Render(_graphicsDevice, RenderingPrimitive::TriangleList);

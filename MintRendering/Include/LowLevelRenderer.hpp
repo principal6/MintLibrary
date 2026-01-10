@@ -360,14 +360,30 @@ namespace mint
 
 			graphicsDevice.GetStateManager().SetIARenderingPrimitive(renderCommand._primitive);
 
-			// ##########
-			// ##########
-			// ##########
-			graphicsDevice.GetMaterialPool().BindMaterial(renderCommand._materialID);
-			// ##########
-			// ##########
-			// ##########
+			GraphicsResourcePool& resourcePool = graphicsDevice.GetResourcePool();
+			GraphicsResource& cbMaterial = resourcePool.GetResource(graphicsDevice.GetCommonCBMaterialID());
+			cbMaterial.BindToShader(GraphicsShaderType::PixelShader, cbMaterial.GetRegisterIndex());
 
+			MaterialPool& materialPool = graphicsDevice.GetMaterialPool();
+			const Material* const material = materialPool.GetMaterial(renderCommand._materialID);
+			if (material != nullptr)
+			{
+				ShaderPipelinePool& shaderPipelinePool = graphicsDevice.GetShaderPipelinePool();
+				if (material->GetShaderPipelineID().IsValid())
+				{
+					shaderPipelinePool.GetShaderPipeline(material->GetShaderPipelineID()).BindShaderPipeline();
+				}
+
+				if (material->GetBaseColorTextureID().IsValid() == true)
+				{
+					resourcePool.GetResource(material->GetBaseColorTextureID()).BindToShader(GraphicsShaderType::PixelShader, material->GetBaseColorTextureSlot());
+				}
+
+				CB_MaterialData cbMaterialData;
+				cbMaterialData._cbBaseColor = material->GetBaseColor();
+				cbMaterial.UpdateBuffer(&cbMaterialData, 1);
+			}
+			
 			switch (renderCommand._primitive)
 			{
 			case RenderingPrimitive::LineList:

@@ -64,20 +64,13 @@ namespace mint
 			_materials.Erase(index);
 		}
 
-		void MaterialPool::BindMaterial(const GraphicsObjectID& materialID) noexcept
+		const Material* MaterialPool::GetMaterial(const GraphicsObjectID& materialID) const noexcept
 		{
 			const uint32 index = BinarySearch(_materials, materialID, GraphicsObject::Evaluator());
 			MINT_ASSERT(IsValidIndex(index) == true, "Material not found!");
 
 			const Material& material = *_materials[index];
-			ShaderPipelinePool& shaderPipelinePool = _graphicsDevice.GetShaderPipelinePool();
-			shaderPipelinePool.GetShaderPipeline(material._shaderPipelineID).BindShaderPipeline();
-
-			if (material._baseColorTextureID.IsValid() == true)
-			{
-				GraphicsResourcePool& resourcePool = _graphicsDevice.GetResourcePool();
-				resourcePool.GetResource(material._baseColorTextureID).BindToShader(GraphicsShaderType::PixelShader, material._baseColorTextureSlot);
-			}
+			return &material;
 		}
 	}
 }

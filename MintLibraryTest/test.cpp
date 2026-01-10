@@ -458,6 +458,15 @@ bool Run3DTestWindow()
 	mint::App app{ windowCreationDesc, appCreationDesc };
 
 
+	GraphicsDevice& graphicsDevice = app.GetGraphicsDevice();
+	MaterialPool& materialPool = graphicsDevice.GetMaterialPool();
+	GraphicsObjectID testMaterialID;
+	{
+		MaterialDesc materialDesc;
+		materialDesc._materialName = "TestMaterial";
+		materialDesc._baseColor = Color(32, 64, 255);
+		testMaterialID = materialPool.CreateMaterial(materialDesc);
+	}
 	SceneObjectRegistry& sceneObjectRegistry = app.GetObjectPool();
 	SceneObject testObject = sceneObjectRegistry.CreateSceneObject();
 	{
@@ -467,6 +476,7 @@ bool Run3DTestWindow()
 		boxParam._height = 1.0f;
 		boxParam._depth = 1.0f;
 		Rendering::MeshGenerator::GenerateBox(boxParam, meshComponent._meshData);
+		meshComponent._materialID = testMaterialID;
 		sceneObjectRegistry.AttachComponent(testObject, std::move(meshComponent));
 
 		Transform& transform = sceneObjectRegistry.GetTransform(testObject);
@@ -474,12 +484,10 @@ bool Run3DTestWindow()
 	}
 
 	GUISystem& guiSystem = app.GetGUISystem();
-	GraphicsDevice& graphicsDevice = app.GetGraphicsDevice();
 	SceneObjectSystems& sceneObjectSystems = app.GetSceneObjectSystems();
 	const InputContext& inputContext = InputContext::GetInstance();
 	FontRenderer& fontRenderer = graphicsDevice.GetFontRenderer();
 	ShapeRenderer& shapeRenderer = graphicsDevice.GetShapeRenderer();
-	MaterialPool& materialPool = graphicsDevice.GetMaterialPool();
 	while (app.IsRunning() == true)
 	{
 		const float deltaTime = DeltaTimer::GetInstance().GetDeltaTimeS();

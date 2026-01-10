@@ -19,7 +19,7 @@ namespace mint
 	namespace Rendering
 	{
 		class GraphicsDevice;
-		struct CB_Material;
+		struct CB_MaterialData;
 	}
 }
 
@@ -44,7 +44,7 @@ namespace mint
 	private:
 		Rendering::LowLevelRenderer<Rendering::VS_INPUT> _lowLevelRenderer;
 		Rendering::CB_Transform _cbTransformData;
-		Vector<Rendering::CB_Material> _cbMaterialDatas;
+		Vector<Rendering::CB_MaterialData> _cbMaterialDatas;
 
 	private:
 		Rendering::GraphicsObjectID _shaderPipelineDefaultID;

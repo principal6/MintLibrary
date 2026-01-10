@@ -40,6 +40,12 @@ namespace mint
 			Material(GraphicsDevice& graphicsDevice);
 			~Material();
 
+		public:
+			MINT_INLINE GraphicsObjectID GetShaderPipelineID() const { return _shaderPipelineID; }
+			MINT_INLINE GraphicsObjectID GetBaseColorTextureID() const { return _baseColorTextureID; }
+			MINT_INLINE uint32 GetBaseColorTextureSlot() const { return _baseColorTextureSlot; }
+			MINT_INLINE const Color& GetBaseColor() const { return _baseColor; }
+
 		private:
 			StackStringA<128> _materialName;
 			GraphicsObjectID _shaderPipelineID;
@@ -62,7 +68,7 @@ namespace mint
 		public:
 			GraphicsObjectID CreateMaterial(const MaterialDesc& materialDesc) noexcept;
 			void DestroyMaterial(const GraphicsObjectID& materialID) noexcept;
-			void BindMaterial(const GraphicsObjectID& materialID) noexcept;
+			const Material* GetMaterial(const GraphicsObjectID& materialID) const noexcept;
 
 		private:
 			GraphicsDevice& _graphicsDevice;

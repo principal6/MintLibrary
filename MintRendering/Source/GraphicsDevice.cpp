@@ -728,7 +728,7 @@ namespace mint
 				}
 
 				{
-					CB_Material cbMaterialData;
+					CB_MaterialData cbMaterialData;
 					const TypeMetaData<CppHlsl::TypeCustomData>& typeMetaData = _cppHlslConstantBuffers.GetTypeMetaData(typeid(cbMaterialData));
 					_cbMaterialID = _resourcePool.AddConstantBuffer(&cbMaterialData, sizeof(cbMaterialData), typeMetaData._customData.GetRegisterIndex());
 				}

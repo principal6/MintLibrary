@@ -50,7 +50,7 @@ namespace mint
 			indices.PushBack(index + 0);
 			indices.PushBack(index + 1);
 
-			CB_Material cbMaterialData;
+			CB_MaterialData cbMaterialData;
 			cbMaterialData._cbBaseColor = color;
 			_cbMaterialDatas.PushBack(cbMaterialData);
 		}
@@ -203,7 +203,7 @@ namespace mint
 		{
 			_lowLevelRendererMesh.PushMesh(meshData);
 
-			CB_Material cbMaterialData;
+			CB_MaterialData cbMaterialData;
 			cbMaterialData._cbBaseColor = baseColor;
 			_cbMaterialDatas.PushBack(cbMaterialData);
 		}
