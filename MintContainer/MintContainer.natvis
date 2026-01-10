@@ -18,6 +18,17 @@
             </ArrayItems>
         </Expand>
     </Type>
+    <Type Name="mint::BasicVector&lt;*&gt;">
+        <DisplayString>{{ size = {_storage._size} capacity = {_storage._capacity} }}</DisplayString>
+        <Expand>
+            <Item Name="[Size]" ExcludeView="simple">_storage._size</Item>
+            <Item Name="[Capacity]" ExcludeView="simple">_storage._capacity</Item>
+            <ArrayItems>
+                <Size>_storage._size</Size>
+                <ValuePointer>_storage._rawPointer</ValuePointer>
+            </ArrayItems>
+        </Expand>
+    </Type>
     
     <Type Name="mint::String&lt;*&gt;">
         <DisplayString Condition="_short._size &lt;= Short::kShortStringCapacity &amp;&amp; 0 &lt; _short._size">{{ Short String ({_short._size, nvo})  Content = {_short._shortString,na} }}</DisplayString>
