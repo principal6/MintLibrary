@@ -47,6 +47,11 @@ namespace mint
 			OwnPtr<Material> newMaterial = MINT_NEW(Material, _graphicsDevice);
 			newMaterial->_materialName = materialDesc._materialName;
 			newMaterial->_shaderPipelineID = materialDesc._shaderPipelineID;
+			if (newMaterial->_shaderPipelineID.IsValid() == false)
+			{
+				newMaterial->_shaderPipelineID = _graphicsDevice.GetShaderPipelineTriangleID();
+			}
+			MINT_ASSERT(newMaterial->_shaderPipelineID.IsValid() == true, "Material must have a valid ShaderPipelineID!");
 			newMaterial->_baseColorTextureID = materialDesc._baseColorTextureID;
 			newMaterial->_baseColorTextureSlot = materialDesc._baseColorTextureSlot;
 			newMaterial->_baseColor = materialDesc._baseColor;

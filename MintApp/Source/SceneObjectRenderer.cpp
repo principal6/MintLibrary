@@ -53,7 +53,7 @@ namespace mint
 			{
 				const SceneObject& sceneObject = iter.GetKey();
 				const MeshComponent& meshComponent = iter.GetValue();
-				const TransformComponent* transformComponent = transformComponentPool.GetComponent(sceneObject);
+				const TransformComponent* const transformComponent = transformComponentPool.GetComponent(sceneObject);
 				_cbTransformData._cbWorldMatrix = transformComponent->_transform.ToMatrix();
 				cbTransform.UpdateBuffer(&_cbTransformData, 1);
 
@@ -65,9 +65,14 @@ namespace mint
 					CB_MaterialData cbMaterialData;
 					cbMaterialData._cbBaseColor = material->GetBaseColor();
 					cbMaterial.UpdateBuffer(&cbMaterialData, 1);
-				}
 
-				shaderPipelineTriangle.BindShaderPipeline();
+					const ShaderPipeline& materialShaderPipeline = shaderPipelinePool.GetShaderPipeline(material->GetShaderPipelineID());
+					materialShaderPipeline.BindShaderPipeline();
+				}
+				else
+				{
+					shaderPipelineTriangle.BindShaderPipeline();
+				}
 				_lowLevelRenderer.Render(_graphicsDevice, RenderingPrimitive::TriangleList);
 
 				if (meshComponent._shouldDrawNormals == true)

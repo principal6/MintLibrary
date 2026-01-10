@@ -368,11 +368,7 @@ namespace mint
 			const Material* const material = materialPool.GetMaterial(renderCommand._materialID);
 			if (material != nullptr)
 			{
-				ShaderPipelinePool& shaderPipelinePool = graphicsDevice.GetShaderPipelinePool();
-				if (material->GetShaderPipelineID().IsValid())
-				{
-					shaderPipelinePool.GetShaderPipeline(material->GetShaderPipelineID()).BindShaderPipeline();
-				}
+				graphicsDevice.GetShaderPipelinePool().GetShaderPipeline(material->GetShaderPipelineID()).BindShaderPipeline();
 
 				if (material->GetBaseColorTextureID().IsValid() == true)
 				{
