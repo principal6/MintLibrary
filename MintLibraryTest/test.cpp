@@ -359,8 +359,8 @@ bool Run2DTestWindow()
 		MaterialDesc materialDesc;
 		materialDesc._materialName = "Corgi";
 		materialDesc._shaderPipelineID = spriteRenderer.GetDefaultShaderPipelineID();
-		materialDesc._textureID = corgiSpriteSheetTextureID;
-		materialDesc._textureSlot = 1;
+		materialDesc._baseColorTextureID = corgiSpriteSheetTextureID;
+		materialDesc._baseColorTextureSlot = 1;
 		corgiMaterialID = materialPool.CreateMaterial(materialDesc);
 	}
 

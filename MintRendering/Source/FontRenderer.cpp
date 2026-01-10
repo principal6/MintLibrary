@@ -73,8 +73,8 @@ namespace mint
 				MaterialDesc materialDesc;
 				materialDesc._materialName = "DefaultFontMaterial";
 				materialDesc._shaderPipelineID = _shaderPipelineMultipleViewportID;
-				materialDesc._textureID = fontData._fontTextureID;
-				materialDesc._textureSlot = 0;
+				materialDesc._baseColorTextureID = fontData._fontTextureID;
+				materialDesc._baseColorTextureSlot = 0;
 				_defaultMaterialID = materialPool.CreateMaterial(materialDesc);
 			}
 			return true;

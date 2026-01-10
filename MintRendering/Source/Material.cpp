@@ -11,7 +11,7 @@ namespace mint
 	{
 		Material::Material(GraphicsDevice& graphicsDevice)
 			: GraphicsObject(graphicsDevice, GraphicsObjectType::Material)
-			, _textureSlot{ 0 }
+			, _baseColorTextureSlot{ 0 }
 		{
 			__noop;
 		}
@@ -47,8 +47,9 @@ namespace mint
 			OwnPtr<Material> newMaterial = MINT_NEW(Material, _graphicsDevice);
 			newMaterial->_materialName = materialDesc._materialName;
 			newMaterial->_shaderPipelineID = materialDesc._shaderPipelineID;
-			newMaterial->_textureID = materialDesc._textureID;
-			newMaterial->_textureSlot = materialDesc._textureSlot;
+			newMaterial->_baseColorTextureID = materialDesc._baseColorTextureID;
+			newMaterial->_baseColorTextureSlot = materialDesc._baseColorTextureSlot;
+			newMaterial->_baseColor = materialDesc._baseColor;
 			newMaterial->AssignIDXXX();
 			const GraphicsObjectID graphicsObjectID = newMaterial->GetID();
 			_materials.PushBack(std::move(newMaterial));
@@ -72,10 +73,10 @@ namespace mint
 			ShaderPipelinePool& shaderPipelinePool = _graphicsDevice.GetShaderPipelinePool();
 			shaderPipelinePool.GetShaderPipeline(material._shaderPipelineID).BindShaderPipeline();
 
-			if (material._textureID.IsValid() == true)
+			if (material._baseColorTextureID.IsValid() == true)
 			{
 				GraphicsResourcePool& resourcePool = _graphicsDevice.GetResourcePool();
-				resourcePool.GetResource(material._textureID).BindToShader(GraphicsShaderType::PixelShader, material._textureSlot);
+				resourcePool.GetResource(material._baseColorTextureID).BindToShader(GraphicsShaderType::PixelShader, material._baseColorTextureSlot);
 			}
 		}
 	}

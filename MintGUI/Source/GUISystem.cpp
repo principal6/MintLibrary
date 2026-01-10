@@ -98,8 +98,6 @@ namespace mint
 			MaterialDesc materialDesc;
 			materialDesc._materialName = "GUI";
 			materialDesc._shaderPipelineID = _graphicsDevice.GetShapeRenderer().GetDefaultShaderPipelineID();
-			materialDesc._textureID;
-			materialDesc._textureSlot;
 			_defaultMaterialID = materialPool.CreateMaterial(materialDesc);
 		}
 
