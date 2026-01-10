@@ -181,9 +181,25 @@ namespace mint
 
 		template<typename EntityType>
 		template<typename ComponentType>
+		inline const ComponentType* EntityRegistry<EntityType>::GetComponent(const EntityType& entity) const
+		{
+			return GetComponentPool<ComponentType>().GetComponent(entity);
+		}
+
+		template<typename EntityType>
+		template<typename ComponentType>
 		inline ComponentType& EntityRegistry<EntityType>::GetComponentMust(const EntityType& entity)
 		{
 			ComponentType* const component = GetComponent<ComponentType>(entity);
+			MINT_ASSERT(component != nullptr, "해당 Component 가 Entity 에 존재하지 않습니다!");
+			return *component;
+		}
+
+		template<typename EntityType>
+		template<typename ComponentType>
+		inline const ComponentType& EntityRegistry<EntityType>::GetComponentMust(const EntityType& entity) const
+		{
+			const ComponentType* const component = GetComponent<ComponentType>(entity);
 			MINT_ASSERT(component != nullptr, "해당 Component 가 Entity 에 존재하지 않습니다!");
 			return *component;
 		}

@@ -79,7 +79,11 @@ namespace mint
 			template<typename ComponentType>
 			ComponentType* GetComponent(const EntityType& entity);
 			template<typename ComponentType>
+			const ComponentType* GetComponent(const EntityType& entity) const;
+			template<typename ComponentType>
 			ComponentType& GetComponentMust(const EntityType& entity);
+			template<typename ComponentType>
+			const ComponentType& GetComponentMust(const EntityType& entity) const;
 
 		public:
 			template<typename ComponentType>
