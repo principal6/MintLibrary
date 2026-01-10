@@ -51,8 +51,8 @@ namespace mint
 			SceneObjectComponentHelpers::RotateCameraPitch(0.125f, cameraComponent);
 			_sceneObjectRegistry->AttachComponent(_defaultCameraObject, std::move(cameraComponent));
 
-			TransformComponent* const transformComponent = _sceneObjectRegistry->GetComponent<TransformComponent>(_defaultCameraObject);
-			transformComponent->_transform._translation._z = 5.0f;
+			TransformComponent& transformComponent = _sceneObjectRegistry->GetComponentMust<TransformComponent>(_defaultCameraObject);
+			transformComponent._transform._translation._z = 5.0f;
 
 			_is3DMode = true;
 			break;
@@ -64,8 +64,8 @@ namespace mint
 			SceneObjectComponentHelpers::RotateCameraPitch(0.125f, cameraComponent);
 			_sceneObjectRegistry->AttachComponent(_defaultCameraObject, std::move(cameraComponent));
 
-			TransformComponent* const transformComponent = _sceneObjectRegistry->GetComponent<TransformComponent>(_defaultCameraObject);
-			transformComponent->_transform._translation._z = 5.0f;
+			TransformComponent& transformComponent = _sceneObjectRegistry->GetComponentMust<TransformComponent>(_defaultCameraObject);
+			transformComponent._transform._translation._z = 5.0f;
 
 			_is3DMode = false;
 			break;

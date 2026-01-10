@@ -33,7 +33,6 @@ namespace mint
 		GraphicsResourcePool& resourcePool = _graphicsDevice.GetResourcePool();
 		MaterialPool& materialPool = _graphicsDevice.GetMaterialPool();
 
-		const SceneObjectComponentPool<TransformComponent>& transformComponentPool = sceneObjectRegistry.GetComponentPool<TransformComponent>();
 		const SceneObjectComponentPool<MeshComponent>& meshComponentPool = sceneObjectRegistry.GetComponentPool<MeshComponent>();
 		const ContiguousHashMap<SceneObject, MeshComponent>& meshComponentMap = meshComponentPool.GetComponentMap();
 		if (meshComponentMap.IsEmpty() == false)
@@ -53,8 +52,8 @@ namespace mint
 			{
 				const SceneObject& sceneObject = iter.GetKey();
 				const MeshComponent& meshComponent = iter.GetValue();
-				const TransformComponent* const transformComponent = transformComponentPool.GetComponent(sceneObject);
-				_cbTransformData._cbWorldMatrix = transformComponent->_transform.ToMatrix();
+				const TransformComponent& transformComponent = sceneObjectRegistry.GetComponentMust<TransformComponent>(sceneObject);
+				_cbTransformData._cbWorldMatrix = transformComponent._transform.ToMatrix();
 				cbTransform.UpdateBuffer(&_cbTransformData, 1);
 
 				_lowLevelRenderer.PushMesh(meshComponent._meshData);
@@ -103,8 +102,8 @@ namespace mint
 			{
 				const SceneObject& sceneObject = iter.GetKey();
 				const Mesh2DComponent& mesh2DComponent = iter.GetValue();
-				const TransformComponent* transformComponent = transformComponentPool.GetComponent(sceneObject);
-				shapeRenderer.AddShape(mesh2DComponent._shape, transformComponent->_transform);
+				const TransformComponent& transformComponent = sceneObjectRegistry.GetComponentMust<TransformComponent>(sceneObject);
+				shapeRenderer.AddShape(mesh2DComponent._shape, transformComponent._transform);
 			}
 		}
 	}

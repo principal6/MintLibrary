@@ -100,9 +100,8 @@ namespace mint
 		cameraComponent->_forwardDirection = Float4x4::RotationMatrixAxisAngle(leftDirection * -handnessSign, cameraComponent->_pitch) * forwardDirectionXz;
 		const Float3& upDirection = Float3::CrossAndNormalize(leftDirection, cameraComponent->_forwardDirection) * handnessSign;
 		const Float4x4& rotationMatrix = Float4x4::RotationMatrixFromAxes(-leftDirection, upDirection, cameraComponent->_forwardDirection * handnessSign);
-		SceneObjectComponentPool<TransformComponent>& transformComponentPool = _sceneObjectRegistry.GetComponentPool<TransformComponent>();
-		TransformComponent* const transformComponent = transformComponentPool.GetComponent(cameraObject);
-		return rotationMatrix.Transpose() * Float4x4::TranslationMatrix(-transformComponent->_transform._translation);
+		const TransformComponent& transformComponent = _sceneObjectRegistry.GetComponentMust<TransformComponent>(cameraObject);
+		return rotationMatrix.Transpose() * Float4x4::TranslationMatrix(-transformComponent._transform._translation);
 	}
 
 	void SceneObjectCameraSystem::IncreaseCurrentCameraMoveSpeed()
@@ -233,28 +232,26 @@ namespace mint
 		const Float3& upDirection = Float3::Cross(leftDirection, cameraComponent->_forwardDirection) * handnessSign;
 
 		const float moveSpeedFloat = GetMoveSpeedAsFloat((cameraComponent->_isBoostMode) ? GetFasterMoveSpeed(GetFasterMoveSpeed(cameraComponent->_moveSpeed)) : cameraComponent->_moveSpeed);
-		SceneObjectComponentPool<TransformComponent>& transformComponentPool = _sceneObjectRegistry.GetComponentPool<TransformComponent>();
-		TransformComponent* const transformComponent = transformComponentPool.GetComponent(_currentCameraObject);
-		Transform& transform = transformComponent->_transform;
+		TransformComponent& transformComponent = _sceneObjectRegistry.GetComponentMust<TransformComponent>(_currentCameraObject);
 		switch (cameraMoveDirection)
 		{
 		case CameraMoveDirection::Forward:
-			transform._translation += cameraComponent->_forwardDirection * moveSpeedFloat * deltaTime;
+			transformComponent._transform._translation += cameraComponent->_forwardDirection * moveSpeedFloat * deltaTime;
 			break;
 		case CameraMoveDirection::Backward:
-			transform._translation -= cameraComponent->_forwardDirection * moveSpeedFloat * deltaTime;
+			transformComponent._transform._translation -= cameraComponent->_forwardDirection * moveSpeedFloat * deltaTime;
 			break;
 		case CameraMoveDirection::Leftward:
-			transform._translation += leftDirection * moveSpeedFloat * deltaTime;
+			transformComponent._transform._translation += leftDirection * moveSpeedFloat * deltaTime;
 			break;
 		case CameraMoveDirection::Rightward:
-			transform._translation -= leftDirection * moveSpeedFloat * deltaTime;
+			transformComponent._transform._translation -= leftDirection * moveSpeedFloat * deltaTime;
 			break;
 		case CameraMoveDirection::Upward:
-			transform._translation += upDirection * moveSpeedFloat * deltaTime;
+			transformComponent._transform._translation += upDirection * moveSpeedFloat * deltaTime;
 			break;
 		case CameraMoveDirection::Downward:
-			transform._translation -= upDirection * moveSpeedFloat * deltaTime;
+			transformComponent._transform._translation -= upDirection * moveSpeedFloat * deltaTime;
 			break;
 		default:
 			break;

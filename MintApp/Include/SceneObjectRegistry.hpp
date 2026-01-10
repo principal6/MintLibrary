@@ -24,7 +24,7 @@ namespace mint
 
 	inline Transform& SceneObjectRegistry::GetTransform(const SceneObject& sceneObject)
 	{
-		return GetComponent<TransformComponent>(sceneObject)->_transform;
+		return GetComponentMust<TransformComponent>(sceneObject)._transform;
 	}
 
 	inline void SceneObjectRegistry::OnEntityCreated(SceneObject entity)
