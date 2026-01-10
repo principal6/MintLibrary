@@ -612,15 +612,6 @@ namespace mint
 				}, meshData, uvs);
 		}
 
-		void MeshGenerator::SetMaterialID(MeshData& meshData, const uint32 materialID) noexcept
-		{
-			const uint32 vertexCount = meshData._vertexArray.Size();
-			for (uint32 vertexIndex = 0; vertexIndex < vertexCount; ++vertexIndex)
-			{
-				meshData._vertexArray[vertexIndex]._materialID = materialID;
-			}
-		}
-
 		void MeshGenerator::TransformMeshData(MeshData& meshData, const Float4x4& transformationMatrix) noexcept
 		{
 			const uint32 positionCount = meshData.GetPositionCount();

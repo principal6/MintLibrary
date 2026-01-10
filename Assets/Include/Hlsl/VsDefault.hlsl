@@ -19,8 +19,5 @@ VS_OUTPUT main(VS_INPUT input)
     output._worldBitangent = normalize(mul(inputBitangent, _cbWorldMatrix));
     output._worldNormal = float4(normalize(cross(output._worldTangent.xyz, output._worldBitangent.xyz)), 0.0);
     output._texCoord = float4(input._positionU.w, input._tangentV.w, input._bitangentW.w, 0.0);
-    
-    output._materialID = input._materialID;
-
     return output;
 }

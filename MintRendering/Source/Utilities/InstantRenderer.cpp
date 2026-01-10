@@ -36,13 +36,10 @@ namespace mint
 
 		void InstantRenderer::DrawLine(const Float3& a, const Float3& b, const Color& color) noexcept
 		{
-			const uint32 materialID = _cbMaterialDatas.Size();
 			auto& vertices = _lowLevelRendererLine.Vertices();
 			auto& indices = _lowLevelRendererLine.Indices();
 
 			VS_INPUT vertex;
-			vertex._materialID = materialID;
-
 			vertex._positionU.SetXYZ(a);
 			vertices.PushBack(vertex);
 
@@ -204,9 +201,6 @@ namespace mint
 
 		void InstantRenderer::PushMeshWithMaterial(MeshData& meshData, const Color& diffuseColor) noexcept
 		{
-			const uint32 materialID = _cbMaterialDatas.Size();
-			MeshGenerator::SetMaterialID(meshData, materialID);
-
 			_lowLevelRendererMesh.PushMesh(meshData);
 
 			CB_Material cbMaterialData;

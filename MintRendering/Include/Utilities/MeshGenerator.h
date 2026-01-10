@@ -96,7 +96,6 @@ namespace mint
 			static void _PushRingQuads(const int32 indexBase, const uint8 quadCount, MeshData& meshData) noexcept;
 
 		public:
-			static void SetMaterialID(MeshData& meshData, const uint32 materialID) noexcept;
 			static void TransformMeshData(MeshData& meshData, const Float4x4& transformationMatrix) noexcept;
 			static void MergeMeshData(const MeshData& meshDataA, const MeshData& meshDataB, MeshData& outMeshData) noexcept;
 			static void MergeMeshData(const MeshData& sourceMeshData, MeshData& inoutTargetMeshData) noexcept;
