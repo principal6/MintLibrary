@@ -140,10 +140,12 @@ namespace mint
 
 		public:
 			bool Initialize();
+			void Terminate();
 			void UpdateScreenSize();
 
 		private:
-			void CreateDxDevice();
+			bool CreateDxDevice();
+			void CreateDefaultShaderPipelines();
 			bool LoadFontData();
 
 		private:
@@ -244,6 +246,12 @@ namespace mint
 			};
 			StateManager& GetStateManager() noexcept;
 
+		public: // ShaderPipelines
+			GraphicsObjectID GetShaderPipelineTriangleID() const noexcept;
+			GraphicsObjectID GetShaderPipelineTriangleDrawNormalsID() const noexcept;
+			GraphicsObjectID GetShaderPipelineTriangleDrawEdgesID() const noexcept;
+			GraphicsObjectID GetShaderPipelineLineID() const noexcept;
+
 		public: // Common buffers
 			GraphicsObjectID GetCommonCBTransformID() const noexcept;
 			GraphicsObjectID GetCommonCBMaterialID() const noexcept;
@@ -327,6 +335,12 @@ namespace mint
 			Language::CppHlsl::Interpreter _cppHlslStreamData;
 			Language::CppHlsl::Interpreter _cppHlslConstantBuffers;
 			Language::CppHlsl::Interpreter _cppHlslStructuredBuffers;
+
+		private:
+			GraphicsObjectID _shaderPipelineTriangleID;
+			GraphicsObjectID _shaderPipelineTriangleDrawNormalsID;
+			GraphicsObjectID _shaderPipelineTriangleDrawEdgesID;
+			GraphicsObjectID _shaderPipelineLineID;
 
 		private:
 			OwnPtr<LowLevelRenderer<VS_INPUT_SHAPE>> _lowLevelRendererForShapeAndFont;

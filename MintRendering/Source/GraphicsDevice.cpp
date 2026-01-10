@@ -453,7 +453,7 @@ namespace mint
 
 		GraphicsDevice::~GraphicsDevice()
 		{
-			__noop;
+			Terminate();
 		}
 
 		bool GraphicsDevice::Initialize()
@@ -461,7 +461,12 @@ namespace mint
 			_clearColor = _window.GetBackgroundColor();
 			_cachedWindowSize = _window.GetSize();
 
-			CreateDxDevice();
+			if (CreateDxDevice() == false)
+			{
+				return false;
+			}
+
+			CreateDefaultShaderPipelines();
 
 			_lowLevelRendererForShapeAndFont.Assign(MINT_NEW(LowLevelRenderer<VS_INPUT_SHAPE>));
 			_fontRenderer.Assign(MINT_NEW(FontRenderer, *this, *_lowLevelRendererForShapeAndFont, _sbTransformDataForShapeAndFont));
@@ -478,6 +483,29 @@ namespace mint
 				return false;
 			}
 			return true;
+		}
+
+		void GraphicsDevice::Terminate()
+		{
+			if (_shaderPipelineTriangleID.IsValid())
+			{
+				_shaderPipelinePool.DestroyShaderPipeline(_shaderPipelineTriangleID);
+			}
+
+			if (_shaderPipelineTriangleDrawNormalsID.IsValid())
+			{
+				_shaderPipelinePool.DestroyShaderPipeline(_shaderPipelineTriangleDrawNormalsID);
+			}
+
+			if (_shaderPipelineTriangleDrawEdgesID.IsValid())
+			{
+				_shaderPipelinePool.DestroyShaderPipeline(_shaderPipelineTriangleDrawEdgesID);
+			}
+
+			if (_shaderPipelineLineID.IsValid())
+			{
+				_shaderPipelinePool.DestroyShaderPipeline(_shaderPipelineLineID);
+			}
 		}
 
 		void GraphicsDevice::UpdateScreenSize()
@@ -507,25 +535,29 @@ namespace mint
 			_cachedWindowSize = _window.GetSize();
 		}
 
-		void GraphicsDevice::CreateDxDevice()
+		bool GraphicsDevice::CreateDxDevice()
 		{
 			const Int2& windowSize = _window.GetSize();
 
 			if (CreateSwapChain(windowSize, _window.GetHandle()) == false)
 			{
-				return;
+				return false;
 			}
 
 			if (InitializeBackBuffer() == false)
 			{
-				return;
+				return false;
 			}
 
 			if (InitializeDepthStencilBufferAndView(windowSize) == false)
 			{
-				return;
+				return false;
 			}
-			InitializeDepthStencilStates();
+
+			if (InitializeDepthStencilStates() == false)
+			{
+				return false;
+			}
 
 			InitializeFullScreenData(windowSize);
 			InitializeDxShaderHeaderMemory();
@@ -573,6 +605,58 @@ namespace mint
 			}
 
 			SetDefaultRenderTargetsAndDepthStencil();
+			return true;
+		}
+
+		void GraphicsDevice::CreateDefaultShaderPipelines()
+		{
+			Rendering::GraphicsObjectID inputLayoutDefaultID;
+			Rendering::GraphicsObjectID vsDefaultID;
+			Rendering::GraphicsObjectID gsNormalID;
+			Rendering::GraphicsObjectID gsTriangleEdgeID;
+			Rendering::GraphicsObjectID psDefaultID;
+			Rendering::GraphicsObjectID psTexCoordAsColorID;
+			Rendering::GraphicsObjectID psColorID;
+			vsDefaultID = _shaderPool.CreateShader(Path::MakeIncludeAssetPath("Hlsl/"), "VsDefault.hlsl", "main", GraphicsShaderType::VertexShader, Path::MakeIncludeAssetPath("HlslBinary/"));
+
+			const Language::TypeMetaData<Language::CppHlsl::TypeCustomData>& vsInputTypeMetaData = _cppHlslStreamData.GetTypeMetaData(typeid(VS_INPUT));
+			inputLayoutDefaultID = _shaderPool.CreateInputLayout(vsDefaultID, vsInputTypeMetaData);
+
+			gsNormalID = _shaderPool.CreateShader(Path::MakeIncludeAssetPath("Hlsl/"), "GsNormal.hlsl", "main", GraphicsShaderType::GeometryShader, Path::MakeIncludeAssetPath("HlslBinary/"));
+			gsTriangleEdgeID = _shaderPool.CreateShader(Path::MakeIncludeAssetPath("Hlsl/"), "GsTriangleEdge.hlsl", "main", GraphicsShaderType::GeometryShader, Path::MakeIncludeAssetPath("HlslBinary/"));
+			psDefaultID = _shaderPool.CreateShader(Path::MakeIncludeAssetPath("Hlsl/"), "PsDefault.hlsl", "main", GraphicsShaderType::PixelShader, Path::MakeIncludeAssetPath("HlslBinary/"));
+			psTexCoordAsColorID = _shaderPool.CreateShader(Path::MakeIncludeAssetPath("Hlsl/"), "PsTexCoordAsColor.hlsl", "main", GraphicsShaderType::PixelShader, Path::MakeIncludeAssetPath("HlslBinary/"));
+			psColorID = _shaderPool.CreateShader(Path::MakeIncludeAssetPath("Hlsl/"), "PsColor.hlsl", "main", GraphicsShaderType::PixelShader, Path::MakeIncludeAssetPath("HlslBinary/"));
+			{
+				ShaderPipelineDesc shaderPipelineDesc;
+				shaderPipelineDesc._inputLayoutID = inputLayoutDefaultID;
+				shaderPipelineDesc._vertexShaderID = vsDefaultID;
+				shaderPipelineDesc._pixelShaderID = psDefaultID;
+				_shaderPipelineTriangleID = _shaderPipelinePool.CreateShaderPipeline(shaderPipelineDesc);
+			}
+			{
+				ShaderPipelineDesc shaderPipelineDesc;
+				shaderPipelineDesc._inputLayoutID = inputLayoutDefaultID;
+				shaderPipelineDesc._vertexShaderID = vsDefaultID;
+				shaderPipelineDesc._geometryShaderID = gsNormalID;
+				shaderPipelineDesc._pixelShaderID = psTexCoordAsColorID;
+				_shaderPipelineTriangleDrawNormalsID = _shaderPipelinePool.CreateShaderPipeline(shaderPipelineDesc);
+			}
+			{
+				ShaderPipelineDesc shaderPipelineDesc;
+				shaderPipelineDesc._inputLayoutID = inputLayoutDefaultID;
+				shaderPipelineDesc._vertexShaderID = vsDefaultID;
+				shaderPipelineDesc._geometryShaderID = gsTriangleEdgeID;
+				shaderPipelineDesc._pixelShaderID = psTexCoordAsColorID;
+				_shaderPipelineTriangleDrawEdgesID = _shaderPipelinePool.CreateShaderPipeline(shaderPipelineDesc);
+			}
+			{
+				ShaderPipelineDesc shaderPipelineDesc;
+				shaderPipelineDesc._inputLayoutID = inputLayoutDefaultID;
+				shaderPipelineDesc._vertexShaderID = vsDefaultID;
+				shaderPipelineDesc._pixelShaderID = psColorID;
+				_shaderPipelineLineID = _shaderPipelinePool.CreateShaderPipeline(shaderPipelineDesc);
+			}
 		}
 
 		bool GraphicsDevice::LoadFontData()

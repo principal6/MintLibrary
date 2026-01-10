@@ -45,11 +45,6 @@ namespace mint
 		Rendering::LowLevelRenderer<Rendering::VS_INPUT> _lowLevelRenderer;
 		Rendering::CB_Transform _cbTransformData;
 		Vector<Rendering::CB_MaterialData> _cbMaterialDatas;
-
-	private:
-		Rendering::GraphicsObjectID _shaderPipelineDefaultID;
-		Rendering::GraphicsObjectID _shaderPipelineDrawNormalsID;
-		Rendering::GraphicsObjectID _shaderPipelineDrawEdgesID;
 	};
 }
 

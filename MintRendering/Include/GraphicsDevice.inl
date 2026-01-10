@@ -30,6 +30,26 @@ namespace mint
 			return _stateManager;
 		}
 
+		MINT_INLINE GraphicsObjectID GraphicsDevice::GetShaderPipelineTriangleID() const noexcept
+		{
+			return _shaderPipelineTriangleID;
+		}
+
+		MINT_INLINE GraphicsObjectID GraphicsDevice::GetShaderPipelineTriangleDrawNormalsID() const noexcept
+		{
+			return _shaderPipelineTriangleDrawNormalsID;
+		}
+
+		MINT_INLINE GraphicsObjectID GraphicsDevice::GetShaderPipelineTriangleDrawEdgesID() const noexcept
+		{
+			return _shaderPipelineTriangleDrawEdgesID;
+		}
+
+		MINT_INLINE GraphicsObjectID GraphicsDevice::GetShaderPipelineLineID() const noexcept
+		{
+			return _shaderPipelineLineID;
+		}
+
 		MINT_INLINE GraphicsObjectID GraphicsDevice::GetCommonCBTransformID() const noexcept
 		{
 			return _cbTransformID;
