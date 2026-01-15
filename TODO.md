@@ -1,4 +1,11 @@
 ﻿# TODO
+## ScreenSpace 좌표계 개선
+ApplyCoordinateSpace 갖다 버리자...... 이건 아닌 듯 ㅎㅎ...
+그냥 ScreenSpaceCoordinates 클래스 만들어서 쓰자.
+사용자는 ScreenSpaceCoordinates(400, 0) 으로 입력하고,
+내부적으로는 실제 좌표(0, 300)으로 변환해서 사용한다.
+즉, 내부적으로는 화면 중앙이 (0, 0)이고 위쪽이 +Y, 오른쪽이 +X 인 좌표계로 통일한다!!!
+
 ## SceneObect 렌더링 개선 - Material 세팅 정식으로 적용하기!
 ## CppHlsl Parser 에 SkipParsingIf 함수 구현하기( 구조를 입력받아 같은 경우에 Skip 다른 경우 실패 처리! )
 ## ECS 관련 클래스 ECS 프로젝트 사용하도록 리팩토링!! 특히 GUI...
