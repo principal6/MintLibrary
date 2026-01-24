@@ -47,16 +47,16 @@ namespace mint
 		void UpdateScreenSize(const Float2& screenSize);
 
 	public:
-		void DefaultSteerCurrentCamera(const float deltaTime, const InputContext& inputContext, const bool is3DMode);
-		void MoveCurrentCamera(const CameraMoveDirection& cameraMoveDirection, float deltaTime);
-		void RotateCurrentCameraByMouseDelta(const Float2& mouseDelta);
+		void DefaultSteerActiveCamera(const float deltaTime, const InputContext& inputContext, const bool is3DMode);
+		void MoveActiveCamera(const CameraMoveDirection& cameraMoveDirection, float deltaTime);
+		void RotateActiveCameraByMouseDelta(const Float2& mouseDelta);
 
 	public:
-		void SetCurrentCameraObject(const SceneObject& cameraObject) { _currentCameraObject = cameraObject; }
-		SceneObject GetCurrentCameraObject() const { return _currentCameraObject; }
+		void SetActiveCameraObject(const SceneObject& cameraObject) { _activeCameraObject = cameraObject; }
+		SceneObject GetActiveCameraObject() const { return _activeCameraObject; }
 		Float4x4 MakeViewMatrix(const SceneObject& cameraObject) const;
-		void IncreaseCurrentCameraMoveSpeed();
-		void DecreaseCurrentCameraMoveSpeed();
+		void IncreaseActiveCameraMoveSpeed();
+		void DecreaseActiveCameraMoveSpeed();
 
 	private:
 		static void UpdateScreenSize(CameraComponent& cameraComponent, const Float2& screenSize);
@@ -66,7 +66,7 @@ namespace mint
 
 	private:
 		SceneObjectRegistry& _sceneObjectRegistry;
-		SceneObject _currentCameraObject;
+		SceneObject _activeCameraObject;
 	};
 
 	class SceneObjectSystems

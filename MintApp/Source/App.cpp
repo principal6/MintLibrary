@@ -75,7 +75,7 @@ namespace mint
 			break;
 		}
 
-		_sceneObjectSystems->GetCameraSystem().SetCurrentCameraObject(_defaultCameraObject);
+		_sceneObjectSystems->GetCameraSystem().SetActiveCameraObject(_defaultCameraObject);
 	}
 
 	App::~App()
@@ -99,7 +99,7 @@ namespace mint
 
 			const float deltaTime = DeltaTimer::GetInstance().GetDeltaTimeS();
 			const InputContext& inputContext = InputContext::GetInstance();
-			_sceneObjectSystems->GetCameraSystem().DefaultSteerCurrentCamera(deltaTime, inputContext, _is3DMode);
+			_sceneObjectSystems->GetCameraSystem().DefaultSteerActiveCamera(deltaTime, inputContext, _is3DMode);
 			return true;
 		}
 		return false;
@@ -109,9 +109,9 @@ namespace mint
 	{
 		if (scopedRenderPhase.IsPhase(Rendering::RenderPhaseLabel::WorldSpace))
 		{
-			const SceneObject currentCameraObject = _sceneObjectSystems->GetCameraSystem().GetCurrentCameraObject();
-			const Float4x4& viewMatrix = _sceneObjectSystems->GetCameraSystem().MakeViewMatrix(currentCameraObject);
-			CameraComponent* const cameraComponent = _sceneObjectRegistry->GetComponent<CameraComponent>(currentCameraObject);
+			const SceneObject activeCameraObject = _sceneObjectSystems->GetCameraSystem().GetActiveCameraObject();
+			const Float4x4& viewMatrix = _sceneObjectSystems->GetCameraSystem().MakeViewMatrix(activeCameraObject);
+			CameraComponent* const cameraComponent = _sceneObjectRegistry->GetComponent<CameraComponent>(activeCameraObject);
 			_graphicsDevice->SetViewProjectionMatrix(viewMatrix, cameraComponent->_projectionMatrix);
 
 			_sceneObjectRenderer->Render(*_sceneObjectRegistry);

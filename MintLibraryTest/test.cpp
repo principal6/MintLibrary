@@ -491,8 +491,8 @@ bool Run3DTestWindow()
 	while (app.IsRunning() == true)
 	{
 		const float deltaTime = DeltaTimer::GetInstance().GetDeltaTimeS();
-		const SceneObject& currentCameraObject = sceneObjectSystems.GetCameraSystem().GetCurrentCameraObject();
-		CameraComponent& cameraComponent = sceneObjectRegistry.GetComponentMust<CameraComponent>(currentCameraObject);
+		const SceneObject& activeCameraObject = sceneObjectSystems.GetCameraSystem().GetActiveCameraObject();
+		CameraComponent& cameraComponent = sceneObjectRegistry.GetComponentMust<CameraComponent>(activeCameraObject);
 		if (inputContext.IsKeyPressed())
 		{
 			if (inputContext.IsKeyDown(KeyCode::Enter) == true)
@@ -538,11 +538,11 @@ bool Run3DTestWindow()
 			const float mouseWheelScroll = inputContext.GetMouseWheelScroll();
 			if (mouseWheelScroll > 0.0f)
 			{
-				sceneObjectSystems.GetCameraSystem().IncreaseCurrentCameraMoveSpeed();
+				sceneObjectSystems.GetCameraSystem().IncreaseActiveCameraMoveSpeed();
 			}
 			else
 			{
-				sceneObjectSystems.GetCameraSystem().DecreaseCurrentCameraMoveSpeed();
+				sceneObjectSystems.GetCameraSystem().DecreaseActiveCameraMoveSpeed();
 			}
 		}
 

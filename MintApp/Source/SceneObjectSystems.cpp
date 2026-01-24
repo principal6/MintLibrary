@@ -104,17 +104,17 @@ namespace mint
 		return rotationMatrix.Transpose() * Float4x4::TranslationMatrix(-transformComponent._transform._translation);
 	}
 
-	void SceneObjectCameraSystem::IncreaseCurrentCameraMoveSpeed()
+	void SceneObjectCameraSystem::IncreaseActiveCameraMoveSpeed()
 	{
 		SceneObjectComponentPool<CameraComponent>& cameraComponentPool = _sceneObjectRegistry.GetComponentPool<CameraComponent>();
-		CameraComponent* const cameraComponent = cameraComponentPool.GetComponent(_currentCameraObject);
+		CameraComponent* const cameraComponent = cameraComponentPool.GetComponent(_activeCameraObject);
 		cameraComponent->_moveSpeed = GetFasterMoveSpeed(cameraComponent->_moveSpeed);
 	}
 
-	void SceneObjectCameraSystem::DecreaseCurrentCameraMoveSpeed()
+	void SceneObjectCameraSystem::DecreaseActiveCameraMoveSpeed()
 	{
 		SceneObjectComponentPool<CameraComponent>& cameraComponentPool = _sceneObjectRegistry.GetComponentPool<CameraComponent>();
-		CameraComponent* const cameraComponent = cameraComponentPool.GetComponent(_currentCameraObject);
+		CameraComponent* const cameraComponent = cameraComponentPool.GetComponent(_activeCameraObject);
 		cameraComponent->_moveSpeed = GetSlowerMoveSpeed(cameraComponent->_moveSpeed);
 	}
 
@@ -146,60 +146,60 @@ namespace mint
 		return moveSpeed;
 	}
 
-	void SceneObjectCameraSystem::DefaultSteerCurrentCamera(const float deltaTime, const InputContext& inputContext, const bool is3DMode)
+	void SceneObjectCameraSystem::DefaultSteerActiveCamera(const float deltaTime, const InputContext& inputContext, const bool is3DMode)
 	{
 		if (is3DMode)
 		{
 			if (inputContext.IsKeyDown(KeyCode::Q) == true)
 			{
-				MoveCurrentCamera(CameraMoveDirection::Upward, deltaTime);
+				MoveActiveCamera(CameraMoveDirection::Upward, deltaTime);
 			}
 			if (inputContext.IsKeyDown(KeyCode::E) == true)
 			{
-				MoveCurrentCamera(CameraMoveDirection::Downward, deltaTime);
+				MoveActiveCamera(CameraMoveDirection::Downward, deltaTime);
 			}
 			if (inputContext.IsKeyDown(KeyCode::W) == true)
 			{
-				MoveCurrentCamera(CameraMoveDirection::Forward, deltaTime);
+				MoveActiveCamera(CameraMoveDirection::Forward, deltaTime);
 			}
 			if (inputContext.IsKeyDown(KeyCode::S) == true)
 			{
-				MoveCurrentCamera(CameraMoveDirection::Backward, deltaTime);
+				MoveActiveCamera(CameraMoveDirection::Backward, deltaTime);
 			}
 			if (inputContext.IsKeyDown(KeyCode::A) == true)
 			{
-				MoveCurrentCamera(CameraMoveDirection::Leftward, deltaTime);
+				MoveActiveCamera(CameraMoveDirection::Leftward, deltaTime);
 			}
 			if (inputContext.IsKeyDown(KeyCode::D) == true)
 			{
-				MoveCurrentCamera(CameraMoveDirection::Rightward, deltaTime);
+				MoveActiveCamera(CameraMoveDirection::Rightward, deltaTime);
 			}
 		}
 		else
 		{
 			if (inputContext.IsKeyDown(KeyCode::Q) == true)
 			{
-				MoveCurrentCamera(CameraMoveDirection::Forward, deltaTime);
+				MoveActiveCamera(CameraMoveDirection::Forward, deltaTime);
 			}
 			if (inputContext.IsKeyDown(KeyCode::E) == true)
 			{
-				MoveCurrentCamera(CameraMoveDirection::Backward, deltaTime);
+				MoveActiveCamera(CameraMoveDirection::Backward, deltaTime);
 			}
 			if (inputContext.IsKeyDown(KeyCode::W) == true)
 			{
-				MoveCurrentCamera(CameraMoveDirection::Upward, deltaTime);
+				MoveActiveCamera(CameraMoveDirection::Upward, deltaTime);
 			}
 			if (inputContext.IsKeyDown(KeyCode::S) == true)
 			{
-				MoveCurrentCamera(CameraMoveDirection::Downward, deltaTime);
+				MoveActiveCamera(CameraMoveDirection::Downward, deltaTime);
 			}
 			if (inputContext.IsKeyDown(KeyCode::A) == true)
 			{
-				MoveCurrentCamera(CameraMoveDirection::Leftward, deltaTime);
+				MoveActiveCamera(CameraMoveDirection::Leftward, deltaTime);
 			}
 			if (inputContext.IsKeyDown(KeyCode::D) == true)
 			{
-				MoveCurrentCamera(CameraMoveDirection::Rightward, deltaTime);
+				MoveActiveCamera(CameraMoveDirection::Rightward, deltaTime);
 			}
 		}
 
@@ -207,32 +207,32 @@ namespace mint
 		{
 			if (inputContext.IsMouseButtonDown(MouseButton::Right) == true)
 			{
-				RotateCurrentCameraByMouseDelta(inputContext.GetMouseDeltaPosition());
+				RotateActiveCameraByMouseDelta(inputContext.GetMouseDeltaPosition());
 			}
 		}
 	}
 
-	void SceneObjectCameraSystem::RotateCurrentCameraByMouseDelta(const Float2& mouseDelta)
+	void SceneObjectCameraSystem::RotateActiveCameraByMouseDelta(const Float2& mouseDelta)
 	{
 		static float factor = 0.005f;
 
 		SceneObjectComponentPool<CameraComponent>& cameraComponentPool = _sceneObjectRegistry.GetComponentPool<CameraComponent>();
-		CameraComponent* const cameraComponent = cameraComponentPool.GetComponent(_currentCameraObject);
+		CameraComponent* const cameraComponent = cameraComponentPool.GetComponent(_activeCameraObject);
 		const float handnessSign = GetHandednessSign(*cameraComponent);
 		SceneObjectComponentHelpers::RotateCameraPitch(mouseDelta._y * factor, *cameraComponent);
 		SceneObjectComponentHelpers::RotateCameraYaw(mouseDelta._x * factor * handnessSign, *cameraComponent);
 	}
 
-	void SceneObjectCameraSystem::MoveCurrentCamera(const CameraMoveDirection& cameraMoveDirection, float deltaTime)
+	void SceneObjectCameraSystem::MoveActiveCamera(const CameraMoveDirection& cameraMoveDirection, float deltaTime)
 	{
 		SceneObjectComponentPool<CameraComponent>& cameraComponentPool = _sceneObjectRegistry.GetComponentPool<CameraComponent>();
-		CameraComponent* const cameraComponent = cameraComponentPool.GetComponent(_currentCameraObject);
+		CameraComponent* const cameraComponent = cameraComponentPool.GetComponent(_activeCameraObject);
 		const float handnessSign = GetHandednessSign(*cameraComponent);
 		const Float3& leftDirection = Float3::Cross(cameraComponent->_forwardDirection, Float3::kAxisY) * handnessSign;
 		const Float3& upDirection = Float3::Cross(leftDirection, cameraComponent->_forwardDirection) * handnessSign;
 
 		const float moveSpeedFloat = GetMoveSpeedAsFloat((cameraComponent->_isBoostMode) ? GetFasterMoveSpeed(GetFasterMoveSpeed(cameraComponent->_moveSpeed)) : cameraComponent->_moveSpeed);
-		TransformComponent& transformComponent = _sceneObjectRegistry.GetComponentMust<TransformComponent>(_currentCameraObject);
+		TransformComponent& transformComponent = _sceneObjectRegistry.GetComponentMust<TransformComponent>(_activeCameraObject);
 		switch (cameraMoveDirection)
 		{
 		case CameraMoveDirection::Forward:
