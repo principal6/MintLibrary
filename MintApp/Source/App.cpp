@@ -60,12 +60,13 @@ namespace mint
 		case AppType::Default2D:
 		{
 			CameraComponent cameraComponent;
+			// ... Using Perspective camera in order not to use Screen Space coordinate system...
 			SceneObjectComponentHelpers::MakePerspectiveCamera(Math::ToRadian(60.0f), 1.0f, 100.0f, windowSize._x / windowSize._y, cameraComponent);
-			SceneObjectComponentHelpers::RotateCameraPitch(0.125f, cameraComponent);
+			//SceneObjectComponentHelpers::RotateCameraPitch(0.5f, cameraComponent);
 			_sceneObjectRegistry->AttachComponent(_defaultCameraObject, std::move(cameraComponent));
 
 			TransformComponent& transformComponent = _sceneObjectRegistry->GetComponentMust<TransformComponent>(_defaultCameraObject);
-			transformComponent._transform._translation._z = 5.0f;
+			transformComponent._transform._translation._z = 6.0f;
 
 			_is3DMode = false;
 			break;
