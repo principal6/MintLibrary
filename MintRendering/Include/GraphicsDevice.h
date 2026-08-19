@@ -177,6 +177,8 @@ namespace mint
 			void SetSolidCullBackRasterizer() noexcept;
 			void SetSolidCullFrontRasterizer() noexcept;
 			void SetSolidCullNoneRasterizer() noexcept;
+			// ClipRect 는 D3D11 ScissorRect 로 그대로 넘어가므로 화면 좌상단이 원점인 픽셀 공간이다.
+			// 내부 2D 좌표(화면 중앙 원점, +Y 가 위)와는 다른 공간이니 주의할 것.
 			const Rect& GetFullScreenClipRect() const noexcept;
 
 		public:

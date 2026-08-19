@@ -14,7 +14,6 @@ namespace mint
 			: _graphicsDevice{ graphicsDevice }
 			, _lowLevelRenderer{ lowLevelRenderer }
 			, _sbTransformData{ sbTransformData }
-			, _coordinateSpace{ CoordinateSpace::World }
 			, _color{ Color::kWhite }
 			, _useMultipleViewports{ false }
 		{
@@ -26,14 +25,9 @@ namespace mint
 			__noop;
 		}
 
-		Float3 IRenderer::ApplyCoordinateSpace(const Float3& position) const
+		Float2 IRenderer::ToInternalPosition(const ScreenSpaceCoordinates& position) const
 		{
-			Float3 outPosition = position;
-			if (_coordinateSpace == CoordinateSpace::Screen)
-			{
-				outPosition._y = static_cast<float>(_graphicsDevice.GetWindowSize()._y) - outPosition._y;
-			}
-			return outPosition;
+			return position.ToInternal(Float2(_graphicsDevice.GetWindowSize()));
 		}
 
 		void IRenderer::FlushTransformBuffer() noexcept

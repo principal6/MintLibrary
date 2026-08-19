@@ -270,9 +270,14 @@ namespace mint
 			PushPosition({ +halfExtents._x, -halfExtents._y, +halfExtents._z }, meshData);
 			PushPosition({ +halfExtents._x, -halfExtents._y, -halfExtents._z }, meshData);
 
-			const Float2 uvs[4]{ Float2(0.0f, 0.0f), Float2(1.0f, 0.0f), Float2(1.0f, 1.0f), Float2(0.0f, 1.0f) };
+			// UV 규칙: 면을 바깥에서 봤을 때 위쪽이 v = 0 이다. (2D Rectangle/Glyph 와 같은 규칙)
+			// Texture 의 v = 0 은 이미지의 첫 행이므로, 이래야 텍스처가 정립으로 보인다.
+			// 아래 uvs 는 각 면의 (좌상, 좌하, 우하, 우상) 순서다.
+			// Top 면은 -Z 가, Bottom 면은 +Z 가 텍스처의 위쪽이 되도록 Vertex 순서를 맞췄다.
+			// ({ 5, 4, 7, 6 } 은 { 7, 6, 5, 4 } 의 Cyclic rotation 이라 Winding 은 그대로다.)
+			const Float2 uvs[4]{ Float2(0.0f, 0.0f), Float2(0.0f, 1.0f), Float2(1.0f, 1.0f), Float2(1.0f, 0.0f) };
 			PushQuad({ 0, 1, 2, 3 }, meshData, uvs); // Top
-			PushQuad({ 7, 6, 5, 4 }, meshData, uvs); // Bottom
+			PushQuad({ 5, 4, 7, 6 }, meshData, uvs); // Bottom
 			_PushRingQuads(0, 4, meshData);
 		}
 
@@ -593,7 +598,9 @@ namespace mint
 			// 4 -- 5        ||  4 -- 5           5                     4         
 			//               ||
 			//
-			const Float2 uvs[4]{ Float2(0.0f, 0.0f), Float2(1.0f, 0.0f), Float2(1.0f, 1.0f), Float2(0.0f, 1.0f) };
+			// Quad 의 Vertex 순서는 { 윗줄[i], 아랫줄[i], 아랫줄[i+1], 윗줄[i+1] } 이다.
+			// UV 규칙(면의 위쪽 = v 0)에 맞춰 v 는 위에서 아래로, u 는 Ring 을 따라 흐르게 한다.
+			const Float2 uvs[4]{ Float2(0.0f, 0.0f), Float2(0.0f, 1.0f), Float2(1.0f, 1.0f), Float2(1.0f, 0.0f) };
 			for (uint8 quadIndex = 0; quadIndex < quadCount - 1; ++quadIndex)
 			{
 				PushQuad(

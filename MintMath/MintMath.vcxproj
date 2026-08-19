@@ -110,6 +110,7 @@
     </ClCompile>
     <ClInclude Include="Include\Quaternion.inl" />
     <ClInclude Include="Include\Rect.h" />
+    <ClInclude Include="Include\ScreenSpaceCoordinates.h" />
     <ClInclude Include="Include\AffineVec.h" />
     <ClInclude Include="Include\TestMath.h" />
     <ClInclude Include="Include\Transform.h" />
@@ -123,6 +124,7 @@
     <None Include="Include\Float4.inl" />
     <None Include="Include\AffineMat.inl" />
     <None Include="Include\Rect.inl" />
+    <None Include="Include\ScreenSpaceCoordinates.inl" />
     <None Include="Include\AffineVec.inl" />
   </ItemGroup>
   <ItemGroup>

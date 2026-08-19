@@ -232,11 +232,11 @@ void RunGJKTestWindow()
 				fontRenderer.SetTextColor(Color::kBlack);
 				StackStringW<100> buffer;
 				FormatString(buffer, L"GJK Iteration: %d / Max %u (Q/W)", gjkInfo._loopCount, gjkInfo._maxLoopCount);
-				fontRenderer.DrawDynamicText(buffer.CString(), Float2(10, 10), FontRenderingOption());
+				fontRenderer.DrawDynamicText(buffer.CString(), ScreenSpaceCoordinates(10, 10), FontRenderingOption());
 				FormatString(buffer, L"EPA Iteration: %d / Max %u (A/S)", epaInfo._iteration, epaInfo._maxIterationCount);
-				fontRenderer.DrawDynamicText(buffer.CString(), Float2(10, 30), FontRenderingOption());
+				fontRenderer.DrawDynamicText(buffer.CString(), ScreenSpaceCoordinates(10, 30), FontRenderingOption());
 				FormatString(buffer, L"Selected: %s (1: None / 2: A / 3: B)", (selectionMode == SelectionMode::None ? L"None" : (selectionMode == SelectionMode::ShapeA ? L"ShapeA" : L"ShapeB")));
-				fontRenderer.DrawDynamicText(buffer.CString(), Float2(10, 50), FontRenderingOption());
+				fontRenderer.DrawDynamicText(buffer.CString(), ScreenSpaceCoordinates(10, 50), FontRenderingOption());
 			}
 		}
 	}
@@ -286,22 +286,22 @@ void RunSplineTestWindow()
 		guiSystem.AttachComponent(guiControlPointControlTemplate, std::move(collisionShapeComponent));
 
 		GUITextComponent textComponent;
-		textComponent._offset = Float2(0, 16);
+		textComponent._offset = Float2(0, -16);
 		textComponent._text = L"CP";
 		guiSystem.AttachComponent(guiControlPointControlTemplate, std::move(textComponent));
 	}
 
 	const GUIControl guiControlPointControl0 = guiSystem.CreateControl(guiControlPointControlTemplate);
-	guiSystem.GetComponent<GUITransform2DComponent>(guiControlPointControl0)->_transform2D._translation = Float2(80, 160);
+	guiSystem.SetControlPosition(guiControlPointControl0, ScreenSpaceCoordinates(80, 160));
 	guiSystem.GetComponent<GUITextComponent>(guiControlPointControl0)->_text = L"CP0";
 	const GUIControl guiControlPointControl1 = guiSystem.CreateControl(guiControlPointControlTemplate);
-	guiSystem.GetComponent<GUITransform2DComponent>(guiControlPointControl1)->_transform2D._translation = Float2(160, 80);
+	guiSystem.SetControlPosition(guiControlPointControl1, ScreenSpaceCoordinates(160, 80));
 	guiSystem.GetComponent<GUITextComponent>(guiControlPointControl1)->_text = L"CP1";
 	const GUIControl guiControlPointControl2 = guiSystem.CreateControl(guiControlPointControlTemplate);
-	guiSystem.GetComponent<GUITransform2DComponent>(guiControlPointControl2)->_transform2D._translation = Float2(240, 80);
+	guiSystem.SetControlPosition(guiControlPointControl2, ScreenSpaceCoordinates(240, 80));
 	guiSystem.GetComponent<GUITextComponent>(guiControlPointControl2)->_text = L"CP2";
 	const GUIControl guiControlPointControl3 = guiSystem.CreateControl(guiControlPointControlTemplate);
-	guiSystem.GetComponent<GUITransform2DComponent>(guiControlPointControl3)->_transform2D._translation = Float2(320, 160);
+	guiSystem.SetControlPosition(guiControlPointControl3, ScreenSpaceCoordinates(320, 160));
 	guiSystem.GetComponent<GUITextComponent>(guiControlPointControl3)->_text = L"CP3";
 
 	GraphicsDevice& graphicsDevice = app.GetGraphicsDevice();
@@ -319,7 +319,7 @@ void RunSplineTestWindow()
 				StackStringW<100> fpsString;
 				FormatString(fpsString, L"FPS: %d", Profiler::FPSCounter::GetFPS());
 				fontRenderer.SetTextColor(Color::kBlack);
-				fontRenderer.DrawDynamicText(fpsString.CString(), Float2(10, 10), FontRenderingOption());
+				fontRenderer.DrawDynamicText(fpsString.CString(), ScreenSpaceCoordinates(10, 10), FontRenderingOption());
 			}
 		}
 
@@ -426,12 +426,12 @@ bool Run2DTestWindow()
 				spriteRenderer.SetMaterial(corgiMaterialID);
 				corgiAnimationSet.Update(deltaTime);
 				const SpriteAnimation& corgiCurrentAnimation = corgiAnimationSet.GetCurrentAnimation();
-				spriteRenderer.DrawImage(Float2(64, 64), Float2(128, 128), corgiCurrentAnimation.GetCurrentFrameUV0(), corgiCurrentAnimation.GetCurrentFrameUV1());
+				spriteRenderer.DrawImage(ScreenSpaceCoordinates(64, 64), Float2(128, 128), corgiCurrentAnimation.GetCurrentFrameUV0(), corgiCurrentAnimation.GetCurrentFrameUV1());
 
 				StackStringW<100> fpsString;
 				FormatString(fpsString, L"FPS: %d", Profiler::FPSCounter::GetFPS());
 				fontRenderer.SetTextColor(Color::kBlack);
-				fontRenderer.DrawDynamicText(fpsString.CString(), Float2(10, 10), FontRenderingOption());
+				fontRenderer.DrawDynamicText(fpsString.CString(), ScreenSpaceCoordinates(10, 10), FontRenderingOption());
 			}
 		}
 
@@ -554,7 +554,7 @@ bool Run3DTestWindow()
 				StackStringW<100> fpsString;
 				FormatString(fpsString, L"FPS: %d", Profiler::FPSCounter::GetFPS());
 				fontRenderer.SetTextColor(Color::kBlack);
-				fontRenderer.DrawDynamicText(fpsString.CString(), Float2(10, 10), FontRenderingOption());
+				fontRenderer.DrawDynamicText(fpsString.CString(), ScreenSpaceCoordinates(10, 10), FontRenderingOption());
 			}
 		}
 
@@ -705,7 +705,7 @@ bool RunPhysics2DTestWindow()
 				StackStringW<100> fpsString;
 				FormatString(fpsString, L"FPS: %d", Profiler::FPSCounter::GetFPS());
 				fontRenderer.SetTextColor(Color::kBlack);
-				fontRenderer.DrawDynamicText(fpsString.CString(), Float2(10, 10), FontRenderingOption());
+				fontRenderer.DrawDynamicText(fpsString.CString(), ScreenSpaceCoordinates(10, 10), FontRenderingOption());
 			}
 		}
 

@@ -15,6 +15,7 @@
 #include <MintMath/Include/Float4x4.h>
 #include <MintMath/Include/Int2.h>
 #include <MintMath/Include/Quaternion.h>
+#include <MintMath/Include/ScreenSpaceCoordinates.h>
 #include <MintMath/Include/Vec.h>
 #include <MintMath/Include/Matrix.h>
 #include <MintMath/Include/Transform.h>

@@ -295,6 +295,16 @@ namespace mint
 			PushTransformToBuffer(Float2::kOne, 0.0f, position);
 		}
 
+		void ShapeRenderer::DrawRectangle(const ScreenSpaceCoordinates& position, const Float2& size)
+		{
+			DrawRectangle(Float3(ToInternalPosition(position)), size);
+		}
+
+		void ShapeRenderer::DrawCircle(const ScreenSpaceCoordinates& position, const float radius)
+		{
+			DrawCircle(Float3(ToInternalPosition(position)), radius);
+		}
+
 		void ShapeRenderer::DrawCircle(const Float3& position, const float radius)
 		{
 			const uint32 vertexOffset = _lowLevelRenderer.GetVertexCount();
@@ -341,18 +351,15 @@ namespace mint
 
 		void ShapeRenderer::PushTransformToBuffer(const Float2& scale, const float rotationAngle, const Float3& position)
 		{
-			const Float3& transformedPosition = ApplyCoordinateSpace(position);
 			SB_Transform sbTransform;
-			sbTransform._transformMatrix = Float4x4::SRTMatrix(Float3(scale._x, scale._y, 1.0f), QuaternionF::MakeRotationQuaternion(Float3::kAxisZ, -rotationAngle), transformedPosition);
+			sbTransform._transformMatrix = Float4x4::SRTMatrix(Float3(scale._x, scale._y, 1.0f), QuaternionF::MakeRotationQuaternion(Float3::kAxisZ, -rotationAngle), position);
 			_sbTransformData.PushBack(sbTransform);
 		}
 
 		void ShapeRenderer::PushTransformToBuffer(const Transform& transform)
 		{
-			const Float3& transformedPosition = ApplyCoordinateSpace(transform._translation);
 			SB_Transform sbTransform;
 			sbTransform._transformMatrix = transform.ToMatrix();
-			sbTransform._transformMatrix.SetTranslation(transformedPosition);
 			_sbTransformData.PushBack(sbTransform);
 		}
 

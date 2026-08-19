@@ -59,11 +59,18 @@ namespace mint
 			void SetTextColor(const Color& textColor) noexcept;
 
 		public:
+			// position is in the internal 2D space: origin at the screen center, +Y up.
 			void DrawDynamicText(const wchar_t* const wideText, const Float2& position, const FontRenderingOption& fontRenderingOption);
 			void DrawDynamicText(const wchar_t* const wideText, const Float3& position, const FontRenderingOption& fontRenderingOption);
 			void DrawDynamicText(const wchar_t* const wideText, const uint32 textLength, const Float3& position, const FontRenderingOption& fontRenderingOption);
 			void DrawDynamicTextBitFlagged(const wchar_t* const wideText, const Float3& position, const FontRenderingOption& fontRenderingOption, const BitVector& bitFlags);
 			void DrawDynamicTextBitFlagged(const wchar_t* const wideText, const uint32 textLength, const Float3& position, const FontRenderingOption& fontRenderingOption, const BitVector& bitFlags);
+
+			// position is in pixels, with the origin at the top-left corner of the screen.
+			void DrawDynamicText(const wchar_t* const wideText, const ScreenSpaceCoordinates& position, const FontRenderingOption& fontRenderingOption);
+			void DrawDynamicText(const wchar_t* const wideText, const uint32 textLength, const ScreenSpaceCoordinates& position, const FontRenderingOption& fontRenderingOption);
+			void DrawDynamicTextBitFlagged(const wchar_t* const wideText, const ScreenSpaceCoordinates& position, const FontRenderingOption& fontRenderingOption, const BitVector& bitFlags);
+			void DrawDynamicTextBitFlagged(const wchar_t* const wideText, const uint32 textLength, const ScreenSpaceCoordinates& position, const FontRenderingOption& fontRenderingOption, const BitVector& bitFlags);
 		
 		public:
 			virtual bool IsEmpty() const noexcept override;

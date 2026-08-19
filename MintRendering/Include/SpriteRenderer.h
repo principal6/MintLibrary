@@ -26,9 +26,11 @@ namespace mint
 			MINT_INLINE GraphicsObjectID GetDefaultShaderPipelineID() const noexcept { return __super::GetDefaultShaderPipelineID(); }
 
 		public:
-			void SetCoordinateSpace(const CoordinateSpace& coordinateSpace) noexcept;
 			void SetMaterial(const GraphicsObjectID& materialID) noexcept;
+			// position 은 내부 2D 좌표(화면 중앙이 원점, +Y 가 위)다.
 			void DrawImage(const Float2& position, const Float2& size, const Float2& uv0, const Float2& uv1);
+			// 화면 좌상단이 원점인 픽셀 좌표로 그린다.
+			void DrawImage(const ScreenSpaceCoordinates& position, const Float2& size, const Float2& uv0, const Float2& uv1);
 
 		private:
 			SpriteRenderer(GraphicsDevice& graphicsDevice, LowLevelRenderer<VS_INPUT_SHAPE>& lowLevelRenderer, Vector<SB_Transform>& sbTransformData, const uint32 psTextureSlot, const ByteColor& transparentColor);

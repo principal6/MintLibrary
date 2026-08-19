@@ -9,6 +9,7 @@
 #include <MintContainer/Include/StringReference.h>
 #include <MintContainer/Include/OwnPtr.h>
 #include <MintContainer/Include/SharedPtr.h>
+#include <MintMath/Include/ScreenSpaceCoordinates.h>
 #include <MintRendering/Include/RenderingBaseCommon.h>
 #include <MintRendering/Include/GraphicsObject.h>
 #include <MintGUI/Include/GUIComponents.h>
@@ -46,6 +47,10 @@ namespace mint
 			void AttachComponent(const GUIControlTemplate& controlTemplate, ComponentType&& component);
 			template<typename ComponentType>
 			ComponentType* GetComponent(const GUIControl& control);
+
+			// Control 의 위치는 내부 2D 좌표(화면 중앙이 원점, +Y 가 위)로 저장된다.
+			// 화면 좌상단 원점 픽셀 좌표로 배치하고 싶을 때 이 함수를 쓴다.
+			void SetControlPosition(const GUIControl& control, const ScreenSpaceCoordinates& position);
 
 			void Update();
 			void Render();

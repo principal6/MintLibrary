@@ -168,6 +168,8 @@ namespace mint
 		bool IsMouseButtonUp(const MouseButton mouseButton) const noexcept;
 		bool IsMousePointerMoved() const noexcept;
 		bool IsMouseWheelScrolled() const noexcept;
+		// 화면 좌상단이 원점이고 +Y 가 아래인 픽셀 좌표다.
+		// 내부 2D 좌표로 쓰려면 ScreenSpaceCoordinates 로 감싸서 변환할 것.
 		Float2 GetMousePosition() const noexcept;
 		Float2 GetMouseDeltaPosition() const noexcept;
 		float GetMouseWheelScroll() const noexcept;

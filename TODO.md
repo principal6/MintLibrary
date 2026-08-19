@@ -1,10 +1,11 @@
 ﻿# TODO
-## ScreenSpace 좌표계 개선
-ApplyCoordinateSpace 갖다 버리자...... 이건 아닌 듯 ㅎㅎ...
-그냥 ScreenSpaceCoordinates 클래스 만들어서 쓰자.
-사용자는 ScreenSpaceCoordinates(400, 0) 으로 입력하고,
-내부적으로는 실제 좌표(0, 300)으로 변환해서 사용한다.
-즉, 내부적으로는 화면 중앙이 (0, 0)이고 위쪽이 +Y, 오른쪽이 +X 인 좌표계로 통일한다!!!
+## TileMap 배치 정리
+TileMap::Draw 가 Tile 행 순서를 뒤집으려고 yOffset 을 수동으로 계산하고 있다.
+WorldSpace 배치 문제라 좌표계 통일과는 별개지만, 정리하면 좋겠다.
+
+## 원뿔/원기둥 Cap UV
+_PushUpperUmbrellaTris / _PushLowerUmbrellaTris 의 UV 가 사실상 퇴화 삼각형 수준이다.
+Box 처럼 제대로 된 규칙(면의 위쪽 = v 0)으로 다시 잡을 것.
 
 ## SceneObect 렌더링 개선 - Material 세팅 정식으로 적용하기!
 ## CppHlsl Parser 에 SkipParsingIf 함수 구현하기( 구조를 입력받아 같은 경우에 Skip 다른 경우 실패 처리! )

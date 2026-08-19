@@ -108,12 +108,25 @@ namespace mint
 			materialPool.DestroyMaterial(_defaultMaterialID);
 		}
 
+		void GUISystem::SetControlPosition(const GUIControl& control, const ScreenSpaceCoordinates& position)
+		{
+			GUITransform2DComponent* const transform2DComponent = GetComponent<GUITransform2DComponent>(control);
+			MINT_ASSERT(transform2DComponent != nullptr, "GUITransform2DComponent 가 없는 Control 이다!");
+			if (transform2DComponent == nullptr)
+			{
+				return;
+			}
+
+			transform2DComponent->_transform2D._translation = position.ToInternal(Float2(_graphicsDevice.GetWindowSize()));
+		}
+
 		void GUISystem::InputSystem(const Vector<GUIControl>& controls)
 		{
 			static Float2 sMouseLeftButtonPressedPosition;
 
 			InputContext& inputContext = InputContext::GetInstance();
-			const Float2& mousePosition = inputContext.GetMousePosition();
+			// 마우스는 좌상단 원점 픽셀 좌표로 들어오므로, Control 들이 사는 내부 2D 좌표로 한 번만 변환한다.
+			const Float2 mousePosition = ScreenSpaceCoordinates(inputContext.GetMousePosition()).ToInternal(Float2(_graphicsDevice.GetWindowSize()));
 			const MouseButtonState leftMouseButtonState = inputContext.GetMouseButtonState(MouseButton::Left);
 
 			if (leftMouseButtonState == MouseButtonState::Pressed)

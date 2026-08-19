@@ -69,30 +69,9 @@ namespace mint
 		{
 			MINT_ASSERT(_renderPhaseLabel != RenderPhaseLabel::COUNT, "This condition MUST be assured!!!");
 
+			// WorldSpace 와 ScreenSpace 는 같은 2D 공간 규칙(화면 중앙 원점, +Y 위)을 쓰므로
+			// Renderer 들이 Phase 별로 다르게 동작할 이유가 없다. 차이는 오직 View-Projection 행렬뿐이다.
 			GraphicsDevice& graphicsDevice = _renderPhaseSequence._graphicsDevice;
-			switch (_renderPhaseLabel)
-			{
-			case RenderPhaseLabel::WorldSpace:
-			{
-				graphicsDevice.GetFontRenderer().SetCoordinateSpace(Rendering::CoordinateSpace::World);
-				graphicsDevice.GetShapeRenderer().SetCoordinateSpace(Rendering::CoordinateSpace::World);
-				graphicsDevice.GetSpriteRenderer().SetCoordinateSpace(Rendering::CoordinateSpace::World);
-				break;
-			}
-			case RenderPhaseLabel::ScreenSpace:
-			{
-				graphicsDevice.GetFontRenderer().SetCoordinateSpace(Rendering::CoordinateSpace::Screen);
-				graphicsDevice.GetShapeRenderer().SetCoordinateSpace(Rendering::CoordinateSpace::Screen);
-				graphicsDevice.GetSpriteRenderer().SetCoordinateSpace(Rendering::CoordinateSpace::Screen);
-				break;
-			}
-			case RenderPhaseLabel::COUNT:
-				break;
-			default:
-				MINT_NEVER;
-				break;
-			}
-
 			const GraphicsDevice::DelegateExecuteRenderPhase& delegateExecuteRenderPhase = graphicsDevice.GetDelegateExecuteRenderPhase();
 			delegateExecuteRenderPhase.Invoke(*this);
 		}
@@ -1080,8 +1059,12 @@ namespace mint
 
 		Float4x4 GraphicsDevice::GetScreenSpace2DProjectionMatrix() const noexcept
 		{
+			// 화면 중앙이 원점이고 +Y 가 위인 내부 2D 공간을 쓴다.
+			// WorldSpace 2D 카메라(SceneObjectCameraSystem::UpdateProjectionMatrix)와 같은 규칙이다.
+			// ProjectionMatrix2DNormal 도 중앙 원점이지만 z 를 버리므로, z 를 통과시키는 이쪽을 쓴다.
 			const Float2 windowSize{ GetWindowSize() };
-			return Float4x4::ProjectionMatrix2DOffCenter(0.0f, windowSize._x, 0.0f, windowSize._y);
+			const Float2 halfWindowSize{ windowSize * 0.5f };
+			return Float4x4::ProjectionMatrix2DOffCenter(-halfWindowSize._x, +halfWindowSize._x, -halfWindowSize._y, +halfWindowSize._y);
 		}
 
 		void GraphicsDevice::SetViewProjectionMatrix(const Float4x4& viewMatrix, const Float4x4& projectionMatrix) noexcept

@@ -20,11 +20,6 @@ namespace mint
 			InitializeCommon();
 		}
 
-		void SpriteRenderer::SetCoordinateSpace(const CoordinateSpace& coordinateSpace) noexcept
-		{
-			__super::SetCoordinateSpace(coordinateSpace);
-		}
-
 		void SpriteRenderer::SetMaterial(const GraphicsObjectID& materialID) noexcept
 		{
 			__super::SetMaterial(materialID);
@@ -36,6 +31,11 @@ namespace mint
 			_uv1 = uv1;
 
 			DrawRectangle(Float3(position), size);
+		}
+
+		void SpriteRenderer::DrawImage(const ScreenSpaceCoordinates& position, const Float2& size, const Float2& uv0, const Float2& uv1)
+		{
+			DrawImage(ToInternalPosition(position), size, uv0, uv1);
 		}
 
 		const char* SpriteRenderer::GetPixelShaderName() const noexcept

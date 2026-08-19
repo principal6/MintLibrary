@@ -74,9 +74,14 @@ namespace mint
 			void DrawArrow(const Float2& begin, const Float2& end, const float thickness, float headLengthRatio, float headWidthRatio);
 
 			void DrawTriangle(const Float2& pointA, const Float2& pointB, const Float2& pointC);
-			
+
+			// position 은 내부 2D 좌표(화면 중앙이 원점, +Y 가 위)다.
 			void DrawRectangle(const Float3& position, const Float2& size);
 			void DrawCircle(const Float3& position, const float radius);
+
+			// 화면 좌상단이 원점인 픽셀 좌표로 그린다.
+			void DrawRectangle(const ScreenSpaceCoordinates& position, const Float2& size);
+			void DrawCircle(const ScreenSpaceCoordinates& position, const float radius);
 
 		public:
 			virtual bool IsEmpty() const noexcept override;
@@ -101,7 +106,6 @@ namespace mint
 			void PushTransformToBuffer(const Transform2D& transform2D);
 			void PushTransformToBuffer(const Float2& scale, const float rotationAngle, const Float3& position);
 			void PushTransformToBuffer(const Transform& transform);
-			// Doesn't apply coordinate space internally!!!
 			void PushManualTransformToBuffer(const Float3& preTranslation, const Float4x4& transformMatrix, const Float3& postTranslation);
 
 		private:

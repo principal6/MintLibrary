@@ -15,11 +15,6 @@ namespace mint
 			return _useMultipleViewports;
 		}
 
-		MINT_INLINE void IRenderer::SetCoordinateSpace(const CoordinateSpace& coordinateSpace) noexcept
-		{
-			_coordinateSpace = coordinateSpace;
-		}
-
 		MINT_INLINE void IRenderer::SetColor(const ByteColor& color) noexcept
 		{
 			SetColor(Color(color.R(), color.G(), color.B(), color.A()));

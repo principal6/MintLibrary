@@ -109,9 +109,8 @@ namespace mint
 			const uint32 indexCount = _lowLevelRenderer.GetIndexCount() - indexOffset;
 			_lowLevelRenderer.PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, indexCount, GetClipRect(), _defaultMaterialID);
 
-			const Float3& preTranslation = ApplyCoordinateSpace(position);
 			const Float3& postTranslation = ComputePostTranslation(wideText, textLength, fontRenderingOption);
-			PushManualTransformToBuffer(preTranslation, fontRenderingOption._transformMatrix, postTranslation);
+			PushManualTransformToBuffer(position, fontRenderingOption._transformMatrix, postTranslation);
 		}
 
 		void FontRenderer::DrawDynamicTextBitFlagged(const wchar_t* const wideText, const Float3& position, const FontRenderingOption& fontRenderingOption, const BitVector& bitFlags)
@@ -133,9 +132,28 @@ namespace mint
 			const uint32 indexCount = _lowLevelRenderer.GetIndexCount() - indexOffset;
 			_lowLevelRenderer.PushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffSetZero, indexOffset, indexCount, GetClipRect(), _defaultMaterialID);
 
-			const Float3& preTranslation = ApplyCoordinateSpace(position);
 			const Float3& postTranslation = ComputePostTranslation(wideText, textLength, fontRenderingOption);
-			PushManualTransformToBuffer(preTranslation, fontRenderingOption._transformMatrix, postTranslation);
+			PushManualTransformToBuffer(position, fontRenderingOption._transformMatrix, postTranslation);
+		}
+
+		void FontRenderer::DrawDynamicText(const wchar_t* const wideText, const ScreenSpaceCoordinates& position, const FontRenderingOption& fontRenderingOption)
+		{
+			DrawDynamicText(wideText, Float3(ToInternalPosition(position)), fontRenderingOption);
+		}
+
+		void FontRenderer::DrawDynamicText(const wchar_t* const wideText, const uint32 textLength, const ScreenSpaceCoordinates& position, const FontRenderingOption& fontRenderingOption)
+		{
+			DrawDynamicText(wideText, textLength, Float3(ToInternalPosition(position)), fontRenderingOption);
+		}
+
+		void FontRenderer::DrawDynamicTextBitFlagged(const wchar_t* const wideText, const ScreenSpaceCoordinates& position, const FontRenderingOption& fontRenderingOption, const BitVector& bitFlags)
+		{
+			DrawDynamicTextBitFlagged(wideText, Float3(ToInternalPosition(position)), fontRenderingOption, bitFlags);
+		}
+
+		void FontRenderer::DrawDynamicTextBitFlagged(const wchar_t* const wideText, const uint32 textLength, const ScreenSpaceCoordinates& position, const FontRenderingOption& fontRenderingOption, const BitVector& bitFlags)
+		{
+			DrawDynamicTextBitFlagged(wideText, textLength, Float3(ToInternalPosition(position)), fontRenderingOption, bitFlags);
 		}
 
 		bool FontRenderer::IsEmpty() const noexcept
@@ -157,10 +175,8 @@ namespace mint
 			}
 			if (fontRenderingOption._directionVert != TextRenderDirectionVert::Centered)
 			{
-				float yOffset = (fontRenderingOption._directionVert == TextRenderDirectionVert::Upward) ? -scaledFontSize * 0.5f : +scaledFontSize * 0.5f;
-				if (_coordinateSpace == CoordinateSpace::Screen)
-					yOffset = -yOffset;
-
+				// +Y is up. Upward pushes the text above the anchor, Downward below it.
+				const float yOffset = (fontRenderingOption._directionVert == TextRenderDirectionVert::Upward) ? +scaledFontSize * 0.5f : -scaledFontSize * 0.5f;
 				postTranslation._y += yOffset;
 			}
 			return postTranslation;
